@@ -1,19 +1,2 @@
 # Add any directories, files, or patterns you don't want to be tracked by version control
 
-**/Results/
-!/Results/PredSim_all/PredSim_all/Results_all.mat
-!/Results/PredSim_all/PredSim_prosthesis/Results_prosthesis.mat
-!/Results/PredSim_all/TrackSim/Results_tracking.mat
-/Polynomials/MuscleAnalysis/ResultsMA/
-/OpenSimModel/subject1/Geometry/
-/OpenSimModel/temp/
-/OpenSimModel/Rajagopal2015/MuscleAnalysis2/
-**/ExperimentalData/
-/Polynomials/MuscleAnalysis/ResultsMA/git 
-/Polynomials/
-/CasADiFunctions/
-/OpenSimModel/
-/StaticStanding/
-/Data/
-/ConvertOsimModel/
-*.mat
