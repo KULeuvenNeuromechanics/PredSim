@@ -8,6 +8,9 @@
 % Date: 12/19/2018
 % Adapted: Lars D'Hondt
 % Date: 01 dec 2021
+%
+% TO DO: review bounds and scaling regarding actuators
+%
 %--------------------------------------------------------------------------
 function [bounds,scaling] = getBounds(S,model_info)
 
@@ -17,7 +20,8 @@ Qs = getIK(IKfile_bounds,model_info);
 
 % Get the names of the coordinates
 coordinate_names = fieldnames(model_info.ExtFunIO.coordi);
-NMuscle = length(model_info.ExtFunIO.muscle.params.names);
+NCoord = length(coordinate_names);
+NMuscle = length(model_info.muscle_info.params.Fmax);
 
 %% Spline approximation of Qs to get Qdots and Qdotdots
 Qs_spline.data = zeros(size(Qs.allfilt));
@@ -39,7 +43,7 @@ end
 
 % prepare index arrays for later use
 idx_mtp = [];
-idx_arms = [model_info.ExtFunIO.jointi.arm_r,model_info.ExtFunIO.jointi.arm_r];
+idx_arms = [model_info.ExtFunIO.jointi.arm_r,model_info.ExtFunIO.jointi.arm_l];
 idx_shoulder_flex = [];
 idx_elbow = [];
 for i = 1:length(coordinate_names)
@@ -70,12 +74,17 @@ for i = 1:length(coordinate_names)
 end
 
 %% extend IK-based bounds
-idx_extend = [floating_base,leg_r,leg_l,torso,idx_elbow,idx_shoulder_flex];
+idx_extend = [model_info.ExtFunIO.jointi.floating_base,...
+    model_info.ExtFunIO.jointi.leg_r,...
+    model_info.ExtFunIO.jointi.leg_l,...
+    model_info.ExtFunIO.jointi.torso,...
+    idx_elbow,idx_shoulder_flex];
+
 % The bounds are extended by twice the absolute difference between upper
 % and lower bounds.
 Qs_range = abs(bounds.Qs.upper - bounds.Qs.lower);
-bounds.Qs.lower = bounds.Qs.lower(idx_extend) - 2*Qs_range(idx_extend);
-bounds.Qs.upper = bounds.Qs.upper(idx_extend) + 2*Qs_range(idx_extend);
+bounds.Qs.lower(idx_extend) = bounds.Qs.lower(idx_extend) - 2*Qs_range(idx_extend);
+bounds.Qs.upper(idx_extend) = bounds.Qs.upper(idx_extend) + 2*Qs_range(idx_extend);
 
 % The bounds are extended by 3 times the absolute difference between upper
 % and lower bounds.
@@ -101,7 +110,7 @@ bounds.Qs.lower(model_info.ExtFunIO.jointi.floating_base(5)) = S.subject.IG_Pelv
 bounds.Qs.upper(model_info.ExtFunIO.jointi.floating_base(6)) = 0.1;
 bounds.Qs.lower(model_info.ExtFunIO.jointi.floating_base(6)) = -0.1;
 % Elbow
-bounds.Qs.lower(idxx_elbow) = 0;
+bounds.Qs.lower(idx_elbow) = 0;
 % Mtp
 bounds.Qs.upper(idx_mtp) = 1.05;
 bounds.Qs.lower(idx_mtp) = -0.5;
@@ -140,12 +149,12 @@ bounds.dFTtilde.lower = -1*ones(1,NMuscle);
 bounds.dFTtilde.upper = 1*ones(1,NMuscle);
 
 %% Arm activations
-bounds.a_a.lower = -ones(1,nq.arms);
-bounds.a_a.upper = ones(1,nq.arms);
+bounds.a_a.lower = -ones(1,length(idx_arms));
+bounds.a_a.upper = ones(1,length(idx_arms));
 
 %% Arm excitations
-bounds.e_a.lower = -ones(1,nq.arms);
-bounds.e_a.upper = ones(1,nq.arms);
+bounds.e_a.lower = -ones(1,length(idx_arms));
+bounds.e_a.upper = ones(1,length(idx_arms));
 
 %% Mtp
 if strcmp(S.subject.mtp_type,'active')
@@ -157,17 +166,17 @@ if strcmp(S.subject.mtp_type,'active')
     bounds.a_mtp.upper = ones(1,2);
 end
 
-%% Lumbar activations
-% Only used when no muscles actuate the lumbar joints (e.g. Rajagopal
-% model)
-bounds.a_lumbar.lower = -ones(1,nq.trunk);
-bounds.a_lumbar.upper = ones(1,nq.trunk);
-
-%% Lumbar excitations
-% Only used when no muscles actuate the lumbar joints (e.g. Rajagopal
-% model)
-bounds.e_lumbar.lower = -ones(1,nq.trunk);
-bounds.e_lumbar.upper = ones(1,nq.trunk);
+% %% Lumbar activations
+% % Only used when no muscles actuate the lumbar joints (e.g. Rajagopal
+% % model)
+% bounds.a_lumbar.lower = -ones(1,nq.trunk);
+% bounds.a_lumbar.upper = ones(1,nq.trunk);
+% 
+% %% Lumbar excitations
+% % Only used when no muscles actuate the lumbar joints (e.g. Rajagopal
+% % model)
+% bounds.e_lumbar.lower = -ones(1,nq.trunk);
+% bounds.e_lumbar.upper = ones(1,nq.trunk);
 
 %% Final time
 bounds.tf.lower = 0.1;
@@ -184,13 +193,13 @@ scaling.Qdots      = max(abs(bounds.Qdots.lower),abs(bounds.Qdots.upper));
 bounds.Qdots.lower = (bounds.Qdots.lower)./scaling.Qdots;
 bounds.Qdots.upper = (bounds.Qdots.upper)./scaling.Qdots;
 % Qs and Qdots are intertwined
-bounds.QsQdots.lower = zeros(1,2*nq.all);
-bounds.QsQdots.upper = zeros(1,2*nq.all);
+bounds.QsQdots.lower = zeros(1,2*NCoord);
+bounds.QsQdots.upper = zeros(1,2*NCoord);
 bounds.QsQdots.lower(1,1:2:end) = bounds.Qs.lower;
 bounds.QsQdots.upper(1,1:2:end) = bounds.Qs.upper;
 bounds.QsQdots.lower(1,2:2:end) = bounds.Qdots.lower;
 bounds.QsQdots.upper(1,2:2:end) = bounds.Qdots.upper;
-scaling.QsQdots                 = zeros(1,2*nq.all);
+scaling.QsQdots                 = zeros(1,2*NCoord);
 scaling.QsQdots(1,1:2:end)      = scaling.Qs ;
 scaling.QsQdots(1,2:2:end)      = scaling.Qdots ;
 % Qdotdots

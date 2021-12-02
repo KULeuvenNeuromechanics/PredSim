@@ -72,7 +72,7 @@ fprintf(fid, 'name %s\ndatacolumns %d\ndatarows %d\nrange %f %f\nendheader\n', .
 % MOT File Body
 % -------------
 cols = [];
-for i = 1:datacols,
+for i = 1:datacols
     if i == 1
         cols = [cols, colnames{i}];
     else
@@ -82,8 +82,8 @@ end
 cols = [cols, '\n'];
 fprintf(fid, cols);
 
-for i = 1:datarows,
-    fprintf(fid, '%20.10f\t', dataMatrix(i,:));
+for i = 1:datarows
+    fprintf(fid, '%10f\t', dataMatrix(i,:));
     fprintf(fid, '\n');
 end
 
