@@ -2,6 +2,10 @@ clear all
 
 [S] = initializeSettings();
 
+load("C:\Users\u0138016\Downloads\model_info.mat");
+
+
+
 S.bounds.a.lower = 0.02;
 
 % S.subject.IG_selection = "quasi-random";
@@ -19,14 +23,16 @@ S.subject.IG_bounds = "C:\Users\u0138016\OneDrive - KU Leuven\SimCP_2\Subjects\C
 % S.subject.IG_selection = "quasi-random";
 % S.subject.IG_selection = "C:\Users\u0138016\OneDrive - KU Leuven\SimCP_2\Subjects\CP3\T0\IK\CP3_T0_07_IK.mot";
 
+S.subject.muscle_strength.names = ["glut_med1_r", "glut_med2_r"];
+S.subject.muscle_strength.scale_factors = [0.8, 0.7]; 
 
 
-
-model_info = load("C:\Users\u0138016\Downloads\model_info.mat");
 model_info.mass = 50;
 model_info.pelvis_y = 0.95;
 
-[S] = getDefaultSettings(S,model_info);
+runPredSim_tests_bram(S,osim_model);
+
+[S] = getDefaultSettings(S);
 
 
 % % current idea

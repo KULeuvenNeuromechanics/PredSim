@@ -1,4 +1,4 @@
-function [S] = getDefaultSettings(S,model_info)
+function [S] = getDefaultSettings(S)
 % --------------------------------------------------------------------------
 %getDefaultSettings 
 %   This functions sets default settings when the user didn't specify the
@@ -84,7 +84,6 @@ end
 %% misc
 
 % maximal contraction velocity identifier
-% here?
 if ~isfield(S.misc,'v_max_s')
     S.misc.v_max_s = 0;
 end
@@ -92,6 +91,22 @@ end
 % type of gait simulation
 if ~isfield(S.misc,'gaitmotion_type')
     S.misc.gaitmotion_type = 'HalfGaitCycle';
+end
+
+% type of equation to approximate musculo-skeletal geometry (moment arm and
+% muscle-tendon lengths wrt. joint angle)
+if ~isfield(S.misc,'msk_geom_eq')
+    S.misc.msk_geom_eq = 'polynomials';
+end
+
+% minimal order of polynomial functions
+if ~isfield(S.misc.poly_order,'lower')
+    S.misc.poly_order.lower = 3;
+end
+
+% maximal order of polynomial functions
+if ~isfield(S.misc.poly_order,'upper')
+    S.misc.poly_order.upper = 9;
 end
 
 %% post_process
@@ -155,24 +170,12 @@ end
 
 % mass of the subject
 if ~isfield(S.subject,'mass')
-   S.subject.mass = model_info.mass;
-elseif S.subject.mass ~= model_info.mass
-    message = sprintf(['The mass that you specified is different from the mass of the osim model. \n',...
-        'The mass of the osim model: ', num2str(model_info.mass),' kg \n',...
-        'The mass you specified: ', num2str(S.subject.mass), ' kg' ]);
-    warning(message);
-    pause(5)
+   S.subject.mass = [];
 end
 
 % height of the pelvis for the initial guess, compare with opensim model
 if ~isfield(S.subject,'IG_pelvis_y')
-   S.subject.IG_pelvis_y = model_info.pelvis_y;
-elseif S.subject.IG_pelvis_y ~= model_info.pelvis_y
-    message = sprintf(['The height that you specified for the pelvis is different from the height in the osim model. \n',...
-        'The pelvis height in the osim model: ', num2str(model_info.pelvis_y),' m \n',...
-        'The pelvis height you specified: ', num2str(S.subject.IG_pelvis_y),' m']);
-    warning(message);
-    pause(5)
+   S.subject.IG_pelvis_y = [];
 end
 
 % average velocity you want the model to have
@@ -213,7 +216,7 @@ else
         error('The motion file you specified does not exist.')
         
     elseif EXT == "" && NAME == "quasi-random"
-         disp(['Using a ',char(S.subject.IG_selection), ' guess as initial guess.'])
+         disp(['Using a quasi-random guess as initial guess.'])
          
     elseif EXT == "" && NAME ~= "quasi-random"
         error('Please specify what you want to use as an initial guess. Either choose "quasi-random" or specify an input .mot file.')
@@ -262,12 +265,12 @@ end
 
 % weight on joint accelerations
 if ~isfield(S.weights,'q_dotdot')
-    S.weightsq_dotdotE = 50000; 
+    S.weights.q_dotdot = 50000; 
 end
 
 % weight on arm excitations
 if ~isfield(S.weights,'a_arm')
-    S.weightsq_e_arm = 10^6; 
+    S.weights.q_e_arm = 10^6; 
 end
 
 % weight on passive torques
