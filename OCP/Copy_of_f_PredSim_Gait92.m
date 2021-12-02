@@ -88,31 +88,31 @@ tensions = [tension;tension];
 pctst = getSlowTwitchRatios(muscleNames(1:end-3));
 pctsts = [pctst;pctst];
 
-%% CasADi functions
-% We create several CasADi functions for later use
-pathCasADiFunctions = [pathRepo,'/CasADiFunctions'];
-PathDefaultFunc = fullfile(pathCasADiFunctions,S.CasadiFunc_Folders);
-f_ArmActivationDynamics = Function.load(fullfile(PathDefaultFunc,'f_ArmActivationDynamics'));
-f_FiberLength_TendonForce_tendon = Function.load(fullfile(PathDefaultFunc,'f_FiberLength_TendonForce_tendon'));
-f_FiberVelocity_TendonForce_tendon = Function.load(fullfile(PathDefaultFunc,'f_FiberVelocity_TendonForce_tendon'));
-f_forceEquilibrium_FtildeState_all_tendon = Function.load(fullfile(PathDefaultFunc,'f_forceEquilibrium_FtildeState_all_tendon'));
-f_J2    = Function.load(fullfile(PathDefaultFunc,'f_J2'));
-f_J23   = Function.load(fullfile(PathDefaultFunc,'f_J23'));
-f_J8    = Function.load(fullfile(PathDefaultFunc,'f_J8'));
-f_J92   = Function.load(fullfile(PathDefaultFunc,'f_J92'));
-f_J92exp = Function.load(fullfile(PathDefaultFunc,'f_J92exp'));
-f_Jnn2  = Function.load(fullfile(PathDefaultFunc,'f_Jnn2'));
-f_lMT_vMT_dM = Function.load(fullfile(PathDefaultFunc,'f_lMT_vMT_dM'));
-f_MtpActivationDynamics = Function.load(fullfile(PathDefaultFunc,'f_MtpActivationDynamics'));
-f_T12 = Function.load(fullfile(PathDefaultFunc,'f_T12'));
-f_T13 = Function.load(fullfile(PathDefaultFunc,'f_T13'));
-f_T27 = Function.load(fullfile(PathDefaultFunc,'f_T27'));
-f_T6 = Function.load(fullfile(PathDefaultFunc,'f_T6'));
-f_AllPassiveTorques = Function.load(fullfile(PathDefaultFunc,'f_AllPassiveTorques'));
-fgetMetabolicEnergySmooth2004all = Function.load(fullfile(PathDefaultFunc,'fgetMetabolicEnergySmooth2004all'));
-
-PathEnergyEq = fullfile(pathCasADiFunctions,'EnergyModels');
-fgetMetabolicEnergy_MargariaSmooth  = Function.load(fullfile(PathEnergyEq, 'fgetMetabolicEnergy_MargariaSmooth'));
+% %% CasADi functions
+% % We create several CasADi functions for later use
+% pathCasADiFunctions = [pathRepo,'/CasADiFunctions'];
+% PathDefaultFunc = fullfile(pathCasADiFunctions,S.CasadiFunc_Folders);
+% f_ArmActivationDynamics = Function.load(fullfile(PathDefaultFunc,'f_ArmActivationDynamics'));
+% f_FiberLength_TendonForce_tendon = Function.load(fullfile(PathDefaultFunc,'f_FiberLength_TendonForce_tendon'));
+% f_FiberVelocity_TendonForce_tendon = Function.load(fullfile(PathDefaultFunc,'f_FiberVelocity_TendonForce_tendon'));
+% f_forceEquilibrium_FtildeState_all_tendon = Function.load(fullfile(PathDefaultFunc,'f_forceEquilibrium_FtildeState_all_tendon'));
+% f_J2    = Function.load(fullfile(PathDefaultFunc,'f_J2'));
+% f_J23   = Function.load(fullfile(PathDefaultFunc,'f_J23'));
+% f_J8    = Function.load(fullfile(PathDefaultFunc,'f_J8'));
+% f_J92   = Function.load(fullfile(PathDefaultFunc,'f_J92'));
+% f_J92exp = Function.load(fullfile(PathDefaultFunc,'f_J92exp'));
+% f_Jnn2  = Function.load(fullfile(PathDefaultFunc,'f_Jnn2'));
+% f_lMT_vMT_dM = Function.load(fullfile(PathDefaultFunc,'f_lMT_vMT_dM'));
+% f_MtpActivationDynamics = Function.load(fullfile(PathDefaultFunc,'f_MtpActivationDynamics'));
+% f_T12 = Function.load(fullfile(PathDefaultFunc,'f_T12'));
+% f_T13 = Function.load(fullfile(PathDefaultFunc,'f_T13'));
+% f_T27 = Function.load(fullfile(PathDefaultFunc,'f_T27'));
+% f_T6 = Function.load(fullfile(PathDefaultFunc,'f_T6'));
+% f_AllPassiveTorques = Function.load(fullfile(PathDefaultFunc,'f_AllPassiveTorques'));
+% fgetMetabolicEnergySmooth2004all = Function.load(fullfile(PathDefaultFunc,'fgetMetabolicEnergySmooth2004all'));
+% 
+% PathEnergyEq = fullfile(pathCasADiFunctions,'EnergyModels');
+% fgetMetabolicEnergy_MargariaSmooth  = Function.load(fullfile(PathEnergyEq, 'fgetMetabolicEnergy_MargariaSmooth'));
 
 
 % file with mass of muscles
@@ -305,21 +305,21 @@ opti.subject_to(bounds.Qdotdots.lower'*ones(1,d*N) < A_col < ...
     bounds.Qdotdots.upper'*ones(1,d*N));
 opti.set_initial(A_col, guess.Qdotdots_col');
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Design optimal exoskeleton support
-if S.OptTexo_Ankle.Bool
-    ExoVect = opti.variable(2, N);
-    opti.subject_to(S.OptTexo_Ankle.Tbound(1)< ExoVect < S.OptTexo_Ankle.Tbound(2));
-    opti.set_initial(ExoVect,zeros(2,N));
-elseif S.OptTexo_AnkleKneeHip.Bool
-    ExoVect = opti.variable(6, N);
-    opti.subject_to(S.OptTexo_AnkleKneeHip.Tbound_Ankle(1) < ...
-        ExoVect(1:2,:) < S.OptTexo_AnkleKneeHip.Tbound_Ankle(2));
-    opti.subject_to(S.OptTexo_AnkleKneeHip.Tbound_Knee(1) < ...
-        ExoVect(3:4,:) < S.OptTexo_AnkleKneeHip.Tbound_Knee(2));
-    opti.subject_to(S.OptTexo_AnkleKneeHip.Tbound_Hip(1) < ...
-        ExoVect(5:6,:) < S.OptTexo_AnkleKneeHip.Tbound_Hip(2));
-end
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% % Design optimal exoskeleton support
+% if S.OptTexo_Ankle.Bool
+%     ExoVect = opti.variable(2, N);
+%     opti.subject_to(S.OptTexo_Ankle.Tbound(1)< ExoVect < S.OptTexo_Ankle.Tbound(2));
+%     opti.set_initial(ExoVect,zeros(2,N));
+% elseif S.OptTexo_AnkleKneeHip.Bool
+%     ExoVect = opti.variable(6, N);
+%     opti.subject_to(S.OptTexo_AnkleKneeHip.Tbound_Ankle(1) < ...
+%         ExoVect(1:2,:) < S.OptTexo_AnkleKneeHip.Tbound_Ankle(2));
+%     opti.subject_to(S.OptTexo_AnkleKneeHip.Tbound_Knee(1) < ...
+%         ExoVect(3:4,:) < S.OptTexo_AnkleKneeHip.Tbound_Knee(2));
+%     opti.subject_to(S.OptTexo_AnkleKneeHip.Tbound_Hip(1) < ...
+%         ExoVect(5:6,:) < S.OptTexo_AnkleKneeHip.Tbound_Hip(2));
+% end
 
 %% OCP: collocation equations
 % Define CasADi variables for static parameters
@@ -386,66 +386,59 @@ for j=1:d
     % Left leg
     qinj_l          = Qskj_nsc(IndexLeft, j+1);
     qdotinj_l       = Qdotskj_nsc(IndexLeft, j+1);
-    [lMTj_l,vMTj_l,MAj_l] =  f_lMT_vMT_dM(qinj_l,qdotinj_l);
-    MAj.hip_flex.l   =  MAj_l(mai(1).mus.l',1);
-    MAj.hip_add.l    =  MAj_l(mai(2).mus.l',2);
-    MAj.hip_rot.l    =  MAj_l(mai(3).mus.l',3);
-    MAj.knee.l       =  MAj_l(mai(4).mus.l',4);
-    MAj.ankle.l      =  MAj_l(mai(5).mus.l',5);
-    MAj.subt.l       =  MAj_l(mai(6).mus.l',6);
-    % For the back muscles, we want left and right together: left
-    % first, right second. In MuscleInfo, we first have the right
+    [lMTj_l,vMTj_l,MAj_l] =  f_casadi.lMT_vMT_dM(qinj_l,qdotinj_l);
+    for i=1:length(model_info.ExtFunIO.jointi.names.leg_l)-1 % not including mtp
+        MAj.(model_info.ExtFunIO.jointi.names.leg_l{i}) = MAj_l(mai(i).mus.l',i);
+    end
+    % Right leg
+    qinj_r          = Qskj_nsc(IndexRight, j+1);
+    qdotinj_r       = Qdotskj_nsc(IndexRight, j+1);
+    [lMTj_r,vMTj_r,MAj_r] =  f_casadi.lMT_vMT_dM(qinj_r,qdotinj_r);
+    for i=1:length(model_info.ExtFunIO.jointi.names.leg_r)-1 % not including mtp
+        MAj.(model_info.ExtFunIO.jointi.names.leg_r{i}) = MAj_r(mai(i).mus.l',i);
+    end
+    % For the back muscles, we want left and right together: right first,
+    % left second. In MuscleInfo, we first have the right
     % muscles (44:46) and then the left muscles (47:49). Since the back
     % muscles only depend on back dofs, we do not care if we extract
     % them "from the left or right leg" so here we just picked left.
-    MAj.trunk_ext    =  MAj_l([47:49,mai(8).mus.l]',8);
-    MAj.trunk_ben    =  MAj_l([47:49,mai(9).mus.l]',9);
-    MAj.trunk_rot    =  MAj_l([47:49,mai(10).mus.l]',10);
-    % Right leg
-    qinj_r      = Qskj_nsc(IndexRight,j+1);
-    qdotinj_r   = Qdotskj_nsc(IndexRight,j+1);
-    [lMTj_r,vMTj_r,MAj_r] = f_lMT_vMT_dM(qinj_r,qdotinj_r);
-    % Here we take the indices from left since the vector is 1:49
-    MAj.hip_flex.r   =  MAj_r(mai(1).mus.l',1);
-    MAj.hip_add.r    =  MAj_r(mai(2).mus.l',2);
-    MAj.hip_rot.r    =  MAj_r(mai(3).mus.l',3);
-    MAj.knee.r       =  MAj_r(mai(4).mus.l',4);
-    MAj.ankle.r      =  MAj_r(mai(5).mus.l',5);
-    MAj.subt.r       =  MAj_r(mai(6).mus.l',6);
+    MAj.trunk_ext    =  MAj_l([MuscleIndex.trunk_l,mai(length(model_info.ExtFunIO.jointi.names.leg_l)).mus.l]',length(model_info.ExtFunIO.jointi.names.leg_l));
+    MAj.trunk_ben    =  MAj_l([MuscleIndex.trunk_l,mai(length(model_info.ExtFunIO.jointi.names.leg_l)+1).mus.l]',length(model_info.ExtFunIO.jointi.names.leg_l)+1);
+    MAj.trunk_rot    =  MAj_l([MuscleIndex.trunk_l,mai(length(model_info.ExtFunIO.jointi.names.leg_l)+2).mus.l]',length(model_info.ExtFunIO.jointi.names.leg_l)+2);
     % Both legs
     % In MuscleInfo, we first have the right back muscles (44:46) and
-    % then the left back muscles (47:49). Here we re-organize so that
-    % we have first the left muscles and then the right muscles.
-    lMTj_lr = [lMTj_l([1:43,47:49],1);lMTj_r(1:46,1)];
-    vMTj_lr = [vMTj_l([1:43,47:49],1);vMTj_r(1:46,1)];
+    % then the left back muscles (47:49).
+    lMTj_rl = [lMTj_r([MuscleIndex.leg_r,MuscleIndex.trunk_r],1);lMTj_l([MuscleIndex.leg_r,MuscleIndex.trunk_l],1)];
+    vMTj_rl = [vMTj_r([MuscleIndex.leg_r,MuscleIndex.trunk_r],1);vMTj_l([MuscleIndex.leg_r,MuscleIndex.trunk_l],1)];
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Get muscle-tendon forces and derive Hill-equilibrium
     [Hilldiffj,FTj,Fcej,Fpassj,Fisoj] = ...
-        f_forceEquilibrium_FtildeState_all_tendon(akj(:,j+1),...
+        f_casadi.forceEquilibrium_FtildeState_all_tendon(akj(:,j+1),...
         FTtildekj_nsc(:,j+1),dFTtildej_nsc(:,j),...
-        lMTj_lr,vMTj_lr,tensions);
+        lMTj_rl,vMTj_rl,tensions);
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Get metabolic energy rate if in the cost function
     % Get muscle fiber lengths
-    [~,lMtildej] = f_FiberLength_TendonForce_tendon(...
-        FTtildekj_nsc(:,j+1),lMTj_lr);
+    [~,lMtildej] = f_casadi.FiberLength_TendonForce_tendon(...
+        FTtildekj_nsc(:,j+1),lMTj_rl);
     % Get muscle fiber velocities
-    [vMj,~] = f_FiberVelocity_TendonForce_tendon(...
+    [vMj,~] = f_casadi.FiberVelocity_TendonForce_tendon(...
         FTtildekj_nsc(:,j+1),dFTtildej_nsc(:,j),...
-        lMTj_lr,vMTj_lr);
-    if strcmp(S.EModel,'Bhargava2014')
+        lMTj_rl,vMTj_rl);
+    if strcmp(S.EModel,'Bhargava2004')
         % Get metabolic energy rate Bhargava et al. (2004)
-        [e_totj,~,~,~,~,~] = fgetMetabolicEnergySmooth2004all(...
+        [e_totj,~,~,~,~,~] = f_casadi.getMetabolicEnergySmooth2004all(...
             akj(:,j+1),akj(:,j+1),lMtildej,vMj,Fcej,Fpassj,...
             MuscleMass.MassM',pctsts,Fisoj,S.mass,10);
     elseif  strcmp(S.EModel,'Marg1968')
-        e_totj = fgetMetabolicEnergy_MargariaSmooth(Fcej,vMj);
+        e_totj = f_casadi.getMetabolicEnergy_MargariaSmooth(Fcej,vMj);
     else
         error('No energy model selected');
     end
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Get passive joint torques
-    Tau_passj_all = f_AllPassiveTorques(Qskj_nsc(:,j+1),Qdotskj_nsc(:,j+1));
+    Tau_passj_all = f_casadi.AllPassiveTorques(Qskj_nsc(:,j+1),Qdotskj_nsc(:,j+1));
+    for 
     Tau_passj.hip.flex.l = Tau_passj_all(1);
     Tau_passj.hip.flex.r = Tau_passj_all(2);
     Tau_passj.hip.add.l = Tau_passj_all(3);
