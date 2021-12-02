@@ -1,4 +1,4 @@
-function [S] = getDefaultSettings(S,model_info)
+function [S,model_info] = getDefaultSettings(S,model_info)
 % --------------------------------------------------------------------------
 %getDefaultSettings 
 %   This functions sets default settings when the user didn't specify the
@@ -201,7 +201,9 @@ if ~isfield(S.subject,'tendon_stiff')
 end
 
 % initial guess inputs
-% input should be a string; "quasi-random" or the path to a .mot file
+% input is a string; "quasi-random" or the path to a .mot file
+% check whether one of the two is inputted, otherwise give an error
+
 if ~isfield(S.subject,'IG_selection')
     error('Please specify what you want to use as an initial guess. Either choose "quasi-random" or specify an input .mot file in S.subject.IG_selection.')
 else
@@ -224,8 +226,15 @@ end
 if ~isfield(S.subject,'IG_bounds')
     error('Please provide a .mot file on which the IG bounds will be based. Specify the file in S.subject.IG_bounds.')
 elseif ~isfile(S.subject.IG_bounds)
-    error('The motion file you specified in S.subject.IG_bounds does not exist.')
+    error('The motion file you specified does not exist.')
 end
+%     if S.subject.IG_selection ~= "quasi-random"
+%         S.subject.IG_bounds = S.subject.IG_selection;
+%         disp(['Using ',char(S.subject.IG_selection), ' to determine initial guess bounds.'])
+%     else
+%         error('Please provide a .mot file on which the IG bounds will be based. Specify the file in S.subject.IG_bounds.')
+%     end
+% end
 disp([char(S.subject.IG_bounds), ' will be used to deteriming IG bounds.'])
 
 % type of mtp joint used in the model

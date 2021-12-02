@@ -20,7 +20,6 @@ function [S] = initializeSettings()
 
 S = struct;
 
-S.IG           = [];
 S.metabolicE   = [];
 S.misc         = [];
 S.post_process = [];
