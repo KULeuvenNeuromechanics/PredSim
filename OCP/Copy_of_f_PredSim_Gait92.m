@@ -1,6 +1,4 @@
 function [] = f_PredSim_Gait92(S)
-
-
 %% Adding the casadi path seems to be needed to run processes in batch
 AddCasadiPaths();
 
