@@ -15,7 +15,7 @@ Main % user specified settings and osim path
             model_info = get_model_info(S,osim_path) % load IO and create struct model_info (convert 32bit to double)
             [] = read_and_scale_MTparameters(S,osim_path,model_info) % save MTparameters in subject-folder
                 MTparameters = getMTparameters(osim_path,muscle_names) % grab muscle_names from model_info
-                MTparameters = scale_MTparameters(S,MTparameters) % scale lM0,vM0,lTs,FMopt,alpha0 (as specified in S)
+                *MTparameters = scale_MTparameters(S,MTparameters) % scale lM0,vM0,lTs,FMopt,alpha0 (as specified in S)
             % only run if the geometry for the given model does not exist yet
             get_musculoskeletal_geometry_approximation(S,osim_path,model_info)
                 muscle_data = muscle_analysis(S,osim_path,model_info) 
@@ -46,9 +46,12 @@ plot_figures % plot info for a list of R
 
 % next meeting: validation steps (early january)
 
+* not crucial to run
 
 
+%% notes
 
+- validation flag for each function: is it validated or not
 
 
 
