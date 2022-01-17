@@ -5,10 +5,11 @@ This repository is a fork of the code and data to generate three-dimensional mus
 
 In this repository the original code of Falisse et al. was adapted to:
 
-- Simulate walking with external support of an exoskeleton
+- More easily use a diffent model
+- Make input-output a bit easier
+- Change parameters of your musculo-skeletal model more easily 
 - Simulate model with mtp joint
 - Simulate Rajagopal model
-- Make input-output a bit easier (in my opinion)
 
 Besides that, the code was also adapted in accordance with recent (October 2020) adjustments in the original repository of Falisse et al.
 
@@ -16,128 +17,52 @@ Besides that, the code was also adapted in accordance with recent (October 2020)
 - support for parallel computing
 - formulation with opti
 
-### Create all input for the simulations
+### Code structure
 
-When using a new/adapted musclulosketal model, you have to execute three steps to create the surrogate models and equations needed for optimization. An example of these steps are shown in the matlab script **./ConvertOsimModel/Example_PrepareOptimimzation.m** 
-
-A summary of the steps:
-
-#### 1. Polynomial fitting
-
-The funciton FitPolynomials create a surrogate model, based on polynomial functions, to compute muscle-tendon lengths and moment arms from the joint kinematics. 
-
-- First, we create a sample of joint angles (i.e. dummy motion) and run muscle analysis on this dummy motion to create a training dataset. Note that running the muscle analysis takes about 20 minutes. 
-- Second, we fit the polynomials functions and save it in a spefici folder (input argument PolyFolder). You'll have to point to this folder using the settings *S.PolyFolder* when running the optimization
-
-#### 2. Create casadi functions
-
-In the next step we read the muscle-tendon parameters from the model, combine it with the polynomial functions and create a casadi function for most of the equations used in the optimization. This includes:
-
-- Equations for metabolic energy
-- Equations for muscle dynamics
-- Equations for activation dynamaics
-- Casadi version of the polynomial functions
-- ....
-
-These functions are saved in a specific folder (input argument CasadiFunc_Folders). You'll have to point to this folder using the settings *S.CasadiFunc_Folders* when running the optimization
-
-#### 3. Automatically create .dll files
-
-You have to provide a .cpp file that solves inverse dynamics with the current model you are using. Note that creating this .cpp file (with the correct modelling parameters) is still a manual step. The conversion from .cpp to .dll is automized in the function CreateDllFileFromCpp, which you can download here https://github.com/MaartenAfschrift/CreateDll_PredSim
-
-#### 4. Run your simulation
-
-You can now run your tracking or predictive simulations when pointing to the correct:
-
-- Folder with polynomial functions: **S.PolyFolder**
-- Casadi functions:  **S.CasadiFunc_Folders**
-- .dll files including the file used:
-  - the optimization: **S.ExternalFunction**
-  - the post processing: **S.ExternalFunction2**
+- main
+	- getDefaultSettings
+	- preprocessing
+		- osim2dll
+		- get_model_info
+		- read_and_scale_MTparameters
+			- getMTparameters
+			- scale_MTparameters
+		- get_musculoskeletal_geometry 
+			- muscle_analysis
+			- polynomial_fit
+		- update_model_info
+	- createCasadiFunctions
+	- OCP_formulations
+	- post-processing
 
 
+### Settings
 
-### Run Tracking and predictive simulations
+All user-defined settings are stored in structure S. In main.m you have to specify the required settings and are free to change/add the optional settings. 
 
-You can run the tracking and predictive simulations using the functions in the folder **OCP**. This includes
+#### Required
 
-**Gait 92 model**:  (https://simtk-confluence.stanford.edu/display/OpenSim/Gait+2392+and+2354+Models)
+- **S.subject.save_folder**: path to the folder where you want to store the results. If the path does not exist yet on your machine, it will be created automatically.
+- **S.subject.name**: the name or code of the subject you are simulating.
+- **S.subject.IG_selection**: either choose "quasi-random" or give the path to a .mot file you want to use as initial guess.
+- **S.subject.IG_bounds**: give the path to a .mot file on which IG_bounds will be based.
 
-- f_PredSim_Gait92.m solves the predictive simulations with the gait 92 model
-- f_TrackSim_Gait92.m solves the tracking simulations with the gait 92 model [not finished yet]
-- f_LoadSim_Gait92.m post processing/analysis from the simulated states and controls (both tracking and predictive simulations). 
+#### Optional
 
-**Rajagopal model**:  (https://simtk.org/projects/full_body)
+**bounds**
 
-- f_PredSim_Rajagopal.m sovles the predictive simulations with the gait 92 model
-- f_TrackSim_Rajagopal.m solves the tracking simulations with the Rajagopal model
-- f_LoadSim_Rajagopal.m post processing/analysis from the simulated states and controls (both tracking and predictive simulations). 
+- **S.bounds.a.lower**: minimal muscle activation. Provide a number between 0 and 1. Default is 0 [double]
 
-This functions requires a matlabstructure (here S) with the settings for the optimization as input. The default settings for the optimization are added to this settings structure using the function *GetDefaultSettings(S)*. You can find an overview of the settings below.
+- **S.bounds.calcn_dist.lower**: minimal distance between calcanei (origin) in the transversal plane. Default is 0.09 m [double]
+- **S.bounds.toes_dist.lower**: minimal distance between toes (origin) in the transversal plane. Default is 0.10 m [double]
+- **S.bounds.tibia_dist.lower**: minimal distance between tibiae (origin) in the transversal plane. Default is 0.11 m [double]
 
-Typically you well run the optimization with a specific setup structure and then analyse the simulation results. As an example:
 
-```matlab
-% settings....
-S.ResultsFolder = 'NameFolderSimResults';
-S.savename      = 'Resuls_DefaultGait92';
-
-% her also other required settings
-
-% Run simulation
-f_PredSim_Gait92(S);     % run the optimization
-f_LoadSim_Gait92(S.ResultsFolder,S.savename) % post-process simulation results
-```
+end
+=========
 
 
 
-### Plot output
-
-You can use the function PlotResults_3DSim the create a default figure with a summary of the results. You can easily add multiple simulations to this figure. For example
-
-
-
-```matlab
-
-%.....
-% simulation walking 1.25 m/s
-S.v_tgt = 1.25;
-S.savename = 'WalkingNormal'
-f_PredSim_Gait92(S);     % run the optimization
-f_LoadSim_Gait92(S.ResultsFolder,S.savename) % post-process simulation results (saves results as S.savename with the extension _pp)
-
-% simulate walking 0.5 m/s
-S.v_tgt = 0.5;
-S.savename = 'WalkingSlow'
-f_PredSim_Gait92(S);     % run the optimization
-f_LoadSim_Gait92(S.ResultsFolder,S.savename) % post-process simulation results (saves results as S.savename with the extension _pp)
-
-% plot figure to compare results (with the three optional input arguments here)
-h = figure(); 	% new figure with handle
-PlotResults_3DSim(fullfile(S.ResultsFolder,'WalkingNormal_pp.mat'),[1 0 0],'Normal',h,1.25,'speed'); 	% plot results of normal walking
-PlotResults_3DSim(fullfile(S.ResultsFolder,'WalkingSlow_pp.mat'),[0 0 1],'Slow',h,0.5,'speed'); 	% plot results of slow walking on same figure
-
-```
-
-
-
-#### Settings- Required
-
-- **PolyFolder**: Folder with the surrogate model for the muscle-tendon length and moment arms (from step 1 of the section "Create all input for the simulations"). This path to the folder is relative to the folder (./Polynomials) [string]
-- **CasadiFunc_Folders**: Name of the folder with the casadifunctions (exported in step 2 of the section "Create all input for the simulations"). This path to the folder is relative to the folder (./CasadiFunctions) [string]
-- **v_tgt**: imposed walking speed [double]
-- **ModelName**: select type of musculoskeletal model. Currently the two options are (1) Gait92 or (2) Rajagopal [string] 
-- **Mass**: mass of the subject in kg [double]
-- **ExternalFunc:** Name of the .dll file used in the optimization (used for solving inverse dynamics). This file should be in the folder *./ExternalFunctions*. See step three of the section "Create all input for the simulations". [string].
-- **ExternalFunc2:** Name of the .dll file used for post processing. This file should be in the folder *./ExternalFunctions*. See step three of the section "Create all input for the simulations" [string]
-- **ResultsFolder**: folder the save the results [string]
-- **Savename**: the of the results file [string]
-
-
-
-#### Settings - optional
-
-**Simulated motion**
 
 - **Symmetric**: simulate symmetric motion (i.e. half a gait cycle), default is true [boolean]
 - **Periodic**: simulate a periodic motion (i.e. full gait cycle), default is false [boolean]
@@ -189,9 +114,3 @@ PlotResults_3DSim(fullfile(S.ResultsFolder,'WalkingSlow_pp.mat'),[0 0 1],'Slow',
 - **Constr.calcn:** minimal distance between calcneneus (origin) in the transversal plane. default is 0.09m [double]
 - **Constr.toes:** minimal distance between toes (origin) in the transversal plane. default is 0.09m [double]
 - **Constr.tibia:** minimal distance between tibia(?s) (origin) in the transversal plane. default is 0.09m [double]
-
-**Exoskeleton control **
-
-- **DataSet**: name of the folder with exoskeleton assistance profile (saved in the folder *./Data*) with a .mat file named *torque_profile.mat*. This mat file should contain the variables *time* and *torque* with the torque profile for one full stride.
-- **ExoBool:** Boolean to select if you want to include the torque profile (i.e. use exoskeleton)
-- **ExoScale:** scale factor for the torque profile.

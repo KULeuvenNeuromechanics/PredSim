@@ -19,52 +19,52 @@ function [S] = getDefaultSettings(S)
 % Original date: 30/11/2021
 %
 % Last edit by: Bram Van Den Bosch
-% Last edit date: 02/12/2021
+% Last edit date: 17/01/2022
 % --------------------------------------------------------------------------
 
 %% bounds
 
-% minimal muscle activation
+% minimal muscle activation, a number between 0 and 1
 if ~isfield(S.bounds.a,'lower')
     S.bounds.a.lower = 0;
 end
 
-% minimal distance between orginins calcanei
+% minimal distance between orginins calcanei, in meters
 if ~isfield(S.bounds.calcn_dist,'lower')
     S.bounds.calcn_dist.lower = 0.09;
 end
 
-% minimal distance between origins toes
+% minimal distance between origins toes, in meters
 if ~isfield(S.bounds.toes_dist,'lower')
     S.bounds.toes_dist.lower = 0.10;
 end
 
-% minimal distance between origins tibiae
+% minimal distance between origins tibiae, in meters
 if ~isfield(S.bounds.tibia_dist,'lower')
     S.bounds.tibia_dist.lower = 0.11;
 end
 
-% upper bound on left step length
+% upper bound on left step length, in meters
 if ~isfield(S.bounds.SLL,'upper')
     S.bounds.SLL.upper = [];
 end
 
-% upper bound on right step length
+% upper bound on right step length, in meters
 if ~isfield(S.bounds.SLR,'upper')
     S.bounds.SLR.upper = [];
 end
 
-% lower bound on distance travelled
+% lower bound on distance travelled, in meters
 if ~isfield(S.bounds.dist_trav,'lower')
     S.bounds.dist_trav.lower = [];
 end
 
-% upper bound on final time
+% upper bound on final time, in seconds
 if ~isfield(S.bounds.t_final,'upper')
     S.bounds.t_final.upper = [];
 end
 
-% lower bound on final time
+% lower bound on final time, in seconds
 if ~isfield(S.bounds.t_final,'lower')
     S.bounds.t_final.lower = [];
 end
@@ -76,14 +76,14 @@ if ~isfield(S.metabolicE,'tanh_b')
     S.metabolicE.tanh_b = 100;
 end
 
-% name of the metabolic energy model
+% name of the metabolic energy model used
 if ~isfield(S.metabolicE,'model')
     S.metabolicE.model = 'Bhargava2004';
 end
 
 %% misc
 
-% maximal contraction velocity identifier
+% maximal contraction velocity identifier --TO CHECK--
 if ~isfield(S.misc,'v_max_s')
     S.misc.v_max_s = 0;
 end
@@ -111,9 +111,9 @@ end
 
 %% post_process
 
-% boolean for making plots or not
+% boolean to plot post processing results
 if ~isfield(S.post_process,'make_plot')
-    S.post_process.make_plot = [];
+    S.post_process.make_plot = 0;
 end
 
 % name used for saving the results (choose custom or structurized savename)
@@ -128,8 +128,8 @@ if ~isfield(S.solver,'linear_solver')
     S.solver.linear_solver = 'mumps';
 end
 
-% the power (10^-x) of the dual infeasibility for when the problem is 
-% ‘solved’, higher number is more precise
+% the power (10^-x) the dual infeasibility has to reach before the OCP can 
+% be regarded as solved; a higher number gives a more precise answer
 if ~isfield(S.solver,'tol_ipopt')
     S.solver.tol_ipopt = '4';
 end
@@ -139,7 +139,7 @@ if ~isfield(S.solver,'max_iter')
     S.solver.max_iter = '10000';
 end
 
-% type of parellel computing
+% type of parallel computing
 if ~isfield(S.solver,'parallel_mode')
     S.solver.parallel_mode = 'thread';
 end
@@ -158,68 +158,68 @@ end
 
 % folder to store the subject specific results
 if ~isfield(S.subject,'save_folder')
-   error('Please provide a folder where to store the results. Specify the folder path in S.subject.save_folder.') 
+   error('Please provide a folder to store the results in. Specify the folder path in S.subject.save_folder.'); 
 elseif ~exist(S.subject.save_folder)
     mkdir(S.subject.save_folder);
 end
 
-% name of the subject, compare with opensim model
+% name of the subject
 if ~isfield(S.subject,'name')
     error('Please provide a name for this subject. This name will be used to store the results. Specify the name in S.subject.name.');
 end
 
-% mass of the subject
+% mass of the subject, in kilograms
 if ~isfield(S.subject,'mass')
    S.subject.mass = [];
 end
 
-% height of the pelvis for the initial guess, compare with opensim model
+% height of the pelvis for the initial guess, in meters
 if ~isfield(S.subject,'IG_pelvis_y')
    S.subject.IG_pelvis_y = [];
 end
 
-% average velocity you want the model to have
+% average velocity you want the model to have, in meters per second
 if ~isfield(S.subject,'v_pelvis_x_trgt')
     S.subject.v_pelvis_x_trgt = 1.25;
 end
 
-% muscle strength, check with opensim model if muscles are present
+% muscle strength
 if ~isfield(S.subject,'muscle_strength')
     S.subject.muscle_strength = [];
 end
 
-% muscle stiffness, check with opensim model if muscles are present
+% muscle stiffness
 if ~isfield(S.subject,'muscle_stiff')
     S.subject.muscle_stiff = [];
 end
 
-% muscle symmetry, check with opensim model if muscles are present
+% muscle symmetry
 if ~isfield(S.subject,'muscle_sym')
     S.subject.muscle_sym = [];
 end
 
-% tendon stiffness, check with opensim model if muscles are present
+% tendon stiffness
 if ~isfield(S.subject,'tendon_stiff')
     S.subject.tendon_stiff = [];
 end
 
 % initial guess inputs
-% input should be a string; "quasi-random" or the path to a .mot file
+% input should be a string: "quasi-random" or the path to a .mot file
 if ~isfield(S.subject,'IG_selection')
-    error('Please specify what you want to use as an initial guess. Either choose "quasi-random" or specify an input .mot file in S.subject.IG_selection.')
+    error('Please specify what you want to use as an initial guess. Either choose "quasi-random" or specify the path of a .mot file in S.subject.IG_selection.')
 else
     [~,NAME,EXT] = fileparts(S.subject.IG_selection);
     if EXT == ".mot" && isfile(S.subject.IG_selection)
         disp(['Using ',char(S.subject.IG_selection), ' as initial guess.'])
         
     elseif EXT == ".mot" && ~isfile(S.subject.IG_selection)
-        error('The motion file you specified does not exist.')
+        error('The motion file path you specified does not exist. Check if the path exist and if you made a typo.')
         
     elseif EXT == "" && NAME == "quasi-random"
          disp(['Using a quasi-random guess as initial guess.'])
          
     elseif EXT == "" && NAME ~= "quasi-random"
-        error('Please specify what you want to use as an initial guess. Either choose "quasi-random" or specify an input .mot file.')
+        error('Please specify what you want to use as an initial guess. Either choose "quasi-random" or specify the path of a .mot file.')
     end
 end
 
@@ -229,7 +229,7 @@ if ~isfield(S.subject,'IG_bounds')
 elseif ~isfile(S.subject.IG_bounds)
     error('The motion file you specified in S.subject.IG_bounds does not exist.')
 end
-disp([char(S.subject.IG_bounds), ' will be used to deteriming IG bounds.'])
+disp([char(S.subject.IG_bounds), ' will be used to determine IG bounds.'])
 
 % type of mtp joint used in the model
 if ~isfield(S.subject,'mtp_type')
@@ -246,10 +246,10 @@ if ~isfield(S.subject,'spasticity')
     S.subject.spasticity = []; 
 end
 
-% muscle coordination
-if ~isfield(S.subject,'muscle_coordination')
-    S.subject.muscle_coordination = []; 
-end
+% % muscle coordination
+% if ~isfield(S.subject,'muscle_coordination')
+%     S.subject.muscle_coordination = []; 
+% end
 
 %% weights
 
