@@ -1,5 +1,5 @@
 function [f_ArmActivationDynamics,f_TrunkActivationDynamics,...
-    f_MtpActivationDynamics] = createCasadi_ActDynam()
+    f_MtpActivationDynamics] = createCasadi_ActDynam(model_info)
 %%createCasadi_ActDynam 
 % Function to create Casadi functions for activation dynamics
 % 
@@ -20,6 +20,8 @@ function [f_ArmActivationDynamics,f_TrunkActivationDynamics,...
 % Original date: 30/11/2021
 
 %% Arm activation dynamics
+nq.arms = model_info.ExtFunIO.nq.arms;
+
 e_a = SX.sym('e_a',nq.arms); % arm excitations
 a_a = SX.sym('a_a',nq.arms); % arm activations
 dadt = ArmActivationDynamics(e_a,a_a);
@@ -28,6 +30,7 @@ f_ArmActivationDynamics = ...
     {'e','a'},{'dadt'});
 
 %% Lumbar activation dynamics
+nq.trunk = model_info.ExtFunIO.nq.trunk;
 e_lumb = SX.sym('e_a',nq.trunk); % Lumbar excitations
 a_lumb = SX.sym('a_a',nq.trunk); % Lumbar activations
 dlumbdt = ArmActivationDynamics(e_lumb,a_lumb);
@@ -36,6 +39,7 @@ f_TrunkActivationDynamics = ...
     {'e','a'},{'dadt'});
 
 %% Mtp activation dynamics
+nq.mtp = model_info.ExtFunIO.nq.mtp;
 e_mtp = SX.sym('e_mtp',nq.mtp); % mtp excitations
 a_mtp = SX.sym('a_mtp',nq.mtp); % mtp activations
 dmtpdt = ArmActivationDynamics(e_mtp,a_mtp);

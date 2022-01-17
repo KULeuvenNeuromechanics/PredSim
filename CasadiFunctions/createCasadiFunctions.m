@@ -31,7 +31,7 @@ f_casadi.lMT_vMT_dM = createCasadi_MSKGeometry(main_path,model_info);
     = createCasadi_PassTorq(model_info);
 
 %% Create Casadi functions for activation dynamics
-[f_casadi.ArmActivationDynamics,f_casadi.TrunkActivationDynamics,f_casadi.MtpActivationDynamics] = createCasadi_ActDynam();
+[f_casadi.ArmActivationDynamics,f_casadi.TrunkActivationDynamics,f_casadi.MtpActivationDynamics] = createCasadi_ActDynam(model_info);
 
 %% Create Casadi functions for metabolic energy.
 [f_casadi.getMetabolicEnergySmooth2004all] = createCasadi_E_Metab(model_info);
