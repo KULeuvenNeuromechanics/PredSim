@@ -1,4 +1,4 @@
-function [f_casadi] = createCasadiFunctions(main_path,model_info,N_musc_cross,nq,coord_muscleActuated,armsi,MTparameters_m)
+function [f_casadi] = createCasadiFunctions(main_path,model_info)
 %createCasadiFunctions.m
 %   Overview function from which al casadi functions are created
 % 
@@ -17,8 +17,7 @@ function [f_casadi] = createCasadiFunctions(main_path,model_info,N_musc_cross,nq
 % Original date: 02/12/2021
 
 %% Create generic casadi functions
-% ***Issue: N_musc_cross will be replaced by info from model_info later***
-f_casadi = createCasadi_GenHelper(model_info,N_musc_cross);
+f_casadi = createCasadi_GenHelper(model_info);
 
 %% Create Casadi functions for musculoskeletal geometry
 f_casadi.lMT_vMT_dM = createCasadi_MSKGeometry(main_path,model_info);
@@ -28,15 +27,12 @@ f_casadi.lMT_vMT_dM = createCasadi_MSKGeometry(main_path,model_info);
     ,f_casadi.FiberVelocity_TendonForce_tendon,f_casadi.lT_vT] = createCasadi_ContractDynam(main_path,model_info);
 
 %% Create Casadi functions for passive torques
-% *** nq,coord_muscleActuated,armsi to be replaced with info from
-% model_info later***
 [f_casadi.PassiveMoments,f_casadi.passiveTATorques,f_casadi.AllPassiveTorques]...
-    = createCasadi_PassTorq(model_info,nq,coord_muscleActuated,armsi);
+    = createCasadi_PassTorq(model_info);
 
 %% Create Casadi functions for activation dynamics
 [f_casadi.ArmActivationDynamics,f_casadi.TrunkActivationDynamics,f_casadi.MtpActivationDynamics] = createCasadi_ActDynam();
 
 %% Create Casadi functions for metabolic energy.
-%*** Replace MTparameters_m by info from model_info later***
-[f_casadi.getMetabolicEnergySmooth2004all] = createCasadi_E_Metab(NMuscle,MTparameters_m);
+[f_casadi.getMetabolicEnergySmooth2004all] = createCasadi_E_Metab(model_info);
 end
