@@ -58,7 +58,7 @@ All user-defined settings are stored in structure *S*. In *main.m* you have to s
 
 ### Optional
 
-**bounds**
+#### S.bounds
 
 - **S.bounds.a.lower**: minimal muscle activation. Provide a number between 0 and 1. Default is *0* [double]
 - **S.bounds.calcn_dist.lower**: minimal distance between calcanei (origin) in the transversal plane. Default is *0.09* m [double]
@@ -70,7 +70,7 @@ All user-defined settings are stored in structure *S*. In *main.m* you have to s
 - **S.bounds.t_final.upper**: upper bound on final time in seconds. Default is *[]* s [double]
 - **S.bounds.t_final.lower**: lower bound on final time in seconds. Default is *[]* s [double]
 
-**metabolic energy**
+#### S.metabolicE - metabolic energy
 
 - **S.metabolicE.tanh_b**: hyperbolic tangeant smoothing factor used in the metabolic cost calculation. Default is *100* [double]
 - **S.metabolicE.model**: the name of the metabolic energy model used. Default is *Bhargava2004* https://doi.org/10.1016/S0021-9290(03)00239-2 [char]. Other options are:
@@ -78,7 +78,7 @@ All user-defined settings are stored in structure *S*. In *main.m* you have to s
 	- *Umberger2010* https://doi.org/10.1098/rsif.2010.0084
 	- *Uchida2016* https://doi.org/10.1371/journal.pone.0150378
 
-**miscellanious**
+#### S.misc - miscellanious
 
 - **S.misc.v_max_s**: maximal contraction velocity identifier. Default is *0* [double] :warning: ***TO CHECK***
 - **S.misc.gaitmotion_type**: type of gait simulation. Default is *HalfGaitCycle* [char] :warning: ***list all other options***
@@ -86,12 +86,12 @@ All user-defined settings are stored in structure *S*. In *main.m* you have to s
 - **S.misc.poly_order.lower**: minimal order of polynomial function. Default is *3* [double]
 - **S.misc.poly_order.upper**: maximal order of polynomial function. Default is *9* [double]
 
-**post processing**
+#### S.post_process
 
 - **S.post_process.make_plot**: boolean to plot post processing results. Default is *0* :warning: ***TO CHECK: possible to make it a string array?***
 - **S.post_process.savename**: name used for saving the result files. Either choose your own naming or *structured*. Default is *structured* [char] :warning: ***add how the structured name looks like?***
 
-**solver**
+#### S.solver
 
 - **S.solver.linear_solver**: solver algorithm used for the OCP. Default is *mumps* [char] :warning: ***add different options***
 - **S.solver.tol_ipopt**: the power (10^-x) the dual infeasibility has to reach before the OCP can be regarded as solved; a higher number gives a more precise answer. Default is *4* [double]
@@ -101,7 +101,7 @@ All user-defined settings are stored in structure *S*. In *main.m* you have to s
 - **S.solver.N_threads**: number of threads in parallel mode. Default is *4* [double]
 - **S.solver.N_meshes**: number of mesh intervals. Default is *50* [double]
 
-**subject**
+#### S.subject
 
 - **S.subject.mass**: mass of the subject in kilograms. Default is *[]* kilograms [double]. If left empty, it will be overwritten by the mass extracted from the OpenSim model.
 - **s.subject.IG_pelvis_y**: height from the ground of the pelvis for the initial guess, in meters. Default is *[]* m [double]. I left empty, it will be overwritten by pelvis height extracted from the OpenSim model.
@@ -125,7 +125,7 @@ All user-defined settings are stored in structure *S*. In *main.m* you have to s
 - **S.subject.muscle_coordination**: muscle coordination.
 	- :warning: ***currently commented out; follow this up***
 	
-**weights**
+#### S.weights
 
 - **S.weights.E**: weight on metabolic energy rate. Default is *500* [double]
 - **S.weights.E_exp**: exponent for the metabolic energy rate. Default is *2* [double]
