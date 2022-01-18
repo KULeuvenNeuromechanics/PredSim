@@ -99,12 +99,12 @@ if ~isfield(S.misc,'msk_geom_eq')
     S.misc.msk_geom_eq = 'polynomials';
 end
 
-% minimal order of polynomial functions
+% minimal order of polynomial function
 if ~isfield(S.misc.poly_order,'lower')
     S.misc.poly_order.lower = 3;
 end
 
-% maximal order of polynomial functions
+% maximal order of polynomial function
 if ~isfield(S.misc.poly_order,'upper')
     S.misc.poly_order.upper = 9;
 end
@@ -116,7 +116,7 @@ if ~isfield(S.post_process,'make_plot')
     S.post_process.make_plot = 0;
 end
 
-% name used for saving the results (choose custom or structurized savename)
+% name used for saving the resultfiles (choose custom or structurized savename)
 if ~isfield(S.post_process,'savename')
     S.post_process.savename = 'structured';
 end
@@ -134,7 +134,7 @@ if ~isfield(S.solver,'tol_ipopt')
     S.solver.tol_ipopt = '4';
 end
 
-% the amount of iterations after which the solver stops
+% maximal amount of itereations after wich the solver will stop
 if ~isfield(S.solver,'max_iter')
     S.solver.max_iter = '10000';
 end
@@ -144,6 +144,7 @@ if ~isfield(S.solver,'parallel_mode')
     S.solver.parallel_mode = 'thread';
 end
 
+% ADD CHECK ST THIS IS ONLY  USED WHEN USING THREAD PARALLEL MODE?
 % number of threads in parallel mode
 if ~isfield(S.solver,'N_threads')
     S.solver.N_threads = '4';
@@ -156,7 +157,7 @@ end
 
 %% subject
 
-% folder to store the subject specific results
+% folder path to store the subject specific results
 if ~isfield(S.subject,'save_folder')
    error('Please provide a folder to store the results in. Specify the folder path in S.subject.save_folder.'); 
 elseif ~exist(S.subject.save_folder)

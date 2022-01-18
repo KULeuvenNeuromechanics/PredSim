@@ -51,66 +51,78 @@ All user-defined settings are stored in structure S. In main.m you have to speci
 
 **bounds**
 
-- **S.bounds.a.lower**: minimal muscle activation. Provide a number between 0 and 1. Default is 0 [double]
+- **S.bounds.a.lower**: minimal muscle activation. Provide a number between 0 and 1. Default is *0* [double]
+- **S.bounds.calcn_dist.lower**: minimal distance between calcanei (origin) in the transversal plane. Default is *0.09* m [double]
+- **S.bounds.toes_dist.lower**: minimal distance between toes (origin) in the transversal plane. Default is *0.10* m [double]
+- **S.bounds.tibia_dist.lower**: minimal distance between tibiae (origin) in the transversal plane. Default is *0.11* m [double]
+- **S.bounds.SLL.upper**: upper bound on left step length in meters. Default is *[]* m [double]
+- **S.bounds.SLR.upper**: upper bound on right step length in meters. Default is *[]* m [double]
+- **S.bounds.dist_trav.lower**: lower bound on distance travelled in meters. Default is *[]* m [double]
+- **S.bounds.t_final.upper**: upper bound on final time in seconds. Default is *[]* s [double]
+- **S.bounds.t_final.lower**: lower bound on final time in seconds. Default is *[]* s [double]
 
-- **S.bounds.calcn_dist.lower**: minimal distance between calcanei (origin) in the transversal plane. Default is 0.09 m [double]
-- **S.bounds.toes_dist.lower**: minimal distance between toes (origin) in the transversal plane. Default is 0.10 m [double]
-- **S.bounds.tibia_dist.lower**: minimal distance between tibiae (origin) in the transversal plane. Default is 0.11 m [double]
+**metabolic energy**
 
+- **S.metabolicE.tanh_b**: hyperbolic tangeant smoothing factor used in the metabolic cost calculation. Default is *100* [double]
+- **S.metabolicE.model**: the name of the metabolic energy model used. Default is *Bhargava2004* https://doi.org/10.1016/S0021-9290(03)00239-2 [char]. Other options are:
+	- *Umberger2003* https://doi.org/10.1080/1025584031000091678
+	- *Umberger2010* https://doi.org/10.1098/rsif.2010.0084
+	- *Uchida2016* https://doi.org/10.1371/journal.pone.0150378
 
-end
-=========
+**miscellanious**
 
+- **S.misc.v_max_s**: maximal contraction velocity identifier. Default is *0* [double] :warning: ***TO CHECK***
+- **S.misc.gaitmotion_type**: type of gait simulation. Default is *HalfGaitCycle* [char] :warning: ***list all other options***
+- **S.misc.msk_geom_eq**: type of equation to approximate musculo-skeletal geometry (moment arm and muscle-tendon lengths wrt. joint angle). Default is *polynomials* [char] :warning: ***list all other options***
+- **S.misc.poly_order.lower**: minimal order of polynomial function. Default is *3* [double]
+- **S.misc.poly_order.upper**: maximal order of polynomial function. Default is *9* [double]
 
+**post processing**
 
+- **S.post_process.make_plot**: boolean to plot post processing results. Default is *0* :warning: ***TO CHECK: possible to make it a string array?***
+- **S.post_process.savename**: name used for saving the result files. Either choose your own naming or *structured*. Default is *structured* [char] :warning: ***add how the structured name looks like?***
 
-- **Symmetric**: simulate symmetric motion (i.e. half a gait cycle), default is true [boolean]
-- **Periodic**: simulate a periodic motion (i.e. full gait cycle), default is false [boolean]
+**solver**
 
-**Settings formulation and solving NLP**
+- **S.solver.linear_solver**: solver algorithm used for the OCP. Default is *mumps* [char] :warning: ***add different options***
+- **S.solver.tol_ipopt**: the power (10^-x) the dual infeasibility has to reach before the OCP can be regarded as solved; a higher number gives a more precise answer. Default is *4* [double]
+- **S.solver.max_iter**: maximal amount of itereations after wich the solver will stop. Default is *10000* [double]
+- **S.solver.parallel_mode**: type of parallel computing. Default is *thread* [char]. Other options are:
+	- ... :warning: ***add other option(s)***
+- **S.solver.N_threads**: number of threads in parallel mode. Default is *4* [double]
+- **S.solver.N_meshes**: number of mesh intervals. Default is *50* [double]
 
-- **N**: number of mesh intervals (default is 50) [double]
-- **NThreads**: number of threads for parallel computing (default is 2) [double]
-- **linear_solver**: default is mumps [string]
-- **tol_ipopt:** tolerance of ipopt solver
-- **parallelMode**: default is thread
+**subject**
 
-**Weights **
+- **S.subject.mass**: mass of the subject in kilograms. Default is *[]* kilograms [double]. If left empty, it will be overwritten by the mass extracted from the OpenSim model.
+- **s.subject.IG_pelvis_y**: height from the ground of the pelvis for the initial guess, in meters. Default is *[]* m [double]. I left empty, it will be overwritten by pelvis height extracted from the OpenSim model.
+- **S.subject.v_pelvis_x_trgt**: average velocity you want the model to have, in meters per second. Default is *1.25* m/s [double]
+- **S.subject.muscle_strength**: structure with scaling factors for muscle strength. Default is *[]*. 
+	- :warning: ***ad something about the possibility to choose either musclewise or jointwise strength scaling***
+	- :warning: ***retink how to write down the information about this setting***
+- **S.subject.muscle_stiff**: structure with scaling factors for muscle stiffness. Default is *[]*. 
+	- :warning: ***ad something about the possibility to choose either musclewise or jointwise scaling***
+	- :warning: ***retink how to write down the information about this setting***
+- **S.subject.muscle_sym**: structure discribing muscle symetries. Default is *[]*.
+	- :warning: ***retink how to write down the information about this setting***
+- **S.subject.tendon_stiff**: structure with tendon stiffnesses. Default is *[]*. 
+	- :warning: ***ad something about the possibility to choose either musclewise or jointwise changing of tendon stiffness***
+	- :warning: ***retink how to write down the information about this setting***
+- **S.subject.mtp_type**: type of mtp joint you want to use in the simulation. Default is *[]* :warning: ***ask Lars to further clarify this setting***
+- **S.subject.MT_params**: muscle tendon properties. Default is *[]*
+	- :warning: ***rethink this; should there be a reference to the muscle_strength, muscle_stiff and tendon_stiff?***
+- **S.subject.spasticity**: muscle spasticity. Default is *[]*
+	- :warning: ***follow up***
+- **S.subject.muscle_coordination**: muscle coordination.
+	- :warning: ***currently commented out; follow this up***
+	
+**weight**
 
-- **W.E**: weight metabolic energy rate (default is 500)
-- **W.Ak**: weight joint accelerations (default is 50000)
-- **W.ArmE**: weight arm excitations (default is 10^6)
-- **W.passMom**: weight passive torques (default is 1000)
-- **W.A**: weight muscle activations (default is 2000)
-- **W.exp_E**: power metabolic energy (default is 2)
-- **W.Mtp**: weight mtp excitations (default is 10^6)
-- **W.u**: weight on excitations arms actuators (default is 0.001)
-- **W.Lumbar: ** weight on miniizing lumbar activations (in Rajagopal model) (default is 10^5)
-
-**Initial guess** (Note: I should improve this in the future)
-
-- **IGmodeID**: initial guess based on (1)walking motion, (2) running motion, (3) previous solution in the *Results* folder, (4) previous solution in the *./IG/data folder* default is (1)
-
-- **IGsel**: (1) quasi random initial guess (2) data-based initial guess (default is 2)
-
-- **IKfile_guess**: relative path to IK file used for initial guess (used when IGsel = 2 and IGmodeID is 1 or 2). Default is *OpenSimModel\IK_Guess_Default.mat*
-
-- **savename_ig**: name of the IK file used for initial guess (used when IGmodelID is 4). This file should be in *./IG/data folder*. [string]
-
-- **ResultsF_ig:** name of Folder with IK file for setting *savename_ig* (see above) when IGmodelID is 3 [string].
-
-- **IG_PelvisY**: height of the pelvis in the quasi-random initial guess (in m) [double]
-
-**Adapting bounds**
-
-- **IKfile_Bounds**: relative path to IK file used to determine bounds (i.e. 3 times ROM in IK file for all DOFs). Default is *OpenSimModel\IK_Guess_Default.mat*
-- **Bounds.ActLower**: lower bound on all muscle activations
-- **Bounds.ActLowerHip**: lower bound on activation of the hip muscles
-- **Bounds.ActLowerKnee**: lower bound on activation of the knee muscles
-- **S.Bounds.ActLowerAnkle**: lower bound on activation of the ankle muscles
-
-**Kinematic constraints**
-
-- **Constr.calcn:** minimal distance between calcneneus (origin) in the transversal plane. default is 0.09m [double]
-- **Constr.toes:** minimal distance between toes (origin) in the transversal plane. default is 0.09m [double]
-- **Constr.tibia:** minimal distance between tibia(?s) (origin) in the transversal plane. default is 0.09m [double]
+- **S.weights.E**: weight on metabolic energy rate. Default is *500* [double]
+- **S.weights.E_exp**: exponent for the metabolic energy rate. Default is *2* [double]
+- **S.weights.q_dotdot**: weight on joint accelerations. Default is *50000* [double]
+- **S.weights.a_arm**: weight on arm excitations. Default is *10^6* [double]
+- **S.weights.pass_torq**: weight on passive torques. Default is *1000* [double]
+- **S.weights.a**: weight on muscle activations. Default is *2000* [double]
+- **S.weights.e_mtp**: weight on mtp excitation. Default is *10^6* [double]
+- **S.weights.slack_ctrl**: weight on slack controls. Default is *2000* [double]
