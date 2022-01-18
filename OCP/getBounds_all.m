@@ -14,13 +14,14 @@
 % TO DO: review bounds and scaling regarding actuators
 %
 %--------------------------------------------------------------------------
-function [bounds,scaling] = getBounds_all(Qs,model_info,S)
+function [bounds,scaling,Qs_spline] = getBounds_all(Qs,model_info,S)
 
 % Get the names of the coordinates
 coordinate_names = fieldnames(model_info.ExtFunIO.coordi);
 NCoord = length(coordinate_names);
-NMuscle = length(model_info.muscle_info.params.Fmax);
-jointi = model_info.ExtFunIO.coordi;
+% NMuscle = length(model_info.muscle_info.params.Fmax);
+NMuscle = length(model_info.muscle_info.muscle_names);
+% jointi = model_info.ExtFunIO.coordi;
 
 %% Spline approximation of Qs to get Qdots and Qdotdots
 Qs_spline.data = zeros(size(Qs.allfilt));
@@ -44,62 +45,70 @@ end
 idx_mtp = [];
 idx_arms = [model_info.ExtFunIO.jointi.arm_r,model_info.ExtFunIO.jointi.arm_l];
 idx_shoulder_flex = [];
-idx_elbow = [];
 for i = [model_info.ExtFunIO.jointi.ground_pelvis model_info.ExtFunIO.jointi.back]
     coordinate = coordinate_names{i};
     coord_idx = model_info.ExtFunIO.coordi.(coordinate);
-    spline_idx = strcmp(Qs.colheaders(1,:),coordinate);
+    spline_idx = find(strcmp(Qs.colheaders(1,:),coordinate));
     % Qs
-    bounds.Qs.upper(coord_idx) = max((Qs_spline.data(:,spline_idx)));
-    bounds.Qs.lower(coord_idx) = min((Qs_spline.data(:,spline_idx)));
+    bounds.Qs.upper(coord_idx) = max(Qs_spline.data(:,spline_idx));
+    bounds.Qs.lower(coord_idx) = min(Qs_spline.data(:,spline_idx));
     % Qdots
-    bounds.Qdots.upper(coord_idx) = max((Qdots_spline.data(:,spline_idx)));
-    bounds.Qdots.lower(coord_idx) = min((Qdots_spline.data(:,spline_idx)));
+    bounds.Qdots.upper(coord_idx) = max(Qdots_spline.data(:,spline_idx));
+    bounds.Qdots.lower(coord_idx) = min(Qdots_spline.data(:,spline_idx));
     % Qdotdots
-    bounds.Qdotdots.upper(coord_idx) = max((Qdotdots_spline.data(:,spline_idx)));
-    bounds.Qdotdots.lower(coord_idx) = min((Qdotdots_spline.data(:,spline_idx)));
+    bounds.Qdotdots.upper(coord_idx) = max(Qdotdots_spline.data(:,spline_idx));
+    bounds.Qdotdots.lower(coord_idx) = min(Qdotdots_spline.data(:,spline_idx));
 end
 for i=[model_info.ExtFunIO.jointi.leg_r model_info.ExtFunIO.jointi.arm_r]
     coordinate_r = coordinate_names{i};
-    coordinate_l = jointi.([coordinate_names{i}(1:end-2) '_l']);
-    coord_idx = model_info.ExtFunIO.coordi.(coordinate_r);
-    spline_idx = [strcmp(Qs.colheaders(1,:),coordinate_r),...
-        strcmp(Qs.colheaders(1,:),coordinate_l)];
+    coordinate_l = [coordinate_r(1:end-2) '_l'];
+    coord_idx_r = model_info.ExtFunIO.coordi.(coordinate_r);
+    coord_idx_l = model_info.ExtFunIO.coordi.(coordinate_l);
+    coord_idx = [coord_idx_r coord_idx_l];
+    spline_idx_r = find(strcmp(Qs.colheaders(1,:),coordinate_r));
+    spline_idx_l = find(strcmp(Qs.colheaders(1,:),coordinate_l));
+    spline_idx = [spline_idx_r spline_idx_l];
     % Qs
-    bounds.Qs.upper(spline_idx) = max(max((Qs_spline.data(:,spline_idx))));
-    bounds.Qs.lower(spline_idx) = min(min((Qs_spline.data(:,spline_idx))));
+    bounds.Qs.upper(coord_idx) = max(max(Qs_spline.data(:,spline_idx)));
+    bounds.Qs.lower(coord_idx) = min(min(Qs_spline.data(:,spline_idx)));
     % Qdots
-    bounds.Qdots.upper(spline_idx) = max(max((Qdots_spline.data(:,spline_idx))));
-    bounds.Qdots.lower(spline_idx) = min(min((Qdots_spline.data(:,spline_idx))));
+    bounds.Qdots.upper(coord_idx) = max(max(Qdots_spline.data(:,spline_idx)));
+    bounds.Qdots.lower(coord_idx) = min(min(Qdots_spline.data(:,spline_idx)));
     % Qdotdots
-    bounds.Qdotdots.upper(spline_idx) = max(max((Qdotdots_spline.data(:,spline_idx))));
-    bounds.Qdotdots.lower(spline_idx) = min(min((Qdotdots_spline.data(:,spline_idx))));
+    bounds.Qdotdots.upper(coord_idx) = max(max(Qdotdots_spline.data(:,spline_idx)));
+    bounds.Qdotdots.lower(coord_idx) = min(min(Qdotdots_spline.data(:,spline_idx)));
     
     % save indices for later use
-    if contains(coordinate,'mtp')
-        idx_mtp = spline_idx;
+    if contains(coordinate_r,'mtp')
+        idx_mtp = coord_idx;
     end
-    if find(idx_arms(:)==coord_idx)
-        if contains(coordinate,'elbow')
-            idx_elbow(end+1) = spline_idx;
-        elseif contains(coordinate,'flex')
-            idx_shoulder_flex(end+1) = spline_idx;
-        end
+    if contains(coordinate_r,'arm_add')
+        idx_sh_add = coord_idx;
+        rec_uw_sh_add = bounds.Qs.upper(coord_idx);
+    elseif contains(coordinate_r,'arm_rot')
+        idx_sh_rot = coord_idx;
+        rec_uw_sh_rot = bounds.Qs.upper(coord_idx);
+    elseif contains(coordinate_r,'elbow_flex')
+        idx_elb = coord_idx;
+    elseif contains(coordinate_r,'arm_flex')
+        idx_shoulder_flex = coord_idx;
     end
 end
 
 %% extend IK-based bounds
-idx_extend = [model_info.ExtFunIO.jointi.floating_base,...
-    model_info.ExtFunIO.jointi.leg_r,...
-    model_info.ExtFunIO.jointi.leg_l,...
-    model_info.ExtFunIO.jointi.torso,...
-    idx_elbow,idx_shoulder_flex];
+% idx_extend = [model_info.ExtFunIO.jointi.floating_base,...
+%     model_info.ExtFunIO.jointi.leg_r,...
+%     model_info.ExtFunIO.jointi.leg_l,...
+%     model_info.ExtFunIO.jointi.torso,...
+%     idx_elbow,idx_shoulder_flex];
 
 % The bounds are extended by twice the absolute difference between upper
 % and lower bounds.
-Qs_range = abs(bounds.Qs.upper - bounds.Qs.lower);
-bounds.Qs.lower(idx_extend) = bounds.Qs.lower(idx_extend) - 2*Qs_range(idx_extend);
-bounds.Qs.upper(idx_extend) = bounds.Qs.upper(idx_extend) + 2*Qs_range(idx_extend);
+Qs_range = bounds.Qs.upper - bounds.Qs.lower;
+% bounds.Qs.lower(idx_extend) = bounds.Qs.lower(idx_extend) - 2*Qs_range(idx_extend);
+% bounds.Qs.upper(idx_extend) = bounds.Qs.upper(idx_extend) + 2*Qs_range(idx_extend);
+bounds.Qs.lower = bounds.Qs.lower - 2*Qs_range;
+bounds.Qs.upper = bounds.Qs.upper + 2*Qs_range;
 
 % The bounds are extended by 3 times the absolute difference between upper
 % and lower bounds.
@@ -124,8 +133,6 @@ bounds.Qs.lower(model_info.ExtFunIO.jointi.floating_base(5)) = S.subject.IG_pelv
 % Pelvis_tz
 bounds.Qs.upper(model_info.ExtFunIO.jointi.floating_base(6)) = 0.1;
 bounds.Qs.lower(model_info.ExtFunIO.jointi.floating_base(6)) = -0.1;
-% Elbow
-bounds.Qs.lower(idx_elbow) = 0;
 % Mtp
 bounds.Qs.upper(idx_mtp) = 1.05;
 bounds.Qs.lower(idx_mtp) = -0.5;
@@ -133,6 +140,10 @@ bounds.Qdots.upper(idx_mtp) = 13;
 bounds.Qdots.lower(idx_mtp) = -13;
 bounds.Qdotdots.upper(idx_mtp) = 500;
 bounds.Qdotdots.lower(idx_mtp) = -500;
+
+bounds.Qs.upper(idx_sh_add) = rec_uw_sh_add;
+bounds.Qs.upper(idx_sh_rot) = rec_uw_sh_rot;
+bounds.Qs.lower(idx_elb) = 0;
 
 % We adjust some bounds when we increase the speed to allow for the
 % generation of running motions.

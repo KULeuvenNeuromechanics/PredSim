@@ -8,12 +8,13 @@
 % Author: Antoine Falisse
 % Date: 12/19/2018
 % 
-function guess = getGuess_QR_opti_int(N,scaling,model_info,S,d)
+function guess = getGuess_QR_opti(N,scaling,model_info,S,d)
 nq = model_info.ExtFunIO.nq;
-NMuscle = size(model_info.muscle_info.params.params,2);
+% NMuscle = size(model_info.muscle_info.params.params,2);
+NMuscle = length(model_info.muscle_info.muscle_names);
 % joints = fields(model_info.ExtFunIO.coordi)';
 jointi = model_info.ExtFunIO.coordi;
-PelvisY = S.IG_pelvis_y;
+PelvisY = S.subject.IG_pelvis_y;
 
 if ~exist('PelvisY','var')
     PelvisY = 0.9385;
@@ -22,23 +23,23 @@ end
 % The final time is function of the imposed speed
 all_speeds = 0.73:0.1:2.73;
 all_tf = 0.70:-((0.70-0.35)/(length(all_speeds)-1)):0.35;
-idx_speed = find(all_speeds==S.v_pelvis_x_trgt);
+idx_speed = find(all_speeds==S.subject.vPelvis_x_trgt);
 if isempty(idx_speed)
-    idx_speed = find(all_speeds > S.v_pelvis_x_trgt,1,'first');
+    idx_speed = find(all_speeds > S.subject.vPelvis_x_trgt,1,'first');
 end
 guess.tf = all_tf(idx_speed);
 
 %% Qs
 % The model is moving forward but with a standing position (Qs=0)
 guess.Qs = zeros(N,nq.all);
-guess.Qs(:,jointi.pelvis_tx) = linspace(0,guess.tf*S.v_pelvis_x_trgt,N);
+guess.Qs(:,jointi.pelvis_tx) = linspace(0,guess.tf*S.subject.vPelvis_x_trgt,N);
 % The model is standing on the ground
 guess.Qs(:,jointi.pelvis_ty) = PelvisY;
 
 %% Qdots
 guess.Qdots = zeros(N,nq.all);
 % The model is moving forward with a constant speed
-guess.Qdots(:,jointi.pelvis_tx) = S.v_pelvis_x_trgt;
+guess.Qdots(:,jointi.pelvis_tx) = S.subject.vPelvis_x_trgt;
 % Qs and Qdots are intertwined
 guess.QsQdots = zeros(N,2*nq.all);
 guess.QsQdots(:,1:2:end) = guess.Qs;
@@ -69,8 +70,8 @@ if strcmp(S.misc.gaitmotion_type,'HalfGaitCycle')
     % For "symmetric" joints, we invert right and left
     inv_X = guess.QsQdots(1,model_info.ExtFunIO.symQs.orderQsInv);
     % For other joints, we take the opposite right and left
-    inv_X(model_info.ExtFunIO.symQs.orderQsOpp) = ...
-        -guess.QsQdots(1,model_info.ExtFunIO.symQs.orderQsOpp);           
+    inv_X(model_info.ExtFunIO.symQs.orderQsOpp1) = ...
+        -guess.QsQdots(1,model_info.ExtFunIO.symQs.orderQsOpp1);           
     dx = guess.QsQdots(end,2*jointi.pelvis_tx-1) - ...
         guess.QsQdots(end-1,2*jointi.pelvis_tx-1);
     inv_X(2*jointi.pelvis.tx-1) = ...
@@ -88,6 +89,7 @@ else
     guess.FTtilde = [guess.FTtilde; guess.FTtilde(1,:)];
     guess.a_a = [guess.a_a; guess.a_a(1,:)];
 end
+
 %% Mtp activations
 guess.a_mtp = 0.1*ones(N+1,nq.mtp);
 guess.e_mtp = 0.1*ones(N,nq.mtp);

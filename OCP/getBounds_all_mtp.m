@@ -7,12 +7,7 @@
 % Author: Antoine Falisse
 % Date: 12/19/2018
 %
-function [bounds,scaling] = getBounds_all_mtp(Qs,model_info,S)
-
-nq = model_info.ExtFunIO.nq;
-NMuscle = size(model_info.muscle_info.params.params,2);
-joints = fields(model_info.ExtFunIO.coordi)';
-jointi = model_info.ExtFunIO.coordi;
+function [bounds,scaling] = getBounds_all_mtp(Qs,NMuscle,nq,jointi,v_tgt)
 
 %% Spline approximation of Qs to get Qdots and Qdotdots
 Qs_spline.data = zeros(size(Qs.allfilt));
@@ -31,36 +26,96 @@ end
 %% Qs
 % The extreme values are selected as upper/lower bounds, which are then
 % further extended.
-for i=[model_info.ExtFunIO.jointi.ground_pelvis model_info.ExtFunIO.jointi.back]
-    bounds.Qs.upper(jointi.(joints{i})) = max((Qs_spline.data(:,strcmp(Qs.colheaders(1,:),joints{i}))));
-    bounds.Qs.lower(jointi.(joints{i})) = min((Qs_spline.data(:,strcmp(Qs.colheaders(1,:),joints{i}))));
-    bounds.Qdots.upper(jointi.(joints{i})) = max((Qdots_spline.data(:,strcmp(Qs.colheaders(1,:),joints{i}))));
-    bounds.Qdots.lower(jointi.(joints{i})) = min((Qdots_spline.data(:,strcmp(Qs.colheaders(1,:),joints{i}))));
-    bounds.Qdotdots.upper(jointi.(joints{i})) = max((Qdotdots_spline.data(:,strcmp(Qs.colheaders(1,:),joints{i}))));
-    bounds.Qdotdots.lower(jointi.(joints{i})) = min((Qdotdots_spline.data(:,strcmp(Qs.colheaders(1,:),joints{i}))));
-end
-for i=[model_info.ExtFunIO.jointi.leg_r model_info.ExtFunIO.jointi.arm_r]
-    bounds.Qs.upper(jointi.(joints{i})) = max(max(Qs_spline.data(:,strcmp(Qs.colheaders(1,:),joints{i}))),...
-    max(Qs_spline.data(:,strcmp(Qs.colheaders(1,:),[joints{i}(1:end-2) '_l']))));
-    bounds.Qs.upper(jointi.([joints{i}(1:end-2) '_l'])) = bounds.Qs.upper(jointi.(joints{i}));
-    bounds.Qs.lower(jointi.(joints{i})) = min(min(Qs_spline.data(:,strcmp(Qs.colheaders(1,:),joints{i}))),...
-    min(Qs_spline.data(:,strcmp(Qs.colheaders(1,:),[joints{i}(1:end-2) '_l']))));
-    bounds.Qs.lower(jointi.([joints{i}(1:end-2) '_l'])) = bounds.Qs.lower(jointi.(joints{i}));
-
-    bounds.Qdots.upper(jointi.(joints{i})) = max(max(Qdots_spline.data(:,strcmp(Qs.colheaders(1,:),joints{i}))),...
-    max(Qdots_spline.data(:,strcmp(Qs.colheaders(1,:),[joints{i}(1:end-2) '_l']))));
-    bounds.Qdots.upper(jointi.([joints{i}(1:end-2) '_l'])) = bounds.Qdots.upper(jointi.(joints{i}));
-    bounds.Qdots.lower(jointi.(joints{i})) = min(min(Qdots_spline.data(:,strcmp(Qs.colheaders(1,:),joints{i}))),...
-    min(Qdots_spline.data(:,strcmp(Qs.colheaders(1,:),[joints{i}(1:end-2) '_l']))));
-    bounds.Qdots.lower(jointi.([joints{i}(1:end-2) '_l'])) = bounds.Qdots.lower(jointi.(joints{i}));
-
-    bounds.Qdotdots.upper(jointi.(joints{i})) = max(max(Qdotdots_spline.data(:,strcmp(Qs.colheaders(1,:),joints{i}))),...
-    max(Qdotdots_spline.data(:,strcmp(Qs.colheaders(1,:),[joints{i}(1:end-2) '_l']))));
-    bounds.Qdotdots.upper(jointi.([joints{i}(1:end-2) '_l'])) = bounds.Qdotdots.upper(jointi.(joints{i}));
-    bounds.Qdotdots.lower(jointi.(joints{i})) = min(min(Qdotdots_spline.data(:,strcmp(Qs.colheaders(1,:),joints{i}))),...
-    min(Qdotdots_spline.data(:,strcmp(Qs.colheaders(1,:),[joints{i}(1:end-2) '_l']))));
-    bounds.Qdotdots.lower(jointi.([joints{i}(1:end-2) '_l'])) = bounds.Qdotdots.lower(jointi.(joints{i}));
-end
+% Pelvis tilt
+bounds.Qs.upper(jointi.pelvis.tilt) = max((Qs_spline.data(:,strcmp(Qs.colheaders(1,:),'pelvis_tilt'))));
+bounds.Qs.lower(jointi.pelvis.tilt) = min((Qs_spline.data(:,strcmp(Qs.colheaders(1,:),'pelvis_tilt'))));
+% Pelvis list
+bounds.Qs.upper(jointi.pelvis.list) = max((Qs_spline.data(:,strcmp(Qs.colheaders(1,:),'pelvis_list'))));
+bounds.Qs.lower(jointi.pelvis.list) = min((Qs_spline.data(:,strcmp(Qs.colheaders(1,:),'pelvis_list'))));
+% Pelvis rot
+bounds.Qs.upper(jointi.pelvis.rot) = max((Qs_spline.data(:,strcmp(Qs.colheaders(1,:),'pelvis_rotation'))));
+bounds.Qs.lower(jointi.pelvis.rot) = min((Qs_spline.data(:,strcmp(Qs.colheaders(1,:),'pelvis_rotation'))));
+% Hip flexion
+bounds.Qs.upper(jointi.hip_flex.l) = max(max(Qs_spline.data(:,strcmp(Qs.colheaders(1,:),'hip_flexion_r')))...
+    ,max(Qs_spline.data(:,strcmp(Qs.colheaders(1,:),'hip_flexion_l'))));
+bounds.Qs.lower(jointi.hip_flex.l) = min(min(Qs_spline.data(:,strcmp(Qs.colheaders(1,:),'hip_flexion_r'))),...
+    min(Qs_spline.data(:,strcmp(Qs.colheaders(1,:),'hip_flexion_l'))));
+bounds.Qs.upper(jointi.hip_flex.r) = bounds.Qs.upper(jointi.hip_flex.l);
+bounds.Qs.lower(jointi.hip_flex.r) = bounds.Qs.lower(jointi.hip_flex.l);
+% Hip adduction
+bounds.Qs.upper(jointi.hip_add.l) = max(max(Qs_spline.data(:,strcmp(Qs.colheaders(1,:),'hip_adduction_r'))),...
+    max(Qs_spline.data(:,strcmp(Qs.colheaders(1,:),'hip_adduction_l'))));
+bounds.Qs.lower(jointi.hip_add.l) = min(min(Qs_spline.data(:,strcmp(Qs.colheaders(1,:),'hip_adduction_r'))),...
+    min(Qs_spline.data(:,strcmp(Qs.colheaders(1,:),'hip_adduction_l'))));
+bounds.Qs.upper(jointi.hip_add.r) = bounds.Qs.upper(jointi.hip_add.l);
+bounds.Qs.lower(jointi.hip_add.r) = bounds.Qs.lower(jointi.hip_add.l);
+% Hip rotation
+bounds.Qs.upper(jointi.hip_rot.l) = max(max(Qs_spline.data(:,strcmp(Qs.colheaders(1,:),'hip_rotation_r'))),...
+    max(Qs_spline.data(:,strcmp(Qs.colheaders(1,:),'hip_rotation_l'))));
+bounds.Qs.lower(jointi.hip_rot.l) = min(min(Qs_spline.data(:,strcmp(Qs.colheaders(1,:),'hip_rotation_r'))),...
+    min(Qs_spline.data(:,strcmp(Qs.colheaders(1,:),'hip_rotation_l'))));
+bounds.Qs.upper(jointi.hip_rot.r) = bounds.Qs.upper(jointi.hip_rot.l);
+bounds.Qs.lower(jointi.hip_rot.r) = bounds.Qs.lower(jointi.hip_rot.l);
+% Knee
+bounds.Qs.upper(jointi.knee.l) = max(max(Qs_spline.data(:,strcmp(Qs.colheaders(1,:),'knee_angle_r'))),...
+    max(Qs_spline.data(:,strcmp(Qs.colheaders(1,:),'knee_angle_l'))));
+bounds.Qs.lower(jointi.knee.l) = min(min(Qs_spline.data(:,strcmp(Qs.colheaders(1,:),'knee_angle_r'))),...
+    min(Qs_spline.data(:,strcmp(Qs.colheaders(1,:),'knee_angle_l'))));
+bounds.Qs.upper(jointi.knee.r) = bounds.Qs.upper(jointi.knee.l);
+bounds.Qs.lower(jointi.knee.r) = bounds.Qs.lower(jointi.knee.l);
+% Ankle
+bounds.Qs.upper(jointi.ankle.l) = max(max(Qs_spline.data(:,strcmp(Qs.colheaders(1,:),'ankle_angle_r'))),...
+    max(Qs_spline.data(:,strcmp(Qs.colheaders(1,:),'ankle_angle_l'))));
+bounds.Qs.lower(jointi.ankle.l) = min(min(Qs_spline.data(:,strcmp(Qs.colheaders(1,:),'ankle_angle_r'))),...
+    min(Qs_spline.data(:,strcmp(Qs.colheaders(1,:),'ankle_angle_l'))));
+bounds.Qs.upper(jointi.ankle.r) = bounds.Qs.upper(jointi.ankle.l);
+bounds.Qs.lower(jointi.ankle.r) = bounds.Qs.lower(jointi.ankle.l);
+% Subtalar
+bounds.Qs.upper(jointi.subt.l) = max(max(Qs_spline.data(:,strcmp(Qs.colheaders(1,:),'subtalar_angle_r'))),...
+    max(Qs_spline.data(:,strcmp(Qs.colheaders(1,:),'subtalar_angle_l'))));
+bounds.Qs.lower(jointi.subt.l) = min(min(Qs_spline.data(:,strcmp(Qs.colheaders(1,:),'subtalar_angle_r'))),...
+    min(Qs_spline.data(:,strcmp(Qs.colheaders(1,:),'subtalar_angle_l'))));
+bounds.Qs.upper(jointi.subt.r) = bounds.Qs.upper(jointi.subt.l);
+bounds.Qs.lower(jointi.subt.r) = bounds.Qs.lower(jointi.subt.l);
+% Trunk extension
+bounds.Qs.upper(jointi.trunk.ext) = max((Qs_spline.data(:,strcmp(Qs.colheaders(1,:),'lumbar_extension'))));
+bounds.Qs.lower(jointi.trunk.ext) = min((Qs_spline.data(:,strcmp(Qs.colheaders(1,:),'lumbar_extension'))));
+% Trunk bending
+bounds.Qs.upper(jointi.trunk.ben) = max((Qs_spline.data(:,strcmp(Qs.colheaders(1,:),'lumbar_bending'))));
+bounds.Qs.lower(jointi.trunk.ben) = min((Qs_spline.data(:,strcmp(Qs.colheaders(1,:),'lumbar_bending'))));
+% Trunk rotation
+bounds.Qs.upper(jointi.trunk.rot) = max((Qs_spline.data(:,strcmp(Qs.colheaders(1,:),'lumbar_rotation'))));
+bounds.Qs.lower(jointi.trunk.rot) = min((Qs_spline.data(:,strcmp(Qs.colheaders(1,:),'lumbar_rotation'))));
+% Shoulder flexion
+bounds.Qs.upper(jointi.sh_flex.l) = max(max(Qs_spline.data(:,strcmp(Qs.colheaders(1,:),'arm_flex_r')))...
+    ,max(Qs_spline.data(:,strcmp(Qs.colheaders(1,:),'arm_flex_l'))));
+bounds.Qs.lower(jointi.sh_flex.l) = min(min(Qs_spline.data(:,strcmp(Qs.colheaders(1,:),'arm_flex_r'))),...
+    min(Qs_spline.data(:,strcmp(Qs.colheaders(1,:),'arm_flex_l'))));
+bounds.Qs.upper(jointi.sh_flex.r) = bounds.Qs.upper(jointi.sh_flex.l);
+bounds.Qs.lower(jointi.sh_flex.r) = bounds.Qs.lower(jointi.sh_flex.l);
+% Shoulder adduction
+bounds.Qs.upper(jointi.sh_add.l) = max(max(Qs_spline.data(:,strcmp(Qs.colheaders(1,:),'arm_add_r'))),...
+    max(Qs_spline.data(:,strcmp(Qs.colheaders(1,:),'arm_add_l'))));
+bounds.Qs.lower(jointi.sh_add.l) = min(min(Qs_spline.data(:,strcmp(Qs.colheaders(1,:),'arm_add_r'))),...
+    min(Qs_spline.data(:,strcmp(Qs.colheaders(1,:),'arm_add_l'))));
+bounds.Qs.upper(jointi.sh_add.r) = bounds.Qs.upper(jointi.sh_add.l);
+bounds.Qs.lower(jointi.sh_add.r) = bounds.Qs.lower(jointi.sh_add.l);
+rec_uw_sh_add = bounds.Qs.upper(jointi.sh_add.l);
+% Shoulder rotation
+bounds.Qs.upper(jointi.sh_rot.l) = max(max(Qs_spline.data(:,strcmp(Qs.colheaders(1,:),'arm_rot_r'))),...
+    max(Qs_spline.data(:,strcmp(Qs.colheaders(1,:),'arm_rot_l'))));
+bounds.Qs.lower(jointi.sh_rot.l) = min(min(Qs_spline.data(:,strcmp(Qs.colheaders(1,:),'arm_rot_r'))),...
+    min(Qs_spline.data(:,strcmp(Qs.colheaders(1,:),'arm_rot_l'))));
+bounds.Qs.upper(jointi.sh_rot.r) = bounds.Qs.upper(jointi.sh_rot.l);
+bounds.Qs.lower(jointi.sh_rot.r) = bounds.Qs.lower(jointi.sh_rot.l);
+rec_uw_sh_rot = bounds.Qs.upper(jointi.sh_rot.l);
+% Elbow
+bounds.Qs.upper(jointi.elb.l) = max(max(Qs_spline.data(:,strcmp(Qs.colheaders(1,:),'elbow_flex_r'))),...
+    max(Qs_spline.data(:,strcmp(Qs.colheaders(1,:),'elbow_flex_l'))));
+bounds.Qs.lower(jointi.elb.l) = min(min(Qs_spline.data(:,strcmp(Qs.colheaders(1,:),'elbow_flex_r'))),...
+    min(Qs_spline.data(:,strcmp(Qs.colheaders(1,:),'elbow_flex_l'))));
+bounds.Qs.upper(jointi.elb.r) = bounds.Qs.upper(jointi.elb.l);
+bounds.Qs.lower(jointi.elb.r) = bounds.Qs.lower(jointi.elb.l);
 % The bounds are extended by twice the absolute difference between upper
 % and lower bounds.
 Qs_range = abs(bounds.Qs.upper - bounds.Qs.lower);
@@ -68,64 +123,264 @@ bounds.Qs.lower = bounds.Qs.lower - 2*Qs_range;
 bounds.Qs.upper = bounds.Qs.upper + 2*Qs_range;
 % For several joints, we manually adjust the bounds
 % Pelvis_tx
-bounds.Qs.upper(jointi.pelvis_tx) = 2;  
-bounds.Qs.lower(jointi.pelvis_tx) = 0;
+bounds.Qs.upper(jointi.pelvis.tx) = 2;  
+bounds.Qs.lower(jointi.pelvis.tx) = 0;
 % Pelvis_ty
-bounds.Qs.upper(jointi.pelvis_ty) = 1.1;  
-bounds.Qs.lower(jointi.pelvis_ty) = 0.75;
+bounds.Qs.upper(jointi.pelvis.ty) = 1.1;  
+bounds.Qs.lower(jointi.pelvis.ty) = 0.75;
 % Pelvis_tz
-bounds.Qs.upper(jointi.pelvis_tz) = 0.1;
-bounds.Qs.lower(jointi.pelvis_tz) = -0.1;
+bounds.Qs.upper(jointi.pelvis.tz) = 0.1;
+bounds.Qs.lower(jointi.pelvis.tz) = -0.1;
 % Mtp
-bounds.Qs.upper(jointi.mtp_angle_l) = 1.05;
-bounds.Qs.lower(jointi.mtp_angle_l) = -0.5;
-bounds.Qs.upper(jointi.mtp_angle_r) = 1.05;
-bounds.Qs.lower(jointi.mtp_angle_r) = -0.5;
+bounds.Qs.upper(jointi.mtp.l) = 1.05;
+bounds.Qs.lower(jointi.mtp.l) = -0.5;
+bounds.Qs.upper(jointi.mtp.r) = 1.05;
+bounds.Qs.lower(jointi.mtp.r) = -0.5;
 % Elbow
-bounds.Qs.lower(jointi.elbow_flex_l) = 0;
-bounds.Qs.lower(jointi.elbow_flex_r) = 0;
-% % Shoulder adduction
-% bounds.Qs.upper(jointi.sh_add.l) = rec_uw_sh_add;
-% bounds.Qs.upper(jointi.sh_add.r) = rec_uw_sh_add;
-% % Shoulder rotation
-% bounds.Qs.upper(jointi.sh_rot.l) = rec_uw_sh_rot;
-% bounds.Qs.upper(jointi.sh_rot.r) = rec_uw_sh_rot;
+bounds.Qs.lower(jointi.elb.l) = 0;
+bounds.Qs.lower(jointi.elb.r) = 0;
+% Shoulder adduction
+bounds.Qs.upper(jointi.sh_add.l) = rec_uw_sh_add;
+bounds.Qs.upper(jointi.sh_add.r) = rec_uw_sh_add;
+% Shoulder rotation
+bounds.Qs.upper(jointi.sh_rot.l) = rec_uw_sh_rot;
+bounds.Qs.upper(jointi.sh_rot.r) = rec_uw_sh_rot;
 % We adjust some bounds when we increase the speed to allow for the
 % generation of running motions.
-if S.v_tgt > 1.33
+if v_tgt > 1.33
     % Pelvis tilt
-    bounds.Qs.lower(jointi.pelvis_tilt) = -20*pi/180;
+    bounds.Qs.lower(jointi.pelvis.tilt) = -20*pi/180;
     % Shoulder flexion
-    bounds.Qs.lower(jointi.arm_flex_l) = -50*pi/180;
-    bounds.Qs.lower(jointi.arm_flex_r) = -50*pi/180;
+    bounds.Qs.lower(jointi.sh_flex.l) = -50*pi/180;
+    bounds.Qs.lower(jointi.sh_flex.r) = -50*pi/180;
 end
 
+%% Qdots
+% The extreme values are selected as upper/lower bounds, which are then
+% further extended.
+% Pelvis tilt
+bounds.Qdots.upper(jointi.pelvis.tilt) = max((Qdots_spline.data(:,strcmp(Qs.colheaders(1,:),'pelvis_tilt'))));
+bounds.Qdots.lower(jointi.pelvis.tilt) = min((Qdots_spline.data(:,strcmp(Qs.colheaders(1,:),'pelvis_tilt'))));
+% Pelvis list
+bounds.Qdots.upper(jointi.pelvis.list) = max((Qdots_spline.data(:,strcmp(Qs.colheaders(1,:),'pelvis_list'))));
+bounds.Qdots.lower(jointi.pelvis.list) = min((Qdots_spline.data(:,strcmp(Qs.colheaders(1,:),'pelvis_list'))));
+% Pelvis rotation
+bounds.Qdots.upper(jointi.pelvis.rot) = max((Qdots_spline.data(:,strcmp(Qs.colheaders(1,:),'pelvis_rotation'))));
+bounds.Qdots.lower(jointi.pelvis.rot) = min((Qdots_spline.data(:,strcmp(Qs.colheaders(1,:),'pelvis_rotation'))));
+% Pelvis_tx
+bounds.Qdots.upper(jointi.pelvis.tx) = max((Qdots_spline.data(:,strcmp(Qs.colheaders(1,:),'pelvis_tx')))); 
+bounds.Qdots.lower(jointi.pelvis.tx) = min((Qdots_spline.data(:,strcmp(Qs.colheaders(1,:),'pelvis_tx'))));
+% Pelvis_ty
+bounds.Qdots.upper(jointi.pelvis.ty) = max(Qdots_spline.data(:,strcmp(Qs.colheaders(1,:),'pelvis_ty'))); 
+bounds.Qdots.lower(jointi.pelvis.ty) = min(Qdots_spline.data(:,strcmp(Qs.colheaders(1,:),'pelvis_ty'))); 
+% Pelvis_tz
+bounds.Qdots.upper(jointi.pelvis.tz) = max(Qdots_spline.data(:,strcmp(Qs.colheaders(1,:),'pelvis_tz'))); 
+bounds.Qdots.lower(jointi.pelvis.tz) = min(Qdots_spline.data(:,strcmp(Qs.colheaders(1,:),'pelvis_tz')));
+% Hip flexion
+bounds.Qdots.upper(jointi.hip_flex.l) = max(max(Qdots_spline.data(:,strcmp(Qs.colheaders(1,:),'hip_flexion_r'))),...
+    max(Qdots_spline.data(:,strcmp(Qs.colheaders(1,:),'hip_flexion_l'))));
+bounds.Qdots.lower(jointi.hip_flex.l) = min(min(Qdots_spline.data(:,strcmp(Qs.colheaders(1,:),'hip_flexion_r'))),...
+    min(Qdots_spline.data(:,strcmp(Qs.colheaders(1,:),'hip_flexion_l'))));
+bounds.Qdots.upper(jointi.hip_flex.r) = bounds.Qdots.upper(jointi.hip_flex.l);
+bounds.Qdots.lower(jointi.hip_flex.r) = bounds.Qdots.lower(jointi.hip_flex.l);
+% Hip adduction
+bounds.Qdots.upper(jointi.hip_add.l) = max(max(Qdots_spline.data(:,strcmp(Qs.colheaders(1,:),'hip_adduction_r'))),...
+    max(Qdots_spline.data(:,strcmp(Qs.colheaders(1,:),'hip_adduction_l'))));
+bounds.Qdots.lower(jointi.hip_add.l) = min(min(Qdots_spline.data(:,strcmp(Qs.colheaders(1,:),'hip_adduction_r'))),...
+    min(Qdots_spline.data(:,strcmp(Qs.colheaders(1,:),'hip_adduction_l'))));
+bounds.Qdots.upper(jointi.hip_add.r) = bounds.Qdots.upper(jointi.hip_add.l);
+bounds.Qdots.lower(jointi.hip_add.r) = bounds.Qdots.lower(jointi.hip_add.l);
+% Hip rotation
+bounds.Qdots.upper(jointi.hip_rot.l) = max(max(Qdots_spline.data(:,strcmp(Qs.colheaders(1,:),'hip_rotation_r'))),...
+    max(Qdots_spline.data(:,strcmp(Qs.colheaders(1,:),'hip_rotation_l'))));
+bounds.Qdots.lower(jointi.hip_rot.l) = min(min(Qdots_spline.data(:,strcmp(Qs.colheaders(1,:),'hip_rotation_r'))),...
+    min(Qdots_spline.data(:,strcmp(Qs.colheaders(1,:),'hip_rotation_l'))));
+bounds.Qdots.upper(jointi.hip_rot.r) = bounds.Qdots.upper(jointi.hip_rot.l);
+bounds.Qdots.lower(jointi.hip_rot.r) = bounds.Qdots.lower(jointi.hip_rot.l);
+% Knee
+bounds.Qdots.upper(jointi.knee.l) = max(max(Qdots_spline.data(:,strcmp(Qs.colheaders(1,:),'knee_angle_r'))),...
+    max(Qdots_spline.data(:,strcmp(Qs.colheaders(1,:),'knee_angle_l'))));
+bounds.Qdots.lower(jointi.knee.l) = min(min(Qdots_spline.data(:,strcmp(Qs.colheaders(1,:),'knee_angle_r'))),...
+    min(Qdots_spline.data(:,strcmp(Qs.colheaders(1,:),'knee_angle_l'))));
+bounds.Qdots.upper(jointi.knee.r) = bounds.Qdots.upper(jointi.knee.l);
+bounds.Qdots.lower(jointi.knee.r) = bounds.Qdots.lower(jointi.knee.l);
+% Ankle
+bounds.Qdots.upper(jointi.ankle.l) = max(max(Qdots_spline.data(:,strcmp(Qs.colheaders(1,:),'ankle_angle_r'))),...
+    max(Qdots_spline.data(:,strcmp(Qs.colheaders(1,:),'ankle_angle_l'))));
+bounds.Qdots.lower(jointi.ankle.l) = min(min(Qdots_spline.data(:,strcmp(Qs.colheaders(1,:),'ankle_angle_r'))),...
+    min(Qdots_spline.data(:,strcmp(Qs.colheaders(1,:),'ankle_angle_l'))));
+bounds.Qdots.upper(jointi.ankle.r) = bounds.Qdots.upper(jointi.ankle.l);
+bounds.Qdots.lower(jointi.ankle.r) = bounds.Qdots.lower(jointi.ankle.l);
+% Subtalar
+bounds.Qdots.upper(jointi.subt.l) = max(max(Qdots_spline.data(:,strcmp(Qs.colheaders(1,:),'subtalar_angle_r'))),...
+    max(Qdots_spline.data(:,strcmp(Qs.colheaders(1,:),'subtalar_angle_l'))));
+bounds.Qdots.lower(jointi.subt.l) = min(min(Qdots_spline.data(:,strcmp(Qs.colheaders(1,:),'subtalar_angle_r'))),...
+    min(Qdots_spline.data(:,strcmp(Qs.colheaders(1,:),'subtalar_angle_l'))));
+bounds.Qdots.upper(jointi.subt.r) = bounds.Qdots.upper(jointi.subt.l);
+bounds.Qdots.lower(jointi.subt.r) = bounds.Qdots.lower(jointi.subt.l);
+% Trunk extension
+bounds.Qdots.upper(jointi.trunk.ext) = max((Qdots_spline.data(:,strcmp(Qs.colheaders(1,:),'lumbar_extension'))));
+bounds.Qdots.lower(jointi.trunk.ext) = min((Qdots_spline.data(:,strcmp(Qs.colheaders(1,:),'lumbar_extension'))));
+% Trunk bending
+bounds.Qdots.upper(jointi.trunk.ben) = max((Qdots_spline.data(:,strcmp(Qs.colheaders(1,:),'lumbar_bending'))));
+bounds.Qdots.lower(jointi.trunk.ben) = min((Qdots_spline.data(:,strcmp(Qs.colheaders(1,:),'lumbar_bending'))));
+% Trunk rotation
+bounds.Qdots.upper(jointi.trunk.rot) = max((Qdots_spline.data(:,strcmp(Qs.colheaders(1,:),'lumbar_rotation'))));
+bounds.Qdots.lower(jointi.trunk.rot) = min((Qdots_spline.data(:,strcmp(Qs.colheaders(1,:),'lumbar_rotation'))));
+% Shoulder flexion
+bounds.Qdots.upper(jointi.sh_flex.l) = max(max(Qdots_spline.data(:,strcmp(Qs.colheaders(1,:),'arm_flex_r')))...
+    ,max(Qdots_spline.data(:,strcmp(Qs.colheaders(1,:),'arm_flex_l'))));
+bounds.Qdots.lower(jointi.sh_flex.l) = min(min(Qdots_spline.data(:,strcmp(Qs.colheaders(1,:),'arm_flex_r'))),...
+    min(Qdots_spline.data(:,strcmp(Qs.colheaders(1,:),'arm_flex_l'))));
+bounds.Qdots.upper(jointi.sh_flex.r) = bounds.Qdots.upper(jointi.sh_flex.l);
+bounds.Qdots.lower(jointi.sh_flex.r) = bounds.Qdots.lower(jointi.sh_flex.l);
+% Shoulder adduction
+bounds.Qdots.upper(jointi.sh_add.l) = max(max(Qdots_spline.data(:,strcmp(Qs.colheaders(1,:),'arm_add_r'))),...
+    max(Qdots_spline.data(:,strcmp(Qs.colheaders(1,:),'arm_add_l'))));
+bounds.Qdots.lower(jointi.sh_add.l) = min(min(Qdots_spline.data(:,strcmp(Qs.colheaders(1,:),'arm_add_r'))),...
+    min(Qdots_spline.data(:,strcmp(Qs.colheaders(1,:),'arm_add_l'))));
+bounds.Qdots.upper(jointi.sh_add.r) = bounds.Qdots.upper(jointi.sh_add.l);
+bounds.Qdots.lower(jointi.sh_add.r) = bounds.Qdots.lower(jointi.sh_add.l);
+% Shoulder rotation
+bounds.Qdots.upper(jointi.sh_rot.l) = max(max(Qdots_spline.data(:,strcmp(Qs.colheaders(1,:),'arm_rot_r'))),...
+    max(Qdots_spline.data(:,strcmp(Qs.colheaders(1,:),'arm_rot_l'))));
+bounds.Qdots.lower(jointi.sh_rot.l) = min(min(Qdots_spline.data(:,strcmp(Qs.colheaders(1,:),'arm_rot_r'))),...
+    min(Qdots_spline.data(:,strcmp(Qs.colheaders(1,:),'arm_rot_l'))));
+bounds.Qdots.upper(jointi.sh_rot.r) = bounds.Qdots.upper(jointi.sh_rot.l);
+bounds.Qdots.lower(jointi.sh_rot.r) = bounds.Qdots.lower(jointi.sh_rot.l);
+% Elbow
+bounds.Qdots.upper(jointi.elb.l) = max(max(Qdots_spline.data(:,strcmp(Qs.colheaders(1,:),'elbow_flex_r'))),...
+    max(Qdots_spline.data(:,strcmp(Qs.colheaders(1,:),'elbow_flex_l'))));
+bounds.Qdots.lower(jointi.elb.l) = min(min(Qdots_spline.data(:,strcmp(Qs.colheaders(1,:),'elbow_flex_r'))),...
+    min(Qdots_spline.data(:,strcmp(Qs.colheaders(1,:),'elbow_flex_l'))));
+bounds.Qdots.upper(jointi.elb.r) = bounds.Qdots.upper(jointi.elb.l);
+bounds.Qdots.lower(jointi.elb.r) = bounds.Qdots.lower(jointi.elb.l);
 % The bounds are extended by 3 times the absolute difference between upper
 % and lower bounds.
 Qdots_range = abs(bounds.Qdots.upper - bounds.Qdots.lower);
 bounds.Qdots.lower = bounds.Qdots.lower - 3*Qdots_range;
 bounds.Qdots.upper = bounds.Qdots.upper + 3*Qdots_range;
 % Mtp
-bounds.Qdots.upper(jointi.mtp_angle_l) = 13;
-bounds.Qdots.lower(jointi.mtp_angle_l) = -13;
-bounds.Qdots.upper(jointi.mtp_angle_r) = 13;
-bounds.Qdots.lower(jointi.mtp_angle_r) = -13;
+bounds.Qdots.upper(jointi.mtp.l) = 13;
+bounds.Qdots.lower(jointi.mtp.l) = -13;
+bounds.Qdots.upper(jointi.mtp.r) = 13;
+bounds.Qdots.lower(jointi.mtp.r) = -13;
 % We adjust some bounds when we increase the speed to allow for the
 % generation of running motions.
-if S.v_tgt > 1.33
+if v_tgt > 1.33
     % Pelvis tx
-    bounds.Qdots.upper(jointi.pelvis_tx) = 4;
+    bounds.Qdots.upper(jointi.pelvis.tx) = 4;
 end
+%% Qdotdots
+% The extreme values are selected as upper/lower bounds, which are then
+% further extended.
+% Pelvis tilt
+bounds.Qdotdots.upper(jointi.pelvis.tilt) = max(Qdotdots_spline.data(:,strcmp(Qs.colheaders(1,:),'pelvis_tilt')));
+bounds.Qdotdots.lower(jointi.pelvis.tilt) = min(Qdotdots_spline.data(:,strcmp(Qs.colheaders(1,:),'pelvis_tilt')));
+% Pelvis list
+bounds.Qdotdots.upper(jointi.pelvis.list) = max(Qdotdots_spline.data(:,strcmp(Qs.colheaders(1,:),'pelvis_list')));
+bounds.Qdotdots.lower(jointi.pelvis.list) = min(Qdotdots_spline.data(:,strcmp(Qs.colheaders(1,:),'pelvis_list')));
+% Pelvis rotation
+bounds.Qdotdots.upper(jointi.pelvis.rot) = max(Qdotdots_spline.data(:,strcmp(Qs.colheaders(1,:),'pelvis_rotation')));
+bounds.Qdotdots.lower(jointi.pelvis.rot) = min(Qdotdots_spline.data(:,strcmp(Qs.colheaders(1,:),'pelvis_rotation')));
+% Pelvis_tx
+bounds.Qdotdots.upper(jointi.pelvis.tx) = max(Qdotdots_spline.data(:,strcmp(Qs.colheaders(1,:),'pelvis_tx'))); 
+bounds.Qdotdots.lower(jointi.pelvis.tx) = min(Qdotdots_spline.data(:,strcmp(Qs.colheaders(1,:),'pelvis_tx')));
+% Pelvis_ty
+bounds.Qdotdots.upper(jointi.pelvis.ty) = max(Qdotdots_spline.data(:,strcmp(Qs.colheaders(1,:),'pelvis_ty')));
+bounds.Qdotdots.lower(jointi.pelvis.ty) = min(Qdotdots_spline.data(:,strcmp(Qs.colheaders(1,:),'pelvis_ty')));
+% Pelvis_tz
+bounds.Qdotdots.upper(jointi.pelvis.tz) = max(Qdotdots_spline.data(:,strcmp(Qs.colheaders(1,:),'pelvis_tz')));
+bounds.Qdotdots.lower(jointi.pelvis.tz) = min(Qdotdots_spline.data(:,strcmp(Qs.colheaders(1,:),'pelvis_tz')));
+% Hip flexion
+bounds.Qdotdots.upper(jointi.hip_flex.l) = max(max(Qdotdots_spline.data(:,strcmp(Qs.colheaders(1,:),'hip_flexion_r'))),...
+    max(Qdotdots_spline.data(:,strcmp(Qs.colheaders(1,:),'hip_flexion_l'))));
+bounds.Qdotdots.lower(jointi.hip_flex.l) = min(min(Qdotdots_spline.data(:,strcmp(Qs.colheaders(1,:),'hip_flexion_r'))),...
+    min(Qdotdots_spline.data(:,strcmp(Qs.colheaders(1,:),'hip_flexion_l'))));
+bounds.Qdotdots.upper(jointi.hip_flex.r) = bounds.Qdotdots.upper(jointi.hip_flex.l);
+bounds.Qdotdots.lower(jointi.hip_flex.r) = bounds.Qdotdots.lower(jointi.hip_flex.l);
+% Hip adduction
+bounds.Qdotdots.upper(jointi.hip_add.l) = max(max(Qdotdots_spline.data(:,strcmp(Qs.colheaders(1,:),'hip_adduction_r'))),...
+    max(Qdotdots_spline.data(:,strcmp(Qs.colheaders(1,:),'hip_adduction_l'))));
+bounds.Qdotdots.lower(jointi.hip_add.l) = min(min(Qdotdots_spline.data(:,strcmp(Qs.colheaders(1,:),'hip_adduction_r'))),...
+    min(Qdotdots_spline.data(:,strcmp(Qs.colheaders(1,:),'hip_adduction_l'))));
+bounds.Qdotdots.upper(jointi.hip_add.r) = bounds.Qdotdots.upper(jointi.hip_add.l);
+bounds.Qdotdots.lower(jointi.hip_add.r) = bounds.Qdotdots.lower(jointi.hip_add.l);
+% Hip rotation
+bounds.Qdotdots.upper(jointi.hip_rot.l) = max(max(Qdotdots_spline.data(:,strcmp(Qs.colheaders(1,:),'hip_rotation_r'))),...
+    max(Qdotdots_spline.data(:,strcmp(Qs.colheaders(1,:),'hip_rotation_l'))));
+bounds.Qdotdots.lower(jointi.hip_rot.l) = min(min(Qdotdots_spline.data(:,strcmp(Qs.colheaders(1,:),'hip_rotation_r'))),...
+    min(Qdotdots_spline.data(:,strcmp(Qs.colheaders(1,:),'hip_rotation_l'))));
+bounds.Qdotdots.upper(jointi.hip_rot.r) = bounds.Qdotdots.upper(jointi.hip_rot.l);
+bounds.Qdotdots.lower(jointi.hip_rot.r) = bounds.Qdotdots.lower(jointi.hip_rot.l);
+% Knee
+bounds.Qdotdots.upper(jointi.knee.l) = max(max(Qdotdots_spline.data(:,strcmp(Qs.colheaders(1,:),'knee_angle_r'))),...
+    max(Qdotdots_spline.data(:,strcmp(Qs.colheaders(1,:),'knee_angle_l'))));
+bounds.Qdotdots.lower(jointi.knee.l) = min(min(Qdotdots_spline.data(:,strcmp(Qs.colheaders(1,:),'knee_angle_r'))),...
+    min(Qdotdots_spline.data(:,strcmp(Qs.colheaders(1,:),'knee_angle_l'))));
+bounds.Qdotdots.upper(jointi.knee.r) = bounds.Qdotdots.upper(jointi.knee.l);
+bounds.Qdotdots.lower(jointi.knee.r) = bounds.Qdotdots.lower(jointi.knee.l);
+% Ankle
+bounds.Qdotdots.upper(jointi.ankle.l) = max(max(Qdotdots_spline.data(:,strcmp(Qs.colheaders(1,:),'ankle_angle_r'))),...
+    max(Qdotdots_spline.data(:,strcmp(Qs.colheaders(1,:),'ankle_angle_l'))));
+bounds.Qdotdots.lower(jointi.ankle.l) = min(min(Qdotdots_spline.data(:,strcmp(Qs.colheaders(1,:),'ankle_angle_r'))),...
+    min(Qdotdots_spline.data(:,strcmp(Qs.colheaders(1,:),'ankle_angle_l'))));
+bounds.Qdotdots.upper(jointi.ankle.r) = bounds.Qdotdots.upper(jointi.ankle.l);
+bounds.Qdotdots.lower(jointi.ankle.r) = bounds.Qdotdots.lower(jointi.ankle.l);
+% Subtalar
+bounds.Qdotdots.upper(jointi.subt.l) = max(max(Qdotdots_spline.data(:,strcmp(Qs.colheaders(1,:),'subtalar_angle_r'))),...
+    max(Qdotdots_spline.data(:,strcmp(Qs.colheaders(1,:),'subtalar_angle_l'))));
+bounds.Qdotdots.lower(jointi.subt.l) = min(min(Qdotdots_spline.data(:,strcmp(Qs.colheaders(1,:),'subtalar_angle_r'))),...
+    min(Qdotdots_spline.data(:,strcmp(Qs.colheaders(1,:),'subtalar_angle_l'))));
+bounds.Qdotdots.upper(jointi.subt.r) = bounds.Qdotdots.upper(jointi.subt.l);
+bounds.Qdotdots.lower(jointi.subt.r) = bounds.Qdotdots.lower(jointi.subt.l);
+% Trunk extension
+bounds.Qdotdots.upper(jointi.trunk.ext) = max(Qdotdots_spline.data(:,strcmp(Qs.colheaders(1,:),'lumbar_extension')));
+bounds.Qdotdots.lower(jointi.trunk.ext) = min(Qdotdots_spline.data(:,strcmp(Qs.colheaders(1,:),'lumbar_extension')));
+% Trunk bending
+bounds.Qdotdots.upper(jointi.trunk.ben) = max(Qdotdots_spline.data(:,strcmp(Qs.colheaders(1,:),'lumbar_bending')));
+bounds.Qdotdots.lower(jointi.trunk.ben) = min(Qdotdots_spline.data(:,strcmp(Qs.colheaders(1,:),'lumbar_bending')));
+% Trunk rotation
+bounds.Qdotdots.upper(jointi.trunk.rot) = max(Qdotdots_spline.data(:,strcmp(Qs.colheaders(1,:),'lumbar_rotation')));
+bounds.Qdotdots.lower(jointi.trunk.rot) = min(Qdotdots_spline.data(:,strcmp(Qs.colheaders(1,:),'lumbar_rotation')));
+% Shoulder flexion
+bounds.Qdotdots.upper(jointi.sh_flex.l) = max(max(Qdotdots_spline.data(:,strcmp(Qs.colheaders(1,:),'arm_flex_r')))...
+    ,max(Qdotdots_spline.data(:,strcmp(Qs.colheaders(1,:),'arm_flex_l'))));
+bounds.Qdotdots.lower(jointi.sh_flex.l) = min(min(Qdotdots_spline.data(:,strcmp(Qs.colheaders(1,:),'arm_flex_r'))),...
+    min(Qdotdots_spline.data(:,strcmp(Qs.colheaders(1,:),'arm_flex_l'))));
+bounds.Qdotdots.upper(jointi.sh_flex.r) = bounds.Qdotdots.upper(jointi.sh_flex.l);
+bounds.Qdotdots.lower(jointi.sh_flex.r) = bounds.Qdotdots.lower(jointi.sh_flex.l);
+% Shoulder adduction
+bounds.Qdotdots.upper(jointi.sh_add.l) = max(max(Qdotdots_spline.data(:,strcmp(Qs.colheaders(1,:),'arm_add_r'))),...
+    max(Qdotdots_spline.data(:,strcmp(Qs.colheaders(1,:),'arm_add_l'))));
+bounds.Qdotdots.lower(jointi.sh_add.l) = min(min(Qdotdots_spline.data(:,strcmp(Qs.colheaders(1,:),'arm_add_r'))),...
+    min(Qdotdots_spline.data(:,strcmp(Qs.colheaders(1,:),'arm_add_l'))));
+bounds.Qdotdots.upper(jointi.sh_add.r) = bounds.Qdotdots.upper(jointi.sh_add.l);
+bounds.Qdotdots.lower(jointi.sh_add.r) = bounds.Qdotdots.lower(jointi.sh_add.l);
+% Shoulder rotation
+bounds.Qdotdots.upper(jointi.sh_rot.l) = max(max(Qdotdots_spline.data(:,strcmp(Qs.colheaders(1,:),'arm_rot_r'))),...
+    max(Qdotdots_spline.data(:,strcmp(Qs.colheaders(1,:),'arm_rot_l'))));
+bounds.Qdotdots.lower(jointi.sh_rot.l) = min(min(Qdotdots_spline.data(:,strcmp(Qs.colheaders(1,:),'arm_rot_r'))),...
+    min(Qdotdots_spline.data(:,strcmp(Qs.colheaders(1,:),'arm_rot_l'))));
+bounds.Qdotdots.upper(jointi.sh_rot.r) = bounds.Qdotdots.upper(jointi.sh_rot.l);
+bounds.Qdotdots.lower(jointi.sh_rot.r) = bounds.Qdotdots.lower(jointi.sh_rot.l);
+% Elbow angle
+bounds.Qdotdots.upper(jointi.elb.l) = max(max(Qdotdots_spline.data(:,strcmp(Qs.colheaders(1,:),'elbow_flex_r'))),...
+    max(Qdotdots_spline.data(:,strcmp(Qs.colheaders(1,:),'elbow_flex_l'))));
+bounds.Qdotdots.lower(jointi.elb.l) = min(min(Qdotdots_spline.data(:,strcmp(Qs.colheaders(1,:),'elbow_flex_r'))),...
+    min(Qdotdots_spline.data(:,strcmp(Qs.colheaders(1,:),'elbow_flex_l'))));
+bounds.Qdotdots.upper(jointi.elb.r) = bounds.Qdotdots.upper(jointi.elb.l);
+bounds.Qdotdots.lower(jointi.elb.r) = bounds.Qdotdots.lower(jointi.elb.l);
 % The bounds are extended by 3 times the absolute difference between upper
 % and lower bounds.
 Qdotdots_range = abs(bounds.Qdotdots.upper - bounds.Qdotdots.lower);
 bounds.Qdotdots.lower = bounds.Qdotdots.lower - 3*Qdotdots_range;
 bounds.Qdotdots.upper = bounds.Qdotdots.upper + 3*Qdotdots_range;
 % Mtp
-bounds.Qdotdots.upper(jointi.mtp_angle_l) = 500;
-bounds.Qdotdots.lower(jointi.mtp_angle_l) = -500;
-bounds.Qdotdots.upper(jointi.mtp_angle_r) = 500;
-bounds.Qdotdots.lower(jointi.mtp_angle_r) = -500;
+bounds.Qdotdots.upper(jointi.mtp.l) = 500;
+bounds.Qdotdots.lower(jointi.mtp.l) = -500;
+bounds.Qdotdots.upper(jointi.mtp.r) = 500;
+bounds.Qdotdots.lower(jointi.mtp.r) = -500;
 
 %% Muscle activations
 bounds.a.lower = 0.05*ones(1,NMuscle);
@@ -174,8 +429,8 @@ bounds.e_lumbar.lower = -ones(1,nq.trunk);
 bounds.e_lumbar.upper = ones(1,nq.trunk);
 
 %% Final time
-bounds.tf.lower = S.bounds.t_final.lower;
-bounds.tf.upper = S.bounds.t_final.upper;
+bounds.tf.lower = 0.1;
+bounds.tf.upper = 1;
 
 %% Scaling
 % Qs

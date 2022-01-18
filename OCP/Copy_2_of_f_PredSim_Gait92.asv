@@ -390,12 +390,12 @@ for j=1:d
     
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Get muscle-tendon lengths, velocities, and moment arms
-    qinj    = Qskj_nsc(model_info.ExtFunIO.nq.coord_muscleActuated, j+1);
-    qdotinj = Qdotskj_nsc(model_info.ExtFunIO.nq.coord_muscleActuated, j+1);
+    qinj    = Qskj_nsc(:, j+1);
+    qdotinj = Qdotskj_nsc(:, j+1);
     % Left leg
     [lMTj,vMTj,MAj] =  f_casadi.lMT_vMT_dM(qinj,qdotinj);
     for i=1:length(model_info.ExtFunIO.jointi.names.leg_l)-1 % not including mtp
-        MAj.(model_info.ExtFunIO.jointi.names.leg_l{i}) = MAj(mai(i).mus.l',i);
+        MAj.(model_info.ExtFunIO.jointi.names.leg_l{i}) = MAj_l(mai(i).mus.l',i);
     end
     % Right leg
     qinj_r          = Qskj_nsc(IndexRight, j+1);

@@ -89,13 +89,11 @@ orderQsOpp = [model_info.ExtFunIO.coordi.pelvis_list:model_info.ExtFunIO.coordi.
     model_info.ExtFunIO.coordi.lumbar_bending:model_info.ExtFunIO.coordi.lumbar_bending,...
     model_info.ExtFunIO.coordi.lumbar_rotation:model_info.ExtFunIO.coordi.lumbar_rotation];
 
-model_info.ExtFunIO.symQs.IndexLeft = IndexLeft;
-model_info.ExtFunIO.symQs.IndexRight = IndexRight;
-model_info.ExtFunIO.symQs.QsInvA = QsInvA;
-model_info.ExtFunIO.symQs.QsInvB = QsInvB;
-model_info.ExtFunIO.symQs.QdotsInvA = QdotsInvA;
-model_info.ExtFunIO.symQs.QdotsInvB = QdotsInvB;
-model_info.ExtFunIO.symQs.orderQsOpp = orderQsOpp;
+model_info.ExtFunIO.symQs.orderQsInvA = orderQs;
+model_info.ExtFunIO.symQs.orderQsInvB = orderQsInv;
+model_info.ExtFunIO.symQs.orderQdotsInvA = orderQsOpp1;
+model_info.ExtFunIO.symQs.orderQdotsInvB = orderArm;
+model_info.ExtFunIO.symQs.orderArmInv = orderArmInv;
 
 end
 
