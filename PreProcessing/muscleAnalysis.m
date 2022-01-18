@@ -1,3 +1,4 @@
+function [MuscleData] = muscleAnalysis(S,osim_path,model_info)
 %
 % Analyse the musculoskeletal geometry of the given osim model.
 %   1) Create a dummy motion
@@ -13,8 +14,6 @@
 % Date: 17/January/2022
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-function [MuscleData] = muscleAnalysis(S,osim_path,model_info)
 
 MA_path = fullfile(S.path_main,'Subjects',S.subject.name,'MuscleAnalysis');
 if ~isfolder(MA_path)
