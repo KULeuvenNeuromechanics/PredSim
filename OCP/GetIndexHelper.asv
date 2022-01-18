@@ -1,25 +1,33 @@
 function [model_info] = GetIndexHelper(S,model_info)
-%UNTITLED5 Summary of this function goes here
-%   Detailed explanation goes here
-% Vectors of indices for later use
+
 residualsi = 1:length(fields(model_info.ExtFunIO.coordi));
 ground_pelvisi      = model_info.ExtFunIO.jointi.ground_pelvis; % ground-pelvis
 trunki              = model_info.ExtFunIO.jointi.torso; % trunk
-legsi               = [model_info.ExtFunIO.jointi.leg_r model_info.ExtFunIO.jointi.leg_l]; % arms
-armsi               = [model_info.ExtFunIO.jointi.arm_r model_info.ExtFunIO.jointi.arm_l]; % arms
-mtpi                = [model_info.ExtFunIO.jointi.mtp_r model_info.ExtFunIO.jointi.mtp_l]; % mtps
-coord_noarmsi       = [ground_pelvisi legsi trunki]; % all but arms
-coord_muscleActuated= [legsi trunki]; % all but arms
+model_info.ExtFunIO.jointi.legsi = [model_info.ExtFunIO.jointi.leg_r model_info.ExtFunIO.jointi.leg_l]; % arms
+model_info.ExtFunIO.jointi.armsi = [model_info.ExtFunIO.jointi.arm_r model_info.ExtFunIO.jointi.arm_l]; % arms
+model_info.ExtFunIO.jointi.mtpi  = [model_info.ExtFunIO.jointi.mtp_r model_info.ExtFunIO.jointi.mtp_l]; % mtps
+model_info.ExtFunIO.jointi.coord_noarmsi = [ground_pelvisi legsi trunki]; % all but arms
+model_info.ExtFunIO.jointi.coord_muscleActuatedi = [legsi trunki]; % all but arms
 % Number of degrees of freedom for later use
 nq.all      = length(residualsi); % all
 nq.abs      = length(ground_pelvisi); % ground-pelvis
 nq.trunk    = length(trunki); % trunk
-nq.arms     = length(armsi); % arms
-nq.mtp      = length(mtpi); % arms
-nq.leg      = length(legsi);
-nq.muscAct  = length(coord_muscleActuated);
+nq.arms     = length(model_info.ExtFunIO.jointi.armsi); % arms
+nq.mtp      = length(model_info.ExtFunIO.jointi.mtpi);
+nq.leg      = length(model_info.ExtFunIO.jointi.legsi);
+nq.coord_muscAct  = length(model_info.ExtFunIO.jointi.coord_muscleActuatedi);
 
 model_info.ExtFunIO.nq = nq;
+
+model_info.ExtFunIO.jointi.muscAct  = [model_info.ExtFunIO.jointi.leg_r,...
+    model_info.ExtFunIO.jointi.leg_l,model_info.ExtFunIO.jointi.torso];
+model_info = addCoordNames(model_info,'leg_r');
+model_info = addCoordNames(model_info,'leg_l');
+model_info = addCoordNames(model_info,'arm_r');
+model_info = addCoordNames(model_info,'arm_l');
+model_info = addCoordNames(model_info,'ground_pelvis');
+model_info = addCoordNames(model_info,'torso');
+model_info = addCoordNames(model_info,'muscAct');
 
 orderQs = [2*model_info.ExtFunIO.jointi.ground_pelvis(1)-1:2*model_info.ExtFunIO.jointi.ground_pelvis(end),...
     2*model_info.ExtFunIO.jointi.leg_r(1)-1:2*model_info.ExtFunIO.jointi.leg_r(end),...
@@ -84,16 +92,18 @@ QdotsInvB = [model_info.ExtFunIO.coordi.pelvis_tilt,...
     model_info.ExtFunIO.jointi.arm_l,model_info.ExtFunIO.jointi.arm_r]';
 
 orderQsOpp = [model_info.ExtFunIO.coordi.pelvis_list:model_info.ExtFunIO.coordi.pelvis_list,...
-    model_info.ExtFunIO.coordi.pelvis_rot:model_info.ExtFunIO.coordi.pelvis_rot,...
+    model_info.ExtFunIO.coordi.pelvis_rotation:model_info.ExtFunIO.coordi.pelvis_rotation,...
     model_info.ExtFunIO.coordi.pelvis_tz:model_info.ExtFunIO.coordi.pelvis_tz,...
     model_info.ExtFunIO.coordi.lumbar_bending:model_info.ExtFunIO.coordi.lumbar_bending,...
     model_info.ExtFunIO.coordi.lumbar_rotation:model_info.ExtFunIO.coordi.lumbar_rotation];
 
-model_info.ExtFunIO.symQs.orderQsInvA = orderQs;
-model_info.ExtFunIO.symQs.orderQsInvB = orderQsInv;
-model_info.ExtFunIO.symQs.orderQdotsInvA = orderQsOpp1;
-model_info.ExtFunIO.symQs.orderQdotsInvB = orderArm;
-model_info.ExtFunIO.symQs.orderArmInv = orderArmInv;
+model_info.ExtFunIO.symQs.IndexLeft = IndexLeft;
+model_info.ExtFunIO.symQs.IndexRight = IndexRight;
+model_info.ExtFunIO.symQs.QsInvA = QsInvA;
+model_info.ExtFunIO.symQs.QsInvB = QsInvB;
+model_info.ExtFunIO.symQs.QdotsInvA = QdotsInvA;
+model_info.ExtFunIO.symQs.QdotsInvB = QdotsInvB;
+model_info.ExtFunIO.symQs.orderQsOpp = orderQsOpp;
 
 end
 

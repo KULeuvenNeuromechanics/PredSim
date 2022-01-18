@@ -79,6 +79,42 @@ tl = load([pathpolynomial,'/muscle_spanning_joint_INFO.mat']);
 % [~,mai1] = MomentArmIndices(muscleNames(1:end/2),tl.muscle_spanning_joint_INFO);
 [~,mai] = MomentArmIndices_asym(muscleNames,tl.muscle_spanning_joint_INFO);
 
+testing = 1;
+if testing==1
+    import casadi.*
+load muscle_spanning_joint_info
+load muscleInfo
+load muscleData
+[~,mai] = MomentArmIndices_asym(muscleNames,muscle_spanning_joint_info);
+muscle_spanning_info_m = muscle_spanning_joint_info(:,:);
+MuscleInfo_m.muscle    = MuscleInfo.muscle(:);
+NMuscle_pol = size(muscle_spanning_info_m,1);
+NJoint_pol = size(muscle_spanning_info_m,2);
+qin     = MX.sym('qin',1,NJoint_pol);
+qdotin  = MX.sym('qdotin',1,NJoint_pol);
+lMT     = MX(NMuscle_pol,1);
+vMT     = MX(NMuscle_pol,1);
+dM      = MX(NMuscle_pol,NJoint_pol);
+load nCoeffMat
+load expoVal_all
+for i=1:NMuscle_pol      
+    index_dof_crossing  = find(muscle_spanning_info_m(i,:)==1);
+    nr_dof_crossing     = length(index_dof_crossing); 
+    order               = MuscleInfo_m.muscle(i).order;
+    [mat,diff_mat_q]    = n_art_mat_3_cas_MX_7(qin(1,index_dof_crossing),...
+        nCoeffMat(order,nr_dof_crossing),expoVal_all{order,nr_dof_crossing});
+    lMT(i,1)            = mat'*MuscleInfo_m.muscle(i).coeff;
+    vMT(i,1)            = 0;
+    dM(i,1:NJoint_pol)  = 0;
+    for dof_nr = 1:nr_dof_crossing
+        dM(i,index_dof_crossing(dof_nr)) = ...
+            (-(diff_mat_q(:,dof_nr)))'*MuscleInfo_m.muscle(i).coeff;
+        vMT(i,1) = vMT(i,1) + (-dM(i,index_dof_crossing(dof_nr))*...
+            qdotin(1,index_dof_crossing(dof_nr)));
+    end 
+end
+f_casadi.f_lMT_vMT_dM = Function('f_lMT_vMT_dM',{qin,qdotin},{lMT,vMT,dM});
+end
 % Parameters for activation dynamics
 tact = 0.015; % Activation time constant
 tdeact = 0.06; % Deactivation time constant
@@ -390,32 +426,20 @@ for j=1:d
     
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Get muscle-tendon lengths, velocities, and moment arms
-    qinj    = Qskj_nsc(:, j+1);
-    qdotinj = Qdotskj_nsc(:, j+1);
+    qinj    = Qskj_nsc(model_info.ExtFunIO.nq.coord_muscleActuated, j+1);
+    qdotinj = Qdotskj_nsc(model_info.ExtFunIO.nq.coord_muscleActuated, j+1);
     % Left leg
     [lMTj,vMTj,MAj] =  f_casadi.lMT_vMT_dM(qinj,qdotinj);
-    for i=1:length(model_info.ExtFunIO.jointi.names.leg_l)-1 % not including mtp
-        MAj.(model_info.ExtFunIO.jointi.names.leg_l{i}) = MAj_l(mai(i).mus.l',i);
+    for i=1:model_info.ExtFunIO.nq.coord_muscleAct
+        MAj.(model_info.ExtFunIO.jointi.names.muscleAct{i}) = ...
+            MAj(mai(model_info.ExtFunIO.jointi.coord_muscleActuatedi(i)).mus',i);
     end
-    % Right leg
-    qinj_r          = Qskj_nsc(IndexRight, j+1);
-    qdotinj_r       = Qdotskj_nsc(IndexRight, j+1);
-    [lMTj_r,vMTj_r,MAj_r] =  f_casadi.lMT_vMT_dM(qinj_r,qdotinj_r);
-    for i=1:length(model_info.ExtFunIO.jointi.names.leg_r)-1 % not including mtp
-        MAj.(model_info.ExtFunIO.jointi.names.leg_r{i}) = MAj_r(mai(i).mus.l',i);
-    end
-    % For the back muscles, we want left and right together: right first,
-    % left second. In MuscleInfo, we first have the right
-    % muscles (44:46) and then the left muscles (47:49). Since the back
-    % muscles only depend on back dofs, we do not care if we extract
-    % them "from the left or right leg" so here we just picked left.
-    MAj.trunk_ext    =  MAj_l([MuscleIndex.trunk_l,mai(length(model_info.ExtFunIO.jointi.names.leg_l)).mus.l]',length(model_info.ExtFunIO.jointi.names.leg_l));
-    MAj.trunk_ben    =  MAj_l([MuscleIndex.trunk_l,mai(length(model_info.ExtFunIO.jointi.names.leg_l)+1).mus.l]',length(model_info.ExtFunIO.jointi.names.leg_l)+1);
-    MAj.trunk_rot    =  MAj_l([MuscleIndex.trunk_l,mai(length(model_info.ExtFunIO.jointi.names.leg_l)+2).mus.l]',length(model_info.ExtFunIO.jointi.names.leg_l)+2);
     % Both legs
     % In MuscleInfo, we first have the right back muscles (44:46) and
     % then the left back muscles (47:49).
-    lMTj_rl = [lMTj_r([MuscleIndex.leg_r,MuscleIndex.trunk_r],1);lMTj_l([MuscleIndex.leg_r,MuscleIndex.trunk_l],1)];
+    lMTj_rl = [lMTj([model_info.ExtFunIO.jointi
+        
+    MuscleIndex.leg_r,MuscleIndex.trunk_r],1);lMTj_l([MuscleIndex.leg_r,MuscleIndex.trunk_l],1)];
     vMTj_rl = [vMTj_r([MuscleIndex.leg_r,MuscleIndex.trunk_r],1);vMTj_l([MuscleIndex.leg_r,MuscleIndex.trunk_l],1)];
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Get muscle-tendon forces and derive Hill-equilibrium
