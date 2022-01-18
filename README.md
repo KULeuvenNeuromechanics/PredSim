@@ -1,27 +1,33 @@
-Predictive simulations human movement
+*Use the table of contensts to easily navigate this README. Click on the three lines next to README.md just above this sentence.*
+
+Predictive Simulations of Human Movement
 ============
 
-This repository is a fork of the code and data to generate three-dimensional muscle-driven predictive simulations of human gait as described in: Falisse A, Serrancoli G, Dembia C, Gillis J, Jonkers J, De Groote F. 2019 Rapid predictive simulations with complex musculoskeletal models suggest that diverse healthy and pathological human gaits can emerge from similar control strategies. Journal of the Royal Society Interface 16: 20190402. http://dx.doi.org/10.1098/rsif.2019.0402. 
+This repository is a rework of the code and data to generate three-dimensional muscle-driven predictive simulations of human gait as described in: Falisse A, Serrancoli G, Dembia C, Gillis J, Jonkers J, De Groote F. 2019 Rapid predictive simulations with complex musculoskeletal models suggest that diverse healthy and pathological human gaits can emerge from similar control strategies. Journal of the Royal Society Interface 16: 20190402. http://dx.doi.org/10.1098/rsif.2019.0402. You can find the original repository here: https://github.com/antoinefalisse/3dpredictsim
 
-In this repository the original code of Falisse et al. was adapted to:
+In general, hard coded variables were removed as much as possible and put in a settings structure the user can adapt. This results in:
 
-- More easily use a diffent model
+- More easily use a diffent model (other number of joints or muscles)
 - Make input-output a bit easier
-- Change parameters of your musculo-skeletal model more easily 
-- Simulate model with mtp joint
-- Simulate Rajagopal model
+- More easily change the (musculo-skeletal) parameters of the simulation
 
 Besides that, the code was also adapted in accordance with recent (October 2020) adjustments in the original repository of Falisse et al.
 
-- Adjusted version of the collocation scheme (now really being an orthogonal radau scheme).
-- support for parallel computing
-- formulation with opti
+- Adjusted version of the collocation scheme (now really being an orthogonal radau scheme)
+- Support for parallel computing
+- Formulation with opti
 
-### Code structure
+Lastly, seperate pieces of code where converted to functions called by the workflow to streamline performing predictive simulations:
+
+- Automatic conversion of an OpenSim model to the external function
+- Perorming Muscle Analysis and polynomial fitting
+
+
+## Code Structure
 
 - main
 	- getDefaultSettings
-	- preprocessing
+	- pre-processing
 		- osim2dll
 		- get_model_info
 		- read_and_scale_MTparameters
@@ -35,19 +41,22 @@ Besides that, the code was also adapted in accordance with recent (October 2020)
 	- OCP_formulations
 	- post-processing
 
+## Installation Instruction
 
-### Settings
+## How to use the software
 
-All user-defined settings are stored in structure S. In main.m you have to specify the required settings and are free to change/add the optional settings. 
+## Settings
 
-#### Required
+All user-defined settings are stored in structure *S*. In *main.m* you have to specify the required settings and are free to change/add the optional settings. 
+
+### Required
 
 - **S.subject.save_folder**: path to the folder where you want to store the results. If the path does not exist yet on your machine, it will be created automatically.
 - **S.subject.name**: the name or code of the subject you are simulating.
 - **S.subject.IG_selection**: either choose "quasi-random" or give the path to a .mot file you want to use as initial guess.
 - **S.subject.IG_bounds**: give the path to a .mot file on which IG_bounds will be based.
 
-#### Optional
+### Optional
 
 **bounds**
 
@@ -116,7 +125,7 @@ All user-defined settings are stored in structure S. In main.m you have to speci
 - **S.subject.muscle_coordination**: muscle coordination.
 	- :warning: ***currently commented out; follow this up***
 	
-**weight**
+**weights**
 
 - **S.weights.E**: weight on metabolic energy rate. Default is *500* [double]
 - **S.weights.E_exp**: exponent for the metabolic energy rate. Default is *2* [double]
