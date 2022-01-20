@@ -1,4 +1,11 @@
 function [] = f_PredSim_Gait92(S)
+
+% TO CHECK
+% MTP is not a part of passive torques that go in the cost funciton, Antoine had it in there
+% scaling.tauMTP = 100 is used, Antoine had it 30
+% Eccentric muscle force was not a part of Antoine's implementation
+% Why is muscle torque not a part of this MTP torque path constraint?
+% Not implemented minimum foot height during swing, need origin velocity indecies
 %% Adding the casadi path seems to be needed to run processes in batch
 AddCasadiPaths();
 
@@ -36,17 +43,17 @@ load('model_info.mat')
 
 % Vectors of indices for later use
 residualsi = 1:length(fields(model_info.ExtFunIO.coordi));
-ground_pelvisi       = model_info.ExtFunIO.jointi.ground_pelvis; % ground-pelvis
+ground_pelvis       = model_info.ExtFunIO.jointi.ground_pelvis; % ground-pelvis
 trunki               = model_info.ExtFunIO.jointi.torso; % trunk
 legsi                = [model_info.ExtFunIO.jointi.leg_r model_info.ExtFunIO.jointi.leg_l]; % arms
 armsi                = [model_info.ExtFunIO.jointi.arm_r model_info.ExtFunIO.jointi.arm_l]; % arms
 mtpi                 = [model_info.ExtFunIO.jointi.mtp_r model_info.ExtFunIO.jointi.mtp_l]; % mtps
-coord_noarmsi        = [ground_pelvisi legsi trunki]; % all but arms
+coord_noarmsi        = [ground_pelvis legsi trunki]; % all but arms
 coord_muscleActuated = [legsi trunki]; % all but arms
 
 % Number of degrees of freedom for later use
 nq.all      = length(residualsi); % all
-nq.abs      = length(ground_pelvisi); % ground-pelvis
+nq.abs      = length(ground_pelvis); % ground-pelvis
 nq.trunk    = length(trunki); % trunk
 nq.arms     = length(armsi); % arms
 nq.mtp      = length(mtpi); % arms
@@ -78,6 +85,7 @@ pathpolynomial = fullfile(pathRepo,'Polynomials',S.PolyFolder); % default locati
 tl = load([pathpolynomial,'/muscle_spanning_joint_INFO.mat']);
 % [~,mai1] = MomentArmIndices(muscleNames(1:end/2),tl.muscle_spanning_joint_INFO);
 [~,mai] = MomentArmIndices_asym(muscleNames,tl.muscle_spanning_joint_INFO);
+sumCross = sum(muscle_spanning_joint_info);
 
 testing = 1;
 if testing==1
@@ -177,9 +185,9 @@ Qs_walk          = getIK(IKfile_bounds,model_info);
 
 jointi = model_info.ExtFunIO.coordi;
 if S.Bounds_Running 
-    [bounds,scaling] = getBounds_all_RunningMaartenB(Qs_walk,model_info,S); % NOTE: used mtpTau = 100, Antoine used 30
+    [bounds,scaling] = getBounds_all_RunningMaartenB(Qs_walk,model_info,S); % NOTE: used scaling.mtpTau = 100, Antoine used 30
 else
-    [bounds,scaling] = getBounds_all(Qs_walk,model_info,S); % NOTE: used mtpTau = 100, Antoine used 30
+    [bounds,scaling] = getBounds_all(Qs_walk,model_info,S); % NOTE: used scaling.mtpTau = 100, Antoine used 30
 end
 % AdaptBounds.m NO LONGER NEEDED NOW. It was adapting lower bound activation of all
 % muscles to a certain value and the bounds on final time. We decided to
@@ -426,13 +434,12 @@ for j=1:d
     
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Get muscle-tendon lengths, velocities, and moment arms
-    qinj    = Qskj_nsc(model_info.ExtFunIO.nq.coord_muscleActuated, j+1);
-    qdotinj = Qdotskj_nsc(model_info.ExtFunIO.nq.coord_muscleActuated, j+1);
-    % Left leg
+    qinj    = Qskj_nsc(model_info.ExtFunIO.jointi.legs_torso, j+1);
+    qdotinj = Qdotskj_nsc(model_info.ExtFunIO.jointi.legs_torso, j+1);
     [lMTj,vMTj,MAj] =  f_casadi.lMT_vMT_dM(qinj,qdotinj);
-    for i=1:model_info.ExtFunIO.nq.coord_muscleAct
-        MAj.(model_info.ExtFunIO.jointi.names.muscleAct{i}) = ...
-            MAj(mai(model_info.ExtFunIO.jointi.coord_muscleActuatedi(i)).mus',i);
+    for i=1:model_info.ExtFunIO.nq.legs_torso
+        MAj.(model_info.ExtFunIO.jointi.names.legs_torso{i}) = ...
+            MAj(mai(model_info.ExtFunIO.jointi.legs_torso(i)).mus',i);
     end
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Get muscle-tendon forces and derive Hill-equilibrium
@@ -459,36 +466,13 @@ for j=1:d
     else
         error('No energy model selected');
     end
-    
-    
-    
-    
-    
-    
-    
-    
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Get passive joint torques
-    Tau_passj_all = f_casadi.AllPassiveTorques(Qskj_nsc(:,j+1),Qdotskj_nsc(:,j+1));
-    for 
-    Tau_passj.hip.flex.l = Tau_passj_all(1);
-    Tau_passj.hip.flex.r = Tau_passj_all(2);
-    Tau_passj.hip.add.l = Tau_passj_all(3);
-    Tau_passj.hip.add.r = Tau_passj_all(4);
-    Tau_passj.hip.rot.l = Tau_passj_all(5);
-    Tau_passj.hip.rot.r = Tau_passj_all(6);
-    Tau_passj.knee.l = Tau_passj_all(7);
-    Tau_passj.knee.r = Tau_passj_all(8);
-    Tau_passj.ankle.l = Tau_passj_all(9);
-    Tau_passj.ankle.r = Tau_passj_all(10);
-    Tau_passj.subt.l = Tau_passj_all(11);
-    Tau_passj.subt.r = Tau_passj_all(12);
-    Tau_passj.mtp.all = Tau_passj_all(13:14);
-    Tau_passj.trunk.ext = Tau_passj_all(15);
-    Tau_passj.trunk.ben = Tau_passj_all(16);
-    Tau_passj.trunk.rot = Tau_passj_all(17);
-    Tau_passj.arm = Tau_passj_all(18:25);
-    Tau_passj_J = Tau_passj_all([1:12 15:end]);
+    Tau_passj_all = f_casadi.f_AllPassiveTorques(Qskj_nsc(:,j+1),Qdotskj_nsc(:,j+1));
+    Tau_passj_arm = Tau_passj_all(:,(model_info.ExtFunIO.nq.muscleActuated+1):(model_info.ExtFunIO.nq.muscleActuated+model_info.ExtFunIO.nq.arms));
+    Tau_passj_mtp = Tau_passj_all(:,(model_info.ExtFunIO.nq.muscleActuated+model_info.ExtFunIO.nq.arms+1):end);
+    Tau_passj_noMTP = Tau_passj_all(:,1:(model_info.ExtFunIO.nq.muscleActuated+model_info.ExtFunIO.nq.arms));% MTP is not a part of this, Antoine had it in there
+    Tau_passj_muscleActuated = Tau_passj_all(:,1:model_info.ExtFunIO.nq.muscleActuated);
     
     % Expression for the state derivatives at the collocation points
     Qsp_nsc      = Qskj_nsc*C(:,j+1);
@@ -511,39 +495,50 @@ for j=1:d
     eq_constr{end+1} = (h*Aj_nsc(:,j) - Qdotsp_nsc)./...
         scaling.QsQdots(2:2:end)';
     % Arm activation dynamics (explicit formulation)
-    da_adtj = f_ArmActivationDynamics(e_ak,a_akj(:,j+1)');
+    da_adtj = f_casadi.f_ArmActivationDynamics(e_ak,a_akj(:,j+1)');
     eq_constr{end+1} = (h*da_adtj - a_ap)./scaling.a_a;
     % Mtp activation dynamics (explicit formulation)
-    da_mtpdtj = f_MtpActivationDynamics(e_mtpk,a_mtpkj(:,j+1)');
+    da_mtpdtj = f_casadi.f_MtpActivationDynamics(e_mtpk,a_mtpkj(:,j+1)');
     eq_constr{end+1} = (h*da_mtpdtj - a_mtpp);
     % Add contribution to the quadrature function
-    J = J + 1*(...
-        W.E*B(j+1)      *(f_J92exp(e_totj,W.exp_E))/S.mass*h + ...
-        W.A*B(j+1)      *(f_J92(akj(:,j+1)'))*h + ...
-        W.ArmE*B(j+1)   *(f_J8(e_ak))*h +...
-        W.Mtp*B(j+1)    *(f_J2(e_mtpk))*h +...
-        W.Ak*B(j+1)     *(f_J23(Aj(coord_noarmsi,j)))*h + ...
-        W.passMom*B(j+1)*(f_J23(Tau_passj_J))*h + ...
-        W.u*B(j+1)      *(f_J92(vAk))*h + ...
-        W.u*B(j+1)      *(f_J92(dFTtildej(:,j)))*h + ...
-        W.u*B(j+1)      *(f_J8(Aj(armsi,j)))*h);
+%     J = J + 1*(...
+%         W.E*B(j+1)      *(f_J92exp(e_totj,W.exp_E))/S.mass*h + ...
+%         W.A*B(j+1)      *(f_J92(akj(:,j+1)'))*h + ...
+%         W.ArmE*B(j+1)   *(f_J8(e_ak))*h +...
+%         W.Mtp*B(j+1)    *(f_J2(e_mtpk))*h +...
+%         W.Ak*B(j+1)     *(f_J23(Aj(coord_noarmsi,j)))*h + ...
+%         W.passMom*B(j+1)*(f_J23(Tau_passj_J))*h + ...
+%         W.u*B(j+1)      *(f_J92(vAk))*h + ...
+%         W.u*B(j+1)      *(f_J92(dFTtildej(:,j)))*h + ...
+%         W.u*B(j+1)      *(f_J8(Aj(armsi,j)))*h);
 
-    if W.EccF ~= 0
+    J = J + 1*(...
+        W.E*B(j+1)      *(f_casadi.J_N_muscles_exp(e_totj,W.exp_E))/S.mass*h + ...
+        W.A*B(j+1)      *(f_casadi.J_N_muscles(akj(:,j+1)'))*h + ...
+        W.ArmE*B(j+1)   *(f_casadi.J_arms_dof(e_ak))*h +...
+        W.Mtp*B(j+1)    *(f_casadi.J_2(e_mtpk))*h +...
+        W.Ak*B(j+1)     *(f_casadi.J_noarms_dof(Aj(model_info.ExtFunIO.jointi.noarmsi,j)))*h + ...
+        W.passMom*B(j+1)*(f_casadi.J_musc_dof(Tau_passj_noMTP))*h + ... % MTP is not a part of this, Antoine had it in there
+        W.u*B(j+1)      *(f_casadi.J_N_muscles(vAk))*h + ...
+        W.u*B(j+1)      *(f_casadi.J_N_muscles(dFTtildej(:,j)))*h + ...
+        W.u*B(j+1)      *(f_casadi.J_arms_dof(Aj(model_info.ExtFunIO.jointi.armsi,j)))*h);
+
+    if W.EccF ~= 0 % was not a part of Antoine's implementation
         % select eccentric muscle force
         b = 100;
         ivMPos = (tanh(b*(vMj-0.02))*0.5+0.5);      % negative power = 0, positive power = positive power
         Fecc = FTj.*ivMPos;
         % add Fecc squared to the objective function
         J = J + 1*(...
-            W.EccF*B(j+1)    *(f_J92exp(Fecc,2))*h );
+            W.EccF*B(j+1)    *(f_casadi.J_N_muscles_exp(Fecc,2))*h );
     end
 
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Call external function (run inverse dynamics)
-    if F.nnz_in == nq.all*3
+    if F.nnz_in == model_info.ExtFunIO.nq.all*3
         % no exoskeleton torque as input in passive simulations
         [Tj] = F([QsQdotskj_nsc(:,j+1);Aj_nsc(:,j)]);    % left and right leg exoskeleton torques as inputs as well.
-    elseif F.nnz_in > nq.all*3
+    elseif F.nnz_in > model_info.ExtFunIO.nq.all*3
         % exoskeleton torques as input in active simulations
         [Tj] = F([QsQdotskj_nsc(:,j+1);Aj_nsc(:,j); -Texok]);    % left and right leg exoskeleton torques as inputs as well.
     end
@@ -555,75 +550,24 @@ for j=1:d
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Add path constraints
     % Null pelvis residuals
-    eq_constr{end+1} = Tj(ground_pelvisi,1);
+    eq_constr{end+1} = Tj(model_info.ExtFunIO.jointi.ground_pelvis,1);
     % Muscle-driven joint torques for the lower limbs and the trunk
-    % Hip flexion, left
-    Ft_hip_flex_l   = FTj(mai(1).mus.l',1);
-    T_hip_flex_l    = f_T27(MAj.hip_flex.l,Ft_hip_flex_l);
-    eq_constr{end+1} = Tj(IO.jointi.hip_flex.l,1)-(T_hip_flex_l + Tau_passj.hip.flex.l);
-    % Hip flexion, right
-    Ft_hip_flex_r   = FTj(mai(1).mus.r',1);
-    T_hip_flex_r    = f_T27(MAj.hip_flex.r,Ft_hip_flex_r);
-    eq_constr{end+1} = Tj(IO.jointi.hip_flex.r,1)-(T_hip_flex_r + Tau_passj.hip.flex.r);
-    % Hip adduction, left
-    Ft_hip_add_l    = FTj(mai(2).mus.l',1);
-    T_hip_add_l     = f_T27(MAj.hip_add.l,Ft_hip_add_l);
-    eq_constr{end+1} = Tj(IO.jointi.hip_add.l,1)-(T_hip_add_l + Tau_passj.hip.add.l);
-    % Hip adduction, right
-    Ft_hip_add_r    = FTj(mai(2).mus.r',1);
-    T_hip_add_r     = f_T27(MAj.hip_add.r,Ft_hip_add_r);
-    eq_constr{end+1} = Tj(IO.jointi.hip_add.r,1)-(T_hip_add_r + Tau_passj.hip.add.r);
-    % Hip rotation, left
-    Ft_hip_rot_l    = FTj(mai(3).mus.l',1);
-    T_hip_rot_l     = f_T27(MAj.hip_rot.l,Ft_hip_rot_l);
-    eq_constr{end+1} = Tj(IO.jointi.hip_rot.l,1)-(T_hip_rot_l + Tau_passj.hip.rot.l);
-    % Hip rotation, right
-    Ft_hip_rot_r    = FTj(mai(3).mus.r',1);
-    T_hip_rot_r     = f_T27(MAj.hip_rot.r,Ft_hip_rot_r);
-    eq_constr{end+1} = Tj(IO.jointi.hip_rot.r,1)-(T_hip_rot_r + Tau_passj.hip.rot.r);
-    % Knee, left
-    Ft_knee_l       = FTj(mai(4).mus.l',1);
-    T_knee_l        = f_T13(MAj.knee.l,Ft_knee_l);
-    eq_constr{end+1} = Tj(IO.jointi.knee.l,1)-(T_knee_l + Tau_passj.knee.l);
-    % Knee, right
-    Ft_knee_r       = FTj(mai(4).mus.r',1);
-    T_knee_r        = f_T13(MAj.knee.r,Ft_knee_r);
-    eq_constr{end+1} = Tj(IO.jointi.knee.r,1)-(T_knee_r + Tau_passj.knee.r);
-    % Ankle, left
-    Ft_ankle_l      = FTj(mai(5).mus.l',1);
-    T_ankle_l       = f_T12(MAj.ankle.l,Ft_ankle_l);
-    eq_constr{end+1} = Tj(IO.jointi.ankle.l,1)-(T_ankle_l + Tau_passj.ankle.l);
-    % Ankle, right
-    Ft_ankle_r      = FTj(mai(5).mus.r',1);
-    T_ankle_r       = f_T12(MAj.ankle.r,Ft_ankle_r);
-    eq_constr{end+1} = Tj(IO.jointi.ankle.r,1)-(T_ankle_r + Tau_passj.ankle.r);
-    % Subtalar, left
-    Ft_subt_l       = FTj(mai(6).mus.l',1);
-    T_subt_l        = f_T12(MAj.subt.l,Ft_subt_l);
-    eq_constr{end+1} = Tj(IO.jointi.subt.l,1)-(T_subt_l +  Tau_passj.subt.l);
-    % Subtalar, right
-    Ft_subt_r       = FTj(mai(6).mus.r',1);
-    T_subt_r        = f_T12(MAj.subt.r,Ft_subt_r);
-    eq_constr{end+1} = Tj(IO.jointi.subt.r,1)-(T_subt_r + Tau_passj.subt.r );
-    % Lumbar extension
-    Ft_trunk_ext    = FTj([mai(8).mus.l,mai(8).mus.r]',1);
-    T_trunk_ext     = f_T6(MAj.trunk_ext,Ft_trunk_ext);
-    eq_constr{end+1} = Tj(IO.jointi.trunk.ext,1)-(T_trunk_ext + Tau_passj.trunk.ext);
-    % Lumbar bending
-    Ft_trunk_ben    = FTj([mai(9).mus.l,mai(9).mus.r]',1);
-    T_trunk_ben     = f_T6(MAj.trunk_ben,Ft_trunk_ben);
-    eq_constr{end+1} = Tj(IO.jointi.trunk.ben,1)-(T_trunk_ben + Tau_passj.trunk.ben);
-    % Lumbar rotation
-    Ft_trunk_rot    = FTj([mai(10).mus.l,mai(10).mus.r]',1);
-    T_trunk_rot     = f_T6(MAj.trunk_rot,Ft_trunk_rot);
-    eq_constr{end+1} = Tj(IO.jointi.trunk.rot,1)-(T_trunk_rot + Tau_passj.trunk.rot);
-    % Torque-driven joint torques for the arms
+    for i=1:model_info.ExtFunIO.nq.muscleActuated
+        Ft.(model_info.ExtFunIO.jointi.names.muscleActuated{i}) = FTj(mai(model_info.ExtFunIO.jointi.muscleActuated(i)).mus',i);
+        T.(model_info.ExtFunIO.jointi.names.muscleActuated{i}) = ...
+            f_casadi.(['musc_cross_' num2str(sumCross(model_info.ExtFunIO.jointi.muscleActuated(i)))])...
+            (MAj.(model_info.ExtFunIO.jointi.names.muscleActuated{i}),...
+            Ft.(model_info.ExtFunIO.jointi.names.muscleActuated{i}));
+        eq_constr{end+1} = Tj(model_info.ExtFunIO.jointi.muscleActuated(i),1) - ...
+            (T.(model_info.ExtFunIO.jointi.names.muscleActuated{i}) + ...
+            Tau_passj_muscleActuated(:,i));
+    end
     % Arms
-    eq_constr{end+1} = Tj(armsi,1)/scaling.ArmTau - (a_akj(:,j+1) + ...
-        (Tau_passj.arm)/scaling.ArmTau);
+    eq_constr{end+1} = Tj(model_info.ExtFunIO.jointi.armsi,1)/scaling.ArmTau - (a_akj(:,j+1) + ...
+        (Tau_passj_arm)/scaling.ArmTau);
     % Mtp
-    eq_constr{end+1} = Tj(mtpi,1)/scaling.MtpTau - (a_mtpkj(:,j+1) + ...
-        (Tau_passj.mtp.all)/scaling.MtpTau);
+    eq_constr{end+1} = Tj(model_info.ExtFunIO.jointi.mtpi,1)/scaling.MtpTau - (a_mtpkj(:,j+1) + ...
+        (Tau_passj_mtp)/scaling.MtpTau); % Why is muscle torque not a part of this?
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Activation dynamics (implicit formulation)
     act1 = vAk_nsc + akj(:,j+1)./(ones(size(akj(:,j+1),1),1)*tdeact);
@@ -641,65 +585,72 @@ for j=1:d
     % Constraints to prevent parts of the skeleton to penetrate each
     % other.
     % Origins calcaneus (transv plane) at minimum 9 cm from each other.
-    Qconstr = f_Jnn2(Tj(calcOr.r,1) - Tj(calcOr.l,1));
+    Qconstr = f_casadi.J_nn_2(Tj(model_info.ExtFunIO.origin.calcn_r,1) - ...
+        Tj(model_info.ExtFunIO.origin.calcn_l,1));
     ineq_constr(ctIneq:ctIneq+length(Qconstr)-1) = Qconstr;
     ineq_constr_index(ctIneq:ctIneq+length(Qconstr)-1) = 3;
     ctIneq = ctIneq + length(Qconstr);
     % Constraint to prevent the arms to penetrate the skeleton
     % Origins femurs and ipsilateral hands (transv plane) at minimum
     % 18 cm from each other.
-    Qconstr = f_Jnn2(Tj(femurOr.r,1) - Tj(handOr.r,1));
+    Qconstr = f_casadi.J_nn_2(Tj(model_info.ExtFunIO.origin.femur_r,1) - ...
+        Tj(model_info.ExtFunIO.origin.hand_r,1));
     ineq_constr(ctIneq:ctIneq+length(Qconstr)-1) = Qconstr;
     ineq_constr_index(ctIneq:ctIneq+length(Qconstr)-1) = 4;
     ctIneq = ctIneq + length(Qconstr);
-    Qconstr = f_Jnn2(Tj(femurOr.l,1) - Tj(handOr.l,1));
+    Qconstr = f_casadi.J_nn_2(Tj(model_info.ExtFunIO.origin.femur_l,1) - ...
+        Tj(model_info.ExtFunIO.origin.hand_l,1));
     ineq_constr(ctIneq:ctIneq+length(Qconstr)-1) = Qconstr;
     ineq_constr_index(ctIneq:ctIneq+length(Qconstr)-1) = 4;
     ctIneq = ctIneq + length(Qconstr);
     % Origins tibia (transv plane) at minimum 11 cm from each other.
-    Qconstr = f_Jnn2(Tj(tibiaOr.r,1) - Tj(tibiaOr.l,1));
+    Qconstr = f_casadi.J_nn_2(Tj(model_info.ExtFunIO.origin.tibia_r,1) - ...
+        Tj(model_info.ExtFunIO.origin.tibia_l,1));
     ineq_constr(ctIneq:ctIneq+length(Qconstr)-1) = Qconstr;
     ineq_constr_index(ctIneq:ctIneq+length(Qconstr)-1) = 5;
     ctIneq = ctIneq + length(Qconstr);
     % Origins toes (transv plane) at minimum 10 cm from each other.
-    Qconstr = f_Jnn2(Tj(toesOr.r,1) - Tj(toesOr.l,1));
+    Qconstr = f_casadi.J_nn_2(Tj(model_info.ExtFunIO.origin.toes_r,1) - ...
+        Tj(model_info.ExtFunIO.origin.toes_l,1));
     ineq_constr(ctIneq:ctIneq+length(Qconstr)-1) = Qconstr;
     ineq_constr_index(ctIneq:ctIneq+length(Qconstr)-1) = 6;
     ctIneq = ctIneq + length(Qconstr);
-    % Minimum foot height during swing
-    if isfield(S.Constr,'ImposeFootHeight') && S.Constr.ImposeFootHeight
-        Vx = Tj([toesOr_dot.r(1) toesOr_dot.l(1) calcOr_dot.r(1) calcOr_dot.l(1)]);
-        Ry = Tj([toesOry.r toesOry.l calcOry.r calcOry.l]);
-        vx_tr = S.Constr.FootHeight.Vx_Treshold;
-        tr_ry = S.Constr.FootHeight.Ry_Treshold;
-        b = S.Constr.FootHeight.b;
-        vx_bool = 0.5.*tanh(b*(Vx-vx_tr))+0.5;
-        ry_ad = -Ry+tr_ry;
-        Qconstr =  ry_ad.*vx_bool;
-        ineq_constr(ctIneq:ctIneq+length(Qconstr)-1) =Qconstr;
-        ineq_constr_index(ctIneq:ctIneq+length(Qconstr)-1) = 101;
-        ctIneq = ctIneq + length(Qconstr);
-    end
-    % inequality constraint on exoskeleton moments
-    if S.OptTexo_Ankle.Bool
-        Qconstr = Texok(1).*Qskj_nsc(IO.jointi.ankle.l,j+1);
-        ineq_constr(ctIneq:ctIneq+length(Qconstr)-1) = Qconstr;
-        ineq_constr_index(ctIneq:ctIneq+length(Qconstr)-1) = 7;
-        ctIneq = ctIneq + length(Qconstr);
-        Qconstr = Texok(2).*Qskj_nsc(IO.jointi.ankle.r,j+1);
-        ineq_constr(ctIneq:ctIneq+length(Qconstr)-1) = Qconstr;
-        ineq_constr_index(ctIneq:ctIneq+length(Qconstr)-1) = 7;
-        ctIneq = ctIneq + length(Qconstr);
-    elseif S.OptTexo_AnkleKneeHip.Bool
-        iVect = [IO.jointi.ankle.l IO.jointi.ankle.r IO.jointi.knee.l IO.jointi.knee.r , ...
-            IO.jointi.hip_flex.l IO.jointi.hip_flex.r];
-        for iv = 1:6
-            Qconstr = Texok(iv).*Qskj_nsc(iVect(iv),j+1);
-            ineq_constr(ctIneq:ctIneq+length(Qconstr)-1) = Qconstr;
-            ineq_constr_index(ctIneq:ctIneq+length(Qconstr)-1) = 7+iv-1;
-            ctIneq = ctIneq + length(Qconstr);
-        end        
-    end
+    
+%     % Minimum foot height during swing
+% CAN BE UNCOMMENTED, NEED INDECIES OF ORIGIN VELOCITIES
+%     if isfield(S.Constr,'ImposeFootHeight') && S.Constr.ImposeFootHeight
+%         Vx = Tj([toesOr_dot.r(1) toesOr_dot.l(1) calcOr_dot.r(1) calcOr_dot.l(1)]);
+%         Ry = Tj([toesOry.r toesOry.l calcOry.r calcOry.l]);
+%         vx_tr = S.Constr.FootHeight.Vx_Treshold;
+%         tr_ry = S.Constr.FootHeight.Ry_Treshold;
+%         b = S.Constr.FootHeight.b;
+%         vx_bool = 0.5.*tanh(b*(Vx-vx_tr))+0.5;
+%         ry_ad = -Ry+tr_ry;
+%         Qconstr =  ry_ad.*vx_bool;
+%         ineq_constr(ctIneq:ctIneq+length(Qconstr)-1) =Qconstr;
+%         ineq_constr_index(ctIneq:ctIneq+length(Qconstr)-1) = 101;
+%         ctIneq = ctIneq + length(Qconstr);
+%     end
+%     % inequality constraint on exoskeleton moments
+%     if S.OptTexo_Ankle.Bool
+%         Qconstr = Texok(1).*Qskj_nsc(IO.jointi.ankle.l,j+1);
+%         ineq_constr(ctIneq:ctIneq+length(Qconstr)-1) = Qconstr;
+%         ineq_constr_index(ctIneq:ctIneq+length(Qconstr)-1) = 7;
+%         ctIneq = ctIneq + length(Qconstr);
+%         Qconstr = Texok(2).*Qskj_nsc(IO.jointi.ankle.r,j+1);
+%         ineq_constr(ctIneq:ctIneq+length(Qconstr)-1) = Qconstr;
+%         ineq_constr_index(ctIneq:ctIneq+length(Qconstr)-1) = 7;
+%         ctIneq = ctIneq + length(Qconstr);
+%     elseif S.OptTexo_AnkleKneeHip.Bool
+%         iVect = [IO.jointi.ankle.l IO.jointi.ankle.r IO.jointi.knee.l IO.jointi.knee.r , ...
+%             IO.jointi.hip_flex.l IO.jointi.hip_flex.r];
+%         for iv = 1:6
+%             Qconstr = Texok(iv).*Qskj_nsc(iVect(iv),j+1);
+%             ineq_constr(ctIneq:ctIneq+length(Qconstr)-1) = Qconstr;
+%             ineq_constr_index(ctIneq:ctIneq+length(Qconstr)-1) = 7+iv-1;
+%             ctIneq = ctIneq + length(Qconstr);
+%         end        
+%     end
 end % End loop over collocation points
 eq_constrV = vertcat(eq_constr{:});
 
@@ -729,26 +680,28 @@ cSel = coll_ineq_constr(find(ineq_constr_index == 5),:); % origin tibia minimum 
 opti.subject_to(S.Constr.tibia.^2 < cSel(:) < 4);
 cSel = coll_ineq_constr(find(ineq_constr_index == 6),:); % origins toes minimum x cm away from each other
 opti.subject_to(S.Constr.toes.^2 < cSel(:) < 4);
-if S.OptTexo_Ankle.Bool         % bound on exoskeleton power
-    cSel = coll_ineq_constr(find(ineq_constr_index == 7),:); % exoskeleton power
-    opti.subject_to(S.OptTexo_Ankle.Pbound(1) < cSel(:) < S.OptTexo_Ankle.Pbound(2));
-elseif S.OptTexo_AnkleKneeHip.Bool
-    lb_ExoPower = [S.OptTexo_AnkleKneeHip.Pbound_Ankle(1)*ones(1,2) ,...
-        S.OptTexo_AnkleKneeHip.Pbound_Knee(1)*ones(1,2), ...
-        S.OptTexo_AnkleKneeHip.Pbound_Hip(1)*ones(1,2)];
-    ub_ExoPower = [S.OptTexo_AnkleKneeHip.Pbound_Ankle(2)*ones(1,2) ,...
-        S.OptTexo_AnkleKneeHip.Pbound_Knee(2)*ones(1,2), ...
-        S.OptTexo_AnkleKneeHip.Pbound_Hip(2)*ones(1,2)];
-    for iv = 1:6
-        cSel = coll_ineq_constr(find(ineq_constr_index == 7+iv-1),:); % exoskeleton power
-        opti.subject_to(lb_ExoPower(iv) < cSel(:) < ub_ExoPower(iv));
-    end
-end
-% inequality constraint minimum foot height during swing
-if isfield(S.Constr,'ImposeFootHeight') && S.Constr.ImposeFootHeight
-    cSel = coll_ineq_constr(find(ineq_constr_index == 101),:); % origins toes minimum x cm away from each other
-    opti.subject_to(cSel(:) < 0.01);
-end
+% if S.OptTexo_Ankle.Bool         % bound on exoskeleton power
+%     cSel = coll_ineq_constr(find(ineq_constr_index == 7),:); % exoskeleton power
+%     opti.subject_to(S.OptTexo_Ankle.Pbound(1) < cSel(:) < S.OptTexo_Ankle.Pbound(2));
+% elseif S.OptTexo_AnkleKneeHip.Bool
+%     lb_ExoPower = [S.OptTexo_AnkleKneeHip.Pbound_Ankle(1)*ones(1,2) ,...
+%         S.OptTexo_AnkleKneeHip.Pbound_Knee(1)*ones(1,2), ...
+%         S.OptTexo_AnkleKneeHip.Pbound_Hip(1)*ones(1,2)];
+%     ub_ExoPower = [S.OptTexo_AnkleKneeHip.Pbound_Ankle(2)*ones(1,2) ,...
+%         S.OptTexo_AnkleKneeHip.Pbound_Knee(2)*ones(1,2), ...
+%         S.OptTexo_AnkleKneeHip.Pbound_Hip(2)*ones(1,2)];
+%     for iv = 1:6
+%         cSel = coll_ineq_constr(find(ineq_constr_index == 7+iv-1),:); % exoskeleton power
+%         opti.subject_to(lb_ExoPower(iv) < cSel(:) < ub_ExoPower(iv));
+%     end
+% end
+
+% % inequality constraint minimum foot height during swing
+% CAN BE UNCOMMENTED, NEED INDECIES OF ORIGIN VELOCITIES
+% if isfield(S.Constr,'ImposeFootHeight') && S.Constr.ImposeFootHeight
+%     cSel = coll_ineq_constr(find(ineq_constr_index == 101),:); % origins toes minimum x cm away from each other
+%     opti.subject_to(cSel(:) < 0.01);
+% end
 
 % Loop over mesh points
 for k=1:N
@@ -774,10 +727,10 @@ end % End loop over mesh points
 if S.Symmetric
     % Periodicity of the states (or rather LR symmetry -half gait cycle)
     % Qs and Qdots
-    opti.subject_to(Qs(QsInvA,end) - Qs(QsInvB,1) == 0);
-    opti.subject_to(Qdots(QdotsInvA,end) - Qdots(QdotsInvB,1) == 0);
-    opti.subject_to(Qs(orderQsOpp,end) + Qs(orderQsOpp,1) == 0);
-    opti.subject_to(Qdots(orderQsOpp,end) + Qdots(orderQsOpp,1) == 0);
+    opti.subject_to(Qs(model_info.ExtFunIO.symQs.QsInvA,end) - Qs(model_info.ExtFunIO.symQs.QsInvB,1) == 0);
+    opti.subject_to(Qdots(model_info.ExtFunIO.symQs.QdotsInvA,end) - Qdots(model_info.ExtFunIO.symQs.QdotsInvB,1) == 0);
+    opti.subject_to(Qs(model_info.ExtFunIO.symQs.orderQsOpp,end) + Qs(model_info.ExtFunIO.symQs.orderQsOpp,1) == 0);
+    opti.subject_to(Qdots(model_info.ExtFunIO.symQs.orderQsOpp,end) + Qdots(model_info.ExtFunIO.symQs.orderQsOpp,1) == 0);
     % Muscle activations
     orderMusInv = [NMuscle/2+1:NMuscle,1:NMuscle/2];
     opti.subject_to(a(:,end) - a(orderMusInv,1) == 0);
@@ -788,9 +741,10 @@ if S.Symmetric
 %         IO.jointi.sh_flex.l:IO.jointi.sh_rot.l,...
 %         IO.jointi.elb.r:IO.jointi.elb.r,...
 %         IO.jointi.elb.l:IO.jointi.elb.l]-IO.jointi.sh_flex.l+1;
-    opti.subject_to(a_a(:,end) - a_a(orderArmInv,1) == 0);
+    opti.subject_to(a_a(:,end) - a_a(model_info.ExtFunIO.symQs.orderArmInv,1) == 0);
     % Mtp activations
-    orderMtpInv = [IO.jointi.mtp.r,IO.jointi.mtp.l]-IO.jointi.mtp.l+1;
+    orderMtpInv = [model_info.ExtFunIO.coordi.mtp_r,model_info.ExtFunIO.coordi.mtp_l];
+    orderMtpInv = orderMtpInv-min(orderMtpInv)+1;
     opti.subject_to(a_mtp(:,end) - a_mtp(orderMtpInv,1) == 0);
 elseif S.Periodic
     opti.subject_to(Qs(:,end) - Qs(:,1) == 0);
@@ -809,9 +763,10 @@ end
 % Average speed
 % Provide expression for the distance traveled
 Qs_nsc = Qs.*(scaling.QsQdots(1:2:end)'*ones(1,N+1));
-dist_trav_tot = Qs_nsc(IO.jointi.pelvis.tx,end) -  Qs_nsc(IO.jointi.pelvis.tx,1);
+dist_trav_tot = Qs_nsc(model_info.ExtFunIO.coordi.pelvis_tx,end) - ...
+    Qs_nsc(model_info.ExtFunIO.coordi.pelvis_tx,1);
 vel_aver_tot = dist_trav_tot/tf;
-opti.subject_to(vel_aver_tot - S.v_tgt == 0)
+opti.subject_to(vel_aver_tot - S.subject.v_pelvis_x_trgt == 0)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Scale cost function
 Jall_sc = sum(Jall)/dist_trav_tot;

@@ -12,6 +12,7 @@
 % Date: 17 jan 2022
 %
 % TO DO: review bounds and scaling regarding actuators
+% NOTE: used scaling.mtpTau = 100, Antoine used 30
 %
 %--------------------------------------------------------------------------
 function [bounds,scaling] = getBounds_all_RunningMaartenB(Qs,model_info,S)

@@ -12,6 +12,7 @@
 % Date: 17 jan 2022
 %
 % TO DO: review bounds and scaling regarding actuators
+% NOTE: used scaling.mtpTau = 100, Antoine used 30
 %
 %--------------------------------------------------------------------------
 function [bounds,scaling,Qs_spline] = getBounds_all(Qs,model_info,S)
