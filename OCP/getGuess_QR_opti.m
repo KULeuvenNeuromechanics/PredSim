@@ -23,23 +23,23 @@ end
 % The final time is function of the imposed speed
 all_speeds = 0.73:0.1:2.73;
 all_tf = 0.70:-((0.70-0.35)/(length(all_speeds)-1)):0.35;
-idx_speed = find(all_speeds==S.subject.vPelvis_x_trgt);
+idx_speed = find(all_speeds==S.subject.v_pelvis_x_trgt);
 if isempty(idx_speed)
-    idx_speed = find(all_speeds > S.subject.vPelvis_x_trgt,1,'first');
+    idx_speed = find(all_speeds > S.subject.v_pelvis_x_trgt,1,'first');
 end
 guess.tf = all_tf(idx_speed);
 
 %% Qs
 % The model is moving forward but with a standing position (Qs=0)
 guess.Qs = zeros(N,nq.all);
-guess.Qs(:,jointi.pelvis_tx) = linspace(0,guess.tf*S.subject.vPelvis_x_trgt,N);
+guess.Qs(:,jointi.pelvis_tx) = linspace(0,guess.tf*S.subject.v_pelvis_x_trgt,N);
 % The model is standing on the ground
 guess.Qs(:,jointi.pelvis_ty) = PelvisY;
 
 %% Qdots
 guess.Qdots = zeros(N,nq.all);
 % The model is moving forward with a constant speed
-guess.Qdots(:,jointi.pelvis_tx) = S.subject.vPelvis_x_trgt;
+guess.Qdots(:,jointi.pelvis_tx) = S.subject.v_pelvis_x_trgt;
 % Qs and Qdots are intertwined
 guess.QsQdots = zeros(N,2*nq.all);
 guess.QsQdots(:,1:2:end) = guess.Qs;

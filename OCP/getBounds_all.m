@@ -148,7 +148,7 @@ bounds.Qs.lower(idx_elb) = 0;
 
 % We adjust some bounds when we increase the speed to allow for the
 % generation of running motions.
-if S.subject.vPelvis_x_trgt > 1.33
+if S.subject.v_pelvis_x_trgt > 1.33
     % Pelvis tilt
     bounds.Qs.lower(model_info.ExtFunIO.jointi.floating_base(1)) = -20*pi/180;
     % Shoulder flexion

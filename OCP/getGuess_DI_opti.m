@@ -121,9 +121,9 @@ guess.e_lumbar = 0.1*ones(N,nq.trunk);
 % The final time is function of the imposed speed
 all_speeds = 0.73:0.1:5;
 all_tf = 0.70:-((0.70-0.35)/(length(all_speeds)-1)):0.35;
-idx_speed = find(all_speeds==S.subject.vPelvis_x_trgt);
+idx_speed = find(all_speeds==S.subject.v_pelvis_x_trgt);
 if isempty(idx_speed)
-    idx_speed = find(all_speeds > S.subject.vPelvis_x_trgt,1,'first');
+    idx_speed = find(all_speeds > S.subject.v_pelvis_x_trgt,1,'first');
 end
 guess.tf = all_tf(idx_speed);
 
