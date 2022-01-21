@@ -1,5 +1,26 @@
 function write_motionFile_v40(q, fname)
-% Author: Dhruv Gupta 12/02/21
+% --------------------------------------------------------------------------
+% write_motionFile_v40 
+%   Write a .mot file compatible with OpenSim 4
+% 
+% INPUT:
+%   q
+%   * Structure of data
+%  
+%   fname
+%   * Filename that you want to write, should contain '.mot' (e.g. gait.mot)
+% 
+% OUTPUT:
+%   NA
+% 
+% Original author: Dhruv Gupta
+% Original date: 12/02/21
+%
+% Last change: Lars D'Hondt
+% Change date: 21/02/22
+% Changelog:
+% If an error occurs while writing, it will now close the file
+% --------------------------------------------------------------------------
 
 fid = fopen(fname, 'w');	
 if fid == -1								
