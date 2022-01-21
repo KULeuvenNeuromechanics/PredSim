@@ -1,4 +1,4 @@
-function [f_casadi] = createCasadi_GenHelper(model_info,N_musc_cross)
+function [f_casadi] = createCasadi_GenHelper(model_info)
 %createCasadi_GenHelper
 %   Function to create general Casadi functions.
 %
@@ -20,17 +20,19 @@ function [f_casadi] = createCasadi_GenHelper(model_info,N_musc_cross)
 import casadi.*
 
 N_muscles = length(model_info.muscle_info.params.names);
-N_non_musc_dof = []; %Zero elements in [# muscles crossing each joint]
-N_musc_dof = []; %Non-zero elements in [# muscles crossing each joint]
+N_arms = model_info.ExtFunIO.nq.arms; %Zero elements in [# muscles crossing each joint]
+N_musc_dof = model_info.ExtFunIO.nq.muscAct + ...
+    model_info.ExtFunIO.nq.abs; %Non-zero elements in [# muscles crossing each joint]
 
 %% Normalized sum of squared values
-% Function for non muscle driven dofs ***(previously f_J8)***
-e_temp_non_musc_dof = SX.sym('e_temp_non_musc_dof',N_non_musc_dof);
+% Function for non muscle driven dofs ***(previously f_J8)*** %%% Tom edit
+% f_J8, f_J23 and a third function when message from Dhruv arrives. %%%
+e_temp_non_musc_dof = SX.sym('e_temp_non_musc_dof',N_arms);
 J_temp_non_musc_dof = 0;
 for i=1:length(e_temp_non_musc_dof)
     J_temp_non_musc_dof = J_temp_non_musc_dof + e_temp_non_musc_dof(i).^2;
 end
-J_temp_non_musc_dof = J_temp_non_musc_dof/N_non_musc_dof;
+J_temp_non_musc_dof = J_temp_non_musc_dof/N_arms;
 f_casadi.J_non_musc_dof = Function('f_J_non_musc_dof',{e_temp_non_musc_dof},{J_temp_non_musc_dof});
 
 % Function for muscle driven dofs ***(previously f_J23)***
@@ -41,6 +43,8 @@ for i=1:length(e_temp_musc_dof)
 end
 J_temp_musc_dof = J_temp_musc_dof/N_musc_dof;
 f_casadi.J_musc_dof = Function('f_J_musc_dof',{e_temp_musc_dof},{J_temp_musc_dof});
+
+% Function for %%%
 
 % Function for all muscles
 e_temp_N_muscles = SX.sym('e_temp_N_muscles',N_muscles);
@@ -82,6 +86,7 @@ f_casadi.J_N_muscles_exp = Function('f_J_N_muscles_exp',{e_temp_N_muscles_exp,ex
 
 %% Sum of products
 % Function for number of muscles crossing a joint
+N_musc_cross = model_info.ExtFunIO.N_musc_cross; %Array with N muscles crossing each joint
 for i = 1:length(N_musc_cross)
     ma_temp_musc_cross = SX.sym('ma_temp_musc_cross',N_musc_cross(i));
     ft_temp_musc_cross = SX.sym('ft_temp_musc_cross',N_musc_cross(i));
