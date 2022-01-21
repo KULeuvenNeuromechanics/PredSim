@@ -270,8 +270,8 @@ if ~isfield(S.weights,'q_dotdot')
 end
 
 % weight on arm excitations
-if ~isfield(S.weights,'a_arm')
-    S.weights.q_e_arm = 10^6; 
+if ~isfield(S.weights,'e_arm')
+    S.weights.e_arm = 10^6; 
 end
 
 % weight on passive torques
@@ -291,7 +291,7 @@ end
 
 % weight on slack controls
 if ~isfield(S.weights,'slack_ctrl')
-    S.weights.slack_ctrl = 2000; 
+    S.weights.slack_ctrl = 0.001; 
 end
 
 end
