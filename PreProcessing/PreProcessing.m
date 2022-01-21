@@ -17,7 +17,7 @@ end
 %% generate external function
 % skeletal and contact dynamics, compiled based on .osim file
 % https://github.com/Lars-DHondt-KUL/opensimAD
-ext_fun_path = fullfile(S.misc.subject_folder,['F_' osim_file_name '.dll']);
+ext_fun_path = fullfile(S.subject.save_folder,['F_' osim_file_name '.dll']);
 if ~exist(ext_fun_path,'file')
     osim2dll(S,osim_path);
 end
