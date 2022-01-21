@@ -11,7 +11,7 @@ function model_info = get_model_info(S,osim_path)
 [~,osim_file_name,~] = fileparts(osim_path);
 
 % load IO from external function
-load(fullfile(S.misc.subject_folder,['F_' osim_file_name '_IO.mat']),'IO');
+load(fullfile(S.subject.save_folder,['F_' osim_file_name '_IO.mat']),'IO');
 
 model_info.ExtFunIO = IO;
 
