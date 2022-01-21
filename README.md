@@ -17,10 +17,10 @@ Besides that, the code was also adapted in accordance with recent (October 2020)
 - Support for parallel computing
 - Formulation with opti
 
-Lastly, seperate pieces of code where converted to functions called by the workflow to streamline performing predictive simulations:
+Lastly, seperate pieces of code where put together to streamline performing predictive simulations:
 
-- Automatic conversion of an OpenSim model to the external function
-- Perorming Muscle Analysis and polynomial fitting
+- Automatic conversion of an OpenSim model to the external function (executable called from the workflow)
+- Perorming Muscle Analysis and polynomial fitting (integrated into the workflow)
 
 
 ## Code Structure
