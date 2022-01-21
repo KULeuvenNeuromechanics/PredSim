@@ -15,7 +15,12 @@ function q = read_motionFile_v40(fname)
 %
 % ASA 12/03
 % Modified by Eran Guendelman 09/06
+%
 % Modified by Dhruv Gupta 12/02/21
+% Changelog:
+% OpenSim 3 to OpenSim 4
+% Added field inDeg
+
 % Open ascii data file for reading.
 
 fid = fopen(fname, 'r');	
