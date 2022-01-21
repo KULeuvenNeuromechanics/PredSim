@@ -136,7 +136,7 @@ end
 
 % maximal amount of itereations after wich the solver will stop
 if ~isfield(S.solver,'max_iter')
-    S.solver.max_iter = '10000';
+    S.solver.max_iter = 10000;
 end
 
 % type of parallel computing
