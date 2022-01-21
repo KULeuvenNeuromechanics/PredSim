@@ -1,15 +1,12 @@
 function [S] = getDefaultSettings(S)
 % --------------------------------------------------------------------------
 %getDefaultSettings 
-%   This functions sets default settings when the user didn't specify the
-%   setting in main.m.
+%   This functions checks if provided settings are valid and sets default 
+%   settings when the user didn't specify them in main.m.
 % 
 % INPUT:
 %   - S -
 %   * setting structure S
-%
-%   - IO -
-%   * structure with all the model information based on the OpenSim model
 % 
 % OUTPUT:
 %   - S -
@@ -19,7 +16,7 @@ function [S] = getDefaultSettings(S)
 % Original date: 30/11/2021
 %
 % Last edit by: Bram Van Den Bosch
-% Last edit date: 17/01/2022
+% Last edit date: 21/01/2022
 % --------------------------------------------------------------------------
 
 %% bounds
@@ -93,6 +90,13 @@ if ~isfield(S.misc,'gaitmotion_type')
     S.misc.gaitmotion_type = 'HalfGaitCycle';
 end
 
+% main path
+if ~isfield(S.misc,'main_path')
+    error('Please provide the path to the main folder in S.misc.main_path.');
+elseif ~exist(S.misc.main_path)
+    error('The main path you provided in S.misc.main_path does not exist.');
+end
+
 % type of equation to approximate musculo-skeletal geometry (moment arm and
 % muscle-tendon lengths wrt. joint angle)
 if ~isfield(S.misc,'msk_geom_eq')
@@ -157,16 +161,23 @@ end
 
 %% subject
 
-% folder path to store the subject specific results
-if ~isfield(S.subject,'save_folder')
-   error('Please provide a folder to store the results in. Specify the folder path in S.subject.save_folder.'); 
-elseif ~exist(S.subject.save_folder)
-    mkdir(S.subject.save_folder);
-end
-
 % name of the subject
 if ~isfield(S.subject,'name')
     error('Please provide a name for this subject. This name will be used to store the results. Specify the name in S.subject.name.');
+end
+
+% folder path to store the results from the OCP in
+if ~isfield(S.subject,'save_results')
+    error('Please provide a name for this subject. This name will be used to store the results. Specify the name in S.subject.name.');
+elseif ~exist(S.subject.save_results)
+    mkdir(S.subject.save_results);
+end
+
+% folder path to store the intermediate subject specific results (muscle
+% analysis etc.)
+S.subject.save_folder = fullfile(S.misc.main_path, "Subjects", S.subject.name);
+if ~exist(S.subject.save_folder)
+    mkdir(S.subject.save_folder);
 end
 
 % mass of the subject, in kilograms

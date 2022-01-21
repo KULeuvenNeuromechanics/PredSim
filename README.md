@@ -51,7 +51,7 @@ All user-defined settings are stored in structure *S*. In *main.m* you have to s
 
 ### Required
 
-- **S.subject.save_folder**: path to the folder where you want to store the results. If the path does not exist yet on your machine, it will be created automatically.
+- **S.subject.save_results**: path to the folder where you want to store the results of the OCP. If the path does not exist yet on your machine, it will be created automatically.
 - **S.subject.name**: the name or code of the subject you are simulating.
 - **S.subject.IG_selection**: either choose "quasi-random" or give the path to a .mot file you want to use as initial guess.
 - **S.subject.IG_bounds**: give the path to a .mot file on which IG_bounds will be based.
@@ -103,6 +103,7 @@ All user-defined settings are stored in structure *S*. In *main.m* you have to s
 
 #### S.subject
 
+- **S.subject.save_folder**: folder path to store the intermediate subject specific results (muscle analysis etc.). This setting is created automatically.
 - **S.subject.mass**: mass of the subject in kilograms. Default is *[]* kilograms [double]. If left empty, it will be overwritten by the mass extracted from the OpenSim model.
 - **s.subject.IG_pelvis_y**: height from the ground of the pelvis for the initial guess, in meters. Default is *[]* m [double]. I left empty, it will be overwritten by pelvis height extracted from the OpenSim model.
 - **S.subject.v_pelvis_x_trgt**: average velocity you want the model to have, in meters per second. Default is *1.25* m/s [double]
