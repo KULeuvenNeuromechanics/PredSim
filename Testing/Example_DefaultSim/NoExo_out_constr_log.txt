@@ -53,3 +53,5 @@ Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback
 f_PredSim_Gait92(model_info,S,f_casadi);
 % run the optimization
 } 
+opentoline('C:\Users\u0145647\OneDrive - KU Leuven\KU Leuven\programing retreat\PredSim-master_old\Depricated\VariousFunctions\solve_NLPSOL.m',77,0)
+Using a quasi-random guess as initial guess.
