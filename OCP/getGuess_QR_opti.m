@@ -10,8 +10,8 @@
 % 
 function guess = getGuess_QR_opti(N,scaling,model_info,S,d)
 nq = model_info.ExtFunIO.nq;
-% NMuscle = size(model_info.muscle_info.params.params,2);
-NMuscle = length(model_info.muscle_info.muscle_names);
+NMuscle = size(model_info.muscle_info.params.params,2);
+% NMuscle = length(model_info.muscle_info.muscle_names);
 % joints = fields(model_info.ExtFunIO.coordi)';
 jointi = model_info.ExtFunIO.coordi;
 PelvisY = S.subject.IG_pelvis_y;
@@ -74,7 +74,7 @@ if strcmp(S.misc.gaitmotion_type,'HalfGaitCycle')
         -guess.QsQdots(1,model_info.ExtFunIO.symQs.orderQsOpp1);           
     dx = guess.QsQdots(end,2*jointi.pelvis_tx-1) - ...
         guess.QsQdots(end-1,2*jointi.pelvis_tx-1);
-    inv_X(2*jointi.pelvis.tx-1) = ...
+    inv_X(2*jointi.pelvis_tx-1) = ...
         guess.QsQdots(end,2*jointi.pelvis_tx-1) + dx;
 
     orderMusInv = [NMuscle/2+1:NMuscle,1:NMuscle/2];
@@ -97,8 +97,8 @@ guess.e_mtp = 0.1*ones(N,nq.mtp);
 %% Mtp lumbar activations
 % Only used when no muscles actuate the lumbar joints (e.g. Rajagopal
 % model)
-guess.a_lumbar = 0.1*ones(N+1,nq.trunk);
-guess.e_lumbar = 0.1*ones(N,nq.trunk);
+guess.a_lumbar = 0.1*ones(N+1,nq.torso);
+guess.e_lumbar = 0.1*ones(N,nq.torso);
 
 %% Scaling
 guess.QsQdots   = guess.QsQdots./repmat(scaling.QsQdots,N+1,1);
@@ -109,7 +109,7 @@ guess.vA        = (guess.vA)./repmat(scaling.vA,N,size(guess.vA,2));
 guess.dFTtilde  = (guess.dFTtilde)./repmat(scaling.dFTtilde,N,...
     size(guess.dFTtilde,2));
 guess.a_mtp_col = zeros(d*N,nq.mtp);
-guess.a_lumbar_col = zeros(d*N,nq.trunk);
+guess.a_lumbar_col = zeros(d*N,nq.torso);
 
 %% Collocation points
     guess.a_col = zeros(d*N,NMuscle);

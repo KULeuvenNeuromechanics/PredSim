@@ -20,8 +20,8 @@ function [bounds,scaling,Qs_spline] = getBounds_all(Qs,model_info,S)
 % Get the names of the coordinates
 coordinate_names = fieldnames(model_info.ExtFunIO.coordi);
 NCoord = length(coordinate_names);
-% NMuscle = length(model_info.muscle_info.params.Fmax);
-NMuscle = length(model_info.muscle_info.muscle_names);
+NMuscle = length(model_info.muscle_info.params.Fmax);
+% NMuscle = length(model_info.muscle_info.muscle_names);
 % jointi = model_info.ExtFunIO.coordi;
 
 %% Spline approximation of Qs to get Qdots and Qdotdots
@@ -205,9 +205,9 @@ end
 % bounds.e_lumbar.lower = -ones(1,nq.trunk);
 % bounds.e_lumbar.upper = ones(1,nq.trunk);
 
-%% Final time
-bounds.tf.lower = S.bounds.t_final.lower;
-bounds.tf.upper = S.bounds.t_final.upper;
+% %% Final time
+% bounds.tf.lower = S.bounds.t_final.lower;
+% bounds.tf.upper = S.bounds.t_final.upper;
 
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Scaling

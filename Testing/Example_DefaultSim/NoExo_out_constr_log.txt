@@ -33,3 +33,4 @@ Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback
 f_PredSim_Gait92(model_info,S,f_casadi);
 % run the optimization
 } 
+exit
