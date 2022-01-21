@@ -14,11 +14,11 @@ for i = 1:size(bounds.Qs.lower,2)
         'r--','linewidth',2);
     hold on
     plot(guess.Qs(:,i),'k','linewidth',2);
-    hold on
-    plot(Qs_spline.data(:,i+1)/scaling.Qs(i),'g--','linewidth',1);
-    hold on
-    plot(q_in.data(:,i+1)/scaling.Qs(i),'k--','linewidth',1);
-    title(coordinate_names{i})
+%     hold on
+%     plot(Qs_spline.data(:,i+1)/scaling.Qs(i),'g--','linewidth',1);
+%     hold on
+%     plot(q_in.data(:,i+1)/scaling.Qs(i),'k--','linewidth',1);
+%     title(coordinate_names{i})
 end
 s = title('Qs');
 set(s,'Fontsize',title_Fontsize)

@@ -34,3 +34,22 @@ f_PredSim_Gait92(model_info,S,f_casadi);
 % run the optimization
 } 
 exit
+{Error using <a href="matlab:matlab.internal.language.introspective.errorDocCallback('casadi.nlpsol', 'C:\Users\u0145647\OneDrive - KU Leuven\KU Leuven\casadi-windows-matlabR2016a-v3.5.5\+casadi\nlpsol.m', 988)" style="font-weight:bold">casadi.nlpsol</a> (<a href="matlab: opentoline('C:\Users\u0145647\OneDrive - KU Leuven\KU Leuven\casadi-windows-matlabR2016a-v3.5.5\+casadi\nlpsol.m',988,0)">line 988</a>)
+.../casadi/core/function_internal.cpp:153:
+Error calling IpoptInterface::finalize for
+'solver':
+.../casadi/core/generic_type.cpp:351:
+Assertion "is_int()" failed:
+type mismatch
+
+Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('solve_NLPSOL', 'C:\Users\u0145647\OneDrive - KU Leuven\KU Leuven\programing retreat\PredSim-master_old\Depricated\VariousFunctions\solve_NLPSOL.m', 77)" style="font-weight:bold">solve_NLPSOL</a> (<a href="matlab: opentoline('C:\Users\u0145647\OneDrive - KU Leuven\KU Leuven\programing retreat\PredSim-master_old\Depricated\VariousFunctions\solve_NLPSOL.m',77,0)">line 77</a>)
+solver = nlpsol('solver',
+'ipopt',prob,optionssol);
+
+Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('f_PredSim_Gait92', 'C:\Users\u0145647\OneDrive - KU Leuven\KU Leuven\programing retreat\PredSim\Testing\f_PredSim_Gait92.m', 780)" style="font-weight:bold">f_PredSim_Gait92</a> (<a href="matlab: opentoline('C:\Users\u0145647\OneDrive - KU Leuven\KU Leuven\programing retreat\PredSim\Testing\f_PredSim_Gait92.m',780,0)">line 780</a>)
+[w_opt,stats] = solve_NLPSOL(opti,options);
+
+Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('testMain', 'C:\Users\u0145647\OneDrive - KU Leuven\KU Leuven\programing retreat\PredSim\Testing\testMain.m', 73)" style="font-weight:bold">testMain</a> (<a href="matlab: opentoline('C:\Users\u0145647\OneDrive - KU Leuven\KU Leuven\programing retreat\PredSim\Testing\testMain.m',73,0)">line 73</a>)
+f_PredSim_Gait92(model_info,S,f_casadi);
+% run the optimization
+} 

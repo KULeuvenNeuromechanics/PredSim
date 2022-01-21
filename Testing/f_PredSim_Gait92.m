@@ -191,6 +191,9 @@ end
 % adapt guess so that it fits within the bounds
 guess = AdaptGuess_UserInput(guess,bounds,S);
 
+nq = model_info.ExtFunIO.nq;
+visualizebounds
+
 bounds.tf.lower = guess.tf;
 bounds.tf.upper = guess.tf;
 % %% exoskeleton torques
@@ -199,7 +202,6 @@ bounds.tf.upper = guess.tf;
 %     ExoVect = GetExoTorques(S,pathRepo,N);
 % end
 
-nq = model_info.ExtFunIO.nq;
 
 %% OCP create variables and bounds
 % using opti

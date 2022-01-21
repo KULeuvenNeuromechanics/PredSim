@@ -49,7 +49,7 @@ S.ExoBool       = 0;
 S.ExoScale      = 0;        % scale factor of exoskeleton assistance profile = 0 (i.e. no assistance)
 S.ExternalFunc  = 'F_test_1.dll';        % external function
 % S.ExternalFunc  = 'PredSim_3D_Pog_s1_mtp.dll';        % external function
-S.ExternalFunc2 = 'PredSim_3D_Pog_s1_mtp_pp.dll';     % external function for post-processing
+% S.ExternalFunc2 = 'PredSim_3D_Pog_s1_mtp_pp.dll';     % external function for post-processing
 S.savename      = 'NoExo_out_constr';
 S = getDefaultSettings_testing(S);
 S = updateS(S);
