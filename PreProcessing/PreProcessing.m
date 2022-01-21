@@ -10,8 +10,8 @@ function [S,model_info] = PreProcessing(S,osim_path)
 
 %% subject specific folder
 % to store information about model
-if ~isfolder(S.misc.subject_folder)
-    mkdir(S.misc.subject_folder);
+if ~isfolder(S.subject.save_folder)
+    mkdir(S.subject.save_folder);
 end
 
 %% generate external function
