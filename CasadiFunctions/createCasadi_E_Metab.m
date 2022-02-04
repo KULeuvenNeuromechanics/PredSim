@@ -12,8 +12,8 @@ function [fgetMetabolicEnergySmooth2004all] = createCasadi_E_Metab(model_info)
 % Authors: Ines Vandekerckhove, KU Leuven
 % Date: 01-12-2021 
 import casadi.*
-NMuscle = length(model_info.muscle_info.params.names);
-MTparameters_m = model_info.muscle_info.params.params;
+NMuscle = model_info.muscle_info.NMuscle;
+MTparameters_m = model_info.muscle_info.params;
 %% Metabolic energy models
 act_SX          = SX.sym('act_SX',NMuscle,1); % Muscle activations
 exc_SX          = SX.sym('exc_SX',NMuscle,1); % Muscle excitations

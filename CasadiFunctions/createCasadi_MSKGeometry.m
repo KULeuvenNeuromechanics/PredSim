@@ -1,4 +1,4 @@
-function [f_lMT_vMT_dM] = createCasadi_MSKGeometry(MainPath,model_info)
+function [f_lMT_vMT_dM] = createCasadi_MSKGeometry(model_info)
 %createCasadi_MSKGeometry 
 %   Function to create Casadi functions for musculoskeletal geometry.
 % 
@@ -25,18 +25,18 @@ muscle_spanning_info_m = model_info.muscle_info.polyFit.muscle_spanning_joint_in
 MuscleInfo_m.muscle    = model_info.muscle_info.polyFit.MuscleInfo.muscle(:);
 NMuscle_pol = size(muscle_spanning_info_m,1);
 NJoint_pol = size(muscle_spanning_info_m,2);
-qin     = MX.sym('qin',1,NJoint_pol);
-qdotin  = MX.sym('qdotin',1,NJoint_pol);
-lMT     = MX(NMuscle_pol,1);
-vMT     = MX(NMuscle_pol,1);
-dM      = MX(NMuscle_pol,NJoint_pol);
+qin     = SX.sym('qin',1,NJoint_pol);
+qdotin  = SX.sym('qdotin',1,NJoint_pol);
+lMT     = SX(NMuscle_pol,1);
+vMT     = SX(NMuscle_pol,1);
+dM      = SX(NMuscle_pol,NJoint_pol);
 load nCoeffMat
 load expoVal_all
 for i=1:NMuscle_pol      
     index_dof_crossing  = find(muscle_spanning_info_m(i,:)==1);
     nr_dof_crossing     = length(index_dof_crossing); 
     order               = MuscleInfo_m.muscle(i).order;
-    [mat,diff_mat_q]    = n_art_mat_3_cas_MX_7(qin(1,index_dof_crossing),...
+    [mat,diff_mat_q]    = n_art_mat_3_cas_SX_7(qin(1,index_dof_crossing),...
         nCoeffMat(order,nr_dof_crossing),expoVal_all{order,nr_dof_crossing});
     lMT(i,1)            = mat'*MuscleInfo_m.muscle(i).coeff;
     vMT(i,1)            = 0;

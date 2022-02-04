@@ -8,9 +8,8 @@
 % Date: 12/19/2018
 % 
 function guess = getGuess_DI_opti(Qs,N,time_IC,scaling,S,d,model_info)
-nq = model_info.ExtFunIO.nq;
-% NMuscle = size(model_info.muscle_info.params.params,2);
-NMuscle = length(model_info.muscle_info.muscle_names);
+nq = model_info.ExtFunIO.jointi.nq;
+NMuscle = model_info.muscle_info.NMuscle;
 coordinate_names = fieldnames(model_info.ExtFunIO.coordi);
 NCoord = length(coordinate_names);
 jointi = model_info.ExtFunIO.coordi;
@@ -32,13 +31,13 @@ end
 for i=1:NCoord
     coordinate = coordinate_names{i};
     coord_idx = model_info.ExtFunIO.coordi.(coordinate);
-    guess.Qs_all.data(:,coord_idx) = Qs_spline.data(:,strcmp(Qs.colheaders(1,:),coordinate));
-    guess.Qdots_all.data(:,coord_idx) = Qdots_spline.data(:,strcmp(Qs.colheaders(1,:),coordinate));
-    guess.Qdotdots_all.data(:,coord_idx) = Qdotdots_spline.data(:,strcmp(Qs.colheaders(1,:),coordinate));
+    guess.Qs_all(:,coord_idx) = Qs_spline.data(:,strcmp(Qs.colheaders(1,:),coordinate));
+    guess.Qdots_all(:,coord_idx) = Qdots_spline.data(:,strcmp(Qs.colheaders(1,:),coordinate));
+    guess.Qdotdots_all(:,coord_idx) = Qdotdots_spline.data(:,strcmp(Qs.colheaders(1,:),coordinate));
     if contains(coordinate,'mtp')
-        guess.Qs_all.data(:,coord_idx) = zeros(size(guess.Qs_all.data,1),1);
-        guess.Qdots_all.data(:,coord_idx) = zeros(size(guess.Qdots_all.data,1),1);
-        guess.Qdotdots_all.data(:,coord_idx) = zeros(size(guess.Qdotdots_all.data,1),1);
+        guess.Qs_all(:,coord_idx) = zeros(size(guess.Qs_all,1),1);
+        guess.Qdots_all(:,coord_idx) = zeros(size(guess.Qdots_all,1),1);
+        guess.Qdotdots_all(:,coord_idx) = zeros(size(guess.Qdotdots_all,1),1);
     end
 end
     
@@ -48,12 +47,12 @@ time_expi.Qs(1) = find(round(Qs_time,3) == round(time_IC(1),3));
 time_expi.Qs(2) = find(round(Qs_time,3) == round(time_IC(2),3));
 step = (Qs_time(time_expi.Qs(2))-Qs_time(time_expi.Qs(1)))/(N-1);
 interval = Qs_time(time_expi.Qs(1)):step:Qs_time(time_expi.Qs(2));
-guess.Qs = interp1(round(Qs_time,4),guess.Qs_all.data,round(interval,4));
+guess.Qs = interp1(round(Qs_time,4),guess.Qs_all,round(interval,4));
 guess.Qs(:,jointi.pelvis_tx) = guess.Qs(:,jointi.pelvis_tx) - ....
     guess.Qs(1,jointi.pelvis_tx);
 
 % Interpolation
-guess.Qdots = interp1(round(Qs_time,4),guess.Qdots_all.data,...
+guess.Qdots = interp1(round(Qs_time,4),guess.Qdots_all,...
     round(interval,4));
 
 % Qs and Qdots are intertwined
@@ -62,7 +61,7 @@ guess.QsQdots(:,1:2:end) = guess.Qs;
 guess.QsQdots(:,2:2:end) = guess.Qdots;
 
 % Interpolation
-guess.Qdotdots = interp1(round(Qs_time,4),guess.Qdotdots_all.data,...
+guess.Qdotdots = interp1(round(Qs_time,4),guess.Qdotdots_all,...
     round(interval,4));
 
 %% Muscle variables
@@ -91,14 +90,12 @@ if strcmp(S.misc.gaitmotion_type,'HalfGaitCycle')
         -guess.QsQdots(1,model_info.ExtFunIO.symQs.orderQsOpp1);           
     dx = guess.QsQdots(end,2*jointi.pelvis_tx-1) - ...
         guess.QsQdots(end-1,2*jointi.pelvis_tx-1);
-    inv_X(2*jointi.pelvis.tx-1) = ...
+    inv_X(2*jointi.pelvis_tx-1) = ...
         guess.QsQdots(end,2*jointi.pelvis_tx-1) + dx;
 
-    orderMusInv = [NMuscle/2+1:NMuscle,1:NMuscle/2];
-
     guess.QsQdots = [guess.QsQdots; inv_X];
-    guess.a = [guess.a; guess.a(1,orderMusInv)];
-    guess.FTtilde = [guess.FTtilde; guess.FTtilde(1,orderMusInv)];
+    guess.a = [guess.a; guess.a(1,model_info.ExtFunIO.symQs.orderMusInv)];
+    guess.FTtilde = [guess.FTtilde; guess.FTtilde(1,model_info.ExtFunIO.symQs.orderMusInv)];
     guess.a_a = [guess.a_a; guess.a_a(1,model_info.ExtFunIO.symQs.orderArmInv)];
 else
     guess.QsQdots = [guess.QsQdots; guess.QsQdots(1,:)];
@@ -111,15 +108,10 @@ end
 guess.a_mtp = 0.1*ones(N+1,nq.mtp);
 guess.e_mtp = 0.1*ones(N,nq.mtp);
 
-%% Mtp lumbar activations
-% Only used when no muscles actuate the lumbar joints (e.g. Rajagopal
-% model)
-guess.a_lumbar = 0.1*ones(N+1,nq.trunk);
-guess.e_lumbar = 0.1*ones(N,nq.trunk);
-
 %% Final time
 % The final time is function of the imposed speed
-all_speeds = 0.73:0.1:5;
+% all_speeds = 0.73:0.1:5;
+all_speeds = 0.73:0.1:2.73;
 all_tf = 0.70:-((0.70-0.35)/(length(all_speeds)-1)):0.35;
 idx_speed = find(all_speeds==S.subject.v_pelvis_x_trgt);
 if isempty(idx_speed)
@@ -145,7 +137,7 @@ guess.a_a_col = zeros(d*N,nq.arms);
 guess.a_mtp_col = zeros(d*N,nq.mtp);
 guess.dFTtilde_col = zeros(d*N,NMuscle);
 guess.Qdotdots_col = zeros(d*N,nq.all);
-guess.a_lumbar_col = zeros(d*N,nq.trunk);
+guess.a_lumbar_col = zeros(d*N,nq.torso);
 for k=1:N
     guess.a_col((k-1)*d+1:k*d,:) = repmat(guess.a(k,:),d,1); 
     guess.FTtilde_col((k-1)*d+1:k*d,:) = repmat(guess.FTtilde(k,:),d,1);

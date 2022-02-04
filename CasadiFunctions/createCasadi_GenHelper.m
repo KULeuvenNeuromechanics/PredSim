@@ -19,14 +19,13 @@ function [f_casadi] = createCasadi_GenHelper(model_info)
 
 import casadi.*
 
-N_muscles = length(model_info.muscle_info.params.names);
-N_arms_dof = model_info.ExtFunIO.nq.arms;
-N_noarms_dof = model_info.ExtFunIO.nq.noarms;
-N_musc_dof = model_info.ExtFunIO.nq.muscleActuated;
-N_pass_noMTP_dof = model_info.ExtFunIO.nq.muscleActuated+model_info.ExtFunIO.nq.arms;
+N_muscles = model_info.muscle_info.NMuscle;
+N_arms_dof = model_info.ExtFunIO.jointi.nq.arms;
+N_noarms_dof = model_info.ExtFunIO.jointi.nq.noarms;
+N_musc_dof = model_info.ExtFunIO.jointi.nq.muscleActuated;
+N_pass_noMTP_dof = model_info.ExtFunIO.jointi.nq.muscleActuated+model_info.ExtFunIO.jointi.nq.arms;
 
 %% Normalized sum of squared values
-% Function for non muscle driven dofs ***(previously f_J8)***
 e_temp_arms_dof = SX.sym('e_temp_arms_dof',N_arms_dof);
 J_temp_arms_dof = 0;
 for i=1:length(e_temp_arms_dof)
@@ -43,7 +42,6 @@ end
 J_temp_noarms_dof = J_temp_noarms_dof/N_noarms_dof;
 f_casadi.J_noarms_dof = Function('f_J_noarms_dof',{e_temp_noarms_dof},{J_temp_noarms_dof});
 
-% Function for muscle driven dofs ***(previously f_J23)***
 e_temp_pass_noMTP_dof = SX.sym('e_temp_pass_noMTP_dof',N_pass_noMTP_dof);
 J_temp_pass_noMTP_dof = 0;
 for i=1:length(e_temp_pass_noMTP_dof)
@@ -60,6 +58,14 @@ end
 J_temp_musc_dof = J_temp_musc_dof/N_musc_dof;
 f_casadi.J_musc_dof = Function('f_J_musc_dof',{e_temp_musc_dof},{J_temp_musc_dof});
 
+% Function for 2 elements
+etemp2 = SX.sym('etemp2',2);
+Jtemp2 = 0;
+for i=1:length(etemp2)
+    Jtemp2 = Jtemp2 + etemp2(i).^2;
+end
+Jtemp2 = Jtemp2/2;
+f_casadi.J_2 = Function('f_J_2',{etemp2},{Jtemp2});
 
 % Function for all muscles
 e_temp_N_muscles = SX.sym('e_temp_N_muscles',N_muscles);
@@ -69,15 +75,6 @@ for i=1:length(e_temp_N_muscles)
 end
 J_temp_N_muscles = J_temp_N_muscles/N_muscles;
 f_casadi.J_N_muscles = Function('f_J_N_muscles',{e_temp_N_muscles},{J_temp_N_muscles});
-
-% Function for 2 elements
-etemp2 = SX.sym('etemp2',2);
-Jtemp2 = 0;
-for i=1:length(etemp2)
-    Jtemp2 = Jtemp2 + etemp2(i).^2;
-end
-Jtemp2 = Jtemp2/2;
-f_casadi.J_2 = Function('f_J_2',{etemp2},{Jtemp2});
 
 %% Sum of squared values (non-normalized)
 % Function for for distance between 2 points

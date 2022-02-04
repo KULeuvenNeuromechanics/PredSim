@@ -4,10 +4,10 @@
 % Authors: Original code from Wouter Aerts, adapted by Antoine Falisse
 % Date: 12/19/2018
 %
-function [mat,diff_mat_q] = n_art_mat_3_cas_MX_7(q, nr_coefficients,expoVal)
+function [mat,diff_mat_q] = n_art_mat_3_cas_SX_7(q, nr_coefficients,expoVal)
 import casadi.*
 n_dof = length(q(1,:));
-q_all = MX(1,4);
+q_all = SX(1,4);
 q_all(1,1:n_dof) = q;
 % if n_dof<4
 %     temp_empty = 4-n_dof;
@@ -16,14 +16,14 @@ q_all(1,1:n_dof) = q;
 %     q_all=[q_all,MX_null];
 % end
 temp_empty = 4-n_dof;
-MX_null = MX(1);
+MX_null = SX(1);
 MX_null(1,1) = 0;
 for n_temp_empty = 1:temp_empty
     q_all(1,n_dof+n_temp_empty) = MX_null;
 end
 
-mat = MX(nr_coefficients,1);
-diff_mat_q = MX(nr_coefficients,4);
+mat = SX(nr_coefficients,1);
+diff_mat_q = SX(nr_coefficients,4);
 
 q_all_nr = repmat(q_all,nr_coefficients,1);
 expo_q_all_nr = q_all_nr.^expoVal;

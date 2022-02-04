@@ -11,18 +11,13 @@
 % Adapted: Dhruv Gupta
 % Date: 17 jan 2022
 %
-% TO DO: review bounds and scaling regarding actuators
-% NOTE: used scaling.mtpTau = 100, Antoine used 30
-%
 %--------------------------------------------------------------------------
-function [bounds,scaling,Qs_spline] = getBounds_all(Qs,model_info,S)
+function [bounds,scaling] = getBounds_all(Qs,model_info,S)
 
 % Get the names of the coordinates
 coordinate_names = fieldnames(model_info.ExtFunIO.coordi);
 NCoord = length(coordinate_names);
-NMuscle = length(model_info.muscle_info.params.Fmax);
-% NMuscle = length(model_info.muscle_info.muscle_names);
-% jointi = model_info.ExtFunIO.coordi;
+NMuscle = model_info.muscle_info.NMuscle;
 
 %% Spline approximation of Qs to get Qdots and Qdotdots
 Qs_spline.data = zeros(size(Qs.allfilt));
@@ -97,17 +92,10 @@ for i=[model_info.ExtFunIO.jointi.leg_r model_info.ExtFunIO.jointi.arm_r]
 end
 
 %% extend IK-based bounds
-% idx_extend = [model_info.ExtFunIO.jointi.floating_base,...
-%     model_info.ExtFunIO.jointi.leg_r,...
-%     model_info.ExtFunIO.jointi.leg_l,...
-%     model_info.ExtFunIO.jointi.torso,...
-%     idx_elbow,idx_shoulder_flex];
 
 % The bounds are extended by twice the absolute difference between upper
 % and lower bounds.
 Qs_range = bounds.Qs.upper - bounds.Qs.lower;
-% bounds.Qs.lower(idx_extend) = bounds.Qs.lower(idx_extend) - 2*Qs_range(idx_extend);
-% bounds.Qs.upper(idx_extend) = bounds.Qs.upper(idx_extend) + 2*Qs_range(idx_extend);
 bounds.Qs.lower = bounds.Qs.lower - 2*Qs_range;
 bounds.Qs.upper = bounds.Qs.upper + 2*Qs_range;
 
@@ -158,7 +146,7 @@ if S.subject.v_pelvis_x_trgt > 1.33
 end
 
 %% Muscle activations
-bounds.a.lower = 0.05*ones(1,NMuscle);
+bounds.a.lower = S.bounds.a.lower*ones(1,NMuscle);
 bounds.a.upper = ones(1,NMuscle);
 
 %% Muscle-tendon forces
@@ -193,21 +181,9 @@ if strcmp(S.subject.mtp_type,'active')
     bounds.a_mtp.upper = ones(1,length(idx_mtp));
 end
 
-% %% Lumbar activations
-% % Only used when no muscles actuate the lumbar joints (e.g. Rajagopal
-% % model)
-% bounds.a_lumbar.lower = -ones(1,nq.trunk);
-% bounds.a_lumbar.upper = ones(1,nq.trunk);
-% 
-% %% Lumbar excitations
-% % Only used when no muscles actuate the lumbar joints (e.g. Rajagopal
-% % model)
-% bounds.e_lumbar.lower = -ones(1,nq.trunk);
-% bounds.e_lumbar.upper = ones(1,nq.trunk);
-
-% %% Final time
-% bounds.tf.lower = S.bounds.t_final.lower;
-% bounds.tf.upper = S.bounds.t_final.upper;
+%% Final time
+bounds.tf.lower = S.bounds.t_final.lower;
+bounds.tf.upper = S.bounds.t_final.upper;
 
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Scaling

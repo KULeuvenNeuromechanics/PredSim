@@ -131,12 +131,12 @@ end
 % the power (10^-x) the dual infeasibility has to reach before the OCP can 
 % be regarded as solved; a higher number gives a more precise answer
 if ~isfield(S.solver,'tol_ipopt')
-    S.solver.tol_ipopt = '4';
+    S.solver.tol_ipopt = 4;
 end
 
 % maximal amount of itereations after wich the solver will stop
 if ~isfield(S.solver,'max_iter')
-    S.solver.max_iter = '10000';
+    S.solver.max_iter = 10000;
 end
 
 % type of parallel computing
@@ -147,12 +147,12 @@ end
 % ADD CHECK ST THIS IS ONLY  USED WHEN USING THREAD PARALLEL MODE?
 % number of threads in parallel mode
 if ~isfield(S.solver,'N_threads')
-    S.solver.N_threads = '4';
+    S.solver.N_threads = 4;
 end
 
 % number of mesh intervals
 if ~isfield(S.solver,'N_meshes')
-    S.solver.N_meshes = '50';
+    S.solver.N_meshes = 50;
 end
 
 %% subject

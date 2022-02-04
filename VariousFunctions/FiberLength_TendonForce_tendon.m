@@ -5,13 +5,7 @@
 % Date: 12/19/2018
 % 
 function [lM,lMtilde,varargout] = ...
-    FiberLength_TendonForce_tendon(FTtilde,params,lMT,aTendon,shift,varargin)
-
-if isempty(varargin)
-    MuscMoAsmp = 0;
-else
-    MuscMoAsmp = varargin{1};
-end
+    FiberLength_TendonForce_tendon(FTtilde,params,lMT,aTendon,shift,MuscMoAsmp)
 
 lMo = ones(size(FTtilde,1),1)*params(2,:);
 lTs = ones(size(FTtilde,1),1)*params(3,:);

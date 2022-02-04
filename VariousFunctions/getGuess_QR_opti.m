@@ -9,19 +9,14 @@
 % Date: 12/19/2018
 % 
 function guess = getGuess_QR_opti(N,scaling,model_info,S,d)
-nq = model_info.ExtFunIO.nq;
-NMuscle = size(model_info.muscle_info.params.params,2);
-% NMuscle = length(model_info.muscle_info.muscle_names);
-% joints = fields(model_info.ExtFunIO.coordi)';
+nq = model_info.ExtFunIO.jointi.nq;
+NMuscle = model_info.muscle_info.NMuscle;
 jointi = model_info.ExtFunIO.coordi;
 PelvisY = S.subject.IG_pelvis_y;
 
-if ~exist('PelvisY','var')
-    PelvisY = 0.9385;
-end
 %% Final time
 % The final time is function of the imposed speed
-all_speeds = 0.73:0.1:2.73;
+all_speeds = 0.73:0.1:5;
 all_tf = 0.70:-((0.70-0.35)/(length(all_speeds)-1)):0.35;
 idx_speed = find(all_speeds==S.subject.v_pelvis_x_trgt);
 if isempty(idx_speed)
@@ -77,11 +72,9 @@ if strcmp(S.misc.gaitmotion_type,'HalfGaitCycle')
     inv_X(2*jointi.pelvis_tx-1) = ...
         guess.QsQdots(end,2*jointi.pelvis_tx-1) + dx;
 
-    orderMusInv = [NMuscle/2+1:NMuscle,1:NMuscle/2];
-
     guess.QsQdots = [guess.QsQdots; inv_X];
-    guess.a = [guess.a; guess.a(1,orderMusInv)];
-    guess.FTtilde = [guess.FTtilde; guess.FTtilde(1,orderMusInv)];
+    guess.a = [guess.a; guess.a(1,model_info.ExtFunIO.symQs.orderMusInv)];
+    guess.FTtilde = [guess.FTtilde; guess.FTtilde(1,model_info.ExtFunIO.symQs.orderMusInv)];
     guess.a_a = [guess.a_a; guess.a_a(1,model_info.ExtFunIO.symQs.orderArmInv)];
 else
     guess.QsQdots = [guess.QsQdots; guess.QsQdots(1,:)];
@@ -93,12 +86,6 @@ end
 %% Mtp activations
 guess.a_mtp = 0.1*ones(N+1,nq.mtp);
 guess.e_mtp = 0.1*ones(N,nq.mtp);
-
-%% Mtp lumbar activations
-% Only used when no muscles actuate the lumbar joints (e.g. Rajagopal
-% model)
-guess.a_lumbar = 0.1*ones(N+1,nq.torso);
-guess.e_lumbar = 0.1*ones(N,nq.torso);
 
 %% Scaling
 guess.QsQdots   = guess.QsQdots./repmat(scaling.QsQdots,N+1,1);
