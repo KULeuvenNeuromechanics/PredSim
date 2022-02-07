@@ -109,6 +109,11 @@ if ~isfield(S.misc.poly_order,'upper')
     S.misc.poly_order.upper = 9;
 end
 
+% visualize IG and bounds
+if ~isfield(S.misc,'visualize_IG_bounds')
+    S.misc.visualize_IG_bounds = 0;
+end
+
 %% post_process
 
 % boolean to plot post processing results
