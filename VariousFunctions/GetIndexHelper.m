@@ -10,6 +10,7 @@ model_info.ExtFunIO.jointi.legs_nomtp = sort(setdiff(model_info.ExtFunIO.jointi.
 model_info.ExtFunIO.jointi.noarmsi = sort([model_info.ExtFunIO.jointi.ground_pelvis model_info.ExtFunIO.jointi.legsi model_info.ExtFunIO.jointi.torso]); % all but arms
 model_info.ExtFunIO.jointi.legs_torso = sort([model_info.ExtFunIO.jointi.legsi model_info.ExtFunIO.jointi.torso]);
 model_info.ExtFunIO.jointi.muscleActuated = sort(setdiff(model_info.ExtFunIO.jointi.legs_torso,model_info.ExtFunIO.jointi.mtpi));
+model_info.ExtFunIO.jointi.tau_passi = [model_info.ExtFunIO.jointi.muscleActuated model_info.ExtFunIO.jointi.armsi model_info.ExtFunIO.jointi.mtpi];
 
 % Number of degrees of freedom for later use
 nq.all      = length(residualsi); % all
@@ -22,6 +23,9 @@ nq.legs_torso = length(model_info.ExtFunIO.jointi.legs_torso);
 nq.noarms   = length(model_info.ExtFunIO.jointi.noarmsi);
 nq.muscleActuated = length(model_info.ExtFunIO.jointi.muscleActuated);
 nq.legs_nomtp = length(model_info.ExtFunIO.jointi.legs_nomtp);
+nq.roti = length(model_info.ExtFunIO.jointi.rotations);
+nq.translationsi = length(model_info.ExtFunIO.jointi.translations);
+nq.tau_pass = length(model_info.ExtFunIO.jointi.tau_passi);
 
 model_info.ExtFunIO.jointi.nq = nq;
 
@@ -38,6 +42,9 @@ model_info = addCoordNames(model_info,'armsi');
 model_info = addCoordNames(model_info,'noarmsi');
 model_info = addCoordNames(model_info,'mtpi');
 model_info = addCoordNames(model_info,'legs_nomtp');
+model_info = addCoordNames(model_info,'rotations');
+model_info = addCoordNames(model_info,'translations');
+model_info = addCoordNames(model_info,'tau_passi');
 
 orderQs = 1:2*nq.all;
 
@@ -134,17 +141,31 @@ model_info.muscle_info.IndexCalf = [model_info.muscle_info.muscle_index.lat_gas_
     model_info.muscle_info.muscle_index.med_gas_l,...
     model_info.muscle_info.muscle_index.soleus_l];
 
-orderMus = 1:length(model_info.muscle_info.params.names);
-orderMusInv = zeros(1,length(model_info.muscle_info.params.names));
-for i=1:length(model_info.muscle_info.params.names)
-    if strcmp(model_info.muscle_info.params.names{i}(end-1:end),'_r')
-        orderMusInv(i) = find(strcmp(model_info.muscle_info.params.names,...
-            [model_info.muscle_info.params.names{i}(1:end-2) '_l']));
-    elseif strcmp(model_info.muscle_info.params.names{i}(end-1:end),'_l')
-        orderMusInv(i) = find(strcmp(model_info.muscle_info.params.names,...
-            [model_info.muscle_info.params.names{i}(1:end-2) '_r']));
+orderMus = 1:length(model_info.muscle_info.muscle_names);
+orderMusInv = zeros(1,length(model_info.muscle_info.muscle_names));
+for i=1:length(model_info.muscle_info.muscle_names)
+    if strcmp(model_info.muscle_info.muscle_names{i}(end-1:end),'_r')
+        orderMusInv(i) = find(strcmp(model_info.muscle_info.muscle_names,...
+            [model_info.muscle_info.muscle_names{i}(1:end-2) '_l']));
+    elseif strcmp(model_info.muscle_info.muscle_names{i}(end-1:end),'_l')
+        orderMusInv(i) = find(strcmp(model_info.muscle_info.muscle_names,...
+            [model_info.muscle_info.muscle_names{i}(1:end-2) '_r']));
     end
 end
 model_info.ExtFunIO.symQs.orderMus = orderMus;
 model_info.ExtFunIO.symQs.orderMusInv = orderMusInv;
 
+orderTauPass = [1:nq.tau_pass];
+orderTauPassInv = zeros(1,nq.tau_pass);
+for i=1:nq.tau_pass
+    if strcmp(model_info.ExtFunIO.jointi.names.tau_passi{i}(end-1:end),'_r')
+        orderTauPassInv(i) = orderTauPass(find(ismember(model_info.ExtFunIO.jointi.names.tau_passi,[model_info.ExtFunIO.jointi.names.tau_passi{i}(1:end-2) '_l'])));
+    elseif strcmp(model_info.ExtFunIO.jointi.names.tau_passi{i}(end-1:end),'_l')
+        orderTauPassInv(i) = orderTauPass(find(ismember(model_info.ExtFunIO.jointi.names.tau_passi,[model_info.ExtFunIO.jointi.names.tau_passi{i}(1:end-2) '_r'])));
+    else
+        orderTauPassInv(i) = orderTauPass(find(ismember(model_info.ExtFunIO.jointi.names.tau_passi,model_info.ExtFunIO.jointi.names.tau_passi{i})));
+    end
+end
+
+model_info.ExtFunIO.symQs.orderTauPass = orderTauPass;
+model_info.ExtFunIO.symQs.orderTauPassInv = orderTauPassInv;

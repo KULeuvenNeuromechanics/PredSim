@@ -77,13 +77,22 @@ J_temp_N_muscles = J_temp_N_muscles/N_muscles;
 f_casadi.J_N_muscles = Function('f_J_N_muscles',{e_temp_N_muscles},{J_temp_N_muscles});
 
 %% Sum of squared values (non-normalized)
-% Function for for distance between 2 points
+% Function for for distance between 2 points (in a certain plane)
 e_temp_2 = SX.sym('e_temp_2',2);
 J_temp_2 = 0;
 for i=1:length(e_temp_2)
     J_temp_2 = J_temp_2 + e_temp_2(i).^2;
 end
 f_casadi.J_nn_2 = Function('f_J_nn_2',{e_temp_2},{J_temp_2});
+
+%% Sum of squared values (non-normalized)
+% Function for for distance between 2 points
+e_temp_3 = SX.sym('e_temp_3',3);
+J_temp_3 = 0;
+for i=1:length(e_temp_3)
+    J_temp_3 = J_temp_3 + e_temp_3(i).^2;
+end
+f_casadi.J_nn_3 = Function('f_J_nn_3',{e_temp_3},{J_temp_3});
 
 %% Normalized sum of values to a certain power
 % Function for 92 elements
