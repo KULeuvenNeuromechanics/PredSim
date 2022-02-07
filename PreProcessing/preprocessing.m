@@ -6,6 +6,10 @@ model_info = get_model_info(S,osim_path);
 
 model_info.muscle_info.params = read_and_scale_MTparameters(S,osim_path,model_info);
 
+IOfields = fields(model_info.ExtFunIO);
+for i=1:length(IOfields)
+    model_info.ExtFunIO.(IOfields{i}) = convert2double(model_info.ExtFunIO.(IOfields{i}));
+end
 [model_info] = GetIndexHelper(S,model_info);
 
 [model_info] = scale_MTparameters(S,model_info);
