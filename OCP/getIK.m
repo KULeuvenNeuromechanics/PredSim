@@ -29,7 +29,7 @@ for i = 1:length(coordinate_names)
         Qs_IK.(coordinate) = zeros(size(Qs_IK.time));
     else
         if strcmp(Qsall.inDeg,'yes')
-            if model_info.ExtFunIO.jointi.translations(:) == model_info.ExtFunIO.coordi.(coordinate)
+            if sum(model_info.ExtFunIO.jointi.translations(:) == model_info.ExtFunIO.coordi.(coordinate))
                 Qs_IK.(coordinate) = Qsall.data(:,idx_coord_Qsall);
             else
                 Qs_IK.(coordinate) = Qsall.data(:,idx_coord_Qsall).*(pi/180);
