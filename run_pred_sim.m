@@ -15,7 +15,7 @@ addpath(pathCasadiFunctions)
 S=getDefaultSettings(S);
 S = updateS_passiveJointTorqueProperties(S);
 
-[S,model_info]=preprocessing(S,osim_path);
+[S,model_info] = preprocessing(S,osim_path);
 
 [f_casadi] = createCasadiFunctions(model_info);
 

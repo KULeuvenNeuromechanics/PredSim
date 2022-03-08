@@ -1,6 +1,18 @@
-function [model_info] = GetIndexHelper(S,model_info)
-% TO DO
-% Why different k for calf muslces?
+function [model_info] = update_model_info(S,model_info)
+%
+% Create additional fields with indices combination in model_info, based on
+% existing fields. All sets of indices needed outside PreProcessing should
+% be added here to guarantee consistency.
+%
+% Author: Dhruv Gupta
+%
+% Last update:
+%   change function name
+%
+% Author: Lars D'Hondt
+% Date: 07/January/2022
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 residualsi = 1:length(fields(model_info.ExtFunIO.coordi));
 model_info.ExtFunIO.jointi.legsi = sort([model_info.ExtFunIO.jointi.leg_l model_info.ExtFunIO.jointi.leg_r]);
@@ -13,14 +25,14 @@ model_info.ExtFunIO.jointi.muscleActuated = sort(setdiff(model_info.ExtFunIO.joi
 model_info.ExtFunIO.jointi.tau_passi = [model_info.ExtFunIO.jointi.muscleActuated model_info.ExtFunIO.jointi.armsi model_info.ExtFunIO.jointi.mtpi];
 
 % Number of degrees of freedom for later use
-nq.all      = length(residualsi); % all
-nq.abs      = length(model_info.ExtFunIO.jointi.ground_pelvis);
-nq.torso    = length(model_info.ExtFunIO.jointi.torso); % trunk
-nq.arms     = length(model_info.ExtFunIO.jointi.armsi); % arms
-nq.mtp      = length(model_info.ExtFunIO.jointi.mtpi);
-nq.leg      = length(model_info.ExtFunIO.jointi.legsi);
-nq.legs_torso = length(model_info.ExtFunIO.jointi.legs_torso);
-nq.noarms   = length(model_info.ExtFunIO.jointi.noarmsi);
+nq.all          = length(residualsi); % all
+nq.abs          = length(model_info.ExtFunIO.jointi.ground_pelvis);
+nq.torso        = length(model_info.ExtFunIO.jointi.torso); % trunk
+nq.arms         = length(model_info.ExtFunIO.jointi.armsi); % arms
+nq.mtp          = length(model_info.ExtFunIO.jointi.mtpi);
+nq.leg          = length(model_info.ExtFunIO.jointi.legsi);
+nq.legs_torso   = length(model_info.ExtFunIO.jointi.legs_torso);
+nq.noarms       = length(model_info.ExtFunIO.jointi.noarmsi);
 nq.muscleActuated = length(model_info.ExtFunIO.jointi.muscleActuated);
 nq.legs_nomtp = length(model_info.ExtFunIO.jointi.legs_nomtp);
 nq.roti = length(model_info.ExtFunIO.jointi.rotations);
