@@ -1,10 +1,4 @@
-function [massM,tensions] = GetMuscleMass(muscleNames,params)
-% get the muscle parameters
-FMo = params(1,:);
-lMo = params(2,:);
-
-% get the specific tension for each muscle
-tensions = getSpecificTensions(muscleNames);
+function [massM,tensions] = GetMuscleMass(FMo,lMo,tensions)
 
 % compute the mass of the muscle
 volM = FMo.*lMo;

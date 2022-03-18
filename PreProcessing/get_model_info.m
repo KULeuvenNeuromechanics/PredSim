@@ -10,13 +10,14 @@ function model_info = get_model_info(S,osim_path)
 %
 % Date: 18/January/2022
 %
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % extract name of opensim model file
 [~,osim_file_name,~] = fileparts(osim_path);
 
 % load IO from external function
-load(fullfile(S.misc.subject_folder,['F_' osim_file_name '_IO.mat']),'IO');
+load(fullfile(S.misc.subject_path,['F_' osim_file_name '_IO.mat']),'IO');
 
 % convert indices int32 to doubles
 IOfields = fields(IO);
@@ -38,3 +39,7 @@ for i=1:model.getMuscles().getSize()
 end
 
 model_info.muscle_info.muscle_names = muscle_names;
+
+model_info.muscle_info.NMuscle = length(muscle_names);
+
+

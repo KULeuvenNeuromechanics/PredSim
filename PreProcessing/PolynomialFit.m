@@ -1,10 +1,32 @@
-% This function computes the polynomials to approximate muscle-tendon 
-% lengths, velocities and moment arms. 
+function [model_info] = PolynomialFit(S,MuscleData)
+% --------------------------------------------------------------------------
+% PolynomialFit
+%   This function computes the polynomials to approximate muscle-tendon 
+%   lengths, velocities and moment arms. 
+% 
+% INPUT:
+%   - S -
+%   * setting structure S
 %
-% Authors: Original code from Wouter Aerts, adapted by Antoine Falisse
-% Date: 12/19/2018
+%   - osim_path -
+%   * path to the OpenSim model file (.osim)
+% 
+%   - model_info -
+%   * structure with all the model information based on the OpenSim model
 %
-function [muscle_spanning_joint_INFO,MuscleInfo] = PolynomialFit(MuscleData)
+% OUTPUT:
+%   - model_info -
+%   * structure with all the model information based on the OpenSim model
+% 
+% Original author: Original code from Wouter Aerts, adapted by Antoine Falisse
+% Original date: 19/December/2018
+%
+% update:
+%   compatibility with generalized code structure
+%
+% Last edit by: Lars D'Hondt
+% Last edit date: 18/March/2022
+% --------------------------------------------------------------------------
 
     %% Construct the polynomials for the moment arms and muscle length
 
@@ -22,7 +44,7 @@ function [muscle_spanning_joint_INFO,MuscleInfo] = PolynomialFit(MuscleData)
       
     q_all = MuscleData.q;
     
-    max_order = 9;
+    max_order = S.misc.poly_order.upper;
     threshold = 0.003; % 3mm
     nr_samples = length(q_all(:,1));
     
@@ -44,7 +66,7 @@ function [muscle_spanning_joint_INFO,MuscleInfo] = PolynomialFit(MuscleData)
         end
         
         criterion_full_filled = 0;
-        order = 3;
+        order = S.misc.poly_order.lower;
         while criterion_full_filled==0
             [mat,diff_mat_q] = n_art_mat_3(q_all(:,index_dof_crossing), order);
             nr_coeffs = length(mat(1,:));
@@ -110,5 +132,9 @@ function [muscle_spanning_joint_INFO,MuscleInfo] = PolynomialFit(MuscleData)
     title('Order of the polynomial approximation')
     ylabel('Order')
     
+    %%
+    model_info.polyFit.muscle_spanning_joint_info = muscle_spanning_joint_INFO;
+    model_info.polyFit.muscleInfo = MuscleInfo;
+
 end
 

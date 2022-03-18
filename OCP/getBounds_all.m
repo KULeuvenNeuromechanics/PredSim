@@ -39,7 +39,6 @@ end
 
 % prepare index arrays for later use
 idx_mtp = [];
-idx_arms = [model_info.ExtFunIO.jointi.arm_r,model_info.ExtFunIO.jointi.arm_l];
 idx_shoulder_flex = [];
 for i = [model_info.ExtFunIO.jointi.ground_pelvis model_info.ExtFunIO.jointi.back]
     coordinate = coordinate_names{i};
@@ -146,8 +145,8 @@ if S.subject.v_pelvis_x_trgt > 1.33
 end
 
 %% Muscle activations
-bounds.a.lower = S.bounds.a.lower*ones(1,NMuscle);
-bounds.a.upper = ones(1,NMuscle);
+bounds.activation.lower = S.bounds.a.lower*ones(1,NMuscle);
+bounds.activation.upper = ones(1,NMuscle);
 
 %% Muscle-tendon forces
 bounds.FTtilde.lower = zeros(1,NMuscle);
@@ -163,23 +162,13 @@ bounds.vA.upper = (1/100*ones(1,NMuscle))./(ones(1,NMuscle)*tact);
 bounds.dFTtilde.lower = -1*ones(1,NMuscle);
 bounds.dFTtilde.upper = 1*ones(1,NMuscle);
 
-%% Arm activations
-bounds.a_a.lower = -ones(1,length(idx_arms));
-bounds.a_a.upper = ones(1,length(idx_arms));
+%% Actuator activations
+bounds.activation_actuators.lower = -ones(1,model_info.actuator_info.NActuators);
+bounds.activation_actuators.upper = ones(1,model_info.actuator_info.NActuators);
 
-%% Arm excitations
-bounds.e_a.lower = -ones(1,length(idx_arms));
-bounds.e_a.upper = ones(1,length(idx_arms));
-
-%% Mtp
-if strcmp(S.subject.mtp_type,'active')
-    % excitations
-    bounds.e_mtp.lower = -ones(1,length(idx_mtp));
-    bounds.e_mtp.upper = ones(1,length(idx_mtp));
-    % activations
-    bounds.a_mtp.lower = -ones(1,length(idx_mtp));
-    bounds.a_mtp.upper = ones(1,length(idx_mtp));
-end
+%% Actuator excitations
+bounds.excitation_actuators.lower = -ones(1,model_info.actuator_info.NActuators);
+bounds.excitation_actuators.upper = ones(1,model_info.actuator_info.NActuators);
 
 %% Final time
 bounds.tf.lower = S.bounds.t_final.lower;
@@ -214,21 +203,16 @@ bounds.Qdotdots.lower(isnan(bounds.Qdotdots.lower)) = 0;
 bounds.Qdotdots.upper(isnan(bounds.Qdotdots.upper)) = 0;
 % Arm torque actuators
 % Fixed scaling factor
-scaling.ArmTau = 150;
-% Fixed scaling factor
-scaling.LumbarTau = 150;
-% Mtp torque actuators
-% Fixed scaling factor
-scaling.MtpTau = 100;
+scaling.Actuator_torque = model_info.actuator_info.max_torque;
 % Time derivative of muscle activations
 % Fixed scaling factor
 scaling.vA = 100;
 % Muscle activations
-scaling.a = 1;
+scaling.activation = 1;
 % Arm activations
-scaling.a_a = 1;
+scaling.activation_actuators = 1;
 % Arm excitations
-scaling.e_a = 1;
+scaling.excitation_actuators = 1;
 % Time derivative of muscle-tendon forces
 % Fixed scaling factor
 scaling.dFTtilde = 100;

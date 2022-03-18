@@ -1,18 +1,30 @@
 function [model_info] = update_model_info(S,model_info)
+% --------------------------------------------------------------------------
+% update_model_info
+%   Create additional fields with indices combination in model_info, based 
+%   on existing fields. All sets of indices needed outside PreProcessing 
+%   should be added here to guarantee consistency.
+% 
+% INPUT:
+%   - S -
+%   * setting structure S
 %
-% Create additional fields with indices combination in model_info, based on
-% existing fields. All sets of indices needed outside PreProcessing should
-% be added here to guarantee consistency.
-%
-% Author: Dhruv Gupta
+%   - model_info -
+%   * structure with all the model information based on the OpenSim model
+% 
+% OUTPUT:
+%   - model_info -
+%   * structure with all the model information based on the OpenSim model
+% 
+% Original author: Dhruv Gupta
+% Original date: 17/March/2022
 %
 % Last update:
-%   change function name
-%
-% Author: Lars D'Hondt
-% Date: 07/January/2022
-%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%   change function name and add header
+% Last edit by: Lars D'Hondt
+% Last edit date: 18/March/2022
+% --------------------------------------------------------------------------
+
 
 residualsi = 1:length(fields(model_info.ExtFunIO.coordi));
 model_info.ExtFunIO.jointi.legsi = sort([model_info.ExtFunIO.jointi.leg_l model_info.ExtFunIO.jointi.leg_r]);
@@ -34,10 +46,10 @@ nq.leg          = length(model_info.ExtFunIO.jointi.legsi);
 nq.legs_torso   = length(model_info.ExtFunIO.jointi.legs_torso);
 nq.noarms       = length(model_info.ExtFunIO.jointi.noarmsi);
 nq.muscleActuated = length(model_info.ExtFunIO.jointi.muscleActuated);
-nq.legs_nomtp = length(model_info.ExtFunIO.jointi.legs_nomtp);
-nq.roti = length(model_info.ExtFunIO.jointi.rotations);
+nq.legs_nomtp   = length(model_info.ExtFunIO.jointi.legs_nomtp);
+nq.roti         = length(model_info.ExtFunIO.jointi.rotations);
 nq.translationsi = length(model_info.ExtFunIO.jointi.translations);
-nq.tau_pass = length(model_info.ExtFunIO.jointi.tau_passi);
+nq.tau_pass     = length(model_info.ExtFunIO.jointi.tau_passi);
 
 model_info.ExtFunIO.jointi.nq = nq;
 

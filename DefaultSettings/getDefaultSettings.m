@@ -83,6 +83,9 @@ end
 
 %% misc
 
+% subject folder to save intermediate data
+S.misc.subject_path = fullfile(S.misc.main_path,'Subjects',S.subject.name);
+
 % maximal contraction velocity identifier --TO CHECK--
 if ~isfield(S.misc,'v_max_s')
     S.misc.v_max_s = 0;
