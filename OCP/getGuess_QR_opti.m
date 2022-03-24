@@ -35,10 +35,6 @@ guess.Qs(:,jointi.pelvis_ty) = PelvisY;
 guess.Qdots = zeros(N,nq.all);
 % The model is moving forward with a constant speed
 guess.Qdots(:,jointi.pelvis_tx) = S.subject.v_pelvis_x_trgt;
-% Qs and Qdots are intertwined
-guess.QsQdots = zeros(N,2*nq.all);
-guess.QsQdots(:,1:2:end) = guess.Qs;
-guess.QsQdots(:,2:2:end) = guess.Qdots;
 
 %% Qdotdots
 guess.Qdotdots = zeros(N,nq.all);
@@ -63,21 +59,29 @@ if strcmp(S.misc.gaitmotion_type,'HalfGaitCycle')
     % Trunk: lumbar ext should be equal, lumbar bend and lumbar rot
     % should be of opposite.     
     % For "symmetric" joints, we invert right and left
-    inv_X = guess.QsQdots(1,model_info.ExtFunIO.symQs.orderQsInv);
+    inv_X_Qs = guess.Qs(1,model_info.ExtFunIO.symQs.orderQsInv);
+    inv_X_Qdots = guess.Qdots(1,model_info.ExtFunIO.symQs.orderQsInv);
     % For other joints, we take the opposite right and left
-    inv_X(model_info.ExtFunIO.symQs.orderQsOpp1) = ...
-        -guess.QsQdots(1,model_info.ExtFunIO.symQs.orderQsOpp1);           
-    dx = guess.QsQdots(end,2*jointi.pelvis_tx-1) - ...
-        guess.QsQdots(end-1,2*jointi.pelvis_tx-1);
-    inv_X(2*jointi.pelvis_tx-1) = ...
-        guess.QsQdots(end,2*jointi.pelvis_tx-1) + dx;
+    inv_X_Qs(model_info.ExtFunIO.symQs.orderQsOpp1) = ...
+        -guess.Qs(1,model_info.ExtFunIO.symQs.orderQsOpp1);           
+    inv_X_Qdots(model_info.ExtFunIO.symQs.orderQsOpp1) = ...
+        -guess.Qdots(1,model_info.ExtFunIO.symQs.orderQsOpp1);           
+    dx = guess.Qs(end,jointi.pelvis_tx) - ...
+        guess.Qs(end-1,jointi.pelvis_tx);
+    inv_X_Qs(jointi.pelvis_tx) = ...
+        guess.Qs(end,jointi.pelvis_tx) + dx;
 
-    guess.QsQdots = [guess.QsQdots; inv_X];
+    guess.Qs = [guess.Qs; inv_X_Qs];
+    guess.Qdots = [guess.Qdots; inv_X_Qdots];
     guess.a = [guess.a; guess.a(1,model_info.ExtFunIO.symQs.orderMusInv)];
     guess.FTtilde = [guess.FTtilde; guess.FTtilde(1,model_info.ExtFunIO.symQs.orderMusInv)];
     guess.a_a = [guess.a_a; guess.a_a(1,model_info.ExtFunIO.symQs.orderArmInv)];
 else
-    guess.QsQdots = [guess.QsQdots; guess.QsQdots(1,:)];
+    dx = guess.Qs(end,jointi.pelvis_tx) - ...
+        guess.Qs(end-1,jointi.pelvis_tx);
+    guess.Qs = [guess.Qs; guess.Qs(1,:)];
+    guess.Qs(end,jointi.pelvis_tx) = guess.Qs(end-1,jointi.pelvis_tx) + dx;
+    guess.Qdots = [guess.Qdots; guess.Qdots(1,:)];
     guess.a = [guess.a; guess.a(1,:)];
     guess.FTtilde = [guess.FTtilde; guess.FTtilde(1,:)];
     guess.a_a = [guess.a_a; guess.a_a(1,:)];
@@ -88,7 +92,8 @@ guess.a_mtp = 0.1*ones(N+1,nq.mtp);
 guess.e_mtp = 0.1*ones(N,nq.mtp);
 
 %% Scaling
-guess.QsQdots   = guess.QsQdots./repmat(scaling.QsQdots,N+1,1);
+guess.Qs = guess.Qs./repmat(scaling.Qs,N+1,1);
+guess.Qdots = guess.Qdots./repmat(scaling.Qdots,N+1,1);
 guess.Qdotdots  = guess.Qdotdots./repmat(scaling.Qdotdots,N,1);
 guess.a         = (guess.a)./repmat(scaling.a,N+1,size(guess.a,2));
 guess.FTtilde   = (guess.FTtilde)./repmat(scaling.FTtilde,N+1,1);
@@ -99,16 +104,18 @@ guess.a_mtp_col = zeros(d*N,nq.mtp);
 guess.a_lumbar_col = zeros(d*N,nq.torso);
 
 %% Collocation points
-    guess.a_col = zeros(d*N,NMuscle);
-    guess.FTtilde_col = zeros(d*N,NMuscle);
-    guess.QsQdots_col = zeros(d*N,2*nq.all);
-    guess.a_a_col = zeros(d*N,nq.arms);
-    guess.dFTtilde_col = zeros(d*N,NMuscle);
-    guess.Qdotdots_col = zeros(d*N,nq.all);
+guess.a_col = zeros(d*N,NMuscle);
+guess.FTtilde_col = zeros(d*N,NMuscle);
+guess.Qs_col = zeros(d*N,nq.all);
+guess.Qdots_col = zeros(d*N,nq.all);
+guess.a_a_col = zeros(d*N,nq.arms);
+guess.dFTtilde_col = zeros(d*N,NMuscle);
+guess.Qdotdots_col = zeros(d*N,nq.all);
 for k=1:N
     guess.a_col((k-1)*d+1:k*d,:) = repmat(guess.a(k,:),d,1); 
     guess.FTtilde_col((k-1)*d+1:k*d,:) = repmat(guess.FTtilde(k,:),d,1);
-    guess.QsQdots_col((k-1)*d+1:k*d,:) = repmat(guess.QsQdots(k,:),d,1);
+    guess.Qs_col((k-1)*d+1:k*d,:) = repmat(guess.Qs(k,:),d,1);
+    guess.Qdots_col((k-1)*d+1:k*d,:) = repmat(guess.Qdots(k,:),d,1);
     guess.a_a_col((k-1)*d+1:k*d,:) = repmat(guess.a_a(k,:),d,1);
     guess.dFTtilde_col((k-1)*d+1:k*d,:) = repmat(guess.dFTtilde(k,:),d,1);
     guess.Qdotdots_col((k-1)*d+1:k*d,:) = repmat(guess.Qdotdots(k,:),d,1);

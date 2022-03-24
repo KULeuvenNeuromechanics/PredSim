@@ -46,7 +46,7 @@ model_info = addCoordNames(model_info,'rotations');
 model_info = addCoordNames(model_info,'translations');
 model_info = addCoordNames(model_info,'tau_passi');
 
-orderQs = 1:2*nq.all;
+orderQs = 1:nq.all;
 
 coords = fields(model_info.ExtFunIO.coordi);
 for i=1:nq.all
@@ -60,14 +60,13 @@ for i=1:nq.all
         orderInv(i) = model_info.ExtFunIO.coordi.(coords{i});
     end
 end
-orderQsInv(1:2:2*nq.all) = (2*orderInv)-1;
-orderQsInv(2:2:2*nq.all) = 2*orderInv;
+orderQsInv = orderInv;
     
-orderQsOpp1 = [2*model_info.ExtFunIO.coordi.pelvis_list-1:2*model_info.ExtFunIO.coordi.pelvis_list,...   
-    2*model_info.ExtFunIO.coordi.pelvis_rotation-1:2*model_info.ExtFunIO.coordi.pelvis_rotation,...
-    2*model_info.ExtFunIO.coordi.pelvis_tz-1:2*model_info.ExtFunIO.coordi.pelvis_tz,...
-    2*model_info.ExtFunIO.coordi.lumbar_bending-1:2*model_info.ExtFunIO.coordi.lumbar_bending,...
-    2*model_info.ExtFunIO.coordi.lumbar_rotation-1:2*model_info.ExtFunIO.coordi.lumbar_rotation];
+orderQsOpp1 = [model_info.ExtFunIO.coordi.pelvis_list,...   
+    model_info.ExtFunIO.coordi.pelvis_rotation,...
+    model_info.ExtFunIO.coordi.pelvis_tz,...
+    model_info.ExtFunIO.coordi.lumbar_bending,...
+    model_info.ExtFunIO.coordi.lumbar_rotation];
 
 orderArm = model_info.ExtFunIO.jointi.armsi;
 orderArm = orderArm-min(orderArm)+1;

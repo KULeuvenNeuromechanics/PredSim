@@ -135,29 +135,29 @@ opti.set_initial(FTtilde_col, guess.FTtilde_col');
 Qs = opti.variable(nq.all,N+1);
 % We want to constraint the pelvis_tx position at the first mesh point,
 % and avoid redundant bounds
-lboundsQsk = bounds.QsQdots.lower(1:2:end)'*ones(1,N+1);
+lboundsQsk = bounds.Qs.lower'*ones(1,N+1);
 lboundsQsk(model_info.ExtFunIO.coordi.pelvis_tx,1) = ...
-    bounds.QsQdots_0.lower(2*model_info.ExtFunIO.coordi.pelvis_tx-1);
-uboundsQsk = bounds.QsQdots.upper(1:2:end)'*ones(1,N+1);
+    bounds.Qs_0.lower(model_info.ExtFunIO.coordi.pelvis_tx);
+uboundsQsk = bounds.Qs.upper'*ones(1,N+1);
 uboundsQsk(model_info.ExtFunIO.coordi.pelvis_tx,1) = ...
-    bounds.QsQdots_0.upper(2*model_info.ExtFunIO.coordi.pelvis_tx-1);
+    bounds.Qs_0.upper(model_info.ExtFunIO.coordi.pelvis_tx);
 opti.subject_to(lboundsQsk < Qs < uboundsQsk);
-opti.set_initial(Qs, guess.QsQdots(:,1:2:end)');
+opti.set_initial(Qs, guess.Qs');
 % Qs at collocation points
 Qs_col = opti.variable(nq.all,d*N);
-opti.subject_to(bounds.QsQdots.lower(1:2:end)'*ones(1,d*N) < Qs_col < ...
-    bounds.QsQdots.upper(1:2:end)'*ones(1,d*N));
-opti.set_initial(Qs_col, guess.QsQdots_col(:,1:2:end)');
+opti.subject_to(bounds.Qs.lower'*ones(1,d*N) < Qs_col < ...
+    bounds.Qs.upper'*ones(1,d*N));
+opti.set_initial(Qs_col, guess.Qs_col');
 % Qdots at mesh points
 Qdots = opti.variable(nq.all,N+1);
-opti.subject_to(bounds.QsQdots.lower(2:2:end)'*ones(1,N+1) < Qdots < ...
-    bounds.QsQdots.upper(2:2:end)'*ones(1,N+1));
-opti.set_initial(Qdots, guess.QsQdots(:,2:2:end)');
+opti.subject_to(bounds.Qdots.lower'*ones(1,N+1) < Qdots < ...
+    bounds.Qdots.upper'*ones(1,N+1));
+opti.set_initial(Qdots, guess.Qdots');
 % Qdots at collocation points
 Qdots_col = opti.variable(nq.all,d*N);
-opti.subject_to(bounds.QsQdots.lower(2:2:end)'*ones(1,d*N) < Qdots_col < ...
-    bounds.QsQdots.upper(2:2:end)'*ones(1,d*N));
-opti.set_initial(Qdots_col, guess.QsQdots_col(:,2:2:end)');
+opti.subject_to(bounds.Qdots.lower'*ones(1,d*N) < Qdots_col < ...
+    bounds.Qdots.upper'*ones(1,d*N));
+opti.set_initial(Qdots_col, guess.Qdots_col');
 % Arm activations at mesh points
 a_a = opti.variable(nq.arms,N+1);
 opti.subject_to(bounds.a_a.lower'*ones(1,N+1) < a_a < ...
@@ -260,8 +260,8 @@ h = tfk/N;
 for j=1:d
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Unscale variables
-    Qskj_nsc = Qskj.*(scaling.QsQdots(1:2:end)'*ones(1,size(Qskj,2)));
-    Qdotskj_nsc = Qdotskj.*(scaling.QsQdots(2:2:end)'*ones(1,size(Qdotskj,2)));
+    Qskj_nsc = Qskj.*(scaling.Qs'*ones(1,size(Qskj,2)));
+    Qdotskj_nsc = Qdotskj.*(scaling.Qdots'*ones(1,size(Qdotskj,2)));
     FTtildekj_nsc = FTtildekj.*(scaling.FTtilde'*ones(1,size(FTtildekj,2)));
     dFTtildej_nsc = dFTtildej.*scaling.dFTtilde;
     Aj_nsc = Aj.*(scaling.Qdotdots'*ones(1,size(Aj,2)));
@@ -331,9 +331,8 @@ for j=1:d
         scaling.FTtilde';
     % Skeleton dynamics (implicit formulation)
     qdotj_nsc = Qdotskj_nsc(:,j+1); % velocity
-    eq_constr{end+1} = (h*qdotj_nsc - Qsp_nsc)./scaling.QsQdots(1:2:end)';
-    eq_constr{end+1} = (h*Aj_nsc(:,j) - Qdotsp_nsc)./...
-        scaling.QsQdots(2:2:end)';
+    eq_constr{end+1} = (h*qdotj_nsc - Qsp_nsc)./scaling.Qs';
+    eq_constr{end+1} = (h*Aj_nsc(:,j) - Qdotsp_nsc)./scaling.Qdots';
     % Arm activation dynamics (explicit formulation)
     da_adtj = f_casadi.ArmActivationDynamics(e_ak,a_akj(:,j+1)');
     eq_constr{end+1} = (h*da_adtj - a_ap)./scaling.a_a;
@@ -542,7 +541,7 @@ else
 end
 % Average speed
 % Provide expression for the distance traveled
-Qs_nsc = Qs.*(scaling.QsQdots(1:2:end)'*ones(1,N+1));
+Qs_nsc = Qs.*(scaling.Qs'*ones(1,N+1));
 dist_trav_tot = Qs_nsc(model_info.ExtFunIO.coordi.pelvis_tx,end) - ...
     Qs_nsc(model_info.ExtFunIO.coordi.pelvis_tx,1);
 vel_aver_tot = dist_trav_tot/tf;
