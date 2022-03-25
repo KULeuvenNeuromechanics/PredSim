@@ -222,6 +222,14 @@ else
     [~,NAME,EXT] = fileparts(S.subject.IG_selection);
     if EXT == ".mot" && isfile(S.subject.IG_selection)
         disp(['Using ',char(S.subject.IG_selection), ' as initial guess.'])
+        if ~isfield(S.subject,'IG_selection_gaitCyclePercent')
+            error('Please specify what percent of gait cycle data is present in the initial guess file in S.subject.IG_selection_gaitCyclePercent. For example, use 50, 100, and 200 if the provided intial guess file has half a gait cycle, full gait cycle or two full gait cycles, respectively.')
+        end
+        if ((strcmp(S.misc.gaitmotion_type,'FullGaitCycle')) && (S.subject.IG_selection_gaitCyclePercent < 100))
+            error('Cannot use an initial guess of an incomplete gait cycle for predictive simulation of a full gait cycle. Please adjust S.misc.gaitmotion_type or initial guess file.')
+        elseif ((strcmp(S.misc.gaitmotion_type,'HalfGaitCycle')) && (S.subject.IG_selection_gaitCyclePercent < 50))
+            error('Cannot use an initial guess of less than half gait gait cycle for predictive simulation of a half gait cycle. Please adjust S.misc.gaitmotion_type or initial guess file.')
+        end
         
     elseif EXT == ".mot" && ~isfile(S.subject.IG_selection)
         error('The motion file path you specified does not exist. Check if the path exist and if you made a typo.')

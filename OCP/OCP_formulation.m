@@ -87,8 +87,16 @@ if strcmp(S.subject.IG_selection,'quasi-random')
 else
     IKfile_guess    = fullfile(pathRepo, S.subject.IG_selection);
     Qs_guess        = getIK(IKfile_guess,model_info);
-    time_IC         = [Qs_guess.time(1),Qs_guess.time(end)];
-    guess = getGuess_DI_opti(Qs_guess,N,time_IC,scaling,S,d,model_info);
+    if strcmp(S.misc.gaitmotion_type,'FullGaitCycle')
+        endIdx = round(size(Qs_guess.allfilt,1)*100/S.subject.IG_selection_gaitCyclePercent);
+    elseif strcmp(S.misc.gaitmotion_type,'HalfGaitCycle')
+        endIdx = round(size(Qs_guess.allfilt,1)*50/S.subject.IG_selection_gaitCyclePercent);
+    end
+    Qs_guess_IG.allfilt = Qs_guess.allfilt(1:endIdx,:);
+    Qs_guess_IG.time = Qs_guess.time(1:endIdx,:);
+    Qs_guess_IG.colheaders = Qs_guess.colheaders;
+    time_IC         = [Qs_guess_IG.time(1),Qs_guess_IG.time(end)];
+    guess = getGuess_DI_opti(Qs_guess_IG,N,time_IC,scaling,S,d,model_info);
 end
 
 % adapt guess so that it fits within the bounds
