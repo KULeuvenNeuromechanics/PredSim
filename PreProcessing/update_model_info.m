@@ -26,7 +26,10 @@ function [model_info] = update_model_info(S,model_info)
 % --------------------------------------------------------------------------
 
 
-residualsi = 1:length(fields(model_info.ExtFunIO.coordi));
+
+% add coordinate names
+model_info.ExtFunIO.coordinate_names = fieldnames(model_info.ExtFunIO.coordi);
+
 model_info.ExtFunIO.jointi.legsi = sort([model_info.ExtFunIO.jointi.leg_l model_info.ExtFunIO.jointi.leg_r]);
 model_info.ExtFunIO.jointi.armsi = sort([model_info.ExtFunIO.jointi.arm_l model_info.ExtFunIO.jointi.arm_r]);
 model_info.ExtFunIO.jointi.mtpi  = sort([model_info.ExtFunIO.jointi.mtp_l model_info.ExtFunIO.jointi.mtp_r]);
@@ -37,7 +40,7 @@ model_info.ExtFunIO.jointi.muscleActuated = sort(setdiff(model_info.ExtFunIO.joi
 model_info.ExtFunIO.jointi.tau_passi = [model_info.ExtFunIO.jointi.muscleActuated model_info.ExtFunIO.jointi.armsi model_info.ExtFunIO.jointi.mtpi];
 
 % Number of degrees of freedom for later use
-nq.all          = length(residualsi); % all
+nq.all          = length(model_info.ExtFunIO.coordinate_names); % all
 nq.abs          = length(model_info.ExtFunIO.jointi.ground_pelvis);
 nq.torso        = length(model_info.ExtFunIO.jointi.torso); % trunk
 nq.arms         = length(model_info.ExtFunIO.jointi.armsi); % arms
@@ -111,15 +114,11 @@ model_info.ExtFunIO.symQs.orderQsOpp1 = orderQsOpp1;
 model_info.ExtFunIO.symQs.orderArm = orderArm;
 model_info.ExtFunIO.symQs.orderArmInv = orderArmInv;
 
-if strcmp(S.ModelName,'Rajagopal')
-    % indexes to select kinematics left and right leg
-    IndexLeft = model_info.ExtFunIO.jointi.leg_l;
-    IndexRight = model_info.ExtFunIO.jointi.leg_r;
-elseif strcmp(S.ModelName,'Gait92')
-    % indexes to select kinematics left and right leg
-    IndexLeft = [model_info.ExtFunIO.jointi.leg_l model_info.ExtFunIO.jointi.torso];
-    IndexRight = [model_info.ExtFunIO.jointi.leg_r model_info.ExtFunIO.jointi.torso];
-end
+
+% indexes to select kinematics left and right leg
+IndexLeft = [model_info.ExtFunIO.jointi.leg_l model_info.ExtFunIO.jointi.torso];
+IndexRight = [model_info.ExtFunIO.jointi.leg_r model_info.ExtFunIO.jointi.torso];
+
 
 % indexes for symmetry steps
 QsInvB = [model_info.ExtFunIO.coordi.pelvis_tilt,...
@@ -158,12 +157,6 @@ model_info.ExtFunIO.symQs.QdotsInvA = QdotsInvA;
 model_info.ExtFunIO.symQs.QdotsInvB = QdotsInvB;
 model_info.ExtFunIO.symQs.orderQsOpp = orderQsOpp;
 
-model_info.muscle_info.IndexCalf = [model_info.muscle_info.muscle_index.lat_gas_r,...
-    model_info.muscle_info.muscle_index.med_gas_r,...
-    model_info.muscle_info.muscle_index.soleus_r,...
-    model_info.muscle_info.muscle_index.lat_gas_l,...
-    model_info.muscle_info.muscle_index.med_gas_l,...
-    model_info.muscle_info.muscle_index.soleus_l];
 
 orderMus = 1:length(model_info.muscle_info.muscle_names);
 orderMusInv = zeros(1,length(model_info.muscle_info.muscle_names));

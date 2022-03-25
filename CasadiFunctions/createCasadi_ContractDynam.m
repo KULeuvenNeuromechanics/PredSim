@@ -1,5 +1,5 @@
-function [f_forceEquilibrium_FtildeState_all_tendon,f_FiberLength_TendonForce_tendon...
-    ,f_FiberVelocity_TendonForce_tendon,f_lT_vT] = createCasadi_ContractDynam(model_info,S)
+function [f_forceEquilibrium_FtildeState_all_tendon,f_FiberLength_TendonForce_tendon,...
+    f_FiberVelocity_TendonForce_tendon,f_lT_vT] = createCasadi_ContractDynam(S,model_info)
 %% createCasadi_ContractDynam.m
 %Function to create Casadi functions for muscle contraction dynamics.
 %

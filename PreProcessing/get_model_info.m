@@ -28,7 +28,6 @@ end
 % create model_info with IO inside
 model_info.ExtFunIO = IO;
 
-
 % read muscle names from .osim file
 import org.opensim.modeling.*;
 model = Model(osim_path);

@@ -1,4 +1,4 @@
-function [f_casadi] = createCasadiFunctions(model_info,S)
+function [f_casadi] = createCasadiFunctions(S,model_info)
 %createCasadiFunctions.m
 %   Overview function from which al casadi functions are created
 % 
@@ -23,13 +23,17 @@ f_casadi = createCasadi_GenHelper(model_info);
 f_casadi.lMT_vMT_dM = createCasadi_MSKGeometry(model_info);
 
 %% Create Casadi functions for muscle contraction dynamics
-[f_casadi.forceEquilibrium_FtildeState_all_tendon,...
-    f_casadi.FiberLength_TendonForce_tendon,...
-    f_casadi.FiberVelocity_TendonForce_tendon,f_casadi.lT_vT] = createCasadi_ContractDynam(model_info,S);
+[forceEquilibrium_FtildeState_all_tendon, FiberLength_TendonForce_tendon,...
+    FiberVelocity_TendonForce_tendon,lT_vT] = createCasadi_ContractDynam(S,model_info);
+
+f_casadi.forceEquilibrium_FtildeState_all_tendon = forceEquilibrium_FtildeState_all_tendon;
+f_casadi.FiberLength_TendonForce_tendon = FiberLength_TendonForce_tendon;
+f_casadi.FiberVelocity_TendonForce_tendon = FiberVelocity_TendonForce_tendon;
+f_casadi.lT_vT = lT_vT;
 
 %% Create Casadi functions for passive torques
 [f_casadi.PassiveMoments,...
-    f_casadi.passiveTATorques,f_casadi.AllPassiveTorques] = createCasadi_PassTorq(model_info,S);
+    f_casadi.passiveTATorques,f_casadi.AllPassiveTorques] = createCasadi_PassTorq(S,model_info);
 
 %% Create Casadi functions for activation dynamics
 [f_casadi.ArmActivationDynamics,f_casadi.TrunkActivationDynamics,...

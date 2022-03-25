@@ -30,13 +30,15 @@ function [model_info] = get_musculoskeletal_geometry_approximation(S,osim_path,m
 % muscle_data = muscleAnalysis(S,osim_path,model_info);
 t0 = tic;
 muscle_data = muscleAnalysisAPI(S,osim_path,model_info);
-disp(toc(t0))
+disp(['analysing MSK geometry: ' num2str(toc(t0))])
 
 % fit expressions to approximate the results
+t0 = tic;
 if strcmp( S.misc.msk_geom_eq,'polynomials')
-    [model_info] = PolynomialFit(S,muscle_data);
+    [model_info] = PolynomialFit(S,muscle_data,model_info);
 else
-    [model_info] = PolynomialFit(S,muscle_data);
+    [model_info] = PolynomialFit(S,muscle_data,model_info);
     warning(['Selected method to approximate musculoskeletal geometry not',...
         ' implemented, using polynomials instead.'])
 end
+disp(['approximating MSK geometry: ' num2str(toc(t0))])

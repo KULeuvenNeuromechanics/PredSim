@@ -5,7 +5,7 @@ S = updateS_passiveJointTorqueProperties(S);
 
 [S,model_info] = preprocessing(S,osim_path);
 
-[f_casadi] = createCasadiFunctions(model_info);
+[f_casadi] = createCasadiFunctions(S,model_info);
 
 OCP_formulation(S,model_info,f_casadi);
 

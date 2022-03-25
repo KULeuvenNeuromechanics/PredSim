@@ -1,4 +1,4 @@
-function [model_info] = PolynomialFit(S,MuscleData)
+function [model_info] = PolynomialFit(S,MuscleData,model_info)
 % --------------------------------------------------------------------------
 % PolynomialFit
 %   This function computes the polynomials to approximate muscle-tendon 
@@ -12,6 +12,8 @@ function [model_info] = PolynomialFit(S,MuscleData)
 %   * structure with joint angles and according muscle-tendon lengths and
 %       momentarms (output from muscleAnalysis.m)
 % 
+%   - model_info -
+%   * structure with all the model information based on the OpenSim model
 %
 % OUTPUT:
 %   - model_info -
@@ -132,8 +134,8 @@ function [model_info] = PolynomialFit(S,MuscleData)
     ylabel('Order')
     
     %%
-    model_info.polyFit.muscle_spanning_joint_info = muscle_spanning_joint_INFO;
-    model_info.polyFit.muscleInfo = MuscleInfo;
+    model_info.muscle_info.polyFit.muscle_spanning_joint_info = muscle_spanning_joint_INFO;
+    model_info.muscle_info.polyFit.MuscleInfo = MuscleInfo;
 
 end
 

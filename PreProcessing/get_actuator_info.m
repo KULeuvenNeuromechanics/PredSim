@@ -29,6 +29,8 @@ function [model_info] = get_actuator_info(S,osim_path,model_info)
 % Last edit date: 
 % --------------------------------------------------------------------------
 
+t0 = tic;
+
 import org.opensim.modeling.*;
 
 % get all actuators from osim model
@@ -67,6 +69,6 @@ actuator_info.NActuators = length(actuator_info.coordi);
 % place struct with actuator info in model_info
 model_info.actuator_info = actuator_info;
 
-
+disp(['reading actuator info: ' num2str(toc(t0))])
 
 

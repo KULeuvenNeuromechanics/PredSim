@@ -1,4 +1,4 @@
-function [f_PassiveMoments,f_passiveTATorques,f_AllPassiveTorques] = createCasadi_PassTorq(model_info,S)
+function [f_PassiveMoments,f_passiveTATorques,f_AllPassiveTorques] = createCasadi_PassTorq(S,model_info)
 %% createCasadi_PassTorq.m
 %Function to create Casadi functions for passive torques.
 %

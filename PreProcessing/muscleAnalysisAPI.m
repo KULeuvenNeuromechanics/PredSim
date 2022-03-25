@@ -47,13 +47,14 @@ Bounds(11,:) = {'lumbar_rot',[-30 30]};
 
 
 % names
-coordinate_names = fieldnames(model_info.ExtFunIO.coordi);
+coordinate_names = model_info.ExtFunIO.coordinate_names;
 muscle_names = model_info.muscle_info.muscle_names;
 
 % sizes and indices
 n_muscle = model_info.muscle_info.NMuscle;
 n_coord = length(coordinate_names);
 n_data_points = 5000;
+n_data_points = 100; % for debugging only !!!
 
 % default bounds
 Q_bounds = [-30;30]*ones(1,n_coord);
