@@ -52,11 +52,7 @@ FMltilde = FMtilde1+FMtilde2+FMtilde3;
 Fiso = FMltilde;
 % Active muscle force-velocity characteristic
 vT = lTs.*dfse./(0.2*Atendonsc*exp(Atendonsc*(lTtilde-0.995)));
-if(MuscMoAsmp == 0) % b = cst
-    cos_alpha = (lMT-lTs.*lTtilde)./lM;
-else    % alpha = cst = alphao
-    cos_alpha = cos(alphao);
-end
+cos_alpha = (lMT-lTs.*lTtilde)./lM;
 vM = (vMT-vT).*cos_alpha;
 vMtilde = vM./vMmax;
 e1 = Fvparam(1);

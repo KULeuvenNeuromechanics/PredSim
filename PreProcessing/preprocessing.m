@@ -10,7 +10,7 @@ IOfields = fields(model_info.ExtFunIO);
 for i=1:length(IOfields)
     model_info.ExtFunIO.(IOfields{i}) = convert2double(model_info.ExtFunIO.(IOfields{i}));
 end
-[model_info] = GetIndexHelper(S,model_info);
+[model_info,S] = GetIndexHelper(S,model_info);
 
 [model_info] = scale_MTparameters(S,model_info);
 

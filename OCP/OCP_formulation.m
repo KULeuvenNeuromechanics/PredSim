@@ -177,16 +177,18 @@ opti.subject_to(bounds.a_a.lower'*ones(1,d*N) < a_a_col < ...
     bounds.a_a.upper'*ones(1,d*N));
 opti.set_initial(a_a_col, guess.a_a_col');
 % Mtp activations at mesh points
-if strcmp(S.subject.mtp_type,'active')
-    a_mtp = opti.variable(nq.mtp,N+1);
-    opti.subject_to(bounds.a_mtp.lower'*ones(1,N+1) < a_mtp < ...
-        bounds.a_mtp.upper'*ones(1,N+1));
-    opti.set_initial(a_mtp, guess.a_mtp');
-    % Mtp activations at collocation points
-    a_mtp_col = opti.variable(nq.mtp,d*N);
-    opti.subject_to(bounds.a_mtp.lower'*ones(1,d*N) < a_mtp_col < ...
-        bounds.a_mtp.upper'*ones(1,d*N));
-    opti.set_initial(a_mtp_col, guess.a_mtp_col');
+if S.misc.mtp_in_model
+    if strcmp(S.subject.mtp_type,'active')
+        a_mtp = opti.variable(nq.mtp,N+1);
+        opti.subject_to(bounds.a_mtp.lower'*ones(1,N+1) < a_mtp < ...
+            bounds.a_mtp.upper'*ones(1,N+1));
+        opti.set_initial(a_mtp, guess.a_mtp');
+        % Mtp activations at collocation points
+        a_mtp_col = opti.variable(nq.mtp,d*N);
+        opti.subject_to(bounds.a_mtp.lower'*ones(1,d*N) < a_mtp_col < ...
+            bounds.a_mtp.upper'*ones(1,d*N));
+        opti.set_initial(a_mtp_col, guess.a_mtp_col');
+    end
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Define controls
@@ -201,11 +203,13 @@ opti.subject_to(bounds.e_a.lower'*ones(1,N) < e_a < ...
     bounds.e_a.upper'*ones(1,N));
 opti.set_initial(e_a, guess.e_a');
 % Mtp excitations
-if strcmp(S.subject.mtp_type,'active')
-    e_mtp = opti.variable(nq.mtp, N);
-    opti.subject_to(bounds.e_mtp.lower'*ones(1,N) < e_mtp < ...
-        bounds.e_mtp.upper'*ones(1,N));
-    opti.set_initial(e_mtp, guess.e_mtp');
+if S.misc.mtp_in_model
+    if strcmp(S.subject.mtp_type,'active')
+        e_mtp = opti.variable(nq.mtp, N);
+        opti.subject_to(bounds.e_mtp.lower'*ones(1,N) < e_mtp < ...
+            bounds.e_mtp.upper'*ones(1,N));
+        opti.set_initial(e_mtp, guess.e_mtp');
+    end
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Define "slack" controls
@@ -243,12 +247,14 @@ a_akj       = [a_ak a_aj];
 vAk     = MX.sym('vAk',NMuscle);
 e_ak    = MX.sym('e_ak',nq.arms);
 
-if strcmp(S.subject.mtp_type,'active')
-    a_mtpk      = MX.sym('a_mtpk',nq.mtp);
-    a_mtpj      = MX.sym('a_mtpkmesh',nq.mtp,d);
-    a_mtpkj     = [a_mtpk a_mtpj];
-    % Define CasADi variables for MTP controls
-    e_mtpk  = MX.sym('e_mtpk',nq.mtp);
+if S.misc.mtp_in_model
+    if strcmp(S.subject.mtp_type,'active')
+        a_mtpk      = MX.sym('a_mtpk',nq.mtp);
+        a_mtpj      = MX.sym('a_mtpkmesh',nq.mtp,d);
+        a_mtpkj     = [a_mtpk a_mtpj];
+        % Define CasADi variables for MTP controls
+        e_mtpk  = MX.sym('e_mtpk',nq.mtp);
+    end
 end
 
 % Define CasADi variables for "slack" controls
@@ -316,13 +322,12 @@ for j=1:d
     end
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Get passive joint torques
-    Tau_passj_all = f_casadi.AllPassiveTorques(Qskj_nsc(:,j+1),Qdotskj_nsc(:,j+1));
-    % In the f_casadi.AllPassiveTorques function, the order in which the
-    % passive torques are exported is muscleActuated joints, then arms, then mtp
-    Tau_passj_arm = Tau_passj_all((nq.muscleActuated+1):(nq.muscleActuated+nq.arms));
-    Tau_passj_mtp = Tau_passj_all((nq.muscleActuated+nq.arms+1):end);
-    Tau_passj_noMTP = Tau_passj_all(1:(nq.muscleActuated+nq.arms));% MTP is not a part of this, Antoine had it in there
-    Tau_passj_muscleActuated = Tau_passj_all(1:nq.muscleActuated);
+    Tau_passj_muscleActuated = f_casadi.PassiveTorques_muscleActuated(Qskj_nsc(:,j+1),Qdotskj_nsc(:,j+1));
+    Tau_passj_arm = f_casadi.PassiveTorques_arms(Qskj_nsc(:,j+1),Qdotskj_nsc(:,j+1));
+    Tau_passj_noMTP = [Tau_passj_muscleActuated;Tau_passj_arm];
+    if S.misc.mtp_in_model
+        Tau_passj_mtp = f_casadi.PassiveTorques_mtp(Qskj_nsc(:,j+1),Qdotskj_nsc(:,j+1));
+    end
     
     % Expression for the state derivatives at the collocation points
     Qsp_nsc      = Qskj_nsc*C(:,j+1);
@@ -336,8 +341,7 @@ for j=1:d
     % Activation dynamics (implicit formulation)
     eq_constr{end+1} = (h*vAk_nsc - ap)./scaling.a;
     % Contraction dynamics (implicit formulation)
-    eq_constr{end+1} = (h*dFTtildej_nsc(:,j) - FTtildep_nsc)./...
-        scaling.FTtilde';
+    eq_constr{end+1} = (h*dFTtildej_nsc(:,j) - FTtildep_nsc)./scaling.FTtilde';
     % Skeleton dynamics (implicit formulation)
     qdotj_nsc = Qdotskj_nsc(:,j+1); % velocity
     eq_constr{end+1} = (h*qdotj_nsc - Qsp_nsc)./scaling.Qs';
@@ -357,13 +361,15 @@ for j=1:d
         W.slack_ctrl*B(j+1) *(f_casadi.J_N_muscles(dFTtildej(:,j)))*h + ...
         W.slack_ctrl*B(j+1) *(f_casadi.J_arms_dof(Aj(model_info.ExtFunIO.jointi.armsi,j)))*h);
     
-    if strcmp(S.subject.mtp_type,'active')
-        a_mtpp       = a_mtpkj*C(:,j+1);
-        % Mtp activation dynamics (explicit formulation)
-        da_mtpdtj = f_casadi.MtpActivationDynamics(e_mtpk,a_mtpkj(:,j+1)');
-        eq_constr{end+1} = (h*da_mtpdtj - a_mtpp);
-        J = J + 1*(...
-            W.e_mtp*B(j+1)  *(f_casadi.J_2(e_mtpk))*h);
+    if S.misc.mtp_in_model
+        if strcmp(S.subject.mtp_type,'active')
+            a_mtpp       = a_mtpkj*C(:,j+1);
+            % Mtp activation dynamics (explicit formulation)
+            da_mtpdtj = f_casadi.MtpActivationDynamics(e_mtpk,a_mtpkj(:,j+1)');
+            eq_constr{end+1} = (h*da_mtpdtj - a_mtpp);
+            J = J + 1*(...
+                W.e_mtp*B(j+1)  *(f_casadi.J_2(e_mtpk))*h);
+        end
     end
     
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -395,13 +401,15 @@ for j=1:d
     eq_constr{end+1} = Tj(model_info.ExtFunIO.jointi.armsi,1)/scaling.ArmTau - (a_akj(:,j+1) + ...
         (Tau_passj_arm)/scaling.ArmTau);
     % Mtp
-    if strcmp(S.subject.mtp_type,'active')
-        eq_constr{end+1} = Tj(model_info.ExtFunIO.jointi.mtpi,1)/scaling.MtpTau - (a_mtpkj(:,j+1) + ...
-            (Tau_passj_mtp)/scaling.MtpTau);
-    else
-        eq_constr{end+1} = Tj(model_info.ExtFunIO.jointi.mtpi,1)/scaling.MtpTau - ...
-            ((Tau_passj_mtp)/scaling.MtpTau);
-    end        
+    if S.misc.mtp_in_model
+        if strcmp(S.subject.mtp_type,'active')
+            eq_constr{end+1} = Tj(model_info.ExtFunIO.jointi.mtpi,1)/scaling.MtpTau - (a_mtpkj(:,j+1) + ...
+                (Tau_passj_mtp)/scaling.MtpTau);
+        else
+            eq_constr{end+1} = Tj(model_info.ExtFunIO.jointi.mtpi,1)/scaling.MtpTau - ...
+                ((Tau_passj_mtp)/scaling.MtpTau);
+        end        
+    end
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Activation dynamics (implicit formulation)
     act1 = vAk_nsc + akj(:,j+1)./(ones(size(akj(:,j+1),1),1)*tdeact);
@@ -432,9 +440,11 @@ for j=1:d
         Tj(model_info.ExtFunIO.origin.tibia_l([1 3]),1));
     ineq_constr5{end+1} = Qconstr;
     % Origins toes (transv plane) at minimum 10 cm from each other.
-    Qconstr = f_casadi.J_nn_2(Tj(model_info.ExtFunIO.origin.toes_r([1 3]),1) - ...
-        Tj(model_info.ExtFunIO.origin.toes_l([1 3]),1));
-    ineq_constr6{end+1} = Qconstr;
+    if S.misc.mtp_in_model
+        Qconstr = f_casadi.J_nn_2(Tj(model_info.ExtFunIO.origin.toes_r([1 3]),1) - ...
+            Tj(model_info.ExtFunIO.origin.toes_l([1 3]),1));
+        ineq_constr6{end+1} = Qconstr;
+    end
 end % End loop over collocation points
 
 eq_constr = vertcat(eq_constr{:});
@@ -445,29 +455,44 @@ ineq_constr4 = vertcat(ineq_constr4{:});
 ineq_constr5 = vertcat(ineq_constr5{:});
 ineq_constr6 = vertcat(ineq_constr6{:});
 
-if strcmp(S.subject.mtp_type,'active')
-    % Casadi function to get constraints and objective
-    f_coll = Function('f_coll',{tfk,ak,aj,FTtildek,FTtildej,Qsk,Qsj,Qdotsk,...
-        Qdotsj,a_ak,a_aj,a_mtpk,a_mtpj,vAk,e_ak,e_mtpk,dFTtildej,Aj},...
-        {eq_constr,ineq_constr1,ineq_constr2,ineq_constr3,...
-        ineq_constr4,ineq_constr5,ineq_constr6,J});
-    % assign NLP problem to multiple cores
-    f_coll_map = f_coll.map(N,S.solver.parallel_mode,S.solver.N_threads);
-    [coll_eq_constr,coll_ineq_constr1,coll_ineq_constr2,coll_ineq_constr3,...
-        coll_ineq_constr4,coll_ineq_constr5,coll_ineq_constr6,Jall] = f_coll_map(tf,...
-        a(:,1:end-1), a_col, FTtilde(:,1:end-1), FTtilde_col, Qs(:,1:end-1), ...
-        Qs_col, Qdots(:,1:end-1), Qdots_col, a_a(:,1:end-1), a_a_col, ...
-        a_mtp(:,1:end-1), a_mtp_col, vA, e_a, e_mtp, dFTtilde_col, A_col);
+if S.misc.mtp_in_model
+    if strcmp(S.subject.mtp_type,'active')
+        % Casadi function to get constraints and objective
+        f_coll = Function('f_coll',{tfk,ak,aj,FTtildek,FTtildej,Qsk,Qsj,Qdotsk,...
+            Qdotsj,a_ak,a_aj,a_mtpk,a_mtpj,vAk,e_ak,e_mtpk,dFTtildej,Aj},...
+            {eq_constr,ineq_constr1,ineq_constr2,ineq_constr3,...
+            ineq_constr4,ineq_constr5,ineq_constr6,J});
+        % assign NLP problem to multiple cores
+        f_coll_map = f_coll.map(N,S.solver.parallel_mode,S.solver.N_threads);
+        [coll_eq_constr,coll_ineq_constr1,coll_ineq_constr2,coll_ineq_constr3,...
+            coll_ineq_constr4,coll_ineq_constr5,coll_ineq_constr6,Jall] = f_coll_map(tf,...
+            a(:,1:end-1), a_col, FTtilde(:,1:end-1), FTtilde_col, Qs(:,1:end-1), ...
+            Qs_col, Qdots(:,1:end-1), Qdots_col, a_a(:,1:end-1), a_a_col, ...
+            a_mtp(:,1:end-1), a_mtp_col, vA, e_a, e_mtp, dFTtilde_col, A_col);
+    else
+        % Casadi function to get constraints and objective
+        f_coll = Function('f_coll',{tfk,ak,aj,FTtildek,FTtildej,Qsk,Qsj,Qdotsk,...
+            Qdotsj,a_ak,a_aj,vAk,e_ak,dFTtildej,Aj},...
+            {eq_constr,ineq_constr1,ineq_constr2,ineq_constr3,...
+            ineq_constr4,ineq_constr5,ineq_constr6,J});
+        % assign NLP problem to multiple cores
+        f_coll_map = f_coll.map(N,S.solver.parallel_mode,S.solver.N_threads);
+        [coll_eq_constr,coll_ineq_constr1,coll_ineq_constr2,coll_ineq_constr3,...
+            coll_ineq_constr4,coll_ineq_constr5,coll_ineq_constr6,Jall] = f_coll_map(tf,...
+            a(:,1:end-1), a_col, FTtilde(:,1:end-1), FTtilde_col, Qs(:,1:end-1), ...
+            Qs_col, Qdots(:,1:end-1), Qdots_col, a_a(:,1:end-1), a_a_col, ...
+            vA, e_a, dFTtilde_col, A_col);
+    end
 else
     % Casadi function to get constraints and objective
     f_coll = Function('f_coll',{tfk,ak,aj,FTtildek,FTtildej,Qsk,Qsj,Qdotsk,...
         Qdotsj,a_ak,a_aj,vAk,e_ak,dFTtildej,Aj},...
         {eq_constr,ineq_constr1,ineq_constr2,ineq_constr3,...
-        ineq_constr4,ineq_constr5,ineq_constr6,J});
+        ineq_constr4,ineq_constr5,J});
     % assign NLP problem to multiple cores
     f_coll_map = f_coll.map(N,S.solver.parallel_mode,S.solver.N_threads);
     [coll_eq_constr,coll_ineq_constr1,coll_ineq_constr2,coll_ineq_constr3,...
-        coll_ineq_constr4,coll_ineq_constr5,coll_ineq_constr6,Jall] = f_coll_map(tf,...
+        coll_ineq_constr4,coll_ineq_constr5,Jall] = f_coll_map(tf,...
         a(:,1:end-1), a_col, FTtilde(:,1:end-1), FTtilde_col, Qs(:,1:end-1), ...
         Qs_col, Qdots(:,1:end-1), Qdots_col, a_a(:,1:end-1), a_a_col, ...
         vA, e_a, dFTtilde_col, A_col);
@@ -481,7 +506,9 @@ opti.subject_to(coll_ineq_constr2(:) <= 1/tact);
 opti.subject_to(S.bounds.calcn_dist.lower.^2 < coll_ineq_constr3(:) < 4);
 opti.subject_to(S.bounds.femur_hand_dist.lower.^2 < coll_ineq_constr4(:) < 4);
 opti.subject_to(S.bounds.tibia_dist.lower.^2 < coll_ineq_constr5(:) < 4);
-opti.subject_to(S.bounds.toes_dist.lower.^2 < coll_ineq_constr6(:) < 4);
+if S.misc.mtp_in_model
+    opti.subject_to(S.bounds.toes_dist.lower.^2 < coll_ineq_constr6(:) < 4);
+end
 
 % Loop over mesh points
 for k=1:N
@@ -492,9 +519,11 @@ for k=1:N
     Qskj = [Qs(:,k), Qs_col(:,(k-1)*d+1:k*d)];
     Qdotskj = [Qdots(:,k), Qdots_col(:,(k-1)*d+1:k*d)];
     a_akj = [a_a(:,k), a_a_col(:,(k-1)*d+1:k*d)];
-    if strcmp(S.subject.mtp_type,'active')
-        a_mtpkj = [a_mtp(:,k), a_mtp_col(:,(k-1)*d+1:k*d)];
-        opti.subject_to(a_mtp(:,k+1) == a_mtpkj*D);
+    if S.misc.mtp_in_model
+        if strcmp(S.subject.mtp_type,'active')
+            a_mtpkj = [a_mtp(:,k), a_mtp_col(:,(k-1)*d+1:k*d)];
+            opti.subject_to(a_mtp(:,k+1) == a_mtpkj*D);
+        end
     end
     % Add equality constraints (next interval starts with end values of
     % states from previous interval)
@@ -520,9 +549,11 @@ if strcmp(S.misc.gaitmotion_type,'HalfGaitCycle')
     % Arm activations
     opti.subject_to(a_a(model_info.ExtFunIO.symQs.orderArm,end) - a_a(model_info.ExtFunIO.symQs.orderArmInv,1) == 0);
     % Mtp activations
-    if strcmp(S.subject.mtp_type,'active')
-        orderMtpInv = [2 1]; % There are only 2 mtps
-        opti.subject_to(a_mtp(:,end) - a_mtp(orderMtpInv,1) == 0);
+    if S.misc.mtp_in_model
+        if strcmp(S.subject.mtp_type,'active')
+            orderMtpInv = [2 1]; % There are only 2 mtps
+            opti.subject_to(a_mtp(:,end) - a_mtp(orderMtpInv,1) == 0);
+        end
     end
 else
     opti.subject_to(Qs(:,end) - Qs(:,1) == 0);
@@ -534,8 +565,10 @@ else
     % Arm activations
     opti.subject_to(a_a(:,end) - a_a(:,1) == 0);
     % Mtp activations
-    if strcmp(S.subject.mtp_type,'active')
-        opti.subject_to(a_mtp(:,end) - a_mtp(:,1) == 0);
+    if S.misc.mtp_in_model
+        if strcmp(S.subject.mtp_type,'active')
+            opti.subject_to(a_mtp(:,end) - a_mtp(:,1) == 0);
+        end
     end
 end
 % Average speed
@@ -617,21 +650,25 @@ a_a_opt = reshape(w_opt(starti:starti+nq.arms*(N+1)-1),nq.arms,N+1)';
 starti = starti + nq.arms*(N+1);
 a_a_col_opt = reshape(w_opt(starti:starti+nq.arms*(d*N)-1),nq.arms,d*N)';
 starti = starti + nq.arms*(d*N);
-if strcmp(S.subject.mtp_type,'active')
-    a_mtp_opt = reshape(w_opt(starti:starti+nq.mtp*(N+1)-1),nq.mtp,N+1)';
-    starti = starti + nq.mtp*(N+1);
-    a_mtp_col_opt = reshape(w_opt(starti:starti+nq.mtp*(d*N)-1),nq.mtp,d*N)';
-    starti = starti + nq.mtp*(d*N);
-    a_mtp_mesh_col_opt=zeros(N*(d+1)+1,nq.mtp);
-    a_mtp_mesh_col_opt(1:(d+1):end,:)= a_mtp_opt;
+if S.misc.mtp_in_model
+    if strcmp(S.subject.mtp_type,'active')
+        a_mtp_opt = reshape(w_opt(starti:starti+nq.mtp*(N+1)-1),nq.mtp,N+1)';
+        starti = starti + nq.mtp*(N+1);
+        a_mtp_col_opt = reshape(w_opt(starti:starti+nq.mtp*(d*N)-1),nq.mtp,d*N)';
+        starti = starti + nq.mtp*(d*N);
+        a_mtp_mesh_col_opt=zeros(N*(d+1)+1,nq.mtp);
+        a_mtp_mesh_col_opt(1:(d+1):end,:)= a_mtp_opt;
+    end
 end
 vA_opt = reshape(w_opt(starti:starti+NMuscle*N-1),NMuscle,N)';
 starti = starti + NMuscle*N;
 e_a_opt = reshape(w_opt(starti:starti+nq.arms*N-1),nq.arms,N)';
 starti = starti + nq.arms*N;
-if strcmp(S.subject.mtp_type,'active')
-    e_mtp_opt = reshape(w_opt(starti:starti+nq.mtp*N-1),nq.mtp,N)';
-    starti = starti + nq.mtp*N;
+if S.misc.mtp_in_model
+    if strcmp(S.subject.mtp_type,'active')
+        e_mtp_opt = reshape(w_opt(starti:starti+nq.mtp*N-1),nq.mtp,N)';
+        starti = starti + nq.mtp*N;
+    end
 end
 dFTtilde_col_opt=reshape(w_opt(starti:starti+NMuscle*(d*N)-1),NMuscle,d*N)';
 starti = starti + NMuscle*(d*N);
@@ -660,8 +697,10 @@ for k=1:N
     Qs_mesh_col_opt(rangei,:) = Qs_col_opt(rangebi,:);
     Qdots_mesh_col_opt(rangei,:) = Qdots_col_opt(rangebi,:);
     a_a_mesh_col_opt(rangei,:) = a_a_col_opt(rangebi,:);
-    if strcmp(S.subject.mtp_type,'active')
-        a_mtp_mesh_col_opt(rangei,:) = a_mtp_col_opt(rangebi,:);
+    if S.misc.mtp_in_model
+        if strcmp(S.subject.mtp_type,'active')
+            a_mtp_mesh_col_opt(rangei,:) = a_mtp_col_opt(rangebi,:);
+        end
     end
 end
 
@@ -696,18 +735,20 @@ FTtilde_opt_unsc = FTtilde_opt(1:end-1,:).*repmat(...
 a_a_opt_unsc = a_a_opt(1:end-1,:);
 % Arm activations (1:N)
 a_a_opt_unsc_all = a_a_opt;
-if strcmp(S.subject.mtp_type,'active')
-    % Mtp activations (1:N-1)
-    a_mtp_opt_unsc = a_mtp_opt(1:end-1,:);
-    % Mtp activations (1:N)
-    a_mtp_opt_unsc_all = a_mtp_opt;
-    % Arm activations
-    a_a_col_opt_unsc = a_a_col_opt;
-    % Mtp activations
-    a_mtp_col_opt_unsc = a_mtp_col_opt;
-    
-    % Mtp excitations (control)
-    e_mtp_opt_unsc = e_mtp_opt;
+if S.misc.mtp_in_model
+    if strcmp(S.subject.mtp_type,'active')
+        % Mtp activations (1:N-1)
+        a_mtp_opt_unsc = a_mtp_opt(1:end-1,:);
+        % Mtp activations (1:N)
+        a_mtp_opt_unsc_all = a_mtp_opt;
+        % Arm activations
+        a_a_col_opt_unsc = a_a_col_opt;
+        % Mtp activations
+        a_mtp_col_opt_unsc = a_mtp_col_opt;
+
+        % Mtp excitations (control)
+        e_mtp_opt_unsc = e_mtp_opt;
+    end
 end
 % Controls at mesh points
 % Time derivative of muscle activations (states)
@@ -774,7 +815,14 @@ for i = 1:N
     [res] = F([Xk_Qs_Qdots_opt(i,:)';Xk_Qdotdots_opt(i,:)']);
     Foutk_opt(i,:) = full(res);
     % passive moments
-    Tau_passk_opt_all(i,:) = full(f_casadi.AllPassiveTorques(q_opt_unsc_all.rad(i+1,:),qdot_opt_unsc_all.rad(i+1,:)));
+    Tau_passk_opt_muscleActuated = full(f_casadi.PassiveTorques_muscleActuated(q_opt_unsc_all.rad(i+1,:),qdot_opt_unsc_all.rad(i+1,:)));
+    Tau_passk_opt_arm = full(f_casadi.PassiveTorques_arms(q_opt_unsc_all.rad(i+1,:),qdot_opt_unsc_all.rad(i+1,:)));
+    if S.misc.mtp_in_model
+        Tau_passk_opt_mtp = full(f_casadi.PassiveTorques_mtp(q_opt_unsc_all.rad(i+1,:),qdot_opt_unsc_all.rad(i+1,:)));
+        Tau_passk_opt_all(i,:) = [Tau_passk_opt_muscleActuated;Tau_passk_opt_arm;Tau_passk_opt_mtp];
+    else
+        Tau_passk_opt_all(i,:) = [Tau_passk_opt_muscleActuated;Tau_passk_opt_arm];
+    end
 end
 GRFk_opt = Foutk_opt(:,[model_info.ExtFunIO.GRFs.right_foot model_info.ExtFunIO.GRFs.left_foot]);
 
@@ -869,11 +917,13 @@ for k=1:N
             W.slack_ctrl*B(j+1) *(f_casadi.J_N_muscles(dFTtilde_col_opt(count,:)))*h_opt + ...
             W.slack_ctrl*B(j+1) *(f_casadi.J_arms_dof(qdotdot_col_opt(count,model_info.ExtFunIO.jointi.armsi)))*h_opt);
 
-        if strcmp(S.subject.mtp_type,'active')
-            J_opt = J_opt + 1/(dist_trav_opt)*(...
-                W.e_mtp*B(j+1)  *(f_casadi.J_2(e_mtp_opt(k,:)))*h_opt);
-            Mtp_cost = Mtp_cost + W.e_mtp*B(j+1)*...
-                (f_casadi.J_2(e_mtp_opt(k,:)))*h_opt;
+        if S.misc.mtp_in_model
+            if strcmp(S.subject.mtp_type,'active')
+                J_opt = J_opt + 1/(dist_trav_opt)*(...
+                    W.e_mtp*B(j+1)  *(f_casadi.J_2(e_mtp_opt(k,:)))*h_opt);
+                Mtp_cost = Mtp_cost + W.e_mtp*B(j+1)*...
+                    (f_casadi.J_2(e_mtp_opt(k,:)))*h_opt;
+            end
         end
         
         E_cost = E_cost + W.E*B(j+1)*...
@@ -904,40 +954,42 @@ Pass_costf = full(Pass_cost);   Obj.Pass = Pass_costf;
 vA_costf = full(vA_cost);       Obj.vA = vA_costf;
 dFTtilde_costf = full(dFTtilde_cost); Obj.dFTtilde = dFTtilde_costf;
 QdotdotArm_costf = full(QdotdotArm_cost); Obj.qdd_arm = QdotdotArm_costf;
-if strcmp(S.subject.mtp_type,'active')
-    Mtp_costf = full(Mtp_cost);     Obj.Mtp = Mtp_costf;
-    contributionCost.absoluteValues = 1/(dist_trav_opt)*[E_costf,A_costf,...
-        Arm_costf,Qdotdot_costf,Pass_costf,vA_costf,dFTtilde_costf,...
-        QdotdotArm_costf,Mtp_costf];
-    contributionCost.relativeValues = 1/(dist_trav_opt)*[E_costf,A_costf,...
-        Arm_costf,Qdotdot_costf,Pass_costf,vA_costf,dFTtilde_costf,...
-        QdotdotArm_costf,Mtp_costf]./J_optf*100;
-    contributionCost.relativeValuesRound2 = ...
-        round(contributionCost.relativeValues,2);
-    contributionCost.labels = {'metabolicEnergy','muscleActivation',...
-        'armExcitation','jointAccelerations','passiveTorques','dadt','dFdt',...
-        'armAccelerations','mtpExcitation'};
-    % assertCost should be 0
-    assertCost = abs(J_optf - 1/(dist_trav_opt)*(E_costf+A_costf+Arm_costf+...
-        Mtp_costf+Qdotdot_costf+Pass_costf+vA_costf+dFTtilde_costf+...
-        QdotdotArm_costf));
-else
-    contributionCost.absoluteValues = 1/(dist_trav_opt)*[E_costf,A_costf,...
-        Arm_costf,Qdotdot_costf,Pass_costf,vA_costf,dFTtilde_costf,...
-        QdotdotArm_costf];
-    contributionCost.relativeValues = 1/(dist_trav_opt)*[E_costf,A_costf,...
-        Arm_costf,Qdotdot_costf,Pass_costf,vA_costf,dFTtilde_costf,...
-        QdotdotArm_costf]./J_optf*100;
-    contributionCost.relativeValuesRound2 = ...
-        round(contributionCost.relativeValues,2);
-    contributionCost.labels = {'metabolicEnergy','muscleActivation',...
-        'armExcitation','jointAccelerations','passiveTorques','dadt','dFdt',...
-        'armAccelerations'};
-    % assertCost should be 0
-    assertCost = abs(J_optf - 1/(dist_trav_opt)*(E_costf+A_costf+Arm_costf+...
-        Qdotdot_costf+Pass_costf+vA_costf+dFTtilde_costf+...
-        QdotdotArm_costf));
-end    
+if S.misc.mtp_in_model
+    if strcmp(S.subject.mtp_type,'active')
+        Mtp_costf = full(Mtp_cost);     Obj.Mtp = Mtp_costf;
+        contributionCost.absoluteValues = 1/(dist_trav_opt)*[E_costf,A_costf,...
+            Arm_costf,Qdotdot_costf,Pass_costf,vA_costf,dFTtilde_costf,...
+            QdotdotArm_costf,Mtp_costf];
+        contributionCost.relativeValues = 1/(dist_trav_opt)*[E_costf,A_costf,...
+            Arm_costf,Qdotdot_costf,Pass_costf,vA_costf,dFTtilde_costf,...
+            QdotdotArm_costf,Mtp_costf]./J_optf*100;
+        contributionCost.relativeValuesRound2 = ...
+            round(contributionCost.relativeValues,2);
+        contributionCost.labels = {'metabolicEnergy','muscleActivation',...
+            'armExcitation','jointAccelerations','passiveTorques','dadt','dFdt',...
+            'armAccelerations','mtpExcitation'};
+        % assertCost should be 0
+        assertCost = abs(J_optf - 1/(dist_trav_opt)*(E_costf+A_costf+Arm_costf+...
+            Mtp_costf+Qdotdot_costf+Pass_costf+vA_costf+dFTtilde_costf+...
+            QdotdotArm_costf));
+    else
+        contributionCost.absoluteValues = 1/(dist_trav_opt)*[E_costf,A_costf,...
+            Arm_costf,Qdotdot_costf,Pass_costf,vA_costf,dFTtilde_costf,...
+            QdotdotArm_costf];
+        contributionCost.relativeValues = 1/(dist_trav_opt)*[E_costf,A_costf,...
+            Arm_costf,Qdotdot_costf,Pass_costf,vA_costf,dFTtilde_costf,...
+            QdotdotArm_costf]./J_optf*100;
+        contributionCost.relativeValuesRound2 = ...
+            round(contributionCost.relativeValues,2);
+        contributionCost.labels = {'metabolicEnergy','muscleActivation',...
+            'armExcitation','jointAccelerations','passiveTorques','dadt','dFdt',...
+            'armAccelerations'};
+        % assertCost should be 0
+        assertCost = abs(J_optf - 1/(dist_trav_opt)*(E_costf+A_costf+Arm_costf+...
+            Qdotdot_costf+Pass_costf+vA_costf+dFTtilde_costf+...
+            QdotdotArm_costf));
+    end
+end
 assertCost2 = abs(stats.iterations.obj(end) - J_optf);
 if assertCost > 1*10^(-S.solver.tol_ipopt)
     disp('Issue when reconstructing optimal cost wrt sum of terms')
@@ -1095,41 +1147,43 @@ if strcmp(S.misc.gaitmotion_type,'HalfGaitCycle')
         a_a_GC(:,:) = a_a_GC(:,orderArmInv);
     end
     
-    if strcmp(S.subject.mtp_type,'active')
-        % Mtp activations
-        orderMtpInv = [2 1]; % There are only 2 mtps
-        a_mtp_GC = zeros(N*2,nq.mtp);
-        a_mtp_GC(1:N-IC1i_s+1,:) = a_mtp_opt_unsc(IC1i_s:end,:);
-        a_mtp_GC(N-IC1i_s+2:N-IC1i_s+1+N,:) = a_mtp_opt_unsc(1:end,orderMtpInv);
-        a_mtp_GC(N-IC1i_s+2+N:2*N,:) = a_mtp_opt_unsc(1:IC1i_s-1,:);
-        % If the first heel strike was on the left foot then we invert so that
-        % we always start with the right foot, for analysis purpose
-        if strcmp(HS1,'l')
-            a_mtp_GC(:,:) = a_mtp_GC(:,orderMtpInv);
-        end
+    if S.misc.mtp_in_model
+        if strcmp(S.subject.mtp_type,'active')
+            % Mtp activations
+            orderMtpInv = [2 1]; % There are only 2 mtps
+            a_mtp_GC = zeros(N*2,nq.mtp);
+            a_mtp_GC(1:N-IC1i_s+1,:) = a_mtp_opt_unsc(IC1i_s:end,:);
+            a_mtp_GC(N-IC1i_s+2:N-IC1i_s+1+N,:) = a_mtp_opt_unsc(1:end,orderMtpInv);
+            a_mtp_GC(N-IC1i_s+2+N:2*N,:) = a_mtp_opt_unsc(1:IC1i_s-1,:);
+            % If the first heel strike was on the left foot then we invert so that
+            % we always start with the right foot, for analysis purpose
+            if strcmp(HS1,'l')
+                a_mtp_GC(:,:) = a_mtp_GC(:,orderMtpInv);
+            end
 
-        % Arm excitations
-        e_a_GC = zeros(N*2,nq.arms);
-        e_a_GC(1:N-IC1i_c+1,:) = e_a_opt_unsc(IC1i_c:end,:);
-        e_a_GC(N-IC1i_c+2:N-IC1i_c+1+N,:) = e_a_opt_unsc(1:end,orderArmInv);
-        e_a_GC(N-IC1i_c+2+N:2*N,:) = e_a_opt_unsc(1:IC1i_c-1,:);
-        % If the first heel strike was on the left foot then we invert so that
-        % we always start with the right foot, for analysis purpose
-        if strcmp(HS1,'l')
-            e_a_GC(:,:) = e_a_GC(:,orderArmInv);
-        end
-    
-        % Mtp excitations
-        e_mtp_GC = zeros(N*2,nq.mtp);
-        e_mtp_GC(1:N-IC1i_c+1,:) = e_mtp_opt_unsc(IC1i_c:end,:);
-        e_mtp_GC(N-IC1i_c+2:N-IC1i_c+1+N,:) = e_mtp_opt_unsc(1:end,orderMtpInv);
-        e_mtp_GC(N-IC1i_c+2+N:2*N,:) = e_mtp_opt_unsc(1:IC1i_c-1,:);
-        % If the first heel strike was on the left foot then we invert so that
-        % we always start with the right foot, for analysis purpose
-        if strcmp(HS1,'l')
-            e_mtp_GC(:,:) = e_mtp_GC(:,orderMtpInv);
-        end
-    end    
+            % Arm excitations
+            e_a_GC = zeros(N*2,nq.arms);
+            e_a_GC(1:N-IC1i_c+1,:) = e_a_opt_unsc(IC1i_c:end,:);
+            e_a_GC(N-IC1i_c+2:N-IC1i_c+1+N,:) = e_a_opt_unsc(1:end,orderArmInv);
+            e_a_GC(N-IC1i_c+2+N:2*N,:) = e_a_opt_unsc(1:IC1i_c-1,:);
+            % If the first heel strike was on the left foot then we invert so that
+            % we always start with the right foot, for analysis purpose
+            if strcmp(HS1,'l')
+                e_a_GC(:,:) = e_a_GC(:,orderArmInv);
+            end
+
+            % Mtp excitations
+            e_mtp_GC = zeros(N*2,nq.mtp);
+            e_mtp_GC(1:N-IC1i_c+1,:) = e_mtp_opt_unsc(IC1i_c:end,:);
+            e_mtp_GC(N-IC1i_c+2:N-IC1i_c+1+N,:) = e_mtp_opt_unsc(1:end,orderMtpInv);
+            e_mtp_GC(N-IC1i_c+2+N:2*N,:) = e_mtp_opt_unsc(1:IC1i_c-1,:);
+            % If the first heel strike was on the left foot then we invert so that
+            % we always start with the right foot, for analysis purpose
+            if strcmp(HS1,'l')
+                e_mtp_GC(:,:) = e_mtp_GC(:,orderMtpInv);
+            end
+        end    
+    end
     % Passive joint torques
     Tau_pass_opt_inv = model_info.ExtFunIO.symQs.orderTauPassInv;
     Tau_pass_opt_GC = zeros(N*2,nq.all-nq.abs);
@@ -1208,8 +1262,12 @@ R.Sopt        = Sopt; % original settings used to solve the OCP
 R.body_mass   = S.subject.mass;
 R.a_arm       = a_a_GC;
 R.e_arm       = e_a_GC;
-R.a_mtp       = a_mtp_GC;
-R.e_mtp       = e_mtp_GC;
+if S.misc.mtp_in_model
+    if strcmp(S.subject.mtp_type,'active')
+        R.a_mtp       = a_mtp_GC;
+        R.e_mtp       = e_mtp_GC;
+    end
+end
 R.TPass       = Tau_pass_opt_GC;
 R.Obj         = Obj;
 R.BodyKin     = BodyKin;

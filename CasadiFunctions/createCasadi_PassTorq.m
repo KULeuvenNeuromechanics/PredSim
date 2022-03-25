@@ -1,4 +1,6 @@
-function [f_PassiveMoments,f_passiveTATorques,f_AllPassiveTorques] = createCasadi_PassTorq(model_info,S)
+function [f_PassiveMoments,f_passiveTATorques,...
+    f_PassiveTorques_muscleActuauted,f_PassiveTorques_arms,...
+    f_PassiveTorques_mtp] = createCasadi_PassTorq(model_info,S)
 %% createCasadi_PassTorq.m
 %Function to create Casadi functions for passive torques.
 %
@@ -39,8 +41,8 @@ f_passiveTATorques = Function('f_passiveTATorques',{stiff,damp,qin,qdotin}, ...
 
 %% Create function to compute passive moments
 
-Q_SX =  SX.sym('Q_SX',model_info.ExtFunIO.jointi.nq.all,1); % Muscle activations
-Qdot_SX = SX.sym('Qdot_SX',model_info.ExtFunIO.jointi.nq.all,1); % Muscle activations
+Q_SX =  SX.sym('Q_SX',model_info.ExtFunIO.jointi.nq.all,1);
+Qdot_SX = SX.sym('Qdot_SX',model_info.ExtFunIO.jointi.nq.all,1);
 
 % Get passive joint torques
 Tau_passj_muscleActuated = [];
@@ -58,6 +60,8 @@ for i=1:model_info.ExtFunIO.jointi.nq.torso
     Qdot_SX(model_info.ExtFunIO.jointi.torso(i)));
     Tau_passj_muscleActuated = [Tau_passj_muscleActuated; Tau_passj_muscleActuated_var];
 end
+f_PassiveTorques_muscleActuauted = Function('f_PassiveTorques_muscleActuated',{Q_SX,Qdot_SX}, ...
+    {Tau_passj_muscleActuated},{'Q_SX','Qdot_SX'},{'Tau_passj_muscleActuated'});
 
 Tau_passj_arms = [];
 for i=1:model_info.ExtFunIO.jointi.nq.arms
@@ -65,17 +69,20 @@ for i=1:model_info.ExtFunIO.jointi.nq.arms
         Q_SX(model_info.ExtFunIO.jointi.armsi(i)), Qdot_SX(model_info.ExtFunIO.jointi.armsi(i)));
     Tau_passj_arms = [Tau_passj_arms; Tau_passj_arms_var];
 end
+f_PassiveTorques_arms = Function('f_PassiveTorques_arms',{Q_SX,Qdot_SX}, ...
+    {Tau_passj_arms},{'Q_SX','Qdot_SX'},{'Tau_passj_arms'});
 
-Tau_passj_mtp = [];
-for i=1:model_info.ExtFunIO.jointi.nq.mtp
-    Tau_passj_mtp_var = f_passiveTATorques(S.kMTP, S.dMTP, ...
-    Q_SX(model_info.ExtFunIO.jointi.mtpi(i)), Qdot_SX(model_info.ExtFunIO.jointi.mtpi(i)));
-    Tau_passj_mtp = [Tau_passj_mtp; Tau_passj_mtp_var];
-end 
-
-Tau_passj_all = [Tau_passj_muscleActuated; Tau_passj_arms; Tau_passj_mtp];
-
-f_AllPassiveTorques = Function('f_AllPassiveTorques',{Q_SX,Qdot_SX}, ...
-    {Tau_passj_all},{'Q_SX','Qdot_SX'},{'Tau_passj_all'});
+if S.misc.mtp_in_model
+    Tau_passj_mtp = [];
+    for i=1:model_info.ExtFunIO.jointi.nq.mtp
+        Tau_passj_mtp_var = f_passiveTATorques(S.kMTP, S.dMTP, ...
+        Q_SX(model_info.ExtFunIO.jointi.mtpi(i)), Qdot_SX(model_info.ExtFunIO.jointi.mtpi(i)));
+        Tau_passj_mtp = [Tau_passj_mtp; Tau_passj_mtp_var];
+    end
+    f_PassiveTorques_mtp = Function('f_PassiveTorques_mtp',{Q_SX,Qdot_SX}, ...
+        {Tau_passj_mtp},{'Q_SX','Qdot_SX'},{'Tau_passj_mtp'});
+else
+    f_PassiveTorques_mtp = [];
+end
 
 end

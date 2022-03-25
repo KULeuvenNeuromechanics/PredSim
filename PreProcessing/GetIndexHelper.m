@@ -1,6 +1,5 @@
-function [model_info] = GetIndexHelper(S,model_info)
-% TO DO
-% Why different k for calf muslces?
+function [model_info,S] = GetIndexHelper(S,model_info)
+
 
 residualsi = 1:length(fields(model_info.ExtFunIO.coordi));
 model_info.ExtFunIO.jointi.legsi = sort([model_info.ExtFunIO.jointi.leg_l model_info.ExtFunIO.jointi.leg_r]);
@@ -11,6 +10,11 @@ model_info.ExtFunIO.jointi.noarmsi = sort([model_info.ExtFunIO.jointi.ground_pel
 model_info.ExtFunIO.jointi.legs_torso = sort([model_info.ExtFunIO.jointi.legsi model_info.ExtFunIO.jointi.torso]);
 model_info.ExtFunIO.jointi.muscleActuated = sort(setdiff(model_info.ExtFunIO.jointi.legs_torso,model_info.ExtFunIO.jointi.mtpi));
 model_info.ExtFunIO.jointi.tau_passi = [model_info.ExtFunIO.jointi.muscleActuated model_info.ExtFunIO.jointi.armsi model_info.ExtFunIO.jointi.mtpi];
+
+S.misc.mtp_in_model = 1;
+if isempty(model_info.ExtFunIO.jointi.mtpi)
+    S.misc.mtp_in_model = 0;
+end
 
 % Number of degrees of freedom for later use
 nq.all      = length(residualsi); % all
