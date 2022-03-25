@@ -136,8 +136,9 @@ if ~isfield(S.solver,'linear_solver')
     S.solver.linear_solver = 'mumps';
 end
 
-% the power (10^-x) the dual infeasibility has to reach before the OCP can 
-% be regarded as solved; a higher number gives a more precise answer
+% the power (10^-x) the error has to reach before the OCP can 
+% be regarded as solved; a higher number gives a more precise answer, but
+% requires more time
 if ~isfield(S.solver,'tol_ipopt')
     S.solver.tol_ipopt = 4;
 end

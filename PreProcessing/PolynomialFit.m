@@ -8,11 +8,10 @@ function [model_info] = PolynomialFit(S,MuscleData)
 %   - S -
 %   * setting structure S
 %
-%   - osim_path -
-%   * path to the OpenSim model file (.osim)
+%   - MuscleData -
+%   * structure with joint angles and according muscle-tendon lengths and
+%       momentarms (output from muscleAnalysis.m)
 % 
-%   - model_info -
-%   * structure with all the model information based on the OpenSim model
 %
 % OUTPUT:
 %   - model_info -

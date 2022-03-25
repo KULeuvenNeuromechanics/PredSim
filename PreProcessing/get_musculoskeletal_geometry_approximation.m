@@ -27,7 +27,10 @@ function [model_info] = get_musculoskeletal_geometry_approximation(S,osim_path,m
 % --------------------------------------------------------------------------
 
 % Analyze the muscle-tendon lengths, velocities, and moment arms in function of coordinate values
-muscle_data = muscleAnalysis(S,osim_path,model_info);
+% muscle_data = muscleAnalysis(S,osim_path,model_info);
+t0 = tic;
+muscle_data = muscleAnalysisAPI(S,osim_path,model_info);
+disp(toc(t0))
 
 % fit expressions to approximate the results
 if strcmp( S.misc.msk_geom_eq,'polynomials')

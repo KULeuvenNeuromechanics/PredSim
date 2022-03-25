@@ -1,16 +1,4 @@
 function [] = run_pred_sim(S,osim_path)
-pathRepo = pwd;
-pathDefaultSettings = [pathRepo '\DefaultSettings'];
-addpath(pathDefaultSettings)
-
-pathPreProcessing = [pathRepo '\PreProcessing'];
-addpath(pathPreProcessing)
-
-pathVariousFunctions = [pathRepo '\VariousFunctions'];
-addpath(pathVariousFunctions)
-
-pathCasadiFunctions = [pathRepo '\CasadiFunctions'];
-addpath(pathCasadiFunctions)
 
 S = getDefaultSettings(S);
 S = updateS_passiveJointTorqueProperties(S);

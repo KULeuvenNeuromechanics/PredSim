@@ -8,6 +8,17 @@ clear all
 close all
 clc
 [pathRepo,~,~] = fileparts(mfilename('fullpath'));
+pathDefaultSettings = [pathRepo '\DefaultSettings'];
+addpath(pathDefaultSettings)
+
+pathPreProcessing = [pathRepo '\PreProcessing'];
+addpath(pathPreProcessing)
+
+pathVariousFunctions = [pathRepo '\VariousFunctions'];
+addpath(pathVariousFunctions)
+
+pathCasadiFunctions = [pathRepo '\CasadiFunctions'];
+addpath(pathCasadiFunctions)
 
 %% Initialize S
 
@@ -17,7 +28,7 @@ S.misc.main_path = pathRepo;
 %% Required inputs
 
 % name of the subject
-S.subject.name          = "test_1"; 
+S.subject.name          = 'test_1'; 
 
 % path to folder where you want to store the results of the OCP
 S.subject.save_folder  = fullfile(pathRepo,'test_1'); 

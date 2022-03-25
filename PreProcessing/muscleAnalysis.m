@@ -15,7 +15,7 @@ function [MuscleData] = muscleAnalysis(S,osim_path,model_info)
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-MA_path = [S.misc.subject_path,'/MuscleAnalysis'];
+MA_path = fullfile(S.misc.subject_path, '/MuscleAnalysis');
 if ~isfolder(MA_path)
     mkdir(MA_path);
 end
@@ -100,8 +100,7 @@ idx_coord_analyse = setdiff(1:n_coord,model_info.ExtFunIO.jointi.floating_base);
 import org.opensim.modeling.*
 
 % run muscle analysis
-OpenSim_Muscle_Analysis(pathDummyMotion, osim_path, MA_path, [time(1) time(end)],...
-    coordinate_names(idx_coord_analyse));
+OpenSim_Muscle_Analysis(pathDummyMotion, osim_path, MA_path, [time(1) time(end)],coordinate_names(idx_coord_analyse));
 
 
 % import the muscle analysis data
