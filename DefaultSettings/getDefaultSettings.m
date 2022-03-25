@@ -119,6 +119,11 @@ if ~isfield(S.misc,'visualize_IG_bounds')
     S.misc.visualize_IG_bounds = 0;
 end
 
+% damping Coefficient in contraction dynamics
+if ~isfield(S.misc,'dampingCoefficient') || isempty(S.misc.dampingCoefficient)
+    S.misc.dampingCoefficient = 0.01;
+end
+
 %% post_process
 
 % boolean to plot post processing results

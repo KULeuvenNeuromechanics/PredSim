@@ -5,7 +5,7 @@
 % Date: 12/19/2018
 % 
 function [vM,vMtilde,varargout] = FiberVelocity_TendonForce_tendon(FTtile,...
-    dFTtilde,params,lMT,vMT,Atendon,shift,MuscMoAsmp)
+    dFTtilde,params,lMT,vMT,Atendon,shift)
 
 lMo = ones(size(FTtile,1),1)*params(2,:);
 lTs = ones(size(FTtile,1),1)*params(3,:);
@@ -17,12 +17,8 @@ lTtilde = log(5*(FTtile + 0.25 - shift))./Atendon + 0.995;
 
 % Hill-type muscle model: geometric relationships
 vT = lTs.*dFTtilde./(0.2*Atendon*exp(Atendon*(lTtilde-0.995)));
-if(MuscMoAsmp == 0) % b = cst
-    lM = sqrt((lMo.*sin(alphao)).^2+(lMT-lTs.*lTtilde).^2);
-    cos_alpha = (lMT-lTs.*lTtilde)./lM;
-else    % alpha = cst = alphao
-    cos_alpha = cos(alphao);
-end
+lM = sqrt((lMo.*sin(alphao)).^2+(lMT-lTs.*lTtilde).^2);
+cos_alpha = (lMT-lTs.*lTtilde)./lM;
 vM = (vMT-vT).*cos_alpha;
 vMtilde = vM./vMmax;
 

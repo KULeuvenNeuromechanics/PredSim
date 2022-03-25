@@ -14,21 +14,8 @@ function [f_forceEquilibrium_FtildeState_all_tendon,f_FiberLength_TendonForce_te
 % Authors: Ines Vandekerckhove, Tom Buurke & Dhruv Gupta, KU Leuven
 % Date: 30-11-2021 
 
-% TO DO
-% What is MuscMoAsmp?
-
 import casadi.*
 N_muscles = model_info.muscle_info.NMuscle;
-if isfield(S,'MuscModelAsmp') && ~isempty(S.MuscModelAsmp)
-    MuscMoAsmp = S.MuscModelAsmp;
-else
-    MuscMoAsmp = 0;
-end
-if isfield(S,'dampingCoefficient') && ~isempty(S.dampingCoefficient)
-    dampingCoefficient = S.dampingCoefficient;
-else
-    dampingCoefficient = 0.01;
-end
 %% Muscle contraction dynamics
 % Function for Hill-equilibrium
 FTtilde     = SX.sym('FTtilde',N_muscles); % Normalized tendon forces
@@ -47,9 +34,6 @@ vMmax       = SX(N_muscles,1); % Maximum contraction velocities
 massM       = SX(N_muscles,1); % Muscle mass
 Fpass       = SX(N_muscles,1); % Passive element forces
 % Parameters of force-length-velocity curves
-% load(fullfile(MainPath,'MuscleModel','Fvparam.mat'),'Fvparam');
-% load(fullfile(MainPath,'MuscleModel','Fpparam.mat'),'Fpparam');
-% load(fullfile(MainPath,'MuscleModel','Faparam.mat'),'Faparam');
 load('Fvparam.mat');
 load('Fpparam.mat');
 load('Faparam.mat');
@@ -59,7 +43,7 @@ for m = 1:N_muscles
         ForceEquilibrium_FtildeState_all_tendon(a(m),FTtilde(m),...
         dFTtilde(m),lMT(m),vMT(m),model_info.muscle_info.params(:,m),Fvparam,Fpparam,...
         Faparam,tension_SX(m),model_info.muscle_info.aTendon(m),...
-        model_info.muscle_info.shift(m),MuscMoAsmp,dampingCoefficient);
+        model_info.muscle_info.shift(m),S.misc.dampingCoefficient);
 end
 f_forceEquilibrium_FtildeState_all_tendon = ...
     Function('f_forceEquilibrium_FtildeState_all_tendon',{a,FTtilde,...
@@ -74,7 +58,7 @@ lT      = SX(N_muscles,1);
 for m = 1:N_muscles
     [lM(m),lMtilde(m),lT(m)] = FiberLength_TendonForce_tendon(FTtilde(m),...
         model_info.muscle_info.params(:,m),lMT(m),...
-        model_info.muscle_info.aTendon(m),model_info.muscle_info.shift(m),MuscMoAsmp);
+        model_info.muscle_info.aTendon(m),model_info.muscle_info.shift(m));
 end
 f_FiberLength_TendonForce_tendon = Function(...
     'f_FiberLength_Ftilde_tendon',{FTtilde,lMT},{lM,lMtilde},...
@@ -87,7 +71,7 @@ vT      = SX(N_muscles,1);
 for m = 1:N_muscles
     [vM(m),vMtilde(m),vT(m)] = FiberVelocity_TendonForce_tendon(FTtilde(m),...
         dFTtilde(m),model_info.muscle_info.params(:,m),lMT(m),vMT(m),...
-        model_info.muscle_info.aTendon(m),model_info.muscle_info.shift(m),MuscMoAsmp);
+        model_info.muscle_info.aTendon(m),model_info.muscle_info.shift(m));
 end
 f_FiberVelocity_TendonForce_tendon = Function(...
     'f_FiberVelocity_Ftilde_tendon',{FTtilde,dFTtilde,lMT,vMT},...
