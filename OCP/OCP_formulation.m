@@ -248,11 +248,12 @@ dFTtildej   = MX.sym('dFTtildej',NMuscle,d);
 Aj          = MX.sym('Aj',nq.all,d);
 J           = 0; % Initialize cost function
 eq_constr   = {}; % Initialize equality constraint vector
-% ineq_constr = MX(567,1); % Initialise inequality constraint vector
-% ineq_constr_index = nan(567); % keeps track of the index of the inequality constraint
-ineq_constr = MX(1000,1); % Initialise inequality constraint vector
-ineq_constr_index = nan(1000,1); % keeps track of the index of the inequality constraint
-ctIneq      = 1;
+ineq_constr1   = {}; % Initialize inequality constraint vector
+ineq_constr2   = {}; % Initialize inequality constraint vector
+ineq_constr3   = {}; % Initialize inequality constraint vector
+ineq_constr4   = {}; % Initialize inequality constraint vector
+ineq_constr5   = {}; % Initialize inequality constraint vector
+ineq_constr6   = {}; % Initialize inequality constraint vector
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Time step
 h = tfk/N;
@@ -397,12 +398,8 @@ for j=1:d
     % Activation dynamics (implicit formulation)
     act1 = vAk_nsc + akj(:,j+1)./(ones(size(akj(:,j+1),1),1)*tdeact);
     act2 = vAk_nsc + akj(:,j+1)./(ones(size(akj(:,j+1),1),1)*tact);
-    ineq_constr(ctIneq:ctIneq+length(act1)-1) = act1;
-    ineq_constr_index(ctIneq:ctIneq+length(act1)-1) = 1;
-    ctIneq = ctIneq + length(act1);
-    ineq_constr(ctIneq:ctIneq+length(act2)-1) = act2;
-    ineq_constr_index(ctIneq:ctIneq+length(act2)-1) = 2;
-    ctIneq = ctIneq + length(act2);
+    ineq_constr1{end+1} = act1;
+    ineq_constr2{end+1} = act2;
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Contraction dynamics (implicit formulation)
     eq_constr{end+1} = Hilldiffj;
@@ -412,46 +409,44 @@ for j=1:d
     % Origins calcaneus (transv plane) at minimum 9 cm from each other.
     Qconstr = f_casadi.J_nn_2(Tj(model_info.ExtFunIO.origin.calcn_r([1 3]),1) - ...
         Tj(model_info.ExtFunIO.origin.calcn_l([1 3]),1));
-    ineq_constr(ctIneq:ctIneq+length(Qconstr)-1) = Qconstr;
-    ineq_constr_index(ctIneq:ctIneq+length(Qconstr)-1) = 3;
-    ctIneq = ctIneq + length(Qconstr);
+    ineq_constr3{end+1} = Qconstr;
     % Constraint to prevent the arms to penetrate the skeleton
     % Origins femurs and ipsilateral hands (transv plane) at minimum
     % 18 cm from each other.
     Qconstr = f_casadi.J_nn_2(Tj(model_info.ExtFunIO.origin.femur_r([1 3]),1) - ...
         Tj(model_info.ExtFunIO.origin.hand_r([1 3]),1));
-    ineq_constr(ctIneq:ctIneq+length(Qconstr)-1) = Qconstr;
-    ineq_constr_index(ctIneq:ctIneq+length(Qconstr)-1) = 4;
-    ctIneq = ctIneq + length(Qconstr);
+    ineq_constr4{end+1} = Qconstr;
     Qconstr = f_casadi.J_nn_2(Tj(model_info.ExtFunIO.origin.femur_l([1 3]),1) - ...
         Tj(model_info.ExtFunIO.origin.hand_l([1 3]),1));
-    ineq_constr(ctIneq:ctIneq+length(Qconstr)-1) = Qconstr;
-    ineq_constr_index(ctIneq:ctIneq+length(Qconstr)-1) = 4;
-    ctIneq = ctIneq + length(Qconstr);
+    ineq_constr4{end+1} = Qconstr;
     % Origins tibia (transv plane) at minimum 11 cm from each other.
     Qconstr = f_casadi.J_nn_2(Tj(model_info.ExtFunIO.origin.tibia_r([1 3]),1) - ...
         Tj(model_info.ExtFunIO.origin.tibia_l([1 3]),1));
-    ineq_constr(ctIneq:ctIneq+length(Qconstr)-1) = Qconstr;
-    ineq_constr_index(ctIneq:ctIneq+length(Qconstr)-1) = 5;
-    ctIneq = ctIneq + length(Qconstr);
+    ineq_constr5{end+1} = Qconstr;
     % Origins toes (transv plane) at minimum 10 cm from each other.
     Qconstr = f_casadi.J_nn_2(Tj(model_info.ExtFunIO.origin.toes_r([1 3]),1) - ...
         Tj(model_info.ExtFunIO.origin.toes_l([1 3]),1));
-    ineq_constr(ctIneq:ctIneq+length(Qconstr)-1) = Qconstr;
-    ineq_constr_index(ctIneq:ctIneq+length(Qconstr)-1) = 6;
-    ctIneq = ctIneq + length(Qconstr);
+    ineq_constr6{end+1} = Qconstr;
 end % End loop over collocation points
 
-eq_constrV = vertcat(eq_constr{:});
+eq_constr = vertcat(eq_constr{:});
+ineq_constr1 = vertcat(ineq_constr1{:});
+ineq_constr2 = vertcat(ineq_constr2{:});
+ineq_constr3 = vertcat(ineq_constr3{:});
+ineq_constr4 = vertcat(ineq_constr4{:});
+ineq_constr5 = vertcat(ineq_constr5{:});
+ineq_constr6 = vertcat(ineq_constr6{:});
 
 if strcmp(S.subject.mtp_type,'active')
     % Casadi function to get constraints and objective
     f_coll = Function('f_coll',{tfk,ak,aj,FTtildek,FTtildej,Qsk,Qsj,Qdotsk,...
         Qdotsj,a_ak,a_aj,a_mtpk,a_mtpj,vAk,e_ak,e_mtpk,dFTtildej,Aj},...
-        {eq_constrV,ineq_constr,J});
+        {eq_constr,ineq_constr1,ineq_constr2,ineq_constr3,...
+        ineq_constr4,ineq_constr5,ineq_constr6,J});
     % assign NLP problem to multiple cores
     f_coll_map = f_coll.map(N,S.solver.parallel_mode,S.solver.N_threads);
-    [coll_eq_constr, coll_ineq_constr, Jall] = f_coll_map(tf,...
+    [coll_eq_constr,coll_ineq_constr1,coll_ineq_constr2,coll_ineq_constr3,...
+        coll_ineq_constr4,coll_ineq_constr5,coll_ineq_constr6,Jall] = f_coll_map(tf,...
         a(:,1:end-1), a_col, FTtilde(:,1:end-1), FTtilde_col, Qs(:,1:end-1), ...
         Qs_col, Qdots(:,1:end-1), Qdots_col, a_a(:,1:end-1), a_a_col, ...
         a_mtp(:,1:end-1), a_mtp_col, vA, e_a, e_mtp, dFTtilde_col, A_col);
@@ -459,10 +454,12 @@ else
     % Casadi function to get constraints and objective
     f_coll = Function('f_coll',{tfk,ak,aj,FTtildek,FTtildej,Qsk,Qsj,Qdotsk,...
         Qdotsj,a_ak,a_aj,vAk,e_ak,dFTtildej,Aj},...
-        {eq_constrV,ineq_constr,J});
+        {eq_constr,ineq_constr1,ineq_constr2,ineq_constr3,...
+        ineq_constr4,ineq_constr5,ineq_constr6,J});
     % assign NLP problem to multiple cores
     f_coll_map = f_coll.map(N,S.solver.parallel_mode,S.solver.N_threads);
-    [coll_eq_constr, coll_ineq_constr, Jall] = f_coll_map(tf,...
+    [coll_eq_constr,coll_ineq_constr1,coll_ineq_constr2,coll_ineq_constr3,...
+        coll_ineq_constr4,coll_ineq_constr5,coll_ineq_constr6,Jall] = f_coll_map(tf,...
         a(:,1:end-1), a_col, FTtilde(:,1:end-1), FTtilde_col, Qs(:,1:end-1), ...
         Qs_col, Qdots(:,1:end-1), Qdots_col, a_a(:,1:end-1), a_a_col, ...
         vA, e_a, dFTtilde_col, A_col);
@@ -471,18 +468,12 @@ end
 opti.subject_to(coll_eq_constr == 0);
 
 % inequality constraints (logical indexing not possible in MX arrays)
-cSel = coll_ineq_constr(find(ineq_constr_index == 1),:); % activation dyanmics
-opti.subject_to(cSel(:)  >= 0);
-cSel = coll_ineq_constr(find(ineq_constr_index == 2),:); % deactivation dyanmics
-opti.subject_to(cSel(:)  <= 1/tact);
-cSel = coll_ineq_constr(find(ineq_constr_index == 3),:); % origin calcaneus
-opti.subject_to(S.bounds.calcn_dist.lower.^2 < cSel(:) < 4);
-cSel = coll_ineq_constr(find(ineq_constr_index == 4),:); % arms from hips
-opti.subject_to(0.0324 < cSel(:) < 4);
-cSel = coll_ineq_constr(find(ineq_constr_index == 5),:); % origin tibia minimum x cm away from each other
-opti.subject_to(S.bounds.tibia_dist.lower.^2 < cSel(:) < 4);
-cSel = coll_ineq_constr(find(ineq_constr_index == 6),:); % origins toes minimum x cm away from each other
-opti.subject_to(S.bounds.toes_dist.lower.^2 < cSel(:) < 4);
+opti.subject_to(coll_ineq_constr1(:) >= 0);
+opti.subject_to(coll_ineq_constr2(:) <= 1/tact);
+opti.subject_to(S.bounds.calcn_dist.lower.^2 < coll_ineq_constr3(:) < 4);
+opti.subject_to(S.bounds.femur_hand_dist.lower.^2 < coll_ineq_constr4(:) < 4);
+opti.subject_to(S.bounds.tibia_dist.lower.^2 < coll_ineq_constr5(:) < 4);
+opti.subject_to(S.bounds.toes_dist.lower.^2 < coll_ineq_constr6(:) < 4);
 
 % Loop over mesh points
 for k=1:N

@@ -34,6 +34,11 @@ if ~isfield(S.bounds.calcn_dist,'lower')
     S.bounds.calcn_dist.lower = 0.09;
 end
 
+% minimal distance between femur and hand orginins, in meters
+if ~isfield(S.bounds.femur_hand_dist,'lower')
+    S.bounds.calcn_dist.lower = 0.18;
+end
+
 % minimal distance between origins toes, in meters
 if ~isfield(S.bounds.toes_dist,'lower')
     S.bounds.toes_dist.lower = 0.10;
