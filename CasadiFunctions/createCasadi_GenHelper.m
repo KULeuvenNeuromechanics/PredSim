@@ -1,4 +1,4 @@
-function [f_casadi] = createCasadi_GenHelper(model_info)
+function [f_casadi] = createCasadi_GenHelper(S,model_info)
 %createCasadi_GenHelper
 %   Function to create general Casadi functions.
 %
@@ -107,7 +107,7 @@ f_casadi.J_N_muscles_exp = Function('f_J_N_muscles_exp',{e_temp_N_muscles_exp,ex
 
 %% Sum of products
 % Function for number of muscles crossing a joint
-sumCross = sum(model_info.muscle_info.polyFit.muscle_spanning_joint_info);
+sumCross = sum(model_info.muscle_info.muscle_spanning_joint_info);
 N_musc_cross = setdiff(unique(sumCross),0);
 for i = 1:length(N_musc_cross)
     ma_temp_musc_cross = SX.sym('ma_temp_musc_cross',N_musc_cross(i));

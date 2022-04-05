@@ -50,7 +50,7 @@ NMuscle = model_info.muscle_info.NMuscle;
 %% read default muscle- and tendon parameters from opensim model file
 t0 = tic;
 [FMo, lMo, lTs, alphao, vMmax] = getMTparameters(osim_path,muscleNames);
-disp(['reading MT params: ' num2str(toc(t0))])
+disp(['   reading MT params: ' num2str(toc(t0)) ' s'])
 
 % maximum isometric force (N)
 model_info.muscle_info.FMo = FMo;
@@ -80,13 +80,13 @@ model_info.muscle_info.pctsts = getSlowTwitchRatios(muscleNames);
 %% scale muscle-tendon parameters based on user-defined settings
 t0 = tic;
 model_info = scale_MTparameters(S,model_info);
-disp(['scaling MT params: ' num2str(toc(t0))])
+disp(['   scaling MT params: ' num2str(toc(t0)) ' s'])
 
 %% impose symmetry on the muscle-tendon parameters
 if ~isempty(S.subject.muscle_sym) && S.subject.muscle_sym
     t0 = tic;
     model_info = impose_symmetry_MTparameters(S,model_info);
-    disp(['MT params symmetry: ' num2str(toc(t0))])
+    disp(['   MT params symmetry: ' num2str(toc(t0))])
 end
 
 %% calculate muscle-tendon parameter values that depend on others

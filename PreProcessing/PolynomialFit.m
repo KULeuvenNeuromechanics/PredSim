@@ -26,7 +26,7 @@ function [model_info] = PolynomialFit(S,MuscleData,model_info)
 %   compatibility with generalized code structure
 %
 % Last edit by: Lars D'Hondt
-% Last edit date: 18/March/2022
+% Last edit date: 05/April/2022
 % --------------------------------------------------------------------------
 
     %% Construct the polynomials for the moment arms and muscle length
@@ -39,9 +39,7 @@ function [model_info] = PolynomialFit(S,MuscleData,model_info)
         end
     end
     
-    muscle_spanning_joint_INFO = squeeze(sum(abs(MuscleData.dM), 1));
-    muscle_spanning_joint_INFO(muscle_spanning_joint_INFO<=0.0001 & muscle_spanning_joint_INFO>=-0.0001) = 0;
-    muscle_spanning_joint_INFO(muscle_spanning_joint_INFO~=0) = 1;
+    model_info.muscle_info.muscle_spanning_joint_info = get_muscle_spanning_joint_info(S,osim_path,model_info);
       
     q_all = MuscleData.q;
     
@@ -134,7 +132,6 @@ function [model_info] = PolynomialFit(S,MuscleData,model_info)
     ylabel('Order')
     
     %%
-    model_info.muscle_info.polyFit.muscle_spanning_joint_info = muscle_spanning_joint_INFO;
     model_info.muscle_info.polyFit.MuscleInfo = MuscleInfo;
 
 end

@@ -1,5 +1,5 @@
 function [f_ArmActivationDynamics,f_TrunkActivationDynamics,...
-    f_MtpActivationDynamics] = createCasadi_ActDynam(model_info)
+    f_MtpActivationDynamics] = createCasadi_ActDynam(S,model_info)
 %%createCasadi_ActDynam 
 % Function to create Casadi functions for activation dynamics
 % 

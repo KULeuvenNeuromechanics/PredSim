@@ -5,12 +5,12 @@
 % Date: 12/19/2018
 % 
 function [vM,vMtilde,varargout] = FiberVelocity_TendonForce_tendon(FTtile,...
-    dFTtilde,params,lMT,vMT,Atendon,shift,MuscMoAsmp)
+    dFTtilde,lMo_in,lTs_in,alphao_in,vMmax_in,lMT,vMT,Atendon,shift,MuscMoAsmp)
 
-lMo = ones(size(FTtile,1),1)*params(2,:);
-lTs = ones(size(FTtile,1),1)*params(3,:);
-alphao = ones(size(FTtile,1),1)*params(4,:);
-vMmax = ones(size(FTtile,1),1)*params(5,:);
+lMo = ones(size(FTtile,1),1)*lMo_in;
+lTs = ones(size(FTtile,1),1)*lTs_in;
+alphao = ones(size(FTtile,1),1)*alphao_in;
+vMmax = ones(size(FTtile,1),1)*vMmax_in;
 
 % Inverse tendon force-length characteristic
 lTtilde = log(5*(FTtile + 0.25 - shift))./Atendon + 0.995;

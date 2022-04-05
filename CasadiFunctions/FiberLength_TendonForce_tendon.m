@@ -5,11 +5,11 @@
 % Date: 12/19/2018
 % 
 function [lM,lMtilde,varargout] = ...
-    FiberLength_TendonForce_tendon(FTtilde,params,lMT,aTendon,shift,MuscMoAsmp)
+    FiberLength_TendonForce_tendon(FTtilde,lMo_in,lTs_in,alphao_in,lMT,aTendon,shift,MuscMoAsmp)
 
-lMo = ones(size(FTtilde,1),1)*params(2,:);
-lTs = ones(size(FTtilde,1),1)*params(3,:);
-alphao = ones(size(FTtilde,1),1)*params(4,:);
+lMo = ones(size(FTtilde,1),1)*lMo_in;
+lTs = ones(size(FTtilde,1),1)*lTs_in;
+alphao = ones(size(FTtilde,1),1)*alphao_in;
 
 % Tendon force-length characteristic
 lTtilde = (log(5*(FTtilde + 0.25 - shift))/aTendon + 0.995);

@@ -2,25 +2,16 @@
 
 % This script starts the predictive simulation of human movement. The
 % required inputs are necessary to start the simulations. Optional inputs,
-% if left empty, will be grabed from getDefaultSettings.m.
+% if left empty, will be taken from getDefaultSettings.m.
 
 clear all
 close all
 clc
 [pathRepo,~,~] = fileparts(mfilename('fullpath'));
-pathDefaultSettings = [pathRepo '\DefaultSettings'];
-addpath(pathDefaultSettings)
-
-pathPreProcessing = [pathRepo '\PreProcessing'];
-addpath(pathPreProcessing)
-
-pathVariousFunctions = [pathRepo '\VariousFunctions'];
-addpath(pathVariousFunctions)
-
-pathCasadiFunctions = [pathRepo '\CasadiFunctions'];
-addpath(pathCasadiFunctions)
 
 %% Initialize S
+pathDefaultSettings = [pathRepo '\DefaultSettings'];
+addpath(pathDefaultSettings)
 
 [S] = initializeSettings();
 S.misc.main_path = pathRepo;

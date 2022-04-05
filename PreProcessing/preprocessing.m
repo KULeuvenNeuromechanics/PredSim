@@ -1,6 +1,6 @@
-function [S,model_info] = preprocessing(S,osim_path)
+function [S,model_info] = PreProcessing(S,osim_path)
 % --------------------------------------------------------------------------
-% preprocessing
+% PreProcessing
 %   This function calls all preprocessing steps needed to prepare formulating
 %   the OCP.
 % 
