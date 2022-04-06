@@ -1,5 +1,6 @@
 function [f_ArmActivationDynamics,f_TrunkActivationDynamics,...
     f_MtpActivationDynamics] = createCasadi_ActDynam(S,model_info)
+
 %%createCasadi_ActDynam 
 % Function to create Casadi functions for activation dynamics
 % 
@@ -36,10 +37,14 @@ f_TrunkActivationDynamics = ...
     {'e','a'},{'dadt'});
 
 %% Mtp activation dynamics
-e_mtp = SX.sym('e_mtp',model_info.ExtFunIO.jointi.nq.mtp); % mtp excitations
-a_mtp = SX.sym('a_mtp',model_info.ExtFunIO.jointi.nq.mtp); % mtp activations
-dmtpdt = ArmActivationDynamics(e_mtp,a_mtp);
-f_MtpActivationDynamics = ...
-    Function('f_MtpActivationDynamics',{e_mtp,a_mtp},{dmtpdt},...
-    {'e','a'},{'dadt'});
+if S.misc.mtp_in_model
+    e_mtp = SX.sym('e_mtp',model_info.ExtFunIO.jointi.nq.mtp); % mtp excitations
+    a_mtp = SX.sym('a_mtp',model_info.ExtFunIO.jointi.nq.mtp); % mtp activations
+    dmtpdt = ArmActivationDynamics(e_mtp,a_mtp);
+    f_MtpActivationDynamics = ...
+        Function('f_MtpActivationDynamics',{e_mtp,a_mtp},{dmtpdt},...
+        {'e','a'},{'dadt'});
+else
+    f_MtpActivationDynamics = [];
+end
 end

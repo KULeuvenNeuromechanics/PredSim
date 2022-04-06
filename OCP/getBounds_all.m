@@ -184,16 +184,7 @@ bounds.Qs.upper = (bounds.Qs.upper)./scaling.Qs;
 scaling.Qdots      = max(abs(bounds.Qdots.lower),abs(bounds.Qdots.upper));
 bounds.Qdots.lower = (bounds.Qdots.lower)./scaling.Qdots;
 bounds.Qdots.upper = (bounds.Qdots.upper)./scaling.Qdots;
-% Qs and Qdots are intertwined
-bounds.QsQdots.lower = zeros(1,2*NCoord);
-bounds.QsQdots.upper = zeros(1,2*NCoord);
-bounds.QsQdots.lower(1,1:2:end) = bounds.Qs.lower;
-bounds.QsQdots.upper(1,1:2:end) = bounds.Qs.upper;
-bounds.QsQdots.lower(1,2:2:end) = bounds.Qdots.lower;
-bounds.QsQdots.upper(1,2:2:end) = bounds.Qdots.upper;
-scaling.QsQdots                 = zeros(1,2*NCoord);
-scaling.QsQdots(1,1:2:end)      = scaling.Qs ;
-scaling.QsQdots(1,2:2:end)      = scaling.Qdots ;
+
 % Qdotdots
 scaling.Qdotdots = max(abs(bounds.Qdotdots.lower),...
     abs(bounds.Qdotdots.upper));
@@ -224,9 +215,11 @@ bounds.FTtilde.upper    = (bounds.FTtilde.upper)./scaling.FTtilde;
 
 %% Hard bounds
 % We impose the initial position of pelvis_tx to be 0
-bounds.QsQdots_0.lower = bounds.QsQdots.lower;
-bounds.QsQdots_0.upper = bounds.QsQdots.upper;
-bounds.QsQdots_0.lower(2*model_info.ExtFunIO.jointi.floating_base(4)-1) = 0;
-bounds.QsQdots_0.upper(2*model_info.ExtFunIO.jointi.floating_base(4)-1) = 0;
+bounds.Qs_0.lower = bounds.Qs.lower;
+bounds.Qs_0.upper = bounds.Qs.upper;
+bounds.Qdots_0.lower = bounds.Qdots.lower;
+bounds.Qdots_0.upper = bounds.Qdots.upper;
+bounds.Qs_0.lower(model_info.ExtFunIO.jointi.floating_base(4)) = 0;
+bounds.Qs_0.upper(model_info.ExtFunIO.jointi.floating_base(4)) = 0;
 
 end

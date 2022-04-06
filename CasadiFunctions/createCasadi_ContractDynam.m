@@ -14,11 +14,9 @@ function [f_forceEquilibrium_FtildeState_all_tendon,f_FiberLength_TendonForce_te
 % Authors: Ines Vandekerckhove, Tom Buurke & Dhruv Gupta, KU Leuven
 % Date: 30-11-2021 
 
-% TO DO
-% What is MuscMoAsmp?
-
 import casadi.*
 N_muscles = model_info.muscle_info.NMuscle;
+
 if isfield(S.misc,'MuscModelAsmp') && ~isempty(S.MuscModelAsmp)
     MuscMoAsmp = S.misc.MuscModelAsmp;
 else
@@ -29,6 +27,7 @@ if isfield(S.misc,'dampingCoefficient') && ~isempty(S.dampingCoefficient)
 else
     dampingCoefficient = 0.01;
 end
+
 %% Muscle contraction dynamics
 % Function for Hill-equilibrium
 FTtilde     = SX.sym('FTtilde',N_muscles); % Normalized tendon forces
@@ -47,12 +46,14 @@ vMmax       = SX(N_muscles,1); % Maximum contraction velocities
 massM       = SX(N_muscles,1); % Muscle mass
 Fpass       = SX(N_muscles,1); % Passive element forces
 % Parameters of force-length-velocity curves
+
 % load(fullfile(MainPath,'MuscleModel','Fvparam.mat'),'Fvparam');
 % load(fullfile(MainPath,'MuscleModel','Fpparam.mat'),'Fpparam');
 % load(fullfile(MainPath,'MuscleModel','Faparam.mat'),'Faparam');
 load('Fvparam.mat','Fvparam');
 load('Fpparam.mat','Fpparam');
 load('Faparam.mat','Faparam');
+
 % Parameters of force-length-velocity curves
 for m = 1:N_muscles
     [Hilldiff(m),FT(m),Fce(m),Fpass(m),Fiso(m),vMmax(m),massM(m)] = ...
