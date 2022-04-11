@@ -29,7 +29,7 @@ function [model_info] = get_actuator_info(S,osim_path,model_info)
 % Last edit date: 
 % --------------------------------------------------------------------------
 
-t0 = tic;
+% t0 = tic;
 
 import org.opensim.modeling.*;
 
@@ -54,9 +54,11 @@ for i=1:Nact
         act_i = actuators.get(i-1);
         acta_i = ActivationCoordinateActuator.safeDownCast(act_i);
         % read parameters and add to struct
-        coord_names{end+1} = char(acta_i.getCoordinate().getName());
+        coord_name_i = char(acta_i.getCoordinate().getName());
+        coord_names{end+1} = coord_name_i;
         max_torque(end+1) = double(acta_i.getOptimalForce());
         time_constant(end+1) = double(acta_i.get_activation_time_constant());
+        coordi(end+1) = model_info.ExtFunIO.coordi.(coord_name_i);
     end
 end
 
@@ -69,6 +71,6 @@ actuator_info.NActuators = length(actuator_info.coordi);
 % place struct with actuator info in model_info
 model_info.actuator_info = actuator_info;
 
-disp(['   reading actuator info: ' num2str(toc(t0)) ' s'])
+% disp(['   reading actuator info: ' num2str(toc(t0)) ' s'])
 
 

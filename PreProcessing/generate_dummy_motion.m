@@ -50,7 +50,7 @@ Bounds(11,:) = {'lumbar_rot',[-30 30]};
 
 
 % names
-coordinate_names = model_info.ExtFunIO.coordinate_names;
+coordinate_names = model_info.ExtFunIO.coord_names.all;
 
 % sizes and indices
 n_coord = length(coordinate_names);

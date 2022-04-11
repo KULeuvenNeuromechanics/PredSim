@@ -29,7 +29,7 @@ function [muscle_spanning_joint_info] = get_muscle_spanning_joint_info(S,osim_pa
 %%
 
 % names
-coordinate_names = model_info.ExtFunIO.coordinate_names;
+coordinate_names = model_info.ExtFunIO.coord_names.all;
 muscle_names = model_info.muscle_info.muscle_names;
 
 % sizes and indices

@@ -33,7 +33,6 @@ f_casadi.lT_vT = lT_vT;
 
 %% Create Casadi functions for passive torques
 [f_casadi.PassiveMoments,f_casadi.passiveTATorques,...
-
     f_casadi.AllPassiveTorques] = createCasadi_PassTorq(S,model_info);
 
 %% Create Casadi functions for activation dynamics

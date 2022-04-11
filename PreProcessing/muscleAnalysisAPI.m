@@ -35,7 +35,9 @@ muscle_names = model_info.muscle_info.muscle_names;
 % number of muscles
 n_muscle = model_info.muscle_info.NMuscle;
 % number of coordinates
-n_coord = length(coordinate_names);
+n_coord = model_info.ExtFunIO.jointi.nq.all;
+% coordinate names
+coord_names = model_info.ExtFunIO.coordinate_names;
 % get senseble muscle-coordinate combinateions to evaluate
 muscle_spanning_joint_info = model_info.muscle_info.muscle_spanning_joint_info;
 
@@ -68,7 +70,7 @@ dM = zeros(n_data_points,n_muscle,n_coord);
 for j=1:n_data_points
     % Set each coordinate value
     for i=1:n_coord
-        state_vars.set((i-1)*2,Qs(j,i));
+        state_vars.set(model_info.ExtFunIO.coordi_OpenSimAPIstate.(coord_names{i}),Qs(j,i));
     end
     model.setStateVariableValues(s,state_vars);
     model.realizePosition(s);
