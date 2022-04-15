@@ -135,16 +135,12 @@ QsInvB = [QsInv,...
 QdotsInvA = [Qs_forward';QsInvA];
 QdotsInvB = [Qs_forward';QsInvB];
 
-% There is no distinction between positions and velocities for the opposite
-% coordinates
-orderQsOpp = QsOpp';
-
 % Assemble struct
 symQs.QsInvA = QsInvA;
 symQs.QsInvB = QsInvB;
 symQs.QdotsInvA = QdotsInvA;
 symQs.QdotsInvB = QdotsInvB;
-symQs.orderQsOpp = orderQsOpp;
+symQs.QsOpp = QsOpp';
 
 
 end

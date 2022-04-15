@@ -27,7 +27,8 @@ function [S,model_info] = PreProcessing(S,osim_path)
 % --------------------------------------------------------------------------
 
 
-% Create external function to describe the rigid-body skeletal dynamics and foot-ground contact dynamics.
+% Create external function to describe the rigid-body skeletal dynamics and
+%   foot-ground contact dynamics.
 osim2dll(S,osim_path);
 
 % Create a struct to contain all information about the neuro-musculoskeletal model
@@ -41,6 +42,9 @@ model_info = get_actuator_info(S,osim_path,model_info);
 
 % Describe muscle-tendon lengths, velocities, and moment arms in function of coordinate values
 model_info = get_musculoskeletal_geometry_approximation(S,osim_path,model_info);
+
+% Read actuator parameters from opensim model
+model_info = get_passive_moment_info(S,model_info);
 
 % Finalize model_info
 model_info = update_model_info(S,osim_path,model_info);

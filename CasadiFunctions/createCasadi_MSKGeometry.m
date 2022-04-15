@@ -27,7 +27,7 @@ if isfile(fullfile(S.misc.subject_path,'f_lMT_vMT_dM_poly'))
     f_lMT_vMT_dM = Function.load(fullfile(S.misc.subject_path,'f_lMT_vMT_dM_poly'));
 else
     % Assemble polynomial approximation from coefficients
-    muscle_spanning_info_m = model_info.muscle_info.polyFit.muscle_spanning_joint_info(:,:);
+    muscle_spanning_info_m = model_info.muscle_info.muscle_spanning_joint_info(:,:);
     MuscleInfo_m.muscle    = model_info.muscle_info.polyFit.MuscleInfo.muscle(:);
     NMuscle_pol = size(muscle_spanning_info_m,1);
     NJoint_pol = size(muscle_spanning_info_m,2);

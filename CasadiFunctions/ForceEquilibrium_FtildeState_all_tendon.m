@@ -1,6 +1,7 @@
 function [err, FT, Fce, Fpass, Fiso, vMmax, massM] = ...
     ForceEquilibrium_FtildeState_all_tendon(a,fse,dfse,lMT,vMT,FMo_in,lMo_in,...
-    lTs_in,alphao_in,vMmax_in,Fvparam,Fpparam,Faparam,tension,aTendon,shift,MuscMoAsmp,d)
+    lTs_in,alphao_in,vMmax_in,Fvparam,Fpparam,Faparam,tension,aTendon,shift,...
+    MuscMoAsmp,d,stiffness,strength)
 
 % This function derives the Hill-equilibrium.
 % More details in De Groote et al. (2016): DOI: 10.1007/s10439-016-1591-9
@@ -69,13 +70,13 @@ e3 = Fvparam(3);
 e4 = Fvparam(4);
 FMvtilde = e1*log((e2*vMtilde+e3)+sqrt((e2*vMtilde+e3).^2+1))+e4;
 % Active muscle force
-Fcetilde = a.*FMltilde.*FMvtilde +d*vMtilde;
+Fcetilde = strength.*a.*FMltilde.*FMvtilde +d*vMtilde;
 Fce = FMo.*Fcetilde;
 
 % Passive muscle force-length characteristic
 e0 = 0.6;
 kpe = 4;
-t5 = exp(kpe * (lMtilde - 0.10e1) / e0);
+t5 = exp(kpe * (lMtilde - stiffness) / e0);
 % Passive muscle force
 Fpetilde = ((t5 - 0.10e1) - Fpparam(1)) / Fpparam(2);
 Fpass = FMo.*Fpetilde;

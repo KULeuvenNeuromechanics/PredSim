@@ -32,7 +32,7 @@ if ~isempty(S.subject.muscle_strength)
         % get scale factor array
         scale_factors_muscle_strength = get_scale_factors(S.subject.muscle_strength, NMuscle, muscleNames);
         % scale
-        warning('Scaling muscle strength is not implemented, using default values instead.')
+        model_info.muscle_info.muscle_strength = model_info.muscle_info.muscle_strength.*scale_factors_muscle_strength;
     catch errmsg
         error(['Unable to scale muscle strength because: ', errmsg]);
     end
@@ -44,7 +44,7 @@ if ~isempty(S.subject.muscle_stiff)
         % get scale factor array
         scale_factors_muscle_stiff = get_scale_factors(S.subject.muscle_stiff, NMuscle, muscleNames);
         % scale
-        warning('Scaling muscle stiffness is not implemented, using default values instead.')
+        model_info.muscle_info.muscle_stiffness = model_info.muscle_info.muscle_stiffness.*scale_factors_muscle_stiff;
     catch errmsg
         error(['Unable to scale muscle stiffness because: ', errmsg]);
     end
@@ -97,30 +97,41 @@ end
 
 %% helper functions
 % get array of scale factors
-function [scale_factors] = get_scale_factors(S_field, N_muscle, muscle_names) 
-N_fields = length(S_field);
-if mod(N_fields,2)~=0
-    error('Array of name-value pairs of muscle name and scale factor needs to have an even number of inputs.')
-end
-scale_factors = ones(1,N_muscle);
+function [scale_factors] = get_scale_factors(S_field, N_muscle, muscle_names)
 
-for ii=1:N_fields/2
-    muscle_names_i = S_field{2*ii-1};
-    if ~iscell(muscle_names_i)
-        muscle_names_i = {muscle_names_i};
-    end
-    for jj=1:length(muscle_names_i)
-        idx_muscle_ij = find(contains(muscle_names{:},muscle_names_i{jj}));
-        if isempty(idx_muscle_ij)
-            error(['Muscle name not found: ' muscle_names_i{jj}])
-        end
-        if scale_factors(idx_muscle_ij)==1
-            scale_factors(idx_muscle_ij) = to_scale_factor(S_field{2*ii});
+    scale_factors = unpack_name_value_combinations(S_field, muscle_names, 1);
+    
+    for ii=1:N_muscle
+        if isnan(scale_factors(ii))
+            scale_factors(ii) = 1;
         else
-            error(['Cannot scale ' muscle_names{idx_muscle_ij} ' twice.'])
+            scale_factors(ii) = to_scale_factor(scale_factors(ii));
         end
     end
-end
+
+% N_fields = length(S_field);
+% if mod(N_fields,2)~=0
+%     error('Array of name-value pairs of muscle name and scale factor needs to have an even number of inputs.')
+% end
+% scale_factors = ones(1,N_muscle);
+% 
+% for ii=1:N_fields/2
+%     muscle_names_i = S_field{2*ii-1};
+%     if ~iscell(muscle_names_i)
+%         muscle_names_i = {muscle_names_i};
+%     end
+%     for jj=1:length(muscle_names_i)
+%         idx_muscle_ij = find(contains(muscle_names{:},muscle_names_i{jj}));
+%         if isempty(idx_muscle_ij)
+%             error(['Muscle name not found: ' muscle_names_i{jj}])
+%         end
+%         if scale_factors(idx_muscle_ij)==1
+%             scale_factors(idx_muscle_ij) = to_scale_factor(S_field{2*ii});
+%         else
+%             error(['Cannot scale ' muscle_names{idx_muscle_ij} ' twice.'])
+%         end
+%     end
+% end
 
 end
 % transform given scale factor to valid scale factor
@@ -132,7 +143,7 @@ function[sf] = to_scale_factor(some_number)
         warning(['Assuming scale factor input value as ' num2str(some_number),...
             ' to be a percentage. Converting to scale factor = ' num2str(sf) '.'])
     else
-        error(['Scale factor ' num2str(some_number) ' is outside the extected range of 0 to 1.'])
+        error(['Scale factor ' num2str(some_number) ' is outside the expected range of 0 to 1.'])
     end
 end
 end

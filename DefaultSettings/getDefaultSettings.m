@@ -1,6 +1,6 @@
 function [S] = getDefaultSettings(S)
 % --------------------------------------------------------------------------
-%getDefaultSettings 
+% getDefaultSettings 
 %   This functions sets default settings when the user didn't specify the
 %   setting in main.m.
 % 
@@ -8,8 +8,6 @@ function [S] = getDefaultSettings(S)
 %   - S -
 %   * setting structure S
 %
-%   - IO -
-%   * structure with all the model information based on the OpenSim model
 % 
 % OUTPUT:
 %   - S -
@@ -126,6 +124,12 @@ end
 if ~isfield(S.misc,'dampingCoefficient') || isempty(S.misc.dampingCoefficient)
     S.misc.dampingCoefficient = 0.01;
 end
+
+% assume constant pennation angle instead of constant width
+if ~isfield(S.misc,'constant_pennation_angle')
+    S.misc.constant_pennation_angle = false;
+end
+
 
 %% post_process
 
@@ -279,6 +283,31 @@ end
 %     S.subject.muscle_coordination = []; 
 % end
 
+% damping coefficient for all degrees of freedon
+if ~isfield(S.subject,'damping_coefficient_all_dofs')
+    S.subject.damping_coefficient_all_dofs = 0.1; 
+end
+
+% different damping coefficient for specific degrees of freedon
+if ~isfield(S.subject,'set_damping_coefficient_selected_dofs')
+    S.subject.set_damping_coefficient_selected_dofs = []; 
+end
+
+% stiffness coefficient for all degrees of freedon
+if ~isfield(S.subject,'stiffness_coefficient_all_dofs')
+    S.subject.stiffness_coefficient_all_dofs = 0; 
+end
+
+% different stiffness coefficient for specific degrees of freedon
+if ~isfield(S.subject,'set_stiffness_coefficient_selected_dofs')
+    S.subject.set_stiffness_coefficient_selected_dofs = []; 
+end
+
+% limit torque coefficient for specific degrees of freedon
+if ~isfield(S.subject,'set_limit_torque_coefficients_selected_dofs')
+    S.subject.set_limit_torque_coefficients_selected_dofs = []; 
+end
+
 %% weights
 
 % weight on metabolic energy rate
@@ -304,6 +333,11 @@ end
 % weight on passive torques
 if ~isfield(S.weights,'pass_torq')
     S.weights.pass_torq = 1000; 
+end
+
+% damping can be included in the passive torques
+if ~isfield(S.weights,'pass_torq_includes_damping')
+    S.weights.pass_torq_includes_damping = true; 
 end
 
 % weight on muscle activations

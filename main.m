@@ -17,7 +17,6 @@ addpath(pathDefaultSettings)
 S.misc.main_path = pathRepo;
 
 %% Required inputs
-
 % name of the subject
 S.subject.name          = 'test_1'; 
 
@@ -25,7 +24,7 @@ S.subject.name          = 'test_1';
 S.subject.save_folder  = fullfile(pathRepo,'test_1'); 
 
 % either choose "quasi-random" or give the path to a .mot file you want to use as initial guess
-S.subject.IG_selection  = "quasi-random";
+S.subject.IG_selection  = 'quasi-random';
 
 % give the path to a .mot file on which IG_bounds will be based
 S.subject.IG_bounds     = 'C:\Users\u0150099\Documents\master_thesis\3dpredictsim\IG\Data\NoExo.mot';
@@ -79,7 +78,7 @@ osim_path              = fullfile(pathRepo,'Subjects','test_1','test_1.osim');
 % S.subject.v_pelvis_x_trgt   = ;
 % S.subject.muscle_strength   = ;
 % S.subject.muscle_stiff      = ;
-% S.subject.muscle_sym        = ;
+% S.subject.muscle_sym        = 1;
 % S.subject.tendon_stiff      = ;
 % S.subject.mtp_type          = '';
 % S.subject.MT_params         = ;

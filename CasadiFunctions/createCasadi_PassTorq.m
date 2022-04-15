@@ -63,7 +63,7 @@ for i=1:model_info.ExtFunIO.jointi.nq.torso
     Qdot_SX(model_info.ExtFunIO.jointi.torso(i)));
     Tau_passj_muscleActuated = [Tau_passj_muscleActuated; Tau_passj_muscleActuated_var];
 end
-f_PassiveTorques_muscleActuauted = Function('f_PassiveTorques_muscleActuated',{Q_SX,Qdot_SX}, ...
+f_PassiveTorques_muscleActuated = Function('f_PassiveTorques_muscleActuated',{Q_SX,Qdot_SX}, ...
     {Tau_passj_muscleActuated},{'Q_SX','Qdot_SX'},{'Tau_passj_muscleActuated'});
 
 Tau_passj_arms = [];

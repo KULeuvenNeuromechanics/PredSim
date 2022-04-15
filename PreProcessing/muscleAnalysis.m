@@ -1,4 +1,4 @@
-function [MuscleData] = muscleAnalysis(S,osim_path,model_info)
+function [MuscleData, varargout] = muscleAnalysis(S,osim_path,model_info,varargin)
 %
 % Analyse the musculoskeletal geometry of the given osim model.
 %   1) Create a dummy motion
@@ -45,7 +45,11 @@ muscle_names = model_info.muscle_info.muscle_names;
 
 % sizes and indices
 n_coord = length(coordinate_names);
-n_data_points = 5000;
+if length(varargin)>=1
+    n_data_points = varargin{1};
+else
+    n_data_points = 5000;
+end
 
 % default bounds
 Q_bounds = [-30;30]*ones(1,n_coord);
@@ -100,7 +104,8 @@ idx_coord_analyse = setdiff(1:n_coord,model_info.ExtFunIO.jointi.floating_base);
 import org.opensim.modeling.*
 
 % run muscle analysis
-OpenSim_Muscle_Analysis(pathDummyMotion, osim_path, MA_path, [time(1) time(end)],coordinate_names(idx_coord_analyse));
+OpenSim_Muscle_Analysis(pathDummyMotion, osim_path, MA_path, [time(1) time(end)],...
+    coordinate_names(idx_coord_analyse));
 
 
 % import the muscle analysis data
@@ -143,6 +148,8 @@ for m = 1:length(muscle_names)
     end
 end
 
-
+if nargout==2
+    varargout{1} = Qs;
+end
 
 

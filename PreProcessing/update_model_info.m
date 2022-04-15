@@ -20,16 +20,13 @@ function [model_info] = update_model_info(S,osim_path,model_info)
 % Original date: 17/March/2022
 %
 % Last update:
-%   change function name and add header
+%   moved most content to separate functions that are called earlier
 % Last edit by: Lars D'Hondt
-% Last edit date: 18/March/2022
+% Last edit date: 12/April/2022
 % --------------------------------------------------------------------------
 
-% Coordinates actuated by muscles
-model_info.ExtFunIO.jointi.muscleActuated = find(sum(model_info.muscle_info.muscle_spanning_joint_info,1)>0);
 
-% Coordinates actuated by ideal actuators
-model_info.ExtFunIO.jointi.torqueActuated = actuator_info.coordi;
+
 
 %%
 
@@ -82,26 +79,22 @@ model_info.ExtFunIO.jointi.nq = nq;
 
 
 
-%%
-
-
-
 
 %%
-orderTauPass = [1:nq.tau_pass];
-orderTauPassInv = zeros(1,nq.tau_pass);
-for i=1:nq.tau_pass
-    if strcmp(model_info.ExtFunIO.coord_names.tau_passi{i}(end-1:end),'_r')
-        orderTauPassInv(i) = orderTauPass(find(ismember(model_info.ExtFunIO.coord_names.tau_passi,[model_info.ExtFunIO.coord_names.tau_passi{i}(1:end-2) '_l'])));
-    elseif strcmp(model_info.ExtFunIO.coord_names.tau_passi{i}(end-1:end),'_l')
-        orderTauPassInv(i) = orderTauPass(find(ismember(model_info.ExtFunIO.coord_names.tau_passi,[model_info.ExtFunIO.coord_names.tau_passi{i}(1:end-2) '_r'])));
-    else
-        orderTauPassInv(i) = orderTauPass(find(ismember(model_info.ExtFunIO.coord_names.tau_passi,model_info.ExtFunIO.coord_names.tau_passi{i})));
-    end
-end
-
-model_info.ExtFunIO.symQs.orderTauPass = orderTauPass;
-model_info.ExtFunIO.symQs.orderTauPassInv = orderTauPassInv;
+% orderTauPass = [1:nq.tau_pass];
+% orderTauPassInv = zeros(1,nq.tau_pass);
+% for i=1:nq.tau_pass
+%     if strcmp(model_info.ExtFunIO.coord_names.tau_passi{i}(end-1:end),'_r')
+%         orderTauPassInv(i) = orderTauPass(find(ismember(model_info.ExtFunIO.coord_names.tau_passi,[model_info.ExtFunIO.coord_names.tau_passi{i}(1:end-2) '_l'])));
+%     elseif strcmp(model_info.ExtFunIO.coord_names.tau_passi{i}(end-1:end),'_l')
+%         orderTauPassInv(i) = orderTauPass(find(ismember(model_info.ExtFunIO.coord_names.tau_passi,[model_info.ExtFunIO.coord_names.tau_passi{i}(1:end-2) '_r'])));
+%     else
+%         orderTauPassInv(i) = orderTauPass(find(ismember(model_info.ExtFunIO.coord_names.tau_passi,model_info.ExtFunIO.coord_names.tau_passi{i})));
+%     end
+% end
+% 
+% model_info.ExtFunIO.symQs.orderTauPass = orderTauPass;
+% model_info.ExtFunIO.symQs.orderTauPassInv = orderTauPassInv;
 
 
 

@@ -1,50 +1,34 @@
-function [f_ArmActivationDynamics,f_TrunkActivationDynamics,...
-    f_MtpActivationDynamics] = createCasadi_ActDynam(S,model_info)
-
-%%createCasadi_ActDynam 
-% Function to create Casadi functions for activation dynamics
+function [f_ActuatorActivationDynamics] = createCasadi_ActDynam(S,model_info)
+% --------------------------------------------------------------------------
+% createCasadi_ActDynam 
+%   Function to create CasADi functions for activation dynamics for
+%   actuators.
 % 
 % INPUT:
-
+%   - S -
+%   * setting structure S
 % 
+%   - model_info -
+%   * structure with all the model information based on the OpenSim model
+%
 % OUTPUT:
-%   f_ArmActivationDynamics
-%   * description of this output
-%
-%   f_TrunkActivationDynamics
-%   * description of this output
-%
-%   f_MtpActivationDynamics
-%   * description of this output
+%   - f_ActuatorActivationDynamics -
+%   * formulation activation dynamics for actuators
 % 
-% Original author: Tom Buurke, KU Leuven
-% Original date: 30/11/2021
+% Original author: Tom Buurke
+% Original date: 30/November/2021
+%
+% Last update:
+%   reformulate to for generic actuator
+% Last edit by: Lars D'Hondt
+% Last edit date: 15/April/2022
+% --------------------------------------------------------------------------
+
 import casadi.*
-%% Arm activation dynamics
-e_a = SX.sym('e_a',model_info.ExtFunIO.jointi.nq.arms); % arm excitations
-a_a = SX.sym('a_a',model_info.ExtFunIO.jointi.nq.arms); % arm activations
-dadt = ArmActivationDynamics(e_a,a_a);
-f_ArmActivationDynamics = ...
-    Function('f_ArmActivationDynamics',{e_a,a_a},{dadt},...
-    {'e','a'},{'dadt'});
+%% Activation dynamics
+e = SX.sym('e',model_info.ExtFunIO.jointi.nq.TorqAct);
+a = SX.sym('a',model_info.ExtFunIO.jointi.nq.TorqAct);
+dadt = (e-a)./actuator_info.time_constant;
 
-%% Lumbar activation dynamics
-e_lumb = SX.sym('e_a',model_info.ExtFunIO.jointi.nq.torso); % Lumbar excitations
-a_lumb = SX.sym('a_a',model_info.ExtFunIO.jointi.nq.torso); % Lumbar activations
-dlumbdt = ArmActivationDynamics(e_lumb,a_lumb);
-f_TrunkActivationDynamics = ...
-    Function('f_TrunkActivationDynamics',{e_lumb,a_lumb},{dlumbdt},...
-    {'e','a'},{'dadt'});
+f_ActuatorActivationDynamics = Function('f_ArmActivationDynamics',{e,a},{dadt},{'e','a'},{'dadt'});
 
-%% Mtp activation dynamics
-if S.misc.mtp_in_model
-    e_mtp = SX.sym('e_mtp',model_info.ExtFunIO.jointi.nq.mtp); % mtp excitations
-    a_mtp = SX.sym('a_mtp',model_info.ExtFunIO.jointi.nq.mtp); % mtp activations
-    dmtpdt = ArmActivationDynamics(e_mtp,a_mtp);
-    f_MtpActivationDynamics = ...
-        Function('f_MtpActivationDynamics',{e_mtp,a_mtp},{dmtpdt},...
-        {'e','a'},{'dadt'});
-else
-    f_MtpActivationDynamics = [];
-end
-end

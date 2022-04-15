@@ -12,14 +12,18 @@ function [model_info] = read_and_scale_MTparameters(S,osim_path,model_info)
 %
 %   Parameter values not obtained from the osim file:
 %       - aTendon: tendon stiffness of the generic stress-strain relation.
-%       Default value = 35, Zajac (1989). This value can be scaled by a
+%       Default value = 35. This value can be scaled by a
 %       factor given in "S.subject.tendon_stiff"
 %       - tensions: specific muscle tension. Data from Uchida et al. (2016)
 %       is loaded through getSpecificTensions.m
 %       - pctsts: fraction of muscle fibers that are slow twitch fibers. Data
 %       from Uchida et al. (2016) is loaded through getSlowTwitchRatios.m
-%       
-% 
+%       - muscle_strength: scale factor on the active muscle fiber force. The
+%       default value of 1 can be replaced through "S.subject.muscle_strength"
+%       - muscle_stiffness: positioning of passive force-length curve of a
+%       muscle w.r.t. its normalized fiber length. Default value is 1, can
+%       be changed to the value specified in "S.subject.muscle_stiff".
+%
 % INPUT:
 %   - S -
 %   * setting structure S
@@ -41,16 +45,11 @@ function [model_info] = read_and_scale_MTparameters(S,osim_path,model_info)
 % Last edit date: 
 % --------------------------------------------------------------------------
 
-% This function reads all parameters that describe the muscle- and tendon
-% properties. 
-
 muscleNames = model_info.muscle_info.muscle_names;
 NMuscle = model_info.muscle_info.NMuscle;
 
 %% read default muscle- and tendon parameters from opensim model file
-% t0 = tic;
 [FMo, lMo, lTs, alphao, vMmax] = getMTparameters(osim_path,muscleNames);
-% disp(['   reading MT params: ' num2str(toc(t0)) ' s'])
 
 % maximum isometric force (N)
 model_info.muscle_info.FMo = FMo;
@@ -77,22 +76,18 @@ model_info.muscle_info.tensions = getSpecificTensions(muscleNames)';
 % ratio of slow twitch muscle fibers
 model_info.muscle_info.pctsts = getSlowTwitchRatios(muscleNames)';
 
-% weakness of active muscle force
-model_info.muscle_info.weakness = ones(1,NMuscle);
+% strength of active muscle force
+model_info.muscle_info.muscle_strength = ones(1,NMuscle);
 
 % stiffness of muscle fibers
-model_info.muscle_info.stiffness = ones(1,NMuscle);
+model_info.muscle_info.muscle_stiffness = ones(1,NMuscle);
 
 %% scale muscle-tendon parameters based on user-defined settings
-% t0 = tic;
 model_info = scale_MTparameters(S,model_info);
-% disp(['   scaling MT params: ' num2str(toc(t0)) ' s'])
 
 %% impose symmetry on the muscle-tendon parameters
 if ~isempty(S.subject.muscle_sym) && S.subject.muscle_sym
-%     t0 = tic;
     model_info = impose_symmetry_MTparameters(S,model_info);
-%     disp(['   MT params symmetry: ' num2str(toc(t0))])
 end
 
 %% calculate muscle-tendon parameter values that depend on others

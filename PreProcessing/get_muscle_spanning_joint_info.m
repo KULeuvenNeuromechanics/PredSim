@@ -29,13 +29,13 @@ function [muscle_spanning_joint_info] = get_muscle_spanning_joint_info(S,osim_pa
 %%
 
 % names
-coordinate_names = model_info.ExtFunIO.coord_names.all;
+coord_names = model_info.ExtFunIO.coord_names.all;
 muscle_names = model_info.muscle_info.muscle_names;
 
 % sizes and indices
 n_muscle = model_info.muscle_info.NMuscle;
-n_coord = length(coordinate_names);
-n_data_points = 5;
+n_coord = length(coord_names);
+n_data_points = 6;
 
 % get dummy motion
 Qs = generate_dummy_motion(S,model_info,n_data_points);
@@ -61,7 +61,7 @@ dM = zeros(n_data_points,n_muscle,n_coord);
 for j=1:n_data_points
     % Set each coordinate value
     for i=1:n_coord
-        state_vars.set((i-1)*2,Qs(j,i));
+        state_vars.set(model_info.ExtFunIO.coordi_OpenSimAPIstate.(coord_names{i}),Qs(j,i));
     end
     model.setStateVariableValues(s,state_vars);
     model.realizePosition(s);
@@ -72,7 +72,7 @@ for j=1:n_data_points
 
         % Get moment arm for each joint
         for i=1:n_coord
-            dM(j,m,i) = muscle_m.computeMomentArm(s,model.getCoordinateSet().get(i-1));
+            dM(j,m,i) = muscle_m.computeMomentArm(s,model.getCoordinateSet().get(coord_names{i}));
         end
     end
 
