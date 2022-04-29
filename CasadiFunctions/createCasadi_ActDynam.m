@@ -26,9 +26,9 @@ function [f_ActuatorActivationDynamics] = createCasadi_ActDynam(S,model_info)
 
 import casadi.*
 %% Activation dynamics
-e = SX.sym('e',model_info.ExtFunIO.jointi.nq.TorqAct);
-a = SX.sym('a',model_info.ExtFunIO.jointi.nq.TorqAct);
-dadt = (e-a)./actuator_info.time_constant;
+e = SX.sym('e',model_info.ExtFunIO.jointi.nq.torqAct);
+a = SX.sym('a',model_info.ExtFunIO.jointi.nq.torqAct);
+dadt = (e-a)./model_info.actuator_info.time_constant';
 
 f_ActuatorActivationDynamics = Function('f_ArmActivationDynamics',{e,a},{dadt},{'e','a'},{'dadt'});
 

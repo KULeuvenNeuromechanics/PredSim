@@ -60,22 +60,22 @@ model_info = addCoordNames(model_info,'tau_passi');
 
 %%
 % Number of degrees of freedom for later use
-nq.all          = length(model_info.ExtFunIO.coord_names.all); % all
-nq.abs          = length(model_info.ExtFunIO.jointi.ground_pelvis);
-nq.torso        = length(model_info.ExtFunIO.jointi.torso); % trunk
-nq.arms         = length(model_info.ExtFunIO.jointi.armsi); % arms
-nq.mtp          = length(model_info.ExtFunIO.jointi.mtpi);
-nq.leg          = length(model_info.ExtFunIO.jointi.legsi);
-nq.legs_torso   = length(model_info.ExtFunIO.jointi.legs_torso);
-nq.noarms       = length(model_info.ExtFunIO.jointi.noarmsi);
-nq.muscleActuated = length(model_info.ExtFunIO.jointi.muscleActuated);
-nq.legs_nomtp   = length(model_info.ExtFunIO.jointi.legs_nomtp);
-nq.roti         = length(model_info.ExtFunIO.jointi.rotations);
-nq.translationsi = length(model_info.ExtFunIO.jointi.translations);
-nq.tau_pass     = length(model_info.ExtFunIO.jointi.tau_passi);
+model_info.ExtFunIO.jointi.nq.all          = length(model_info.ExtFunIO.coord_names.all); % all
+model_info.ExtFunIO.jointi.nq.abs          = length(model_info.ExtFunIO.jointi.ground_pelvis);
+model_info.ExtFunIO.jointi.nq.torso        = length(model_info.ExtFunIO.jointi.torso); % trunk
+model_info.ExtFunIO.jointi.nq.arms         = length(model_info.ExtFunIO.jointi.armsi); % arms
+model_info.ExtFunIO.jointi.nq.mtp          = length(model_info.ExtFunIO.jointi.mtpi);
+model_info.ExtFunIO.jointi.nq.leg          = length(model_info.ExtFunIO.jointi.legsi);
+model_info.ExtFunIO.jointi.nq.legs_torso   = length(model_info.ExtFunIO.jointi.legs_torso);
+model_info.ExtFunIO.jointi.nq.noarms       = length(model_info.ExtFunIO.jointi.noarmsi);
+model_info.ExtFunIO.jointi.nq.muscleActuated = length(model_info.ExtFunIO.jointi.muscleActuated);
+model_info.ExtFunIO.jointi.nq.torqAct      = length(model_info.ExtFunIO.jointi.torqueActuated);
+model_info.ExtFunIO.jointi.nq.legs_nomtp   = length(model_info.ExtFunIO.jointi.legs_nomtp);
+model_info.ExtFunIO.jointi.nq.roti         = length(model_info.ExtFunIO.jointi.rotations);
+model_info.ExtFunIO.jointi.nq.translationsi = length(model_info.ExtFunIO.jointi.translations);
+model_info.ExtFunIO.jointi.nq.tau_pass     = length(model_info.ExtFunIO.jointi.tau_passi);
 
-model_info.ExtFunIO.jointi.nq = nq;
-
+% note: remove the ones that we do not use later
 
 
 

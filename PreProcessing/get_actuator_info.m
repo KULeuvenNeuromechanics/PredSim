@@ -73,6 +73,6 @@ model_info.actuator_info = actuator_info;
 
 % Coordinates actuated by ideal actuators
 model_info.ExtFunIO.jointi.torqueActuated = actuator_info.coordi;
-model_info.ExtFunIO.jointi.nq.TorqAct = Nact;
+
 
 

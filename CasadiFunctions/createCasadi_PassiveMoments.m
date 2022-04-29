@@ -56,9 +56,9 @@ f_limit_torque = Function('f_limit_torque',{K_pass,theta_pass,...
 
 q = SX.sym('q',n_coord);
 qdot = SX.sym('qdot',n_coord);
-tau_k = SX(n_coord);
-tau_d = SX(n_coord);
-tau_lim = SX(n_coord);
+tau_k = SX(n_coord,1);
+tau_d = SX(n_coord,1);
+tau_lim = SX(n_coord,1);
 
 for i=1:n_coord
     if passive_moment_info(i).stiffness_coeff~=0

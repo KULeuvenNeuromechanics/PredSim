@@ -138,12 +138,8 @@ end
 function[sf] = to_scale_factor(some_number)
     if some_number >=0 && some_number <= 1
         sf = some_number;
-    elseif some_number >=0 && some_number <= 100
-        sf = some_number/100;
-        warning(['Assuming scale factor input value as ' num2str(some_number),...
-            ' to be a percentage. Converting to scale factor = ' num2str(sf) '.'])
     else
-        error(['Scale factor ' num2str(some_number) ' is outside the expected range of 0 to 1.'])
+        error(['Scale factor ' num2str(some_number) ' should be positive.'])
     end
 end
 end

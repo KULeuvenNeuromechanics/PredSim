@@ -1,4 +1,4 @@
-function [] = OCP_formulation(model_info,S,f_casadi)
+function [] = OCP_formulation(S,model_info,f_casadi)
 %%
 % TO CHECK
 % MTP is not a part of passive torques that go in the cost funciton, Antoine had it in there
@@ -25,7 +25,7 @@ pathmain = pwd;
 addpath(genpath(pathRepo));
 % Loading external functions.
 setup.derivatives =  'AD'; % Algorithmic differentiation
-pathSubjectFolder = S.subject.save_results;
+pathSubjectFolder = S.misc.subject_path;
 cd(pathSubjectFolder)
 F  = external('F',S.ExternalFunc);
 cd(pathmain);

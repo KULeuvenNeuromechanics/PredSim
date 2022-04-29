@@ -4,7 +4,7 @@ addpath([S.misc.main_path '\VariousFunctions'])
 
 
 S = getDefaultSettings(S);
-S = updateS_passiveJointTorqueProperties(S);
+% S = updateS_passiveJointTorqueProperties(S);
 
 %% PreProcessing
 addpath([S.misc.main_path '\PreProcessing'])
