@@ -19,16 +19,18 @@ function [f_ActuatorActivationDynamics] = createCasadi_ActDynam(S,model_info)
 % Original date: 30/November/2021
 %
 % Last update:
-%   reformulate to for generic actuator
+%   reformulate for generic actuator
 % Last edit by: Lars D'Hondt
 % Last edit date: 15/April/2022
 % --------------------------------------------------------------------------
 
 import casadi.*
+time_constants = struct_array_to_double_array(model_info.actuator_info.parameters,'time_constant');
+
 %% Activation dynamics
 e = SX.sym('e',model_info.ExtFunIO.jointi.nq.torqAct);
 a = SX.sym('a',model_info.ExtFunIO.jointi.nq.torqAct);
-dadt = (e-a)./model_info.actuator_info.time_constant';
+dadt = (e-a)./time_constants;
 
-f_ActuatorActivationDynamics = Function('f_ArmActivationDynamics',{e,a},{dadt},{'e','a'},{'dadt'});
+f_ActuatorActivationDynamics = Function('f_ActuatorActivationDynamics',{e,a},{dadt},{'e','a'},{'dadt'});
 

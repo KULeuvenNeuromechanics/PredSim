@@ -37,7 +37,6 @@ function [f_PassiveStiffnessMoments,f_PassiveDampingMoments,f_LimitTorques,...
 import casadi.*
 
 n_coord = model_info.ExtFunIO.jointi.nq.all;
-passive_moment_info = model_info.passive_moment_info;
 
 %% Coordinate limit torque 
 K_pass      = SX.sym('K_pass',4);
@@ -61,15 +60,15 @@ tau_d = SX(n_coord,1);
 tau_lim = SX(n_coord,1);
 
 for i=1:n_coord
-    if passive_moment_info(i).stiffness_coeff~=0
-        tau_k(i) = -passive_moment_info(i).stiffness_coeff*q(i);
+    if model_info.passive_moment_info.parameters(i).stiffness_coeff~=0
+        tau_k(i) = -model_info.passive_moment_info.parameters(i).stiffness_coeff*q(i);
     end
-    if passive_moment_info(i).damping_coeff~=0
-        tau_d(i) = -passive_moment_info(i).damping_coeff*qdot(i);
+    if model_info.passive_moment_info.parameters(i).damping_coeff~=0
+        tau_d(i) = -model_info.passive_moment_info.parameters(i).damping_coeff*qdot(i);
     end
 
-    if ~isempty(passive_moment_info(i).K_pass) && ~isempty(passive_moment_info(i).theta_pass)
-        tau_lim(i) = f_limit_torque(passive_moment_info(i).K_pass,passive_moment_info(i).theta_pass,q(i));
+    if ~isempty(model_info.passive_moment_info.parameters(i).K_pass) && ~isempty(model_info.passive_moment_info.parameters(i).theta_pass)
+        tau_lim(i) = f_limit_torque(model_info.passive_moment_info.parameters(i).K_pass,model_info.passive_moment_info.parameters(i).theta_pass,q(i));
 
     end
 end

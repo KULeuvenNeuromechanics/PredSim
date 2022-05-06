@@ -29,7 +29,7 @@ function [S,model_info] = PreProcessing(S,osim_path)
 
 % Create external function to describe the rigid-body skeletal dynamics and
 %   foot-ground contact dynamics.
-osim2dll(S,osim_path);
+S = osim2dll(S,osim_path);
 
 % Create a struct to contain all information about the neuro-musculoskeletal model
 model_info = get_model_info(S,osim_path);

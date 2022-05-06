@@ -1,4 +1,4 @@
-function [] = osim2dll(S,osim_path)
+function [S] = osim2dll(S,osim_path)
 %
 % Matlab shell for the python workflow
 %
@@ -9,9 +9,11 @@ function [] = osim2dll(S,osim_path)
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+% extract name of opensim model file
+[~,osim_file_name,~] = fileparts(osim_path);
 
-
-
+% external function name
+S.misc.external_function = ['F_' osim_file_name '.dll'];
 
 
 

@@ -34,17 +34,11 @@ model_info.muscle_info.muscle_spanning_joint_info = get_muscle_spanning_joint_in
 model_info.ExtFunIO.jointi.muscleActuated = find(sum(model_info.muscle_info.muscle_spanning_joint_info,1)>0);
 
 
-if ~strcmp(S.misc.msk_geom_eq,'polynomials') 
-    warning(['Selected method to approximate musculoskeletal geometry: "',...
-        S.misc.msk_geom_eq, '" not implemented, using polynomials instead.'])
-    S.misc.msk_geom_eq = 'polynomials';
-end
-
 % Use polynomial approximatrion
 if strcmp(S.misc.msk_geom_eq,'polynomials') 
     % Only perform muscle analysis and fitting if the result is not yet
     % available, because the analysis takes long. (4 minutes)
-    if ~isfile(fullfile(S.misc.subject_path,'f_lMT_vMT_dM_poly'))
+    if ~isfile(fullfile(S.misc.subject_path,S.misc.MSK_geometry_name))
         % Analyze the muscle-tendon lengths, velocities, and moment arms in function of coordinate values
         t0 = tic;
         muscle_data = muscleAnalysisAPI(S,osim_path,model_info); % faster version
@@ -59,6 +53,8 @@ if strcmp(S.misc.msk_geom_eq,'polynomials')
 
 else
     % Other fitting methods are not (yet) implemented
+    warning(['Selected method to approximate musculoskeletal geometry: "',...
+        S.misc.msk_geom_eq, '" not implemented.'])
 end
 
 

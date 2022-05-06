@@ -66,14 +66,14 @@ limitTorque = [];
 
 for i=1:n_coord
     if max(model_info.ExtFunIO.jointi.floating_base == i)>0
-        passive_moment_info(i).coord = coord_names{i};
+        passive_moment_info(i).coord_name = coord_names{i};
         passive_moment_info(i).K_pass = [];
         passive_moment_info(i).theta_pass = [];
         passive_moment_info(i).damping_coeff = 0;
         passive_moment_info(i).stiffness_coeff = 0;
 
     else
-        passive_moment_info(i).coord = coord_names{i};
+        passive_moment_info(i).coord_name = coord_names{i};
         if exist("K_pass","var") && ~isnan(K_pass(i,1))
             passive_moment_info(i).K_pass = K_pass(i,:);
             passive_moment_info(i).theta_pass = theta_pass(i,:);
@@ -104,7 +104,7 @@ for i=1:n_coord
     end
 end
 
-model_info.passive_moment_info = passive_moment_info;
+model_info.passive_moment_info.parameters = passive_moment_info;
 
 
 % Coordinates with limit torque

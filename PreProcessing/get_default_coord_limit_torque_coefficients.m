@@ -10,6 +10,10 @@ function [K_pass,theta_pass] = get_default_coord_limit_torque_coefficients(coord
 %   function will look for a close match (e.g. assign "hip_flex" bounds to
 %   "hip_flexion_r" coordinate). 
 %
+%   Coefficient values are taken from: 
+%       Anderson III, Frank Clayton. A dynamic optimization solution for a 
+%       complete cycle of normal gait. The University of Texas at Austin, 1999.
+%
 % INPUT:
 %   - coord_names -
 %   * cell array of coordinate names
@@ -41,6 +45,8 @@ K.ankle_angle = [-2.03 38.11 0.18 -12.12];
 theta.ankle_angle = [-0.74 0.52];
 K.subtalar_angle = [-60.21 16.32 60.21 -16.32];
 theta.subtalar_angle = [-0.65 0.65];
+K.mtp_angle = [-0.9 14.87 0.18 -70.08];
+theta.mtp_angle = [0 65/180*pi];
 K.lumbar_extension = [-0.35 30.72 0.25 -20.36];
 theta.lumbar_extension = [-0.5235987755982988 0.17];
 K.lumbar_bending = [-0.25 20.36 0.25 -20.36];
@@ -48,9 +54,7 @@ theta.lumbar_bending = [-0.3490658503988659 0.3490658503988659];
 K.lumbar_rotation = [-0.25 20.36 0.25 -20.36];
 theta.lumbar_rotation = [-0.3490658503988659 0.3490658503988659];
 
-% By default, there is no limit torque on the mtp joint
-% K.mtp_angle = [-0.9 14.87 0.18 -70.08];
-% theta.mtp_angle = [0 65/180*pi];
+
 
 
 

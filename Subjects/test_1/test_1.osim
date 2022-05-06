@@ -10031,34 +10031,6 @@
 					<!--The transition velocity, default is 0.01 (m/s).-->
 					<transition_velocity>0.20000000000000001</transition_velocity>
 				</SmoothSphereHalfSpaceForce>
-				<ActivationCoordinateActuator name="actuator_mtp_l">
-					<!--Minimum allowed value for control signal. Used primarily when solving for control values.-->
-					<min_control>-1</min_control>
-					<!--Maximum allowed value for control signal. Used primarily when solving for control values.-->
-					<max_control>1</max_control>
-					<!--Name of the generalized coordinate to which the actuator applies.-->
-					<coordinate>mtp_angle_l</coordinate>
-					<!--The maximum generalized force produced by this actuator.-->
-					<optimal_force>100</optimal_force>
-					<!--Larger value means activation changes more slowly (units: seconds; default: 0.01 seconds).-->
-					<activation_time_constant>0.035000000000000003</activation_time_constant>
-					<!--Value of activation in the default state (default: 0.5).-->
-					<default_activation>0</default_activation>
-				</ActivationCoordinateActuator>
-				<ActivationCoordinateActuator name="actuator_mtp_r">
-					<!--Minimum allowed value for control signal. Used primarily when solving for control values.-->
-					<min_control>-1</min_control>
-					<!--Maximum allowed value for control signal. Used primarily when solving for control values.-->
-					<max_control>1</max_control>
-					<!--Name of the generalized coordinate to which the actuator applies.-->
-					<coordinate>mtp_angle_r</coordinate>
-					<!--The maximum generalized force produced by this actuator.-->
-					<optimal_force>100</optimal_force>
-					<!--Larger value means activation changes more slowly (units: seconds; default: 0.01 seconds).-->
-					<activation_time_constant>0.035000000000000003</activation_time_constant>
-					<!--Value of activation in the default state (default: 0.5).-->
-					<default_activation>0</default_activation>
-				</ActivationCoordinateActuator>
 				<ActivationCoordinateActuator name="actuator_arm_flex_l">
 					<!--Minimum allowed value for control signal. Used primarily when solving for control values.-->
 					<min_control>-1</min_control>

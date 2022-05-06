@@ -1,4 +1,4 @@
-function [guess,bounds] = AdaptGuess_UserInput(guess,bounds,S)
+function [guess,bounds] = AdaptGuess_UserInput(S,guess,bounds)
 %UNTITLED3 Summary of this function goes here
 %   Detailed explanation goes here
 guess.a(guess.a < S.bounds.a.lower) = S.bounds.a.lower;

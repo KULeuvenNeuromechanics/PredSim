@@ -9,19 +9,17 @@
 % Adapted: Lars D'Hondt
 % Date: 01 dec 2021
 %
-% TO DO: review bounds and scaling regarding actuators
-%
 %--------------------------------------------------------------------------
 function [bounds,scaling] = getBounds(S,model_info)
 
 % Kinematics file for bounds -- input arguments
-IKfile_bounds = fullfile(S.subject.folder_name, S.subject.IKfile_bounds);
-Qs = getIK(IKfile_bounds,model_info);
+% IKfile_bounds = fullfile(S.subject.folder_name, S.subject.IKfile_bounds);
+Qs = getIK(S.subject.IG_bounds,model_info);
 
 % Get the names of the coordinates
-coordinate_names = fieldnames(model_info.ExtFunIO.coordi);
-NCoord = length(coordinate_names);
-NMuscle = length(model_info.muscle_info.params.Fmax);
+coordinate_names = model_info.ExtFunIO.coord_names.all;
+NCoord = model_info.ExtFunIO.jointi.nq.all;
+NMuscle = model_info.muscle_info.NMuscle;
 
 %% Spline approximation of Qs to get Qdots and Qdotdots
 Qs_spline.data = zeros(size(Qs.allfilt));
@@ -37,7 +35,7 @@ for i = 2:size(Qs.allfilt,2)
         SplineEval_ppuval(Qs.datafiltspline(i),Qs.allfilt(:,1),1);
 end
 
-%% get IK-besed bounds from spline
+%% get IK-based bounds from spline
 % The extreme values are selected as upper/lower bounds, which are then
 % further extended.
 
@@ -104,8 +102,8 @@ bounds.Qdotdots.upper = bounds.Qdotdots.upper + 3*Qdotdots_range;
 bounds.Qs.upper(model_info.ExtFunIO.jointi.floating_base(4)) = 2;  
 bounds.Qs.lower(model_info.ExtFunIO.jointi.floating_base(4)) = 0;
 % Pelvis_ty
-bounds.Qs.upper(model_info.ExtFunIO.jointi.floating_base(5)) = S.subject.IG_PelvisY*1.2;
-bounds.Qs.lower(model_info.ExtFunIO.jointi.floating_base(5)) = S.subject.IG_PelvisY*1.2;
+bounds.Qs.upper(model_info.ExtFunIO.jointi.floating_base(5)) = S.subject.IG_pelvis_y*1.2;
+bounds.Qs.lower(model_info.ExtFunIO.jointi.floating_base(5)) = S.subject.IG_pelvis_y*0.5;
 % Pelvis_tz
 bounds.Qs.upper(model_info.ExtFunIO.jointi.floating_base(6)) = 0.1;
 bounds.Qs.lower(model_info.ExtFunIO.jointi.floating_base(6)) = -0.1;
@@ -121,7 +119,7 @@ bounds.Qdotdots.lower(idx_mtp) = -500;
 
 % We adjust some bounds when we increase the speed to allow for the
 % generation of running motions.
-if S.subject.vPelvis_x_trgt > 1.33
+if S.subject.v_pelvis_x_trgt > 1.33
     % Pelvis tilt
     bounds.Qs.lower(model_info.ExtFunIO.jointi.floating_base(1)) = -20*pi/180;
     % Shoulder flexion
@@ -139,44 +137,21 @@ bounds.FTtilde.lower = zeros(1,NMuscle);
 bounds.FTtilde.upper = 5*ones(1,NMuscle);
 
 %% Time derivative of muscle activations
-tact = 0.015;
-tdeact = 0.06;
-bounds.vA.lower = (-1/100*ones(1,NMuscle))./(ones(1,NMuscle)*tdeact);
-bounds.vA.upper = (1/100*ones(1,NMuscle))./(ones(1,NMuscle)*tact);
+bounds.vA.lower = (-1/100*ones(1,NMuscle))./(ones(1,NMuscle)*model_info.muscle_info.tdeact);
+bounds.vA.upper = (1/100*ones(1,NMuscle))./(ones(1,NMuscle)*model_info.muscle_info.tact);
 
 %% Time derivative of muscle-tendon forces
 bounds.dFTtilde.lower = -1*ones(1,NMuscle);
 bounds.dFTtilde.upper = 1*ones(1,NMuscle);
 
-%% Arm activations
-bounds.a_a.lower = -ones(1,length(idx_arms));
-bounds.a_a.upper = ones(1,length(idx_arms));
+%% Torque actuator activations
+bounds.a_a.lower = -ones(1,model_info.ExtFunIO.jointi.nq.torqAct);
+bounds.a_a.upper = ones(1,model_info.ExtFunIO.jointi.nq.torqAct);
 
-%% Arm excitations
-bounds.e_a.lower = -ones(1,length(idx_arms));
-bounds.e_a.upper = ones(1,length(idx_arms));
+%% Torque actuator excitations
+bounds.e_a.lower = -ones(1,model_info.ExtFunIO.jointi.nq.torqAct);
+bounds.e_a.upper = ones(1,model_info.ExtFunIO.jointi.nq.torqAct);
 
-%% Mtp
-if strcmp(S.subject.mtp_type,'active')
-    % excitations
-    bounds.e_mtp.lower = -ones(1,2);
-    bounds.e_mtp.upper = ones(1,2);
-    % activations
-    bounds.a_mtp.lower = -ones(1,2);
-    bounds.a_mtp.upper = ones(1,2);
-end
-
-% %% Lumbar activations
-% % Only used when no muscles actuate the lumbar joints (e.g. Rajagopal
-% % model)
-% bounds.a_lumbar.lower = -ones(1,nq.trunk);
-% bounds.a_lumbar.upper = ones(1,nq.trunk);
-% 
-% %% Lumbar excitations
-% % Only used when no muscles actuate the lumbar joints (e.g. Rajagopal
-% % model)
-% bounds.e_lumbar.lower = -ones(1,nq.trunk);
-% bounds.e_lumbar.upper = ones(1,nq.trunk);
 
 %% Final time
 bounds.tf.lower = 0.1;
@@ -209,22 +184,16 @@ bounds.Qdotdots.lower = (bounds.Qdotdots.lower)./scaling.Qdotdots;
 bounds.Qdotdots.upper = (bounds.Qdotdots.upper)./scaling.Qdotdots;
 bounds.Qdotdots.lower(isnan(bounds.Qdotdots.lower)) = 0;
 bounds.Qdotdots.upper(isnan(bounds.Qdotdots.upper)) = 0;
-% Arm torque actuators
-% Fixed scaling factor
-scaling.ArmTau = 150;
-% Fixed scaling factor
-scaling.LumbarTau = 150;
-% Mtp torque actuators
-% Fixed scaling factor
-scaling.MtpTau = 100;
+% Torque actuator torque actuators
+scaling.ActuatorTorque = struct_array_to_double_array(model_info.actuator_info.parameters,'max_torque');
 % Time derivative of muscle activations
 % Fixed scaling factor
 scaling.vA = 100;
 % Muscle activations
 scaling.a = 1;
-% Arm activations
+% Torque actuator activations
 scaling.a_a = 1;
-% Arm excitations
+% Torque actuator excitations
 scaling.e_a = 1;
 % Time derivative of muscle-tendon forces
 % Fixed scaling factor
@@ -237,9 +206,9 @@ bounds.FTtilde.upper    = (bounds.FTtilde.upper)./scaling.FTtilde;
 
 %% Hard bounds
 % We impose the initial position of pelvis_tx to be 0
-bounds.QsQdots_0.lower = bounds.QsQdots.lower;
-bounds.QsQdots_0.upper = bounds.QsQdots.upper;
-bounds.QsQdots_0.lower(2*model_info.ExtFunIO.jointi.floating_base(4)-1) = 0;
-bounds.QsQdots_0.upper(2*model_info.ExtFunIO.jointi.floating_base(4)-1) = 0;
+bounds.Qs_0.lower = bounds.Qs.lower;
+bounds.Qs_0.upper = bounds.Qs.upper;
+bounds.Qs_0.lower(model_info.ExtFunIO.jointi.floating_base(4)) = 0;
+bounds.Qs_0.upper(model_info.ExtFunIO.jointi.floating_base(4)) = 0;
 
 end

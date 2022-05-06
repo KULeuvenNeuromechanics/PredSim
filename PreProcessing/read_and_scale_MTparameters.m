@@ -45,45 +45,55 @@ function [model_info] = read_and_scale_MTparameters(S,osim_path,model_info)
 % Last edit date: 
 % --------------------------------------------------------------------------
 
-muscleNames = model_info.muscle_info.muscle_names;
-NMuscle = model_info.muscle_info.NMuscle;
+muscle_info = model_info.muscle_info;
+muscleNames = muscle_info.muscle_names;
+NMuscle = muscle_info.NMuscle;
 
 %% read default muscle- and tendon parameters from opensim model file
 [FMo, lMo, lTs, alphao, vMmax] = getMTparameters(osim_path,muscleNames);
 
-% maximum isometric force (N)
-model_info.muscle_info.FMo = FMo;
-
-% optimal fiber length (m)
-model_info.muscle_info.lMo = lMo;
-
-% tendon slack length (m)
-model_info.muscle_info.lTs = lTs;
-
-% pennation angle at optimal fiber length (rad)
-model_info.muscle_info.alphao = alphao;
-
-% maximum contraction velocity (m/s)
-model_info.muscle_info.vMmax = vMmax;
-
 %% parameters not from osim file
 % default tendon stiffness
-model_info.muscle_info.aTendon = 35*ones(1,NMuscle);
+tendon_stiff = 35*ones(1,NMuscle);
 
 % specific tensions of muscle fibers
-model_info.muscle_info.tensions = getSpecificTensions(muscleNames)';
+specific_tension = getSpecificTensions(muscleNames)';
 
 % ratio of slow twitch muscle fibers
-model_info.muscle_info.pctsts = getSlowTwitchRatios(muscleNames)';
+slow_twitch_fiber_ratio = getSlowTwitchRatios(muscleNames)';
 
 % strength of active muscle force
-model_info.muscle_info.muscle_strength = ones(1,NMuscle);
+muscle_strength = ones(1,NMuscle);
 
 % stiffness of muscle fibers
-model_info.muscle_info.muscle_stiffness = ones(1,NMuscle);
+muscle_pass_stiff_shift = ones(1,NMuscle);
+muscle_pass_stiff_scale = ones(1,NMuscle);
+
+
+
+%% Organise in struct
+
+for i=1:NMuscle
+    parameters(i).muscle_name = muscleNames{i};
+end
+[parameters] = double_array_to_struct_array(parameters,'FMo',FMo);
+[parameters] = double_array_to_struct_array(parameters,'lMo',lMo);
+[parameters] = double_array_to_struct_array(parameters,'lTs',lTs);
+[parameters] = double_array_to_struct_array(parameters,'alphao',alphao);
+[parameters] = double_array_to_struct_array(parameters,'vMmax',vMmax);
+[parameters] = double_array_to_struct_array(parameters,'tendon_stiff',tendon_stiff);
+[parameters] = double_array_to_struct_array(parameters,'tendon_stiff_shift',[]);
+[parameters] = double_array_to_struct_array(parameters,'specific_tension',specific_tension);
+[parameters] = double_array_to_struct_array(parameters,'slow_twitch_fiber_ratio',slow_twitch_fiber_ratio);
+[parameters] = double_array_to_struct_array(parameters,'muscle_strength',muscle_strength);
+[parameters] = double_array_to_struct_array(parameters,'muscle_pass_stiff_shift',muscle_pass_stiff_shift);
+[parameters] = double_array_to_struct_array(parameters,'muscle_pass_stiff_scale',muscle_pass_stiff_scale);
+[parameters] = double_array_to_struct_array(parameters,'muscle_mass',[]);
+
+muscle_info.parameters = parameters;
 
 %% scale muscle-tendon parameters based on user-defined settings
-model_info = scale_MTparameters(S,model_info);
+muscle_info = scale_MTparameters(S,muscle_info);
 
 %% impose symmetry on the muscle-tendon parameters
 if ~isempty(S.subject.muscle_sym) && S.subject.muscle_sym
@@ -91,15 +101,20 @@ if ~isempty(S.subject.muscle_sym) && S.subject.muscle_sym
 end
 
 %% calculate muscle-tendon parameter values that depend on others
-% shift tendon stiffness curve based on its stiffness
-model_info.muscle_info.shift = getShift(model_info.muscle_info.aTendon);
 
-% compute muscle mass
-model_info.muscle_info.muscle_mass = GetMuscleMass(model_info.muscle_info.FMo,...
-    model_info.muscle_info.lMo, model_info.muscle_info.tensions);
+for i=1:NMuscle
+    % shift tendon stiffness curve based on its stiffness
+    tendon_stiff_shift_i = getShift(muscle_info.parameters(i).tendon_stiff);
+    muscle_info.parameters(i).tendon_stiff_shift = tendon_stiff_shift_i;
+
+    % compute muscle mass
+    muscle_mass_i = GetMuscleMass(muscle_info.parameters(i).FMo,...
+        muscle_info.parameters(i).lMo,muscle_info.parameters(i).specific_tension);
+    muscle_info.parameters(i).muscle_mass = muscle_mass_i;
+end
 
 
+model_info.muscle_info = muscle_info;
 
-
-
-
+model_info.muscle_info.tact = 0.015;
+model_info.muscle_info.tdeact = 0.06;

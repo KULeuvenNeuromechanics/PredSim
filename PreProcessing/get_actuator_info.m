@@ -62,17 +62,24 @@ for i=1:Nact
     end
 end
 
-actuator_info.coord_names = coord_names;
-actuator_info.coordi = coordi;
-actuator_info.max_torque = max_torque;
-actuator_info.time_constant = time_constant;
-actuator_info.NActuators = length(actuator_info.coordi);
+% actuator_info.coord_names = coord_names;
+% actuator_info.coordi = coordi;
+% actuator_info.max_torque = max_torque;
+% actuator_info.time_constant = time_constant;
+actuator_info.NActuators = length(coord_names);
+
+%
+[parameters] = double_array_to_struct_array([],'coord_name',coord_names);
+[parameters] = double_array_to_struct_array(parameters,'coordi',coordi);
+[parameters] = double_array_to_struct_array(parameters,'max_torque',max_torque);
+[parameters] = double_array_to_struct_array(parameters,'time_constant',time_constant);
+actuator_info.parameters = parameters;
 
 % place struct with actuator info in model_info
 model_info.actuator_info = actuator_info;
 
 % Coordinates actuated by ideal actuators
-model_info.ExtFunIO.jointi.torqueActuated = actuator_info.coordi;
+model_info.ExtFunIO.jointi.torqueActuated = coordi;
 
 
 

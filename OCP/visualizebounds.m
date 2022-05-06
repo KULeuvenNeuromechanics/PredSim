@@ -18,21 +18,21 @@ for i = 1:size(bounds.Qs.lower,2)
 %     plot(Qs_spline.data(:,i+1)/scaling.Qs(i),'g--','linewidth',1);
 %     hold on
 %     plot(q_in.data(:,i+1)/scaling.Qs(i),'k--','linewidth',1);
-%     title(coordinate_names{i})
+    title(model_info.ExtFunIO.coord_names.all{i})
 end
-s = title('Qs');
+s = sgtitle('Qs');
 set(s,'Fontsize',title_Fontsize)
 figure()
-for i = 1:size(bounds.QsQdots.lower,2)
+for i = 1:size(bounds.Qdots.lower,2)
     subplot(10,7,i)
-    plot([1,N],[bounds.QsQdots.upper(:,i),bounds.QsQdots.upper(:,i)],...
+    plot([1,N],[bounds.Qdots.upper(:,i),bounds.Qdots.upper(:,i)],...
         'b--','linewidth',2);
     hold on
-    plot([1,N],[bounds.QsQdots.lower(:,i),bounds.QsQdots.lower(:,i)],...
+    plot([1,N],[bounds.Qdots.lower(:,i),bounds.Qdots.lower(:,i)],...
         'r--','linewidth',2);
-    plot(guess.QsQdots(:,i),'k','linewidth',2);
+    plot(guess.Qdots(:,i),'k','linewidth',2);
 end
-s = title('Qs and Qdots');
+s = sgtitle('Qdots');
 set(s,'Fontsize',title_Fontsize)
 figure()
 for i = 1:size(bounds.Qdotdots.lower,2)
@@ -44,7 +44,7 @@ for i = 1:size(bounds.Qdotdots.lower,2)
         'r--','linewidth',2);
     plot(guess.Qdotdots(:,i),'k','linewidth',2);
 end
-s = title('Time derivative of Qdots');
+s = sgtitle('Time derivative of Qdots');
 set(s,'Fontsize',title_Fontsize)
 figure()
 for i = 1:NMuscle
@@ -56,7 +56,7 @@ for i = 1:NMuscle
         'r--','linewidth',2);
     plot(guess.a(:,i),'k','linewidth',2);
 end
-s = title('Muscle activations');
+s = sgtitle('Muscle activations');
 set(s,'Fontsize',title_Fontsize)
 figure()
 for i = 1:NMuscle
@@ -68,7 +68,7 @@ for i = 1:NMuscle
         'r--','linewidth',2);
     plot(guess.vA(:,i),'k','linewidth',2);
 end
-s = title('Time derivative of muscle activations');
+s = sgtitle('Time derivative of muscle activations');
 set(s,'Fontsize',title_Fontsize)
 figure()
 for i = 1:NMuscle
@@ -80,7 +80,7 @@ for i = 1:NMuscle
         'r--','linewidth',2);
     plot(guess.FTtilde(:,i),'k','linewidth',2);
 end
-s = title('Muscle-tendon forces');
+s = sgtitle('Muscle-tendon forces');
 set(s,'Fontsize',title_Fontsize)
 figure()
 for i = 1:NMuscle
@@ -92,7 +92,7 @@ for i = 1:NMuscle
         'r--','linewidth',2);
     plot(guess.dFTtilde(:,i),'k','linewidth',2);
 end
-s = title('Time derivative of muscle-tendon forces');
+s = sgtitle('Time derivative of muscle-tendon forces');
 set(s,'Fontsize',title_Fontsize)
 figure()
 for i = 1:nq.arms
@@ -104,7 +104,7 @@ for i = 1:nq.arms
         'r--','linewidth',2);
     plot(guess.a_a(:,i),'k','linewidth',2);
 end
-s = title('Arm activations');
+s = sgtitle('Torque actuator activations');
 set(s,'Fontsize',title_Fontsize)
 figure()
 for i = 1:nq.arms
@@ -116,5 +116,5 @@ for i = 1:nq.arms
         'r--','linewidth',2);
     plot(guess.e_a(:,i),'k','linewidth',2);
 end
-s = title('Arm excitations');
+s = sgtitle('Torque actuator excitations');
 set(s,'Fontsize',title_Fontsize)

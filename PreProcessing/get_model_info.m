@@ -79,8 +79,8 @@ for i=1:length(model_info.muscle_info.muscle_names)
             [model_info.muscle_info.muscle_names{i}(1:end-2) '_r']));
     end
 end
-symQs.orderMus = orderMus;
-symQs.orderMusInv = orderMusInv;
+symQs.MusInvA = orderMus;
+symQs.MusInvB = orderMusInv;
 
 model_info.ExtFunIO.symQs = symQs;
 

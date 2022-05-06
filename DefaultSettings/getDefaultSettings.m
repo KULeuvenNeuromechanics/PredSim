@@ -34,7 +34,7 @@ end
 
 % minimal distance between femur and hand orginins, in meters
 if ~isfield(S.bounds.femur_hand_dist,'lower')
-    S.bounds.calcn_dist.lower = sqrt(0.00324);
+    S.bounds.femur_hand_dist.lower = sqrt(0.00324);
 end
 
 % minimal distance between origins toes, in meters
@@ -113,6 +113,13 @@ end
 % maximal order of polynomial function
 if ~isfield(S.misc.poly_order,'upper')
     S.misc.poly_order.upper = 9;
+end
+
+% name to save musculoskeletal geometry CasADi function
+S.misc.MSK_geometry_name = ['f_lMT_vMT_dM'];
+if strcmp(S.misc.msk_geom_eq,'polynomials') 
+    S.misc.MSK_geometry_name = [S.misc.MSK_geometry_name '_poly_',...
+        num2str(S.misc.poly_order.lower) '_' num2str(S.misc.poly_order.upper)];
 end
 
 % visualize IG and bounds
@@ -213,8 +220,11 @@ if ~isfield(S.subject,'muscle_strength')
 end
 
 % muscle stiffness
-if ~isfield(S.subject,'muscle_stiff')
-    S.subject.muscle_stiff = [];
+if ~isfield(S.subject,'muscle_pass_stiff_shift')
+    S.subject.muscle_pass_stiff_shift = [];
+end
+if ~isfield(S.subject,'muscle_pass_stiff_scale')
+    S.subject.muscle_pass_stiff_scale = [];
 end
 
 % muscle symmetry
@@ -245,7 +255,7 @@ else
         end
         
     elseif EXT == ".mot" && ~isfile(S.subject.IG_selection)
-        error('The motion file path you specified does not exist. Check if the path exist and if you made a typo.')
+        error('The motion file path you specified does not exist. Check if the path exists or if you made a typo.')
         
     elseif EXT == "" && NAME == "quasi-random"
          disp(['Using a quasi-random guess as initial guess.'])
@@ -257,7 +267,7 @@ end
 
 % initial guess bounds
 if ~isfield(S.subject,'IG_bounds')
-    error('Please provide a .mot file on which the IG bounds will be based. Specify the file in S.subject.IG_bounds.')
+    S.subject.IG_bounds = fullfile(S.misc.main_path,'PreProcessing','IK_Bounds_Default.osim');
 elseif ~isfile(S.subject.IG_bounds)
     error('The motion file you specified in S.subject.IG_bounds does not exist.')
 end
@@ -265,7 +275,7 @@ disp([char(S.subject.IG_bounds), ' will be used to determine IG bounds.'])
 
 % type of mtp joint used in the model
 if ~isfield(S.subject,'mtp_type')
-    S.subject.mtp_type = []; 
+    S.subject.mtp_type = 'passive'; 
 end
 
 % muscle tendon properties
