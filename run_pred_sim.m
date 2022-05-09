@@ -28,9 +28,7 @@ disp(['... CasADi functions created. Time elapsed ' num2str(toc(t0)) ' s'])
 
 %% Formulating OCP
 addpath([S.misc.main_path '\OCP'])
-disp('Start formulating OCP...')
 OCP_formulation(S,model_info,f_casadi);
-disp('... done.')
 
 %% PostProcessing
 addpath([S.misc.main_path '\PostProcessing'])

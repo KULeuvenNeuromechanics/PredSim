@@ -21,7 +21,7 @@ import casadi.*
 
 N_muscles = model_info.muscle_info.NMuscle;
 N_arms_dof = model_info.ExtFunIO.jointi.nq.arms;
-N_noarms_dof = model_info.ExtFunIO.jointi.nq.noarms;
+N_noarms_dof = model_info.ExtFunIO.jointi.nq.noArms;
 N_torq_act = model_info.ExtFunIO.jointi.nq.torqAct;
 N_pass_dof = model_info.ExtFunIO.jointi.nq.limTorq;
 

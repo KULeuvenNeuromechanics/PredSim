@@ -1,4 +1,4 @@
-function [] = post_processing(model_info,S,f_casadi)
+function [] = PostProcessing(model_info,S,f_casadi)
 %%
 %% User inputs (typical settings structure)
 % settings for optimization

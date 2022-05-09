@@ -26,7 +26,8 @@ function [model_info] = update_model_info(S,osim_path,model_info)
 % --------------------------------------------------------------------------
 
 
-%%
+%% Add crossed coordinates to muscle_info
+% This is purely for user convenience, functions use muscle_spanning_joint_info
 
 NMuscle = model_info.muscle_info.NMuscle;
 for i=1:NMuscle
@@ -40,77 +41,26 @@ for i=1:NMuscle
     model_info.muscle_info.parameters(i).coords_crossed_by_muscle = tmpst;
 end
 
-%%
-if strcmp(S.subject.mtp_type,'active')
-    act_mtpi = [];
-    act_not_mtpi = [];
-    for i=1:model_info.actuator_info.NActuators
-        if contains(model_info.actuator_info.parameters(i).coord_name,'mtp')
-            act_mtpi(end+1) = i;
-        else
-            act_no_mtpi(end+1) = i;
-        end
 
-    end
-else
-    act_mtpi = [];
-    act_not_mtpi = 1:model_info.actuator_info.NActuators;
-end
-
-model_info.actuator_info.act_mtpi = act_mtpi;
-model_info.actuator_info.act_not_mtpi = act_not_mtpi;
-
-%%
+%% Coordinate index subsets
 Ncoords = length(model_info.ExtFunIO.coord_names.all);
 
-% model_info.ExtFunIO.jointi.NOT_muscleActuated = setdiff([1:Ncoords],model_info.ExtFunIO.jointi.muscleActuated);
-
-model_info.ExtFunIO.jointi.legsi = sort([model_info.ExtFunIO.jointi.leg_l model_info.ExtFunIO.jointi.leg_r]);
 model_info.ExtFunIO.jointi.armsi = sort([model_info.ExtFunIO.jointi.arm_l model_info.ExtFunIO.jointi.arm_r]);
-model_info.ExtFunIO.jointi.mtpi  = sort([model_info.ExtFunIO.jointi.mtp_l model_info.ExtFunIO.jointi.mtp_r]);
-model_info.ExtFunIO.jointi.legs_nomtp = sort(setdiff(model_info.ExtFunIO.jointi.legsi,model_info.ExtFunIO.jointi.mtpi));
-model_info.ExtFunIO.jointi.noarmsi = sort([model_info.ExtFunIO.jointi.ground_pelvis model_info.ExtFunIO.jointi.legsi model_info.ExtFunIO.jointi.torso]); % all but arms
-model_info.ExtFunIO.jointi.legs_torso = sort([model_info.ExtFunIO.jointi.legsi model_info.ExtFunIO.jointi.torso]);
+model_info.ExtFunIO.jointi.noarmsi = setdiff(1:Ncoords,model_info.ExtFunIO.jointi.armsi);
+model_info.ExtFunIO.jointi.base_forward = setdiff(model_info.ExtFunIO.symQs.QdotsInvA,model_info.ExtFunIO.symQs.QsInvA);
 
-model_info.ExtFunIO.jointi.tau_passi = [model_info.ExtFunIO.jointi.muscleActuated model_info.ExtFunIO.jointi.armsi model_info.ExtFunIO.jointi.mtpi];
-
-model_info = addCoordNames(model_info,'leg_r');
-model_info = addCoordNames(model_info,'leg_l');
-model_info = addCoordNames(model_info,'arm_r');
-model_info = addCoordNames(model_info,'arm_l');
-model_info = addCoordNames(model_info,'ground_pelvis');
-model_info = addCoordNames(model_info,'torso');
 model_info = addCoordNames(model_info,'muscleActuated');
-model_info = addCoordNames(model_info,'legs_torso');
-model_info = addCoordNames(model_info,'legsi');
-model_info = addCoordNames(model_info,'armsi');
-model_info = addCoordNames(model_info,'noarmsi');
-model_info = addCoordNames(model_info,'mtpi');
-model_info = addCoordNames(model_info,'legs_nomtp');
-model_info = addCoordNames(model_info,'rotations');
-model_info = addCoordNames(model_info,'translations');
-model_info = addCoordNames(model_info,'tau_passi');
 
-
-
-%%
-% Number of degrees of freedom for later use
+%% Number of degrees of freedom for later use
 model_info.ExtFunIO.jointi.nq.all          = Ncoords; % all
-model_info.ExtFunIO.jointi.nq.abs          = length(model_info.ExtFunIO.jointi.ground_pelvis);
-model_info.ExtFunIO.jointi.nq.torso        = length(model_info.ExtFunIO.jointi.torso); % trunk
-model_info.ExtFunIO.jointi.nq.arms         = length(model_info.ExtFunIO.jointi.armsi); % arms
-model_info.ExtFunIO.jointi.nq.mtp          = length(model_info.ExtFunIO.jointi.mtpi);
-model_info.ExtFunIO.jointi.nq.leg          = length(model_info.ExtFunIO.jointi.legsi);
-model_info.ExtFunIO.jointi.nq.legs_torso   = length(model_info.ExtFunIO.jointi.legs_torso);
-model_info.ExtFunIO.jointi.nq.noarms       = length(model_info.ExtFunIO.jointi.noarmsi);
-model_info.ExtFunIO.jointi.nq.muscleActuated = length(model_info.ExtFunIO.jointi.muscleActuated);
+model_info.ExtFunIO.jointi.nq.arms         = length(model_info.ExtFunIO.jointi.armsi);
+model_info.ExtFunIO.jointi.nq.noArms       = length(model_info.ExtFunIO.jointi.noarmsi);
+model_info.ExtFunIO.jointi.nq.musAct       = length(model_info.ExtFunIO.jointi.muscleActuated);
 model_info.ExtFunIO.jointi.nq.torqAct      = length(model_info.ExtFunIO.jointi.torqueActuated);
-model_info.ExtFunIO.jointi.nq.legs_nomtp   = length(model_info.ExtFunIO.jointi.legs_nomtp);
-model_info.ExtFunIO.jointi.nq.roti         = length(model_info.ExtFunIO.jointi.rotations);
-model_info.ExtFunIO.jointi.nq.translationsi = length(model_info.ExtFunIO.jointi.translations);
+model_info.ExtFunIO.jointi.nq.rot          = length(model_info.ExtFunIO.jointi.rotations);
+model_info.ExtFunIO.jointi.nq.trnsl        = length(model_info.ExtFunIO.jointi.translations);
 
-% note: remove the ones that we do not use later
-
+%% Model symmetry (for half gait cycle simulations)
 ActOpp = find(ismember(model_info.ExtFunIO.symQs.QsOpp(:),model_info.ExtFunIO.jointi.torqueActuated));
 ActInvA = setdiff(1:model_info.ExtFunIO.jointi.nq.torqAct,ActOpp);
 
@@ -123,39 +73,6 @@ end
 model_info.ExtFunIO.symQs.ActInvA = ActInvA;
 model_info.ExtFunIO.symQs.ActInvB = ActInvB;
 model_info.ExtFunIO.symQs.ActOpp = ActOpp;
-
-%%
-% orderTauPass = [1:nq.tau_pass];
-% orderTauPassInv = zeros(1,nq.tau_pass);
-% for i=1:nq.tau_pass
-%     if strcmp(model_info.ExtFunIO.coord_names.tau_passi{i}(end-1:end),'_r')
-%         orderTauPassInv(i) = orderTauPass(find(ismember(model_info.ExtFunIO.coord_names.tau_passi,[model_info.ExtFunIO.coord_names.tau_passi{i}(1:end-2) '_l'])));
-%     elseif strcmp(model_info.ExtFunIO.coord_names.tau_passi{i}(end-1:end),'_l')
-%         orderTauPassInv(i) = orderTauPass(find(ismember(model_info.ExtFunIO.coord_names.tau_passi,[model_info.ExtFunIO.coord_names.tau_passi{i}(1:end-2) '_r'])));
-%     else
-%         orderTauPassInv(i) = orderTauPass(find(ismember(model_info.ExtFunIO.coord_names.tau_passi,model_info.ExtFunIO.coord_names.tau_passi{i})));
-%     end
-% end
-% 
-% model_info.ExtFunIO.symQs.orderTauPass = orderTauPass;
-% model_info.ExtFunIO.symQs.orderTauPassInv = orderTauPassInv;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

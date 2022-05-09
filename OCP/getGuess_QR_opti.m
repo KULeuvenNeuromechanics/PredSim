@@ -27,14 +27,14 @@ guess.tf = all_tf(idx_speed);
 %% Qs
 % The model is moving forward but with a standing position (Qs=0)
 guess.Qs = zeros(N,nq.all);
-guess.Qs(:,jointi.pelvis_tx) = linspace(0,guess.tf*S.subject.v_pelvis_x_trgt,N);
+guess.Qs(:,model_info.ExtFunIO.jointi.base_forward) = linspace(0,guess.tf*S.subject.v_pelvis_x_trgt,N);
 % The model is standing on the ground
 guess.Qs(:,jointi.pelvis_ty) = S.subject.IG_pelvis_y;
 
 %% Qdots
 guess.Qdots = zeros(N,nq.all);
 % The model is moving forward with a constant speed
-guess.Qdots(:,jointi.pelvis_tx) = S.subject.v_pelvis_x_trgt;
+guess.Qdots(:,model_info.ExtFunIO.jointi.base_forward) = S.subject.v_pelvis_x_trgt;
 
 %% Qdotdots
 guess.Qdotdots = zeros(N,nq.all);

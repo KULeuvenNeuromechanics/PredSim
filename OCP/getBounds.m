@@ -208,7 +208,7 @@ bounds.FTtilde.upper    = (bounds.FTtilde.upper)./scaling.FTtilde;
 % We impose the initial position of pelvis_tx to be 0
 bounds.Qs_0.lower = bounds.Qs.lower;
 bounds.Qs_0.upper = bounds.Qs.upper;
-bounds.Qs_0.lower(model_info.ExtFunIO.jointi.floating_base(4)) = 0;
-bounds.Qs_0.upper(model_info.ExtFunIO.jointi.floating_base(4)) = 0;
+bounds.Qs_0.lower(model_info.ExtFunIO.jointi.base_forward) = 0;
+bounds.Qs_0.upper(model_info.ExtFunIO.jointi.base_forward) = 0;
 
 end

@@ -48,7 +48,7 @@ if strcmp(S.misc.msk_geom_eq,'polynomials')
         t1 = tic;
         [model_info] = PolynomialFit(S,muscle_data,model_info);
         disp(['   approximating MSK geometry: ' num2str(toc(t1)) ' s'])
-        disp(['total duration: ' num2str(toc(t0)) ' s'])
+        disp(['   (total duration: ' num2str(toc(t0)) ' s)'])
     end
 
 else
