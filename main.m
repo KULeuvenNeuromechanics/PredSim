@@ -8,6 +8,7 @@ clear all
 close all
 clc
 [pathRepo,~,~] = fileparts(mfilename('fullpath'));
+[pathRepoFolder,~,~] = fileparts(pathRepo);
 
 %% Initialize S
 pathDefaultSettings = [pathRepo '\DefaultSettings'];
@@ -18,19 +19,19 @@ S.misc.main_path = pathRepo;
 
 %% Required inputs
 % name of the subject
-S.subject.name          = 'test_1'; 
+S.subject.name          = 'Fal_s1'; 
 
 % path to folder where you want to store the results of the OCP
-S.subject.save_folder  = fullfile(pathRepo,'test_1_results'); 
+S.subject.save_folder  = fullfile(pathRepoFolder,'PredSimResults',S.subject.name); 
 
 % either choose "quasi-random" or give the path to a .mot file you want to use as initial guess
-% S.subject.IG_selection  = 'C:\Users\u0150099\Documents\master_thesis\ReferenceData\ModelScaling\reference_data\IK_subject1_withMTJ_locked_scaled_default_gait_14.mot';
-% S.subject.IG_selection_gaitCyclePercent = 100;
 S.subject.IG_selection = 'quasi-random';
 
 % give the path to the osim model of your subject
-osim_path              = fullfile(pathRepo,'Subjects','test_1','test_1.osim');
+osim_path              = fullfile(pathRepo,'Subjects','Fal_s1','Fal_s1.osim');
 
+% Do you want to run the simulation as a batch job (parallel computing toolbox)
+S.solver.run_as_batch_job       = 1;
 
 %% Optional inputs
 % see README.md in the main folder for information about these optional
@@ -46,11 +47,11 @@ osim_path              = fullfile(pathRepo,'Subjects','test_1','test_1.osim');
 % S.bounds.dist_trav.lower    = ;
 % S.bounds.t_final.upper      = ;
 % S.bounds.t_final.lower      = ;
-% 
+
 % % S.metabolicE - metabolic energy
 % S.metabolicE.tanh_b = ;
 % S.metabolicE.model  = '';
-% 
+
 % % S.misc - miscellanious
 % S.misc.v_max_s             = ;
 % S.misc.visualize_IG_bounds = 1;
@@ -58,22 +59,24 @@ osim_path              = fullfile(pathRepo,'Subjects','test_1','test_1.osim');
 % S.misc.msk_geom_eq         = '';
 % S.misc.poly_order.lower    = ;
 % S.misc.poly_order.upper    = ;
-% 
+
 % % S.post_process
 % S.post_process.make_plot = '';
 % S.post_process.savename  = '';
-% 
+
 % % S.solver
 % S.solver.linear_solver  = '';
 % S.solver.tol_ipopt      = ;
-S.solver.max_iter       = 5;
+S.solver.max_iter       = 10;
 % S.solver.parallel_mode  = '';
 % S.solver.N_threads      = ;
 % S.solver.N_meshes       = ;
-% 
+% S.solver.par_cluster_name = ;
+S.solver.CasADi_path    = 'C:\GBW_MyPrograms\casadi_3_5_5';
+
 % % S.subject
-S.subject.mass              = 75;
-S.subject.IG_pelvis_y       = 0.89;
+S.subject.mass              = 62;
+S.subject.IG_pelvis_y       = 0.9385;
 S.subject.v_pelvis_x_trgt   = 1.33;
 % S.subject.IG_bounds = ;
 % S.subject.muscle_strength   = ;
@@ -87,7 +90,7 @@ S.subject.v_pelvis_x_trgt   = 1.33;
 % S.subject.muscle_coordination = ;
 S.subject.set_stiffness_coefficient_selected_dofs = {{'mtp_angle_l','mtp_angle_r'},25};
 S.subject.set_damping_coefficient_selected_dofs = {{'mtp_angle_l','mtp_angle_r'},2};
-% 
+
 % % S.weights
 % S.weights.E         = ;
 % S.weights.E_exp     = ;
@@ -100,10 +103,14 @@ S.subject.set_damping_coefficient_selected_dofs = {{'mtp_angle_l','mtp_angle_r'}
 
 
 %% Run predictive simulations
+if S.solver.run_as_batch_job
+    add_pred_sim_to_batch(S,osim_path)
+else
+    run_pred_sim(S,osim_path);
+end
 
-run_pred_sim(S,osim_path);
 
 %% Plot figures
 
-plot_figures
+% plot_figures
 

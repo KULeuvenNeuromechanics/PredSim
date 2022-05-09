@@ -1,12 +1,5 @@
 function [] = OCP_formulation(S,model_info,f_casadi)
-%%
-% TO CHECK
-% MTP is not a part of passive torques that go in the cost funciton, Antoine had it in there
-% Not implemented minimum foot height during swing, need origin velocity indecies
-% Notes:
-% Need External function, IG file in Subjects/<subject_name> folder
-% Need collocationscheme.m and other files/functions of MuscleModel and
-% MetabolicEnergy in VariousFunctions folder
+
 
 %% User inputs (typical settings structure)
 % settings for optimization
@@ -322,26 +315,60 @@ for j=1:d
 
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Add path constraints
-    % Null pelvis residuals
-    eq_constr{end+1} = Tj(model_info.ExtFunIO.jointi.floating_base,1);
-    % Muscle-driven joint torques for the lower limbs and the trunk
-    % Casadi functions are created and called based on the number of
-    % muscles each joint crosses
-    for i=1:nq.muscleActuated
-        Ft.(model_info.ExtFunIO.coord_names.muscleActuated{i}) = FTj(mai(model_info.ExtFunIO.jointi.muscleActuated(i)).mus',1);
-        T.(model_info.ExtFunIO.coord_names.muscleActuated{i}) = ...
-            f_casadi.(['musc_cross_' num2str(sumCross(model_info.ExtFunIO.jointi.muscleActuated(i)))])...
-            (MA_j.(model_info.ExtFunIO.coord_names.muscleActuated{i}),...
-            Ft.(model_info.ExtFunIO.coord_names.muscleActuated{i}));
-        eq_constr{end+1} = Tj(model_info.ExtFunIO.jointi.muscleActuated(i),1) - ...
-            (T.(model_info.ExtFunIO.coord_names.muscleActuated{i}) + ...
-            Tau_passj(model_info.ExtFunIO.jointi.muscleActuated(i)));
+    for i=1:nq.all
+        % total coordinate torque
+        Ti = 0;
+
+        % muscle moment
+        if ismember(i,model_info.ExtFunIO.jointi.muscleActuated)
+            % muscle forces
+            FTj_coord_i = FTj(mai(i).mus',1);
+            % total muscle moment
+            M_mus_i = f_casadi.(['musc_cross_' num2str(sumCross(i))])...
+            (MA_j.(model_info.ExtFunIO.coord_names.all{i}),FTj_coord_i);
+            % add to total moment
+            Ti = Ti + M_mus_i;
+        end
+        
+        % torque actuator
+        if ismember(i,model_info.ExtFunIO.jointi.torqueActuated)
+            idx_act_i = find(model_info.ExtFunIO.jointi.torqueActuated(:)==i);
+            T_act_i = a_akj(idx_act_i,j+1).*scaling.ActuatorTorque(idx_act_i);
+            Ti = Ti + T_act_i;
+        end
+
+        % passive moment
+        if ~ismember(i,model_info.ExtFunIO.jointi.floating_base)
+            Ti = Ti + Tau_passj(i);
+        end
+        
+        % total coordinate torque equals inverse dynamics torque
+        eq_constr{end+1} = Tj(i,1) - Ti;
+
     end
-    % Arms
-    eq_constr{end+1} = Tj(model_info.ExtFunIO.jointi.torqueActuated,1)./scaling.ActuatorTorque -...
-        (a_akj(:,j+1) + ...
-        Tau_passj(model_info.ExtFunIO.jointi.torqueActuated)./scaling.ActuatorTorque);
-    
+
+%     % Null pelvis residuals
+%     eq_constr{end+1} = Tj(model_info.ExtFunIO.jointi.floating_base,1);
+%     % Muscle-driven joint torques for the lower limbs and the trunk
+%     % Casadi functions are created and called based on the number of
+%     % muscles each joint crosses
+%     for i=1:nq.muscleActuated
+%         Ft.(model_info.ExtFunIO.coord_names.muscleActuated{i}) = FTj(mai(model_info.ExtFunIO.jointi.muscleActuated(i)).mus',1);
+%         T.(model_info.ExtFunIO.coord_names.muscleActuated{i}) = ...
+%             f_casadi.(['musc_cross_' num2str(sumCross(model_info.ExtFunIO.jointi.muscleActuated(i)))])...
+%             (MA_j.(model_info.ExtFunIO.coord_names.muscleActuated{i}),...
+%             Ft.(model_info.ExtFunIO.coord_names.muscleActuated{i}));
+%         eq_constr{end+1} = Tj(model_info.ExtFunIO.jointi.muscleActuated(i),1) - ...
+%             (T.(model_info.ExtFunIO.coord_names.muscleActuated{i}) + ...
+%             Tau_passj(model_info.ExtFunIO.jointi.muscleActuated(i)));
+%     end
+%     % Arms
+%     eq_constr{end+1} = Tj(model_info.ExtFunIO.jointi.torqueActuated,1)./scaling.ActuatorTorque -...
+%         (a_akj(:,j+1) + ...
+%         Tau_passj(model_info.ExtFunIO.jointi.torqueActuated)./scaling.ActuatorTorque);
+%     
+%     eq_constr{end+1} = Tj(model_info.ExtFunIO.jointi.mtpi,1) -...
+%         Tau_passj(model_info.ExtFunIO.jointi.mtpi);
 
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Activation dynamics (implicit formulation)
@@ -387,48 +414,20 @@ ineq_constr4 = vertcat(ineq_constr4{:});
 ineq_constr5 = vertcat(ineq_constr5{:});
 ineq_constr6 = vertcat(ineq_constr6{:});
 
-% if S.misc.mtp_in_model
-%     if strcmp(S.subject.mtp_type,'active')
-%         % Casadi function to get constraints and objective
-%         f_coll = Function('f_coll',{tfk,ak,aj,FTtildek,FTtildej,Qsk,Qsj,Qdotsk,...
-%             Qdotsj,a_ak,a_aj,a_mtpk,a_mtpj,vAk,e_ak,e_mtpk,dFTtildej,Aj},...
-%             {eq_constr,ineq_constr1,ineq_constr2,ineq_constr3,...
-%             ineq_constr4,ineq_constr5,ineq_constr6,J});
-%         % assign NLP problem to multiple cores
-%         f_coll_map = f_coll.map(N,S.solver.parallel_mode,S.solver.N_threads);
-%         [coll_eq_constr,coll_ineq_constr1,coll_ineq_constr2,coll_ineq_constr3,...
-%             coll_ineq_constr4,coll_ineq_constr5,coll_ineq_constr6,Jall] = f_coll_map(tf,...
-%             a(:,1:end-1), a_col, FTtilde(:,1:end-1), FTtilde_col, Qs(:,1:end-1), ...
-%             Qs_col, Qdots(:,1:end-1), Qdots_col, a_a(:,1:end-1), a_a_col, ...
-%             a_mtp(:,1:end-1), a_mtp_col, vA, e_a, e_mtp, dFTtilde_col, A_col);
-%     else
-%         % Casadi function to get constraints and objective
-%         f_coll = Function('f_coll',{tfk,ak,aj,FTtildek,FTtildej,Qsk,Qsj,Qdotsk,...
-%             Qdotsj,a_ak,a_aj,vAk,e_ak,dFTtildej,Aj},...
-%             {eq_constr,ineq_constr1,ineq_constr2,ineq_constr3,...
-%             ineq_constr4,ineq_constr5,ineq_constr6,J});
-%         % assign NLP problem to multiple cores
-%         f_coll_map = f_coll.map(N,S.solver.parallel_mode,S.solver.N_threads);
-%         [coll_eq_constr,coll_ineq_constr1,coll_ineq_constr2,coll_ineq_constr3,...
-%             coll_ineq_constr4,coll_ineq_constr5,coll_ineq_constr6,Jall] = f_coll_map(tf,...
-%             a(:,1:end-1), a_col, FTtilde(:,1:end-1), FTtilde_col, Qs(:,1:end-1), ...
-%             Qs_col, Qdots(:,1:end-1), Qdots_col, a_a(:,1:end-1), a_a_col, ...
-%             vA, e_a, dFTtilde_col, A_col);
-%     end
-% else
-    % Casadi function to get constraints and objective
-    f_coll = Function('f_coll',{tfk,ak,aj,FTtildek,FTtildej,Qsk,Qsj,Qdotsk,...
-        Qdotsj,a_ak,a_aj,vAk,e_ak,dFTtildej,Aj},...
-        {eq_constr,ineq_constr1,ineq_constr2,ineq_constr3,...
-        ineq_constr4,ineq_constr5,ineq_constr6,J});
-    % assign NLP problem to multiple cores
-    f_coll_map = f_coll.map(N,S.solver.parallel_mode,S.solver.N_threads);
-    [coll_eq_constr,coll_ineq_constr1,coll_ineq_constr2,coll_ineq_constr3,...
-        coll_ineq_constr4,coll_ineq_constr5,coll_ineq_constr6,Jall] = f_coll_map(tf,...
-        a(:,1:end-1), a_col, FTtilde(:,1:end-1), FTtilde_col, Qs(:,1:end-1), ...
-        Qs_col, Qdots(:,1:end-1), Qdots_col, a_a(:,1:end-1), a_a_col, ...
-        vA, e_a, dFTtilde_col, A_col);
-% end
+
+% Casadi function to get constraints and objective
+f_coll = Function('f_coll',{tfk,ak,aj,FTtildek,FTtildej,Qsk,Qsj,Qdotsk,...
+    Qdotsj,a_ak,a_aj,vAk,e_ak,dFTtildej,Aj},...
+    {eq_constr,ineq_constr1,ineq_constr2,ineq_constr3,...
+    ineq_constr4,ineq_constr5,ineq_constr6,J});
+% assign NLP problem to multiple cores
+f_coll_map = f_coll.map(N,S.solver.parallel_mode,S.solver.N_threads);
+[coll_eq_constr,coll_ineq_constr1,coll_ineq_constr2,coll_ineq_constr3,...
+    coll_ineq_constr4,coll_ineq_constr5,coll_ineq_constr6,Jall] = f_coll_map(tf,...
+    a(:,1:end-1), a_col, FTtilde(:,1:end-1), FTtilde_col, Qs(:,1:end-1), ...
+    Qs_col, Qdots(:,1:end-1), Qdots_col, a_a(:,1:end-1), a_a_col, ...
+    vA, e_a, dFTtilde_col, A_col);
+
 % equality constrains
 opti.subject_to(coll_eq_constr == 0);
 
@@ -473,7 +472,12 @@ if strcmp(S.misc.gaitmotion_type,'HalfGaitCycle')
     % Muscle-tendon forces
     opti.subject_to(FTtilde(model_info.ExtFunIO.symQs.MusInvA,end) - FTtilde(model_info.ExtFunIO.symQs.MusInvB,1) == 0);
     % Torque actuator activations
-    opti.subject_to(a_a(model_info.ExtFunIO.symQs.ActInvA,end) - a_a(model_info.ExtFunIO.symQs.ActInvB,1) == 0);
+    if ~isempty(model_info.ExtFunIO.symQs.ActInvA)
+        opti.subject_to(a_a(model_info.ExtFunIO.symQs.ActInvA,end) - a_a(model_info.ExtFunIO.symQs.ActInvB,1) == 0);
+    end
+    if ~isempty(model_info.ExtFunIO.symQs.ActOpp)
+        opti.subject_to(a_a(model_info.ExtFunIO.symQs.ActOpp,end) + a_a(model_info.ExtFunIO.symQs.ActOpp,1) == 0);
+    end
 
 else
     opti.subject_to(Qs(:,end) - Qs(:,1) == 0);

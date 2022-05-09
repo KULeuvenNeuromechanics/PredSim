@@ -2,9 +2,15 @@ function [] = run_pred_sim(S,osim_path)
 
 addpath([S.misc.main_path '\VariousFunctions'])
 
+% Need to add casadi to path inside this function when running it as batch
+% job. Passing the folder as AdditionalPaths when creating the job does not
+% work. Feel free to change if you find a cleaner solution.
+if S.solver.run_as_batch_job
+    addpath(genpath(S.solver.CasADi_path));
+end
 
 S = getDefaultSettings(S);
-% S = updateS_passiveJointTorqueProperties(S);
+
 
 %% PreProcessing
 addpath([S.misc.main_path '\PreProcessing'])
