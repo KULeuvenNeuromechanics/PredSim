@@ -116,7 +116,7 @@ if ~isfield(S.misc.poly_order,'upper')
 end
 
 % name to save musculoskeletal geometry CasADi function
-S.misc.MSK_geometry_name = ['f_lMT_vMT_dM'];
+S.misc.MSK_geometry_name = 'f_lMT_vMT_dM';
 if strcmp(S.misc.msk_geom_eq,'polynomials') 
     S.misc.MSK_geometry_name = [S.misc.MSK_geometry_name '_poly_',...
         num2str(S.misc.poly_order.lower) '_' num2str(S.misc.poly_order.upper)];
@@ -185,12 +185,23 @@ if ~isfield(S.solver,'N_meshes')
     S.solver.N_meshes = 50;
 end
 
+% path to CasADi installation folder
+if ~isfield(S.solver,'CasADi_path')
+    S.solver.CasADi_path = [];
+elseif ~isfolder(S.solver.CasADi_path)
+     error('Unable to find the path assigned to "S.solver.CasADi_path"')
+end
+
+if isempty(S.solver.CasADi_path) && S.solver.run_as_batch_job
+    error('Running a simulation as batch job requires "S.solver.CasADi_path" to contain the CasADi installation folder')
+end
+
 %% subject
 
 % folder path to store the subject specific results
 if ~isfield(S.subject,'save_folder')
    error('Please provide a folder to store the results in. Specify the folder path in S.subject.save_folder.'); 
-elseif ~exist(S.subject.save_folder)
+elseif ~isfolder(S.subject.save_folder)
     mkdir(S.subject.save_folder);
 end
 
@@ -258,7 +269,7 @@ else
         error('The motion file path you specified does not exist. Check if the path exists or if you made a typo.')
         
     elseif EXT == "" && NAME == "quasi-random"
-         disp(['Using a quasi-random guess as initial guess.'])
+         disp('Using a quasi-random initial guess.')
          
     elseif EXT == "" && NAME ~= "quasi-random"
         error('Please specify what you want to use as an initial guess. Either choose "quasi-random" or specify the path of a .mot file.')

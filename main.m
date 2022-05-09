@@ -1,4 +1,4 @@
-%% Predcitive Simulations of Human Movement
+%% Predictive Simulations of Human MGait
 
 % This script starts the predictive simulation of human movement. The
 % required inputs are necessary to start the simulations. Optional inputs,
@@ -7,7 +7,9 @@
 clear all
 close all
 clc
+% path to the repository folder
 [pathRepo,~,~] = fileparts(mfilename('fullpath'));
+% path to the folder that contains the repository folder
 [pathRepoFolder,~,~] = fileparts(pathRepo);
 
 %% Initialize S
@@ -25,7 +27,10 @@ S.subject.name          = 'Fal_s1';
 S.subject.save_folder  = fullfile(pathRepoFolder,'PredSimResults',S.subject.name); 
 
 % either choose "quasi-random" or give the path to a .mot file you want to use as initial guess
-S.subject.IG_selection = 'quasi-random';
+% S.subject.IG_selection = 'quasi-random';
+S.subject.IG_selection = 'C:\Users\u0150099\Documents\master_thesis\3dpredictsim\IG\Data\NoExo.mot';
+S.subject.IG_selection_gaitCyclePercent = 200;
+
 
 % give the path to the osim model of your subject
 osim_path              = fullfile(pathRepo,'Subjects','Fal_s1','Fal_s1.osim');
@@ -67,12 +72,13 @@ S.solver.run_as_batch_job       = 0;
 % % S.solver
 % S.solver.linear_solver  = '';
 % S.solver.tol_ipopt      = ;
-S.solver.max_iter       = 1;
+% S.solver.max_iter       = 1;
 % S.solver.parallel_mode  = '';
 % S.solver.N_threads      = ;
 % S.solver.N_meshes       = ;
 % S.solver.par_cluster_name = ;
 S.solver.CasADi_path    = 'C:\GBW_MyPrograms\casadi_3_5_5';
+S.solver.PostProcess_only   = 1;
 
 % % S.subject
 S.subject.mass              = 62;

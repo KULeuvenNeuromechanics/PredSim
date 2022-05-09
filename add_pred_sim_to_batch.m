@@ -5,6 +5,7 @@ function [] = add_pred_sim_to_batch(S,osim_path)
 %   allows the simulation to run in the background. It is possible to run
 %   multiple simulations at the same time, and queue more to run when they
 %   are done.
+%   Requires the parallel computing toolbox
 % 
 % INPUT:
 %   - S -
@@ -27,12 +28,6 @@ function [] = add_pred_sim_to_batch(S,osim_path)
 % Running a function as part of batch needs all paths that are called inside
 % the function
 additional_paths = {};
-if isfolder(S.solver.CasADi_path)
-    additional_paths{end+1} = genpath(S.solver.CasADi_path);
-else
-    error(['Batch processing requires the path to the CasADi 3.5.5 folder.',...
-        ' Please assign this path to "S.solver.CasADi_path"'])
-end
 [pathOsim,~,~] = fileparts(osim_path);
 additional_paths{end+1} = pathOsim;
 additional_paths{end+1} = fullfile(S.misc.main_path,'DefaultSettings');

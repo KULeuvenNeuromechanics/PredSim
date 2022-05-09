@@ -550,13 +550,13 @@ Qdots_opt = reshape(w_opt(starti:starti+nq.all*(N+1)-1),nq.all,N+1)';
 starti = starti + nq.all*(N+1);
 Qdots_col_opt = reshape(w_opt(starti:starti+nq.all*(d*N)-1),nq.all,d*N)';
 starti = starti + nq.all*(d*N);
-a_a_opt = reshape(w_opt(starti:starti+nq.arms*(N+1)-1),nq.torqAct,N+1)';
+a_a_opt = reshape(w_opt(starti:starti+nq.torqAct*(N+1)-1),nq.torqAct,N+1)';
 starti = starti + nq.torqAct*(N+1);
-a_a_col_opt = reshape(w_opt(starti:starti+nq.arms*(d*N)-1),nq.torqAct,d*N)';
+a_a_col_opt = reshape(w_opt(starti:starti+nq.torqAct*(d*N)-1),nq.torqAct,d*N)';
 starti = starti + nq.torqAct*(d*N);
 vA_opt = reshape(w_opt(starti:starti+NMuscle*N-1),NMuscle,N)';
 starti = starti + NMuscle*N;
-e_a_opt = reshape(w_opt(starti:starti+nq.arms*N-1),nq.torqAct,N)';
+e_a_opt = reshape(w_opt(starti:starti+nq.torqAct*N-1),nq.torqAct,N)';
 starti = starti + nq.torqAct*N;
 dFTtilde_col_opt=reshape(w_opt(starti:starti+NMuscle*(d*N)-1),NMuscle,d*N)';
 starti = starti + NMuscle*(d*N);
@@ -829,7 +829,7 @@ if strcmp(S.misc.gaitmotion_type,'HalfGaitCycle')
     % If the first heel strike was on the left foot then we invert so that
     % we always start with the right foot, for analysis purpose
     if strcmp(HS1,'l')
-        Qs_GC(:,model_info.ExtFunIO.symQs.QdotsInvA)  = Qs_GC(:,model_info.ExtFunIO.symQs.QdotsInvB);
+        Qs_GC(:,model_info.ExtFunIO.symQs.QsInvA)  = Qs_GC(:,model_info.ExtFunIO.symQs.QsInvB);
         Qs_GC(:,model_info.ExtFunIO.symQs.QsOpp)      = -Qs_GC(:,model_info.ExtFunIO.symQs.QsOpp);
     end
     temp_Qs_GC_pelvis_tx = Qs_GC(1,model_info.ExtFunIO.jointi.base_forward);
@@ -891,7 +891,6 @@ if strcmp(S.misc.gaitmotion_type,'HalfGaitCycle')
     end
     
     % Muscle-Tendon Forces
-    orderMusInv = model_info.ExtFunIO.symQs.MusInvA;
     FTtilde_GC = zeros(N*2,NMuscle);
     FTtilde_GC(1:N-IC1i_s+1,:) = FTtilde_opt_unsc(IC1i_s:end,:);
     FTtilde_GC(N-IC1i_s+2:N-IC1i_s+1+N,model_info.ExtFunIO.symQs.MusInvA) = ...
@@ -906,13 +905,13 @@ if strcmp(S.misc.gaitmotion_type,'HalfGaitCycle')
     % Time derivative of muscle-tendon force
     dFTtilde_GC = zeros(N*2,NMuscle);
     dFTtilde_GC(1:N-IC1i_c+1,:) = dFTtilde_opt_unsc(IC1i_c:end,:);
-    dFTtilde_GC(N-IC1i_c+2:N-IC1i_c+1+N,:) = ...
-        dFTtilde_opt_unsc(1:end,orderMusInv);
+    dFTtilde_GC(N-IC1i_c+2:N-IC1i_c+1+N,model_info.ExtFunIO.symQs.MusInvA) = ...
+        dFTtilde_opt_unsc(1:end,model_info.ExtFunIO.symQs.MusInvB);
     dFTtilde_GC(N-IC1i_c+2+N:2*N,:) = dFTtilde_opt_unsc(1:IC1i_c-1,:);
     % If the first heel strike was on the left foot then we invert so that
     % we always start with the right foot, for analysis purpose
     if strcmp(HS1,'l')
-        dFTtilde_GC(:,:) = dFTtilde_GC(:,orderMusInv);
+        dFTtilde_GC(:,model_info.ExtFunIO.symQs.MusInvA) = dFTtilde_GC(:,model_info.ExtFunIO.symQs.MusInvB);
     end
  
     % Torque actuator activations
