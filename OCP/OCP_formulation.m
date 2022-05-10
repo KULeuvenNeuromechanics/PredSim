@@ -1070,8 +1070,8 @@ for i=1:nq.torqAct
 end
 
 %% Convert joint accelerations to °/s^2
+Qdotdots_GC(:,model_info.ExtFunIO.jointi.rotations) = Qdotdots_GC(:,model_info.ExtFunIO.jointi.rotations)*180/pi;
 
-Qdotdots_GC(:,)
 %% Save the results
 % Structure Results_all
 R.S             = S;

@@ -28,8 +28,6 @@ S.subject.save_folder  = fullfile(pathRepoFolder,'PredSimResults',S.subject.name
 
 % either choose "quasi-random" or give the path to a .mot file you want to use as initial guess
 % S.subject.IG_selection = 'quasi-random';
-% S.subject.IG_selection = 'C:\Users\u0150099\OneDrive - KU Leuven\3dpredictsim_results\debug\Fal_s1_mtp_sd_MTPp_k17_d05_ig21.mot';
-% S.subject.IG_selection_gaitCyclePercent = 200;
 S.subject.IG_selection = fullfile(S.misc.main_path,'OCP','IK_Bounds_Default.mot');
 S.subject.IG_selection_gaitCyclePercent = 50;
 
@@ -37,7 +35,7 @@ S.subject.IG_selection_gaitCyclePercent = 50;
 osim_path              = fullfile(pathRepo,'Subjects','Fal_s1','Fal_s1.osim');
 
 % Do you want to run the simulation as a batch job (parallel computing toolbox)
-S.solver.run_as_batch_job       = 1;
+S.solver.run_as_batch_job       = 0;
 
 %% Optional inputs
 % see README.md in the main folder for information about these optional
