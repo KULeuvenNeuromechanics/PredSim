@@ -2,8 +2,7 @@ function [] = PostProcessing(S,model_info,f_casadi)
 
 
 %% load results
-OutFolder = S.subject.save_folder;
-Outname = fullfile(OutFolder,['R_' S.subject.name '.mat']);
+Outname = fullfile(S.subject.save_folder,[S.post_process.result_filename '.mat']);
 load(Outname,'R');
 
 %%
@@ -40,7 +39,7 @@ if writeIKmotion
     end
     JointAngleMuscleAct.inDeg = 'true';
 %     OutFolder = fullfile(pathRepo,'Results',S.ResultsFolder);
-    filenameJointAngles = fullfile(OutFolder,[S.subject.name '.mot']);
+    filenameJointAngles = fullfile(S.subject.save_folder,[S.post_process.result_filename '.mot']);
     write_motionFile_v40(JointAngleMuscleAct, filenameJointAngles);
 end
 

@@ -14,7 +14,7 @@ function [bounds,scaling] = getBounds(S,model_info)
 
 % Kinematics file for bounds -- input arguments
 % IKfile_bounds = fullfile(S.subject.folder_name, S.subject.IKfile_bounds);
-Qs = getIK(S.subject.IG_bounds,model_info);
+Qs = getIK(S.subject.IK_Bounds,model_info);
 
 % Get the names of the coordinates
 coordinate_names = model_info.ExtFunIO.coord_names.all;
@@ -128,6 +128,24 @@ if S.subject.v_pelvis_x_trgt > 1.33
     bounds.Qdots.upper(model_info.ExtFunIO.jointi.floating_base(4)) = 4;
 end
 
+%% Adjust bounds to be symmetric
+bounds.Qs.upper(model_info.ExtFunIO.symQs.QsInvA) =...
+    max(bounds.Qs.upper(model_info.ExtFunIO.symQs.QsInvA),bounds.Qs.upper(model_info.ExtFunIO.symQs.QsInvB));
+bounds.Qs.lower(model_info.ExtFunIO.symQs.QsInvA) =...
+    min(bounds.Qs.lower(model_info.ExtFunIO.symQs.QsInvA),bounds.Qs.lower(model_info.ExtFunIO.symQs.QsInvB));
+
+bounds.Qdots.upper(model_info.ExtFunIO.symQs.QdotsInvA) =...
+    max(bounds.Qdots.upper(model_info.ExtFunIO.symQs.QdotsInvA),bounds.Qdots.upper(model_info.ExtFunIO.symQs.QdotsInvB));
+bounds.Qdots.lower(model_info.ExtFunIO.symQs.QdotsInvA) =...
+    min(bounds.Qdots.lower(model_info.ExtFunIO.symQs.QdotsInvA),bounds.Qdots.lower(model_info.ExtFunIO.symQs.QdotsInvB));
+
+bounds.Qdotdots.upper(model_info.ExtFunIO.symQs.QdotsInvA) =...
+    max(bounds.Qdotdots.upper(model_info.ExtFunIO.symQs.QdotsInvA),bounds.Qdotdots.upper(model_info.ExtFunIO.symQs.QdotsInvB));
+bounds.Qdotdots.lower(model_info.ExtFunIO.symQs.QdotsInvA) =...
+    min(bounds.Qdotdots.lower(model_info.ExtFunIO.symQs.QdotsInvA),bounds.Qdotdots.lower(model_info.ExtFunIO.symQs.QdotsInvB));
+
+
+
 %% Muscle activations
 bounds.a.lower = 0.05*ones(1,NMuscle);
 bounds.a.upper = ones(1,NMuscle);
@@ -178,8 +196,7 @@ scaling.QsQdots                 = zeros(1,2*NCoord);
 scaling.QsQdots(1,1:2:end)      = scaling.Qs ;
 scaling.QsQdots(1,2:2:end)      = scaling.Qdots ;
 % Qdotdots
-scaling.Qdotdots = max(abs(bounds.Qdotdots.lower),...
-    abs(bounds.Qdotdots.upper));
+scaling.Qdotdots = max(abs(bounds.Qdotdots.lower),abs(bounds.Qdotdots.upper));
 bounds.Qdotdots.lower = (bounds.Qdotdots.lower)./scaling.Qdotdots;
 bounds.Qdotdots.upper = (bounds.Qdotdots.upper)./scaling.Qdotdots;
 bounds.Qdotdots.lower(isnan(bounds.Qdotdots.lower)) = 0;
@@ -199,8 +216,7 @@ scaling.e_a = 1;
 % Fixed scaling factor
 scaling.dFTtilde = 100;
 % Muscle-tendon forces
-scaling.FTtilde         = max(...
-    abs(bounds.FTtilde.lower),abs(bounds.FTtilde.upper)); 
+scaling.FTtilde         = max(abs(bounds.FTtilde.lower),abs(bounds.FTtilde.upper)); 
 bounds.FTtilde.lower    = (bounds.FTtilde.lower)./scaling.FTtilde;
 bounds.FTtilde.upper    = (bounds.FTtilde.upper)./scaling.FTtilde;
 

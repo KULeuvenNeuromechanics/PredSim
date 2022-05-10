@@ -123,8 +123,8 @@ if strcmp(S.misc.msk_geom_eq,'polynomials')
 end
 
 % visualize IG and bounds
-if ~isfield(S.misc,'visualize_IG_bounds')
-    S.misc.visualize_IG_bounds = 0;
+if ~isfield(S.misc,'visualize_bounds')
+    S.misc.visualize_bounds = 0;
 end
 
 % damping Coefficient in contraction dynamics
@@ -148,6 +148,20 @@ end
 % name used for saving the resultfiles (choose custom or structurized savename)
 if ~isfield(S.post_process,'savename')
     S.post_process.savename = 'structured';
+end
+
+% rerun post-processing without solving OCP
+if ~isfield(S.post_process,'rerun')
+    S.post_process.rerun = 0;
+end
+
+% filename of the result to post-process
+if ~isfield(S.post_process,'result_filename')
+    S.post_process.result_filename = [];
+end
+
+if S.post_process.rerun && isempty(S.post_process.result_filename)
+    error('Please provide the name of the result to post-process. (S.post_process.result_filename)')
 end
 
 %% solver
@@ -277,12 +291,12 @@ else
 end
 
 % initial guess bounds
-if ~isfield(S.subject,'IG_bounds')
-    S.subject.IG_bounds = fullfile(S.misc.main_path,'PreProcessing','IK_Bounds_Default.osim');
-elseif ~isfile(S.subject.IG_bounds)
-    error('The motion file you specified in S.subject.IG_bounds does not exist.')
+if ~isfield(S.subject,'IK_Bounds')
+    S.subject.IK_Bounds = fullfile(S.misc.main_path,'OCP','IK_Bounds_Default.mot');
+elseif ~isfile(S.subject.IK_Bounds)
+    error('The motion file you specified in S.subject.IK_Bounds does not exist.')
 end
-disp([char(S.subject.IG_bounds), ' will be used to determine IG bounds.'])
+disp([char(S.subject.IK_Bounds), ' will be used to determine bounds.'])
 
 % type of mtp joint used in the model
 if ~isfield(S.subject,'mtp_type')

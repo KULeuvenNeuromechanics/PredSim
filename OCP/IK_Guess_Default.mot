@@ -1,8 +1,8 @@
-C:\Users\u0150099\Documents\PredSim_dev\PreProcessing/IK_Bounds_Default.osim
+C:\Users\u0150099\Documents\PredSim_dev\OCP\IK_Guess_Default.mot
 version=1
 nRows=50
 nColumns=32
-inDegrees=no
+inDegrees=false
 endheader
                 time	         pelvis_tilt	         pelvis_list	     pelvis_rotation	           pelvis_tx	           pelvis_ty	           pelvis_tz	       hip_flexion_l	     hip_adduction_l	      hip_rotation_l	       hip_flexion_r	     hip_adduction_r	      hip_rotation_r	        knee_angle_l	        knee_angle_r	       ankle_angle_l	       ankle_angle_r	    subtalar_angle_l	    subtalar_angle_r	         mtp_angle_l	         mtp_angle_r	    lumbar_extension	      lumbar_bending	     lumbar_rotation	          arm_flex_l	           arm_add_l	           arm_rot_l	          arm_flex_r	           arm_add_r	           arm_rot_r	        elbow_flex_l	        elbow_flex_r	
           0.00000000	          0.01543582	          0.04793920	          0.05949989	          0.00000000	          0.89975485	         -0.07161432	         -0.28941582	          0.09731058	          0.02393867	          0.49236501	         -0.02552389	         -0.11459121	         -0.24160124	         -0.21549696	          0.23637483	          0.05569048	          0.16306475	          0.05935107	          0.00000000	          0.00000000	         -0.14028240	         -0.05217555	         -0.13489288	          0.08647206	         -0.37766868	          0.26139966	         -0.12843262	         -0.23534922	          0.30483801	          0.63299207	          0.17985638	

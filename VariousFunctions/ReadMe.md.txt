@@ -1,0 +1,1 @@
+This folder contains helper functions that are not specific to (any step of) this predictive simulation.

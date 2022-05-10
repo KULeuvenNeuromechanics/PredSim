@@ -11,7 +11,7 @@ load(ref_file,'R')
 R_ref = R;
 x = 1:(100-1)/(size(R_ref.Qs,1)-1):100;
 
-load('C:\Users\u0150099\Documents\PredSimResults\Fal_s1\R_Fal_s1.mat','R','model_info')
+load('C:\Users\u0150099\Documents\PredSimResults\Fal_s1\Fal_s1_v2.mat','R','model_info')
 
 figure
 for i=1:31
@@ -28,3 +28,46 @@ for i=1:31
     plot(x,R.Qs(:,i))
 end
 legend('reference','new code')
+
+%%
+figure
+idx_r = [];
+for i=1:length(R_ref.colheaders.muscles)
+    if strcmp(R_ref.colheaders.muscles{i}(end),'r')
+        idx_r(end+1) = i;
+    end
+end
+for i=1:length(idx_r)
+    subplot(7,7,i)
+    hold on
+    plot(x,R_ref.a(:,idx_r(i)))
+    title(R_ref.colheaders.muscles{idx_r(i)},'Interpreter','none')
+end
+
+idx_r2 = [];
+for i=1:length(model_info.muscle_info.muscle_names)
+    if strcmp(model_info.muscle_info.muscle_names{i}(end),'r')
+        idx_r2(end+1) = i;
+    end
+end
+for i=1:length(idx_r2)
+    idx0 = find(strcmp(model_info.muscle_info.muscle_names(idx_r2),R_ref.colheaders.muscles(idx_r(i))));
+%     idx = find(idx_r(:)==idx0);
+    subplot(7,7,i)
+    hold on
+    plot(x,R.a(:,idx_r2(idx0)))
+end
+legend('reference','new code')
+
+
+%%
+
+% clc
+% for i=1:length(model_info.ExtFunIO.symQs.QsInvA)
+%     name1 = model_info.ExtFunIO.coord_names.all{model_info.ExtFunIO.symQs.QsInvA(i)};
+%     name2 = model_info.ExtFunIO.coord_names.all{model_info.ExtFunIO.symQs.QsInvB(i)};
+%     disp([name1 '  -  ' name2])
+% end
+
+
+

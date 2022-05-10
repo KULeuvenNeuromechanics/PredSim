@@ -55,6 +55,8 @@ if ~isempty(S.subject.set_limit_torque_coefficients_selected_dofs)
     try
         [K_pass,theta_pass] = unpack_name_value_combinations(S.subject.set_limit_torque_coefficients_selected_dofs,...
             coord_names,[4,2]);
+        K_pass = K_pass';
+        theta_pass = theta_pass';
      catch errmsg
         error(['Unable to set limit torque coefficients because: ', errmsg]);
     end
@@ -77,6 +79,9 @@ for i=1:n_coord
         if exist("K_pass","var") && ~isnan(K_pass(i,1))
             passive_moment_info(i).K_pass = K_pass(i,:);
             passive_moment_info(i).theta_pass = theta_pass(i,:);
+        elseif exist("K_pass","var") && K_pass(i,1)==0
+            passive_moment_info(i).K_pass = [];
+            passive_moment_info(i).theta_pass = [];
         elseif ~isnan(K_pass_default(i,1))
             passive_moment_info(i).K_pass = K_pass_default(i,:);
             passive_moment_info(i).theta_pass = theta_pass_default(i,:);

@@ -1,4 +1,4 @@
-%% Predictive Simulations of Human MGait
+%% Predictive Simulations of Human Gait
 
 % This script starts the predictive simulation of human movement. The
 % required inputs are necessary to start the simulations. Optional inputs,
@@ -28,15 +28,16 @@ S.subject.save_folder  = fullfile(pathRepoFolder,'PredSimResults',S.subject.name
 
 % either choose "quasi-random" or give the path to a .mot file you want to use as initial guess
 % S.subject.IG_selection = 'quasi-random';
-S.subject.IG_selection = 'C:\Users\u0150099\Documents\master_thesis\3dpredictsim\IG\Data\NoExo.mot';
-S.subject.IG_selection_gaitCyclePercent = 200;
-
+% S.subject.IG_selection = 'C:\Users\u0150099\OneDrive - KU Leuven\3dpredictsim_results\debug\Fal_s1_mtp_sd_MTPp_k17_d05_ig21.mot';
+% S.subject.IG_selection_gaitCyclePercent = 200;
+S.subject.IG_selection = fullfile(S.misc.main_path,'OCP','IK_Bounds_Default.mot');
+S.subject.IG_selection_gaitCyclePercent = 50;
 
 % give the path to the osim model of your subject
 osim_path              = fullfile(pathRepo,'Subjects','Fal_s1','Fal_s1.osim');
 
 % Do you want to run the simulation as a batch job (parallel computing toolbox)
-S.solver.run_as_batch_job       = 0;
+S.solver.run_as_batch_job       = 1;
 
 %% Optional inputs
 % see README.md in the main folder for information about these optional
@@ -59,7 +60,7 @@ S.solver.run_as_batch_job       = 0;
 
 % % S.misc - miscellanious
 % S.misc.v_max_s             = ;
-% S.misc.visualize_IG_bounds = 1;
+% S.misc.visualize_bounds = 1;
 % S.misc.gaitmotion_type     = '';
 % S.misc.msk_geom_eq         = '';
 % S.misc.poly_order.lower    = ;
@@ -68,17 +69,19 @@ S.solver.run_as_batch_job       = 0;
 % % S.post_process
 % S.post_process.make_plot = '';
 % S.post_process.savename  = '';
+% S.post_process.rerun   = 1;
+% S.post_process.result_filename = 'Fal_s1_v1';
 
 % % S.solver
 % S.solver.linear_solver  = '';
 % S.solver.tol_ipopt      = ;
-% S.solver.max_iter       = 1;
+% S.solver.max_iter       = 5;
 % S.solver.parallel_mode  = '';
 % S.solver.N_threads      = ;
 % S.solver.N_meshes       = ;
 % S.solver.par_cluster_name = ;
 S.solver.CasADi_path    = 'C:\GBW_MyPrograms\casadi_3_5_5';
-S.solver.PostProcess_only   = 1;
+
 
 % % S.subject
 S.subject.mass              = 62;
@@ -96,6 +99,7 @@ S.subject.v_pelvis_x_trgt   = 1.33;
 % S.subject.muscle_coordination = ;
 S.subject.set_stiffness_coefficient_selected_dofs = {{'mtp_angle_l','mtp_angle_r'},17};
 S.subject.set_damping_coefficient_selected_dofs = {{'mtp_angle_l','mtp_angle_r'},0.5};
+S.subject.set_limit_torque_coefficients_selected_dofs = {{'mtp_angle_l','mtp_angle_r'},[0,0,0,0],[0,0]};
 
 % % S.weights
 % S.weights.E         = ;

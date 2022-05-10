@@ -48,12 +48,6 @@ cd(S.misc.subject_path)
 F  = external('F',S.misc.external_function);
 cd(pathmain);
 
-%% Output folder
-OutFolder = S.subject.save_folder;
-if ~isfolder(OutFolder)
-    mkdir(OutFolder);
-end
-
 %% Collocation Scheme
 % We use a pseudospectral direct collocation method, i.e. we use Lagrange
 % polynomials to approximate the state derivatives at the collocation
@@ -100,7 +94,7 @@ end
 [guess,bounds] = AdaptGuess_UserInput(S,guess,bounds);
 
 
-if (S.misc.visualize_IG_bounds)
+if (S.misc.visualize_bounds)
     visualizebounds
 end
 
@@ -507,14 +501,18 @@ opti.solver('ipopt', options);
 % timer
 disp(['... OCP formulation done. Time elapsed ' num2str(toc(t0)) ' s'])
 % Create and save diary
-Outname = fullfile(OutFolder,[S.subject.name '_log.txt']);
+Outname = fullfile(S.subject.save_folder,[S.post_process.result_filename '_log.txt']);
 diary(Outname);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Solve problem
 % Opti does not use bounds on variables but constraints. This function
 % adjusts for that.
-%     opti.solve();
 [w_opt,stats] = solve_NLPSOL(opti,options);
+
+% % for debug purpose: load raw results
+% Outname = fullfile(S.subject.save_folder,[S.post_process.result_filename '.mat']);
+% load(Outname,'w_opt','stats');
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 diary off
 % Extract results
@@ -718,7 +716,7 @@ for k=1:N
             a_col_opt_unsc(count,:)',a_col_opt_unsc(count,:)',...
             full(lMtilde_opt_all),...
             full(vM_opt_all),full(Fce_opt_all),full(Fpass_opt_all),...
-            MuscleMass',pctsts,full(Fiso_opt_all),S.subject.mass,10);
+            MuscleMass',pctsts,full(Fiso_opt_all),S.subject.mass,S.metabolicE.tanh_b);
         else
             error('No energy model selected');
         end
@@ -795,6 +793,20 @@ if assertCost2 > 1*10^(-S.solver.tol_ipopt)
     disp(['   Difference = ' num2str(assertCost2)])
 end
 
+% % Test collocation function
+% [coll_eq_constr_opt,coll_ineq_constr1_opt,coll_ineq_constr2_opt,coll_ineq_constr3_opt,...
+%     coll_ineq_constr4_opt,coll_ineq_constr5_opt,coll_ineq_constr6_opt,Jall_opt] = f_coll_map(tf_opt,...
+%     a_opt(1:end-1,:)', a_col_opt', FTtilde_opt(1:end-1,:)', FTtilde_col_opt', Qs_opt(1:end-1,:)', ...
+%     Qs_col_opt', Qdots_opt(1:end-1,:)', Qdots_col_opt', a_a_opt(1:end-1,:)', a_a_col_opt', ...
+%     vA_opt', e_a_opt', dFTtilde_col_opt', qdotdot_col_opt');
+% 
+% Jall_sc_opt = full(sum(Jall_opt)/dist_trav_opt);
+% assertCost3 = abs(stats.iterations.obj(end) - Jall_sc_opt);
+% 
+% if assertCost3 > 1*10^(-S.solver.tol_ipopt)
+%     disp('Issue when reconstructing optimal cost wrt stats')
+%     disp(['   Difference = ' num2str(assertCost3)])
+% end
 
 %% Reconstruct full gait cycle
 % Ground reaction forces at mesh points (N), except #1
@@ -1057,6 +1069,9 @@ for i=1:nq.torqAct
     T_a_GC(:,i) = a_a_GC(:,i).*scaling.ActuatorTorque(i);
 end
 
+%% Convert joint accelerations to °/s^2
+
+Qdotdots_GC(:,)
 %% Save the results
 % Structure Results_all
 R.S             = S;
@@ -1074,7 +1089,7 @@ R.a_torqAct     = a_a_GC;
 R.e_torqAct     = e_a_GC;
 R.T_torqAct     = T_a_GC;
 
-Outname = fullfile(OutFolder,['R_' S.subject.name '.mat']);
+Outname = fullfile(S.subject.save_folder,[S.post_process.result_filename '.mat']);
 save(Outname,'w_opt','stats','setup','R','model_info');
 
 

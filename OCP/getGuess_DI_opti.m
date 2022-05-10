@@ -61,16 +61,14 @@ time_expi.Qs(2) = find(round(Qs_time,3) == round(time_IC(2),3));
 step = (Qs_time(time_expi.Qs(2))-Qs_time(time_expi.Qs(1)))/(N-1);
 interval = Qs_time(time_expi.Qs(1)):step:Qs_time(time_expi.Qs(2));
 guess.Qs = interp1(round(Qs_time,4),guess.Qs_all,round(interval,4));
-guess.Qs(:,jointi.pelvis_tx) = guess.Qs(:,jointi.pelvis_tx) - ....
-    guess.Qs(1,jointi.pelvis_tx);
+guess.Qs(:,model_info.ExtFunIO.jointi.base_forward) = guess.Qs(:,model_info.ExtFunIO.jointi.base_forward) - ....
+    guess.Qs(1,model_info.ExtFunIO.jointi.base_forward);
 
 % Interpolation
-guess.Qdots = interp1(round(Qs_time,4),guess.Qdots_all,...
-    round(interval,4));
+guess.Qdots = interp1(round(Qs_time,4),guess.Qdots_all,round(interval,4));
 
 % Interpolation
-guess.Qdotdots = interp1(round(Qs_time,4),guess.Qdotdots_all,...
-    round(interval,4));
+guess.Qdotdots = interp1(round(Qs_time,4),guess.Qdotdots_all,round(interval,4));
 
 %% Muscle variables
 guess.a = 0.1*ones(N,NMuscle);
@@ -101,10 +99,10 @@ if strcmp(S.misc.gaitmotion_type,'HalfGaitCycle')
         -guess.Qs(1,model_info.ExtFunIO.symQs.QsOpp);           
     inv_X_Qdots(model_info.ExtFunIO.symQs.QsOpp) = ...
         -guess.Qdots(1,model_info.ExtFunIO.symQs.QsOpp);           
-    dx = guess.Qs(end,jointi.pelvis_tx) - ...
-        guess.Qs(end-1,jointi.pelvis_tx);
-    inv_X_Qs(jointi.pelvis_tx) = ...
-        guess.Qs(end,jointi.pelvis_tx) + dx;
+    dx = guess.Qs(end,model_info.ExtFunIO.jointi.base_forward) - ...
+        guess.Qs(end-1,model_info.ExtFunIO.jointi.base_forward);
+    inv_X_Qs(model_info.ExtFunIO.jointi.base_forward) = ...
+        guess.Qs(end,model_info.ExtFunIO.jointi.base_forward) + dx;
 
     guess.Qs = [guess.Qs; inv_X_Qs];
     guess.Qdots = [guess.Qdots; inv_X_Qdots];
@@ -112,10 +110,10 @@ if strcmp(S.misc.gaitmotion_type,'HalfGaitCycle')
     guess.FTtilde = [guess.FTtilde; guess.FTtilde(1,model_info.ExtFunIO.symQs.MusInvB)];
     guess.a_a = [guess.a_a; guess.a_a(1,:)];
 else
-    dx = guess.Qs(end,jointi.pelvis_tx) - ...
-        guess.Qs(end-1,jointi.pelvis_tx);
+    dx = guess.Qs(end,model_info.ExtFunIO.jointi.base_forward) - ...
+        guess.Qs(end-1,model_info.ExtFunIO.jointi.base_forward);
     guess.Qs = [guess.Qs; guess.Qs(1,:)];
-    guess.Qs(end,jointi.pelvis_tx) = guess.Qs(end-1,jointi.pelvis_tx) + dx;
+    guess.Qs(end,model_info.ExtFunIO.jointi.base_forward) = guess.Qs(end-1,model_info.ExtFunIO.jointi.base_forward) + dx;
     guess.Qdots = [guess.Qdots; guess.Qdots(1,:)];
     guess.a = [guess.a; guess.a(1,:)];
     guess.FTtilde = [guess.FTtilde; guess.FTtilde(1,:)];
@@ -150,8 +148,7 @@ guess.a_col = zeros(d*N,NMuscle);
 guess.FTtilde_col = zeros(d*N,NMuscle);
 guess.Qs_col = zeros(d*N,nq.all);
 guess.Qdots_col = zeros(d*N,nq.all);
-guess.a_a_col = zeros(d*N,nq.arms);
-guess.a_mtp_col = zeros(d*N,nq.mtp);
+guess.a_a_col = zeros(d*N,nq.torqAct);
 guess.dFTtilde_col = zeros(d*N,NMuscle);
 guess.Qdotdots_col = zeros(d*N,nq.all);
 for k=1:N
