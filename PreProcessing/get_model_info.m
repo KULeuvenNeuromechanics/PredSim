@@ -30,16 +30,19 @@ function [model_info] = get_model_info(S,osim_path)
 
 %% External function
 % load IO from external function
-load(fullfile(S.misc.subject_path,['F_' osim_file_name '_IO.mat']),'IO');
+% We load IO into a struct, because having a variable named "IO" conflicts
+% with OpenSim api.
+IEAIAIO = load(fullfile(S.misc.subject_path,['F_' osim_file_name '_IO.mat']),'IO');
+ExtFunIO = IEAIAIO.IO;
 
 % convert indices int32 to doubles
-IOfields = fields(IO);
+IOfields = fields(ExtFunIO);
 for i=1:length(IOfields)
-    IO.(IOfields{i}) = convert2double(IO.(IOfields{i}));
+    ExtFunIO.(IOfields{i}) = convert2double(ExtFunIO.(IOfields{i}));
 end
 
 % create model_info with IO inside
-model_info.ExtFunIO = IO;
+model_info.ExtFunIO = ExtFunIO;
 
 % coordinate names
 model_info.ExtFunIO.coord_names.all = fieldnames(model_info.ExtFunIO.coordi);

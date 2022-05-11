@@ -329,7 +329,10 @@ for j=1:d
         Ti = 0;
 
         % muscle moment
-        if ismember(i,model_info.ExtFunIO.jointi.muscleActuated)
+        cond_special_mtp = strcmp(S.subject.mtp_type,'2022paper') &&...
+            contains(model_info.ExtFunIO.coord_names.all{i},'mtp');
+
+        if ismember(i,model_info.ExtFunIO.jointi.muscleActuated) && ~cond_special_mtp
             % muscle forces
             FTj_coord_i = FTj(mai(i).mus',1);
             % total muscle moment

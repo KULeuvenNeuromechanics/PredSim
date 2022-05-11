@@ -300,7 +300,7 @@ disp([char(S.subject.IK_Bounds), ' will be used to determine bounds.'])
 
 % type of mtp joint used in the model
 if ~isfield(S.subject,'mtp_type')
-    S.subject.mtp_type = 'passive'; 
+    S.subject.mtp_type = ''; 
 end
 
 % muscle tendon properties

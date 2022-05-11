@@ -21,7 +21,7 @@ S.misc.main_path = pathRepo;
 
 %% Required inputs
 % name of the subject
-S.subject.name          = 'Fal_s1'; 
+S.subject.name = 'Fal_s1_mtp'; 
 
 % path to folder where you want to store the results of the OCP
 S.subject.save_folder  = fullfile(pathRepoFolder,'PredSimResults',S.subject.name); 
@@ -32,10 +32,10 @@ S.subject.IG_selection = fullfile(S.misc.main_path,'OCP','IK_Bounds_Default.mot'
 S.subject.IG_selection_gaitCyclePercent = 50;
 
 % give the path to the osim model of your subject
-osim_path              = fullfile(pathRepo,'Subjects','Fal_s1','Fal_s1.osim');
+osim_path = fullfile(pathRepo,'Subjects',S.subject.name,[S.subject.name '.osim']);
 
 % Do you want to run the simulation as a batch job (parallel computing toolbox)
-S.solver.run_as_batch_job       = 0;
+S.solver.run_as_batch_job = 0;
 
 %% Optional inputs
 % see README.md in the main folder for information about these optional
@@ -73,7 +73,7 @@ S.solver.run_as_batch_job       = 0;
 % % S.solver
 % S.solver.linear_solver  = '';
 % S.solver.tol_ipopt      = ;
-% S.solver.max_iter       = 5;
+S.solver.max_iter       = 5;
 % S.solver.parallel_mode  = '';
 % S.solver.N_threads      = ;
 % S.solver.N_meshes       = ;
@@ -91,7 +91,7 @@ S.subject.v_pelvis_x_trgt   = 1.33;
 % S.subject.muscle_pass_stiff_scale = ;
 % S.subject.muscle_sym        = 1;
 % S.subject.tendon_stiff      = ;
-% S.subject.mtp_type          = 'passive';
+S.subject.mtp_type          = '2022paper';
 % S.subject.MT_params         = ;
 % S.subject.spasticity        = ;
 % S.subject.muscle_coordination = ;

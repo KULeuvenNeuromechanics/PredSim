@@ -4,3 +4,6 @@
 *.sto
 *.log
 
+/Subjects/Fal_s1_mtp/**
+/Tests/untitled.m
+
