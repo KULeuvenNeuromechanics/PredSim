@@ -390,4 +390,16 @@ if ~isfield(S.weights,'slack_ctrl')
     S.weights.slack_ctrl = 0.001; 
 end
 
+%% Cpp2Dll
+
+if ~isfield(S,'Cpp2Dll')
+    
+elseif
+    if ~isfield(S.Cpp2Dll,'compiler')
+        S.Cpp2Dll.compiler = 'Visual Studio 15 2017 Win64';
+    end
+    if ~isfield(S.Cpp2Dll.PathCpp2Dll_Exe)
+        S.Cpp2Dll.PathCpp2Dll_Exe = [];
+    end
+
 end
