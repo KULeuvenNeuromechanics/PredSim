@@ -36,8 +36,10 @@ IEAIAIO = load(fullfile(S.misc.subject_path,['F_' osim_file_name '_IO.mat']),'IO
 ExtFunIO = IEAIAIO.IO;
 
 % convert indices int32 to doubles
+ExtFunIO = rmfield(ExtFunIO,"coordinatesOrder");
+ExtFunIO = rmfield(ExtFunIO,"nCoordinates");
 IOfields = fields(ExtFunIO);
-for i=1:length(IOfields)
+for i=1:length(IOfields)  
     ExtFunIO.(IOfields{i}) = convert2double(ExtFunIO.(IOfields{i}));
 end
 

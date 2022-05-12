@@ -6,9 +6,12 @@ Outname = fullfile(S.subject.save_folder,[S.post_process.result_filename '.mat']
 load(Outname,'R');
 
 %%
-
+if S.misc.gaitmotion_type == 'HalfGaitCycle'
 t_mesh = [R.t_mesh(1:end-1),R.t_mesh(1:end-1)+R.t_mesh(end),...
     R.t_mesh(1:end-1)+R.t_mesh(end)*2,R.t_mesh(1:end-1)+R.t_mesh(end)*3];
+elseif S.misc.gaitmotion_type == 'FullGaitCycle'
+    t_mesh = [R.t_mesh(1:end-1),R.t_mesh(1:end-1)+R.t_mesh(end)];
+end
 %%
 
 

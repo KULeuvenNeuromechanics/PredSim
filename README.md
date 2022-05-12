@@ -24,7 +24,7 @@ A summary of the steps:
 
 #### 1. Polynomial fitting
 
-The function FitPolynomials create a surrogate model, based on polynomial functions, to compute muscle-tendon lengths and moment arms from the joint kinematics. 
+The function FitPolynomials creates a surrogate model, based on polynomial functions, to compute muscle-tendon lengths and moment arms from the joint kinematics. 
 
 - First, we create a sample of joint angles (i.e. dummy motion) and run muscle analysis on this dummy motion to create a training dataset. Note that running the muscle analysis takes about 20 minutes. 
 - Second, we fit the polynomials functions and save it in a spefici folder (input argument PolyFolder). You'll have to point to this folder using the settings *S.PolyFolder* when running the optimization
