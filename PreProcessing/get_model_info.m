@@ -35,14 +35,6 @@ function [model_info] = get_model_info(S,osim_path)
 IEAIAIO = load(fullfile(S.misc.subject_path,['F_' osim_file_name '_IO.mat']),'IO');
 ExtFunIO = IEAIAIO.IO;
 
-% Remove fields that were only used to generate the .dll
-if isfield(ExtFunIO,"coordinatesOrder")
-    ExtFunIO = rmfield(ExtFunIO,"coordinatesOrder");
-end
-if isfield(ExtFunIO,"nCoordinates")
-    ExtFunIO = rmfield(ExtFunIO,"nCoordinates");
-end
-
 % convert indices int32 to doubles
 ExtFunIO = rmfield(ExtFunIO,"coordinatesOrder");
 ExtFunIO = rmfield(ExtFunIO,"nCoordinates");

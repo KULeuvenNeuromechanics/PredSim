@@ -102,8 +102,8 @@ bounds.Qdotdots.upper = bounds.Qdotdots.upper + 3*Qdotdots_range;
 bounds.Qs.upper(model_info.ExtFunIO.jointi.floating_base(4)) = 2;  
 bounds.Qs.lower(model_info.ExtFunIO.jointi.floating_base(4)) = 0;
 % Pelvis_ty
-bounds.Qs.upper(model_info.ExtFunIO.jointi.floating_base(5)) = model_info.IG_pelvis_y*1.2;
-bounds.Qs.lower(model_info.ExtFunIO.jointi.floating_base(5)) = model_info.IG_pelvis_y*0.5;
+bounds.Qs.upper(model_info.ExtFunIO.jointi.floating_base(5)) = S.subject.IG_pelvis_y*1.2;
+bounds.Qs.lower(model_info.ExtFunIO.jointi.floating_base(5)) = S.subject.IG_pelvis_y*0.5;
 % Pelvis_tz
 bounds.Qs.upper(model_info.ExtFunIO.jointi.floating_base(6)) = 0.1;
 bounds.Qs.lower(model_info.ExtFunIO.jointi.floating_base(6)) = -0.1;

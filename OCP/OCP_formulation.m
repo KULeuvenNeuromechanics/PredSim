@@ -845,7 +845,7 @@ if strcmp(S.misc.gaitmotion_type,'HalfGaitCycle')
     % we always start with the right foot, for analysis purpose
     if strcmp(HS1,'l')
         Qs_GC(:,model_info.ExtFunIO.symQs.QsInvA)  = Qs_GC(:,model_info.ExtFunIO.symQs.QsInvB);
-        Qs_GC(:,model_info.ExtFunIO.symQs.QsOpp) = -Qs_GC(:,model_info.ExtFunIO.symQs.QsOpp);
+        Qs_GC(:,model_info.ExtFunIO.symQs.QsOpp)      = -Qs_GC(:,model_info.ExtFunIO.symQs.QsOpp);
     end
     temp_Qs_GC_pelvis_tx = Qs_GC(1,model_info.ExtFunIO.jointi.base_forward);
     Qs_GC(:,model_info.ExtFunIO.jointi.base_forward) = Qs_GC(:,model_info.ExtFunIO.jointi.base_forward)-...
@@ -1074,7 +1074,6 @@ end
 
 %% Convert joint accelerations to °/s^2
 Qdotdots_GC(:,model_info.ExtFunIO.jointi.rotations) = Qdotdots_GC(:,model_info.ExtFunIO.jointi.rotations)*180/pi;
-
 
 %% Save the results
 % Structure Results_all

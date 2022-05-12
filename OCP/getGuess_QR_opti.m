@@ -12,7 +12,7 @@ function guess = getGuess_QR_opti(S,model_info,scaling,d)
 N = S.solver.N_meshes; % number of mesh intervals
 nq = model_info.ExtFunIO.jointi.nq;
 NMuscle = model_info.muscle_info.NMuscle;
-coordi = model_info.ExtFunIO.coordi;
+jointi = model_info.ExtFunIO.coordi;
 
 %% Final time
 % The final time is function of the imposed speed
@@ -29,7 +29,7 @@ guess.tf = all_tf(idx_speed);
 guess.Qs = zeros(N,nq.all);
 guess.Qs(:,model_info.ExtFunIO.jointi.base_forward) = linspace(0,guess.tf*S.subject.v_pelvis_x_trgt,N);
 % The model is standing on the ground
-guess.Qs(:,coordi.pelvis_ty) = model_info.IG_pelvis_y;
+guess.Qs(:,jointi.pelvis_ty) = S.subject.IG_pelvis_y;
 
 %% Qdots
 guess.Qdots = zeros(N,nq.all);
