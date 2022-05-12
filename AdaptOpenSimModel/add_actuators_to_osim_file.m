@@ -17,7 +17,7 @@ import org.opensim.modeling.*;
 [pathHere,~,~] = fileparts(mfilename('fullpath'));
 
 % osim_filename = 'Hamner_modified';
-osim_filename = 'Fal_s1';
+osim_filename = 'CP3_T0_scaled_MRI_v7_scaledMT_test';
 
 model = Model([pathHere '\' osim_filename '.osim']);
 coords = model.getCoordinateSet();
