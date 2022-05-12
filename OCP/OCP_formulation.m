@@ -1075,6 +1075,7 @@ end
 %% Convert joint accelerations to °/s^2
 Qdotdots_GC(:,model_info.ExtFunIO.jointi.rotations) = Qdotdots_GC(:,model_info.ExtFunIO.jointi.rotations)*180/pi;
 
+
 %% Save the results
 % Structure Results_all
 R.S             = S;

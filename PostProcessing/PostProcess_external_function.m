@@ -28,26 +28,29 @@ function [R] = PostProcess_external_function(S,model_info,f_casadi,R)
 % Last edit date: 
 % --------------------------------------------------------------------------
 
-N = size(R.Qs,2);
+N = size(R.Qs,1);
 
 import casadi.*
 [F] = load_external_function(S);
 
 
 QsQdots = zeros(N,2*model_info.ExtFunIO.jointi.nq.all);
+QsQdots(:,1:2:end) = R.Qs_rad;
+QsQdots(:,2:2:end) = R.Qdots_rad;
 
+Foutk_opt = zeros(N,F.nnz_out);
 
-Foutk_opt                   = zeros(N,F.nnz_out);
 for i = 1:N
     % ID moments
-    [res] = F([Xk_Qs_Qdots_opt(i,:)';Xk_Qdotdots_opt(i,:)']);
+    [res] = F([QsQdots(i,:)';R.Qddots_rad(i,:)']);
     Foutk_opt(i,:) = full(res);
 end
 
+tmp=1
 
+R.Tid = Foutk_opt(:,1:model_info.ExtFunIO.jointi.nq.all);
 
-
-
+R.GRFs.
 
 
 

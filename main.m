@@ -4,7 +4,7 @@
 % required inputs are necessary to start the simulations. Optional inputs,
 % if left empty, will be taken from getDefaultSettings.m.
 
-clear all
+clear
 close all
 clc
 % path to the repository folder
@@ -67,8 +67,8 @@ S.solver.run_as_batch_job = 0;
 % % S.post_process
 % S.post_process.make_plot = '';
 % S.post_process.savename  = '';
-% S.post_process.rerun   = 1;
-% S.post_process.result_filename = 'Fal_s1_v1';
+S.post_process.rerun   = 1;
+S.post_process.result_filename = 'Fal_s1_mtp_v2';
 
 % % S.solver
 % S.solver.linear_solver  = '';
