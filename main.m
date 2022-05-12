@@ -21,7 +21,7 @@ S.misc.main_path = pathRepo;
 
 %% Required inputs
 % name of the subject
-S.subject.name = 'Fal_s1_mtp'; 
+S.subject.name = 'Fal_s1'; 
 
 % path to folder where you want to store the results of the OCP
 S.subject.save_folder  = fullfile(pathRepoFolder,'PredSimResults',S.subject.name); 
@@ -78,7 +78,7 @@ S.solver.max_iter       = 5;
 % S.solver.N_threads      = ;
 % S.solver.N_meshes       = ;
 % S.solver.par_cluster_name = ;
-S.solver.CasADi_path    = 'C:\GBW_MyPrograms\casadi_3_5_5';
+S.solver.CasADi_path    = 'C:\GBW_MyDownloads\CasADi v3_5_2';
 
 
 % % S.subject
