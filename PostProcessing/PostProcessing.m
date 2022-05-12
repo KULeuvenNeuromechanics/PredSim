@@ -48,7 +48,7 @@ R.Qddots_rad(:,model_info.ExtFunIO.jointi.rotations) = R.Qddots(:,model_info.Ext
 
 
 %%
-[R] = PostProcess_external_function(S,model_info,f_casadi,R);
+% [R] = PostProcess_external_function(S,model_info,f_casadi,R);
 
 
 
