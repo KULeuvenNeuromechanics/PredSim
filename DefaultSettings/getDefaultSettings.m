@@ -72,6 +72,11 @@ if ~isfield(S.bounds.t_final,'lower')
     S.bounds.t_final.lower = [];
 end
 
+% manually overwrite coordinate bounds
+if ~isfield(S.bounds,'coordinates')
+    S.bounds.coordinates = [];
+end
+
 %% metabolicE
 
 % hyperbolic tangent smoothing factor (used in metabolic cost)
