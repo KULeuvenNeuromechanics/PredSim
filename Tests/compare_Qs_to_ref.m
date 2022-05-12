@@ -12,7 +12,7 @@ R_ref = R;
 x = 1:(100-1)/(size(R_ref.Qs,1)-1):100;
 
 
-load('C:\Users\u0150099\Documents\PredSimResults\Fal_s1_mtp\Fal_s1_mtp_v1.mat','R','model_info')
+load('C:\Users\u0150099\Documents\PredSimResults\Fal_s1_mtp\Fal_s1_mtp_v2.mat','R','model_info')
 R_mtp = R;
 model_info_mtp = model_info;
 
