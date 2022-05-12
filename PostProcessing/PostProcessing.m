@@ -5,6 +5,7 @@ function [] = PostProcessing(S,model_info,f_casadi)
 Outname = fullfile(S.subject.save_folder,[S.post_process.result_filename '.mat']);
 load(Outname,'R');
 
+
 %% Create .mot file for OpenSim GUI
 [R] = PostProcess_write_motion_file(S,model_info,f_casadi,R);
 

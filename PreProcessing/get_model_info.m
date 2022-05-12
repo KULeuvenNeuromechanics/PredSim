@@ -44,10 +44,8 @@ if isfield(ExtFunIO,"nCoordinates")
 end
 
 % convert indices int32 to doubles
-ExtFunIO = rmfield(ExtFunIO,"coordinatesOrder");
-ExtFunIO = rmfield(ExtFunIO,"nCoordinates");
 IOfields = fields(ExtFunIO);
-for i=1:length(IOfields)  
+for i=1:length(IOfields)
     ExtFunIO.(IOfields{i}) = convert2double(ExtFunIO.(IOfields{i}));
 end
 
