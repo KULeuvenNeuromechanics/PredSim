@@ -49,4 +49,4 @@ model_info = get_passive_moment_info(S,model_info);
 % Finalize model_info
 model_info = update_model_info(S,osim_path,model_info);
 
-
+model_info = get_IG_pelvis_y(S,osim_path,model_info);

@@ -64,6 +64,10 @@ guess.Qs = interp1(round(Qs_time,4),guess.Qs_all,round(interval,4));
 guess.Qs(:,model_info.ExtFunIO.jointi.base_forward) = guess.Qs(:,model_info.ExtFunIO.jointi.base_forward) - ....
     guess.Qs(1,model_info.ExtFunIO.jointi.base_forward);
 
+% Adjust pelvis height
+guess.Qs(:,model_info.ExtFunIO.coordi.pelvis_ty) = guess.Qs(:,model_info.ExtFunIO.coordi.pelvis_ty) ...
+    - mean(guess.Qs(:,model_info.ExtFunIO.coordi.pelvis_ty)) + model_info.IG_pelvis_y;
+
 % Interpolation
 guess.Qdots = interp1(round(Qs_time,4),guess.Qdots_all,round(interval,4));
 

@@ -67,8 +67,8 @@ S.solver.run_as_batch_job = 0;
 % % S.post_process
 % S.post_process.make_plot = '';
 % S.post_process.savename  = '';
-S.post_process.rerun   = 1;
-S.post_process.result_filename = 'Fal_s1_mtp_v2';
+% S.post_process.rerun   = 1;
+% S.post_process.result_filename = 'Fal_s1_mtp_v2';
 
 % % S.solver
 % S.solver.linear_solver  = '';
@@ -83,7 +83,7 @@ S.solver.CasADi_path    = 'C:\GBW_MyPrograms\casadi_3_5_5';
 
 % % S.subject
 S.subject.mass              = 62;
-S.subject.IG_pelvis_y       = 0.9385;
+% S.subject.IG_pelvis_y       = ;
 S.subject.v_pelvis_x_trgt   = 1.33;
 % S.subject.IG_bounds = ;
 % S.subject.muscle_strength   = ;
