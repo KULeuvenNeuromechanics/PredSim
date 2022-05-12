@@ -1,16 +1,32 @@
-% This script provides bounds and scaling factors for the design variables.
-% The bounds on the joint variables are informed by experimental data.
-% The bounds on the remaining variables are fixed.
-% The bounds are scaled such that the upper/lower bounds cannot be
-% larger/smaller than 1/-1.
-%
-% Author: Antoine Falisse
-% Date: 12/19/2018
-% Adapted: Lars D'Hondt
-% Date: 01 dec 2021
-%
-%--------------------------------------------------------------------------
 function [bounds,scaling] = getBounds(S,model_info)
+% --------------------------------------------------------------------------
+% getBounds
+%   This script provides bounds and scaling factors for the design variables.
+%   The bounds on the joint variables are informed by experimental data.
+%   The bounds on the remaining variables are fixed.
+%   The bounds are scaled such that the upper/lower bounds cannot be
+%   larger/smaller than 1/-1.
+%   
+% INPUT:
+%   - S -
+%   * setting structure S
+%
+%   - model_info -
+%   * structure with all the model information based on the OpenSim model
+%
+% OUTPUT:
+%   - bounds -
+%   * 
+%
+%   - scaling -
+%   * 
+% 
+% Original author: Antoine Falisse
+% Original date: 12/19/2018
+%
+% Last edit by: Lars D'Hondt
+% Last edit date: 01 dec 2021
+% --------------------------------------------------------------------------
 
 % Kinematics file for bounds -- input arguments
 % IKfile_bounds = fullfile(S.subject.folder_name, S.subject.IKfile_bounds);

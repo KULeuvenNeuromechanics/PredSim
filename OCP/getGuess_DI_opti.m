@@ -1,13 +1,36 @@
-% This script provides an inital guess for the design variables.
-% The guess is data-informed (DI). We use experimental data to provide an
-% initial guess of the joint variables but set constant values to the 
-% muscle variable and the arm variables. We use a pre-defined final time 
-% that is function of the imposed speed.
-%
-% Author: Antoine Falisse
-% Date: 12/19/2018
-% 
 function guess = getGuess_DI_opti(S,model_info,scaling,d)
+% --------------------------------------------------------------------------
+% getGuess_DI_opti
+%   This script provides an inital guess for the design variables.
+%   The guess is data-informed (DI). We use experimental data to provide an
+%   initial guess of the joint variables but set constant values to the 
+%   muscle variable and the arm variables. We use a pre-defined final time 
+%   that is function of the imposed speed.
+%   
+% INPUT:
+%   - S -
+%   * setting structure S
+% 
+%   - model_info -
+%   * structure with all the model information based on the OpenSim model
+% 
+%   - scaling -
+%   * 
+% 
+%   - d -
+%   * 
+%
+% OUTPUT:
+%   - guess -
+%   * 
+% 
+% Original author: Antoine Falisse
+% Original date: 12/19/2018
+%
+% Last edit by: 
+% Last edit date: 
+% --------------------------------------------------------------------------
+
 N = S.solver.N_meshes; % number of mesh intervals
 nq = model_info.ExtFunIO.jointi.nq;
 NMuscle = model_info.muscle_info.NMuscle;

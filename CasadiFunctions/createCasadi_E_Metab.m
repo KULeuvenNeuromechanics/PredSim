@@ -1,16 +1,26 @@
 function [fgetMetabolicEnergySmooth2004all] = createCasadi_E_Metab(S,model_info)
-%% createCasadi_E_Metab.m
-% Function to create Casadi functions for metabolic energy.
+% --------------------------------------------------------------------------
+% createCasadi_E_Metab
+%   Function to create Casadi functions for metabolic energy.
+%   
+% INPUT:
+%   - S -
+%   * setting structure S
+% 
+%   - model_info -
+%   * structure with all the model information based on the OpenSim model
 %
-% INPUT -> need to be renamed
-% - NMuscle
-% - MTparameters_m
+% OUTPUT:
+%   - fgetMetabolicEnergySmooth2004all -
+%   * Casadi functions for metabolic energy
+% 
+% Original author: Ines Vandekerckhove, KU Leuven
+% Original date: 01-12-2021
 %
-% OUTPUT
-%  - Casadi function
-%
-% Authors: Ines Vandekerckhove, KU Leuven
-% Date: 01-12-2021 
+% Last edit by: 
+% Last edit date: 
+% --------------------------------------------------------------------------
+
 import casadi.*
 NMuscle = model_info.muscle_info.NMuscle;
 FMo = struct_array_to_double_array(model_info.muscle_info.parameters,'FMo');

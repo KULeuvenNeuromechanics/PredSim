@@ -1,19 +1,39 @@
 function [MuscleData, varargout] = muscleAnalysis(S,osim_path,model_info,varargin)
-%
-% Analyse the musculoskeletal geometry of the given osim model.
-%   1) Create a dummy motion
-%   2) Run the OpenSim muscle analysis tool to calculate the muscle-tendon
+% --------------------------------------------------------------------------
+% muscleAnalysis
+%   Analyse the musculoskeletal geometry of the given osim model.
+%       1) Create a dummy motion
+%       2) Run the OpenSim muscle analysis tool to calculate the muscle-tendon
 %       lengths and moment arms in the model for this dummy motion.
-%   3) Import the muscle-tendon lengths and moment arms, and store them
+%       3) Import the muscle-tendon lengths and moment arms, and store them
 %       along with the dummy motion.
 %
-% note: The boundaries of the dummy motion are hard-coded. They should
+%   note: The boundaries of the dummy motion are hard-coded. They should
 %       become user inputs in a future update;
+%   
+% INPUT:
+%   - S -
+%   * setting structure S
 %
-% Author: Lars D'Hondt
-% Date: 17/January/2022
+%   - osim_path -
+%   * path to the OpenSim model file (.osim)
+% 
+%   - varargin -
+%   * 
 %
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% OUTPUT:
+%   - MuscleData -
+%   * 
+%
+%   - varargout -
+%   * 
+% 
+% Original author: Lars D'Hondt
+% Original date: 17/January/2022
+%
+% Last edit by: 
+% Last edit date: 
+% --------------------------------------------------------------------------
 
 MA_path = fullfile(S.misc.subject_path, '/MuscleAnalysis');
 if ~isfolder(MA_path)

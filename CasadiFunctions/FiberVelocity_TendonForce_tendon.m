@@ -1,11 +1,20 @@
-% This function computes muscle fiber velocities from muscle-tendon forces.
-% More details in De Groote et al. (2016): DOI: 10.1007/s10439-016-1591-9
-%
-% Author: Antoine Falisse
-% Date: 12/19/2018
-% 
 function [vM,vMtilde,varargout] = FiberVelocity_TendonForce_tendon(FTtile,...
     dFTtilde,lMo_in,lTs_in,alphao_in,vMmax_in,lMT,vMT,Atendon,shift,MuscMoAsmp)
+% --------------------------------------------------------------------------
+% FiberVelocity_TendonForce_tendon
+%    This function computes muscle fiber velocities from muscle-tendon forces.
+%    More details in De Groote et al. (2016): DOI: 10.1007/s10439-016-1591-9
+%   
+% INPUT:
+%
+% OUTPUT:
+% 
+% Original author: Antoine Falisse
+% Original date: 12/19/2018
+%
+% Last edit by: 
+% Last edit date: 
+% --------------------------------------------------------------------------
 
 lMo = ones(size(FTtile,1),1)*lMo_in;
 lTs = ones(size(FTtile,1),1)*lTs_in;

@@ -1,8 +1,35 @@
 function [] = OpenSim_Muscle_Analysis(motion_file,model_sel,output_path,event,varargin)
-%OpenSim_Muscle_Analysis Executes a muscle analsysis from the command line
-%   Detailed explanation goes here
+% --------------------------------------------------------------------------
+% OpenSim_Muscle_Analysis 
+%   Executes a muscle analsysis from the command line
+%   Note: check compatibility with Opensim 4.0
+%   
+% INPUT:
+%   - motion_file -
+%   * 
+%
+%   - model_sel -
+%   * 
+% 
+%   - output_path -
+%   * 
+%
+%   - event -
+%   * 
+% 
+%   - varargin -
+%   * 
+%
+% OUTPUT:
+%   * no outputs
+% 
+% Original author: 
+% Original date: 
+%
+% Last edit by: 
+% Last edit date: 
+% --------------------------------------------------------------------------
 
-% Note: check compatibility with Opensim 4.0
 
 % run only muscle analysis for the selected DOFs
 bool_Limit = 0;

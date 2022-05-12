@@ -1,4 +1,29 @@
 function [w_opt,stats] = solve_NLPSOL(opti,optionssol)
+% --------------------------------------------------------------------------
+% solve_NLPSOL
+%   (Explanation)
+%   
+% INPUT:
+%   - opti -
+%   * 
+%
+%   - optionssol -
+%   * 
+%
+% OUTPUT:
+%   - w_opt -
+%   * 
+%
+%   - stats -
+%   * 
+% 
+% Original author: 
+% Original date: 
+%
+% Last edit by: 
+% Last edit date: 
+% --------------------------------------------------------------------------
+
 import casadi.*
 % this will return the guess
 X = opti.x;

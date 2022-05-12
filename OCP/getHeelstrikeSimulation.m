@@ -1,10 +1,32 @@
 function [IC1i_c,IC1i_s,HS1] = getHeelstrikeSimulation(GRFk_opt,N)
-%UNTITLED2 Summary of this function goes here
-%   Detailed explanation goes here
+% --------------------------------------------------------------------------
+% getHeelstrikeSimulation
+%  To reconstruct the full gait cycle from the simulated half gait cycle
+%   
+% INPUT:
+%   - GRFk_opt -
+%   * 
+%
+%   - N -
+%   * 
+%
+% OUTPUT:
+%   - IC1i_c -
+%   * 
+%
+%   - IC1i_s -
+%   * 
+%
+%   - HS1 -
+%   * 
+% 
+% Original author: 
+% Original date: 
+%
+% Last edit by: 
+% Last edit date: 
+% --------------------------------------------------------------------------
 
-
-%% Reconstruct full gait cycle
-% We reconstruct the full gait cycle from the simulated half gait cycle
 % Identify heel strike
 threshold = 20; % there is foot-ground contact above the threshold
 if exist('HS1','var')

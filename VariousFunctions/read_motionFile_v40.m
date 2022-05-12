@@ -1,22 +1,33 @@
 function q = read_motionFile_v40(fname)
-% Purpose:  This function reads a file in the format of a SIMM motion file
+% --------------------------------------------------------------------------
+% read_motionFile_v40
+%   This function reads a file in the format of a SIMM motion file
 %           and returns a data structure
-%
-% Input:    fname is the name of the ascii datafile to be read 
+%   
+% INPUT:
+%   - fname -
+%   * fname is the name of the ascii datafile to be read 
 %           ('character array')
 %           inDeg: are the values in degrees
 %
-% Output:   q returns a structure with the following format:
+% OUTPUT:
+%   - q -
+%   * q returns a structure with the following format:
 %				q.labels 	= array of column labels
 %				q.data 		= matrix of data
 %				q.inDeg 	= values in degrees or radians
 %				q.nr 		= number of matrix rows
 %				q.nc 		= number of matrix columns
+% 
+% Original author: ASA 
+% Original date: 12/03
 %
-% ASA 12/03
-% Modified by Eran Guendelman 09/06
-% Modified by Dhruv Gupta 12/02/21
-% Open ascii data file for reading.
+% Edit by: Eran Guendelman
+% Edit date: 09/06
+%
+% Last edit by: Dhruv Gupta
+% Last edit date: 12/02/21
+% --------------------------------------------------------------------------
 
 fid = fopen(fname, 'r');	
 if fid == -1								

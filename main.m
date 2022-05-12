@@ -19,17 +19,22 @@ addpath(pathDefaultSettings)
 [S] = initializeSettings();
 S.misc.main_path = pathRepo;
 
+S.misc.gaitmotion_type = 'HalfGaitCycle';
+% S.misc.gaitmotion_type = 'FullGaitCycle';
+
 %% Required inputs
 % name of the subject
 S.subject.name = 'Fal_s1_mtp'; 
 
 % path to folder where you want to store the results of the OCP
-S.subject.save_folder  = fullfile(pathRepoFolder,'PredSimResults',S.subject.name); 
+S.subject.save_folder  = fullfile(pathRepoFolder,'PredSimResults\HalfCycle_DI',S.subject.name); 
 
 % either choose "quasi-random" or give the path to a .mot file you want to use as initial guess
 % S.subject.IG_selection = 'quasi-random';
 S.subject.IG_selection = fullfile(S.misc.main_path,'OCP','IK_Bounds_Default.mot');
 S.subject.IG_selection_gaitCyclePercent = 50;
+% S.subject.IG_selection = 'C:\Users\febre\Documents\MATLAB\github-repositories\PredSimResults\HalfCycle_QR\Fal_s1_mtp\Fal_s1_mtp_v1.mot';
+% S.subject.IG_selection_gaitCyclePercent = 200;
 
 % give the path to the osim model of your subject
 osim_path = fullfile(pathRepo,'Subjects',S.subject.name,[S.subject.name '.osim']);
@@ -73,12 +78,12 @@ S.solver.run_as_batch_job = 0;
 % % S.solver
 % S.solver.linear_solver  = '';
 % S.solver.tol_ipopt      = ;
-S.solver.max_iter       = 5;
+S.solver.max_iter       = 2000;
 % S.solver.parallel_mode  = '';
 % S.solver.N_threads      = ;
 % S.solver.N_meshes       = ;
 % S.solver.par_cluster_name = ;
-S.solver.CasADi_path    = 'C:\GBW_MyPrograms\casadi_3_5_5';
+S.solver.CasADi_path    = 'C:\Users\febre\Documents\MATLAB\casadi-windows-matlabR2016a-v3.5.5'; %'C:\GBW_MyPrograms\casadi_3_5_5';
 
 
 % % S.subject

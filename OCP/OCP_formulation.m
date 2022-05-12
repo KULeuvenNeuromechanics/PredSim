@@ -470,7 +470,7 @@ if strcmp(S.misc.gaitmotion_type,'HalfGaitCycle')
     end
 
 else
-    opti.subject_to(Qs(:,end) - Qs(:,1) == 0);
+    opti.subject_to(Qs([1:3,5:end],end) - Qs([1:3,5:end],1) == 0);
     opti.subject_to(Qdots(:,end) - Qdots(:,1) == 0);
     % Muscle activations
     opti.subject_to(a(:,end) - a(:,1) == 0);

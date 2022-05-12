@@ -1,11 +1,20 @@
-% This function computes muscle fiber lengths from muscle-tendon forces.
-% More details in De Groote et al. (2016): DOI: 10.1007/s10439-016-1591-9
-%
-% Author: Antoine Falisse
-% Date: 12/19/2018
-% 
 function [lM,lMtilde,varargout] = ...
     FiberLength_TendonForce_tendon(FTtilde,lMo_in,lTs_in,alphao_in,lMT,aTendon,shift,MuscMoAsmp)
+% --------------------------------------------------------------------------
+% FiberLength_TendonForce_tendon
+%    This function computes muscle fiber lengths from muscle-tendon forces.
+%    More details in De Groote et al. (2016): DOI: 10.1007/s10439-016-1591-9
+%   
+% INPUT:
+%
+% OUTPUT:
+% 
+% Original author: Antoine Falisse
+% Original date: 12/19/2018
+%
+% Last edit by: 
+% Last edit date: 
+% --------------------------------------------------------------------------
 
 lMo = ones(size(FTtilde,1),1)*lMo_in;
 lTs = ones(size(FTtilde,1),1)*lTs_in;

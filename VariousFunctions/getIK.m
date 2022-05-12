@@ -1,13 +1,26 @@
-% This function returns the Qs (radian) given the path to the inverse
-% kinematics file and the joints of interest.
-%
-% Author: Antoine Falisse
-% Date: 12/19/2018
-% Adapted: Lars D'Hondt
-% Date: 30 nov 2021
-%--------------------------------------------------------------------------
-
 function Qs_IK = getIK(path_IK,model_info)
+% --------------------------------------------------------------------------
+% getIK
+%    This function returns the Qs (radian) given the path to the inverse
+%    kinematics file and the joints of interest.
+%   
+% INPUT:
+%   - path_IK -
+%   * path to the inverse kinematics file
+% 
+%   - model_info -
+%   * structure with all the model information based on the OpenSim model
+%
+% OUTPUT:
+%   - Qs_IK -
+%   * struct with inverse kinematics results (time, coordinates and labels)
+% 
+% Original author: Antoine Falisse
+% Original date: 12/19/2018
+%
+% Last edit by: Lars D'Hondt
+% Last edit date: 30 nov 2021
+% --------------------------------------------------------------------------
 
 % Get the names of the coordinates
 coordinate_names = fieldnames(model_info.ExtFunIO.coordi);

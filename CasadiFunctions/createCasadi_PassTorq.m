@@ -1,22 +1,38 @@
-
 function [f_PassiveMoments,f_passiveTATorques,f_AllPassiveTorques] = createCasadi_PassTorq(S,model_info)
 % function [f_PassiveMoments,f_passiveTATorques,...
 %     f_PassiveTorques_muscleActuauted,f_PassiveTorques_arms,...
 %     f_PassiveTorques_mtp] = createCasadi_PassTorq(model_info,S)
-
-%% createCasadi_PassTorq.m
-%Function to create Casadi functions for passive torques.
+% --------------------------------------------------------------------------
+% createCasadi_PassTorq.m
+%   Function to create Casadi functions for passive torques.
 %
 %INPUT
-% - model_info
+%   - S -
+%   * setting structure S
+% 
+%   - model_info -
+%   * structure with all the model information based on the OpenSim model
 %
 %OUTPUT
-%  - Casadi functions
+%   - f_PassiveMoments -
+%   * 
+% 
+%   - f_passiveTATorques -
+%   * 
+% 
+%   - f_AllPassiveTorques -
+%   * 
+% 
+%   TO DO
+%   Put hard coded data in Settings (confirm values as well)
 %
-%TO DO
-% Put hard coded data in Settings (confirm values as well)
-% Authors: Ines Vandekerckhove, Dhruv Gupta, KU Leuven
-% Date: 30-11-2021 
+% Original author: Ines Vandekerckhove, Dhruv Gupta, KU Leuven
+% Original date: 30-11-2021 
+%
+% Last edit by: 
+% Last edit date: 
+% --------------------------------------------------------------------------
+
 
 import casadi.*
 

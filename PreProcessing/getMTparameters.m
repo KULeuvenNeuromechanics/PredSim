@@ -1,19 +1,38 @@
-% This function returns the muscle-tendon parameters of the muscles
-% specified in muscleNames from the model in modelPath.
-%
-% These parameters are:
-%   - FMo       maximum isometric force (N)
-%   - lMo       optimal fiber length (m)
-%   - lTs       tendon slack length (m)
-%   - alphao    pennation angle at optimal fiber length (rad)
-%   - vMmax     maximum contraltion velocity (m/s)
-%
-% Author: Antoine Falisse
-% Date: 12/19/2018
-% Adapted by Lars D'Hondt on 17/March/2022 to output each parameter
-% separately.
-%
 function [FMo, lMo, lTs, alphao, vMmax] = getMTparameters(modelPath,muscleNames)
+% --------------------------------------------------------------------------
+% getMTparameters
+%   This function returns the muscle-tendon parameters of the muscles
+%   specified in muscleNames from the model in modelPath.
+%   
+% INPUT:
+%   - modelPath -
+%   * path to the OpenSim model file (.osim)
+% 
+%   - muscleNames -
+%   * muscles for which we want to read the muscle-tendon parameters
+%
+% OUTPUT:
+%   - FMo -
+%   * maximum isometric force (N)
+%
+%   - lMo -
+%   * optimal fiber length (m)
+%
+%   - lTs -
+%   * tendon slack length (m)
+%
+%   - alphao -
+%   * pennation angle at optimal fiber length (rad)
+%
+%   - vMmax -
+%   * maximum contraltion velocity (m/s)
+%
+% Original author: Antoine Falisse
+% Original date: 12/19/2018
+%
+% Last edit by: Lars D'Hondt (adapted to output each parameter separately)
+% Last edit date: 17/March/2022
+% --------------------------------------------------------------------------
 
 import org.opensim.modeling.*
 

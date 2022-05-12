@@ -1,11 +1,24 @@
-% This function returns the percentage of slow twitch fibers in the muscles
-% The data come from Uchida et al. (2016).
-% We used 0.5 when no data were available.
-%
-% Author: Antoine Falisse
-% Date: 12/19/2018
-%     
 function pctst = getSlowTwitchRatios(muscleNames)
+% --------------------------------------------------------------------------
+% getSlowTwitchRatios
+%   This function returns the percentage of slow twitch fibers in the muscles
+%   The data come from Uchida et al. (2016).
+%   We used 0.5 when no data were available.
+%   
+% INPUT:
+%   - muscleNames -
+%   * 
+%
+% OUTPUT:
+%   - pctst -
+%   * 
+% 
+% Original author: Antoine Falisse
+% Original date: 12/19/2018
+%
+% Last edit by: 
+% Last edit date: 
+% --------------------------------------------------------------------------
 
     pctst_data.glut_med1_r = 0.55;
     pctst_data.glut_med2_r = 0.55;

@@ -2,13 +2,21 @@ function [err, FT, Fce, Fpass, Fiso, vMmax, massM] = ...
     ForceEquilibrium_FtildeState_all_tendon(a,fse,dfse,lMT,vMT,FMo_in,lMo_in,...
     lTs_in,alphao_in,vMmax_in,Fvparam,Fpparam,Faparam,tension,aTendon,shift,...
     MuscMoAsmp,d,stiffness_shift,stiffness_scale,strength)
-
-% This function derives the Hill-equilibrium.
-% More details in De Groote et al. (2016): DOI: 10.1007/s10439-016-1591-9
+% --------------------------------------------------------------------------
+% ForceEquilibrium_FtildeState_all_tendon
+%    This function derives the Hill-equilibrium.
+%    More details in De Groote et al. (2016): DOI: 10.1007/s10439-016-1591-9
+%   
+% INPUT:
 %
-% Author: Antoine Falisse
-% Date: 12/19/2018
+% OUTPUT:
 % 
+% Original author: Antoine Falisse
+% Original date: 12/19/2018
+%
+% Last edit by: 
+% Last edit date: 
+% --------------------------------------------------------------------------
 
 FMo = ones(size(a,1),1)*FMo_in;
 lMo = ones(size(a,1),1)*lMo_in;

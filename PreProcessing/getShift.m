@@ -1,11 +1,27 @@
-% This script returns the value used to shift the tendon force-length curve
-% when changing the tendon stiffness. 
-% With the standard stiffness (35), the shift is 0. For a different
-% stiffness, the curve is shifted so that the normalized tendon force is
-% the same as with the standard stiffness when the normalized tendon length
-% is 1.
-
 function shift = getShift(kT)
+% --------------------------------------------------------------------------
+% getShift
+%   This script returns the value used to shift the tendon force-length curve
+%   when changing the tendon stiffness. 
+%   With the standard stiffness (35), the shift is 0. For a different
+%   stiffness, the curve is shifted so that the normalized tendon force is
+%   the same as with the standard stiffness when the normalized tendon length
+%   is 1.
+%   
+% INPUT:
+%   - kT -
+%   * 
+%
+% OUTPUT:
+%   - shift -
+%   * 
+% 
+% Original author: 
+% Original date: 
+%
+% Last edit by: 
+% Last edit date: 
+% --------------------------------------------------------------------------
 
 kT35 = 35;
 shift = 0;

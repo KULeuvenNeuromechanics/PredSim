@@ -1,8 +1,14 @@
-% This script generates a series of plots showing bounds and initial guess
+% --------------------------------------------------------------------------
+% visualizebounds
+%    This script generates a series of plots showing bounds and initial guess
+%   
+% Original author: Antoine Falisse
+% Original date: 12/19/2018
 %
-% Author: Antoine Falisse
-% Date: 12/19/2018
-% 
+% Last edit by: 
+% Last edit date: 
+% --------------------------------------------------------------------------
+
 title_Fontsize = 16;
 figure()
 for i = 1:size(bounds.Qs.lower,2)

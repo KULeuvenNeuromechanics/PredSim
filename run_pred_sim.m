@@ -32,7 +32,7 @@ end
 addpath([S.misc.main_path '\PreProcessing'])
 disp('Start PreProcessing...')
 t0 = tic;
-[S,model_info] = PreProcessing(S,osim_path);
+[S,model_info] = preprocessing(S,osim_path); %PreProcessing(S,osim_path);
 disp(['... PreProcessing done. Time elapsed ' num2str(toc(t0)) ' s'])
 
 %% Creating casadi functions

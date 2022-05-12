@@ -1,20 +1,25 @@
 function [f_casadi] = createCasadiFunctions(S,model_info)
+% --------------------------------------------------------------------------
 %createCasadiFunctions.m
 %   Overview function from which al casadi functions are created
 % 
 % INPUT:
-%   main_path
-%   * Main path
+%   - S -
+%   * setting structure S
 %  
-%   model_info
-%   * Struct containing all model_info
+%   - model_info -
+%   * structure with all the model information based on the OpenSim model
 % 
 % OUTPUT:
-%   f_casadi
+%   - f_casadi -
 %   * Struct containing all casadi functions.
 % 
 % Original author: Tom Buurke
 % Original date: 02/12/2021
+%
+% Last edit by: 
+% Last edit date: 
+% --------------------------------------------------------------------------
 
 %% Create generic casadi functions
 f_casadi = createCasadi_GenHelper(S,model_info);

@@ -1,18 +1,35 @@
 function [f_forceEquilibrium_FtildeState_all_tendon,f_FiberLength_TendonForce_tendon,...
     f_FiberVelocity_TendonForce_tendon,f_lT_vT] = createCasadi_ContractDynam(S,model_info)
-%% createCasadi_ContractDynam.m
-%Function to create Casadi functions for muscle contraction dynamics.
+% --------------------------------------------------------------------------
+% createCasadi_ContractDynam
+%   Function to create Casadi functions for muscle contraction dynamics.
+%   
+% INPUT:
+%   - S -
+%   * setting structure S
 %
-%INPUT
-% - Mainpath
-% - NMuscle
-% - IO
+%   - model_info -
+%   * structure with all the model information based on the OpenSim model
 %
-%OUTPUT
-%  - Casadi functions
+% OUTPUT:
+%   - f_forceEquilibrium_FtildeState_all_tendon -
+%   * 
 %
-% Authors: Ines Vandekerckhove, Tom Buurke & Dhruv Gupta, KU Leuven
-% Date: 30-11-2021 
+%   - f_FiberLength_TendonForce_tendon -
+%   * 
+%
+%   - f_FiberVelocity_TendonForce_tendon -
+%   * 
+%
+%   - f_lT_vT -
+%   * 
+% 
+% Original author: Ines Vandekerckhove, Tom Buurke & Dhruv Gupta, KU Leuven
+% Original date: 30-11-2021 
+%
+% Last edit by: 
+% Last edit date: 
+% --------------------------------------------------------------------------
 
 import casadi.*
 N_muscles = model_info.muscle_info.NMuscle;
