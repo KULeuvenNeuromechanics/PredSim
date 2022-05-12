@@ -7,7 +7,6 @@ function [model_info] = get_actuator_info(S,osim_path,model_info)
 %   An example of adding such actuators to an osim file can be found in
 %   \Tests\add_actuators_to_osim.m 
 %   
-% 
 % INPUT:
 %   - S -
 %   * setting structure S

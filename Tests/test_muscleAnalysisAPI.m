@@ -18,6 +18,7 @@ clc
 [pathTests,~,~] = fileparts(mfilename('fullpath'));
 [pathRepo,~,~] = fileparts(pathTests);
 addpath([pathRepo '\PreProcessing'])
+addpath([pathRepo '\VariousFunctions'])
 
 S.misc.main_path = pathRepo;
 
