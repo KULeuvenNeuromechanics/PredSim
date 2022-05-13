@@ -53,6 +53,8 @@ if isfield(S.solver,'N_threads') && S.solver.N_threads > N_threads
     S.solver.N_threads = N_threads;
 end
 
+S.solver.job_id = myCluster.Jobs(end,1).ID+1;
+
 % Add job to batch
 batch(myCluster,'run_pred_sim',0,{S,osim_path},'CurrentFolder',S.misc.main_path,...
     'AdditionalPaths',additional_paths);

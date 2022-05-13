@@ -4,6 +4,8 @@ function [varargout] = unpack_name_value_combinations(name_values_cell, valid_na
 %   Helper function to unpack a cell array of name-value pairs,
 %   name-value-value triplets, etc. Each set of values is returned as an
 %   array with a row for each valid name. Unspecified values are NaN.
+%   Unit tests in \Tests\test_unpack_name_value_combinations.m show how to
+%   call this function.
 % 
 % INPUT:
 %   - name_values_cell -
@@ -54,7 +56,9 @@ for ii=1:Nfields/(Nvalues+1)
         end
         for k=1:Nvalues
             if isnan(values_array{k}(1,idx_ij))
-                values_array{k}(:,idx_ij) = vertcat(name_values_cell{(Nvalues+1)*(ii-1)+1+k});
+                if ~isempty(name_values_cell{(Nvalues+1)*(ii-1)+1+k})
+                    values_array{k}(:,idx_ij) = vertcat(name_values_cell{(Nvalues+1)*(ii-1)+1+k});
+                end
             else
                 error(['Multiple values assigned to "' valid_names{idx_ij} '".'])
             end

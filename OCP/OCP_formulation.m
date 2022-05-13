@@ -525,6 +525,8 @@ setup.bounds = bounds;
 setup.scaling = scaling;
 setup.guess = guess;
 
+Outname = fullfile(S.subject.save_folder,[S.post_process.result_filename '.mat']);
+save(Outname,'w_opt','stats','setup','model_info','S','');
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Essential post processing

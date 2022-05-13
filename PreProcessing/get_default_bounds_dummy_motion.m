@@ -1,8 +1,8 @@
-function [coord_bounds] = get_bounds_dummy_motion(coord_names)
+function [coord_bounds] = get_default_bounds_dummy_motion(coord_names)
 % --------------------------------------------------------------------------
-% get_bounds_dummy_motion
-%   Returns the upper and lower bound of coordinates. These bounds are used 
-%   to generate a dummy motion to determine the musculoskeletal geometry.
+% get_default_bounds_dummy_motion
+%   Returns the default upper and lower bound of coordinates. These bounds are 
+%   used to generate a dummy motion to determine the musculoskeletal geometry.
 %
 %   THESE ARE NOT THE BOUNDS USED TO FORMULATE AND SCALE THE OCP!!!!
 % 
@@ -18,14 +18,16 @@ function [coord_bounds] = get_bounds_dummy_motion(coord_names)
 % OUTPUT:
 %   - bounds -
 %   * Table with lower and upper bound for each input coordinate. Translations
-%   are in meters, rotations in radians.
+%   are in meters, rotations in degrees.
 % 
 %
 % Original author: Lars D'Hondt
 % Original date: 14/April/2022
 %
-% Last edit by:
-% Last edit date:
+% Edit: Changed name from "get_bounds_dummy_motion" to
+%   "get_default_bounds_dummy_motion" to reflect what this function does.
+% Last edit by: Lars D'Hondt
+% Last edit date: 13/May/2022
 % --------------------------------------------------------------------------
 
 %% Predefined bounds

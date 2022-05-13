@@ -23,8 +23,8 @@ import casadi.*
 % Check for existing file with polynomial approximation, and load if it
 % exists. We only perform muscle analysis and fitting if the result is not 
 % yet available, because the analysis takes long.
-if isfile(fullfile(S.misc.subject_path,S.misc.MSK_geometry_name))
-    f_lMT_vMT_dM = Function.load(fullfile(S.misc.subject_path,S.misc.MSK_geometry_name));
+if isfile(fullfile(S.misc.subject_path,S.misc.msk_geom_name))
+    f_lMT_vMT_dM = Function.load(fullfile(S.misc.subject_path,S.misc.msk_geom_name));
 else
     % Assemble polynomial approximation from coefficients
     muscle_spanning_info_m = model_info.muscle_info.muscle_spanning_joint_info(:,:);
@@ -58,7 +58,7 @@ else
     f_lMT_vMT_dM = Function('f_lMT_vMT_dM',{qin,qdotin},{lMT,vMT,dM});
     
     % Save function for later use
-    f_lMT_vMT_dM.save(fullfile(S.misc.subject_path,S.misc.MSK_geometry_name));
+    f_lMT_vMT_dM.save(fullfile(S.misc.subject_path,S.misc.msk_geom_name));
 end
 
 end

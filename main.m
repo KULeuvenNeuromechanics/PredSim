@@ -35,7 +35,7 @@ S.subject.IG_selection_gaitCyclePercent = 50;
 osim_path = fullfile(pathRepo,'Subjects',S.subject.name,[S.subject.name '.osim']);
 
 % Do you want to run the simulation as a batch job (parallel computing toolbox)
-S.solver.run_as_batch_job = 0;
+S.solver.run_as_batch_job = 1;
 
 %% Optional inputs
 % see README.md in the main folder for information about these optional
@@ -51,7 +51,7 @@ S.solver.run_as_batch_job = 0;
 % S.bounds.dist_trav.lower    = ;
 % S.bounds.t_final.upper      = ;
 % S.bounds.t_final.lower      = ;
-% S.bounds.coordinates        = {'pelvis_tilt',-30*pi/180,30*pi/180};
+% S.bounds.coordinates        = {'pelvis_tilt',-30,30};
 
 % % S.metabolicE - metabolic energy
 % S.metabolicE.tanh_b = ;
@@ -59,11 +59,12 @@ S.solver.run_as_batch_job = 0;
 
 % % S.misc - miscellanious
 % S.misc.v_max_s             = ;
-S.misc.visualize_bounds = 1;
+% S.misc.visualize_bounds = 1;
 % S.misc.gaitmotion_type     = '';
 % S.misc.msk_geom_eq         = '';
 % S.misc.poly_order.lower    = ;
 % S.misc.poly_order.upper    = ;
+% S.misc.msk_geom_bounds      = {{'knee_angle_l','knee_angle_r'},-120,10};
 
 % % S.post_process
 % S.post_process.make_plot = '';

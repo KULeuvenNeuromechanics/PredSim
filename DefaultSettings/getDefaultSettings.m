@@ -121,10 +121,15 @@ if ~isfield(S.misc.poly_order,'upper')
 end
 
 % name to save musculoskeletal geometry CasADi function
-S.misc.MSK_geometry_name = 'f_lMT_vMT_dM';
+S.misc.msk_geom_name = 'f_lMT_vMT_dM';
 if strcmp(S.misc.msk_geom_eq,'polynomials') 
-    S.misc.MSK_geometry_name = [S.misc.MSK_geometry_name '_poly_',...
+    S.misc.msk_geom_name = [S.misc.msk_geom_name '_poly_',...
         num2str(S.misc.poly_order.lower) '_' num2str(S.misc.poly_order.upper)];
+end
+
+% manually overwrite coordinate bounds used to approximate musculoskeletal geometry
+if ~isfield(S.misc,'msk_geom_bounds')
+    S.misc.msk_geom_bounds = [];
 end
 
 % visualize IG and bounds

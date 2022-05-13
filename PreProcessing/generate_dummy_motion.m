@@ -27,8 +27,23 @@ function [Qs] = generate_dummy_motion(S,model_info,n_data_points)
 % --------------------------------------------------------------------------
 
 
-% Upper and lower bounds of dummy motion
-Q_bounds = get_bounds_dummy_motion(model_info.ExtFunIO.coord_names.all);
+% Default upper and lower bounds of dummy motion
+Q_bounds = get_default_bounds_dummy_motion(model_info.ExtFunIO.coord_names.all);
+
+% adapt bounds based on user input
+if ~isempty(S.misc.msk_geom_bounds)
+    [new_lb,new_ub] = unpack_name_value_combinations(S.misc.msk_geom_bounds,...
+        model_info.ExtFunIO.coord_names.all,[1,1]);
+    for i=1:model_info.ExtFunIO.jointi.nq.all
+        if ~isnan(new_lb(i))
+            Q_bounds(1,i) = new_lb(i);
+        end
+        if ~isnan(new_ub(i))
+            Q_bounds(2,i) = new_ub(i);
+        end
+
+    end
+end
 
 % Construct scale from bounds
 Q_scale = diff(Q_bounds);

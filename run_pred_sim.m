@@ -13,14 +13,18 @@ if ~isfolder(OutFolder)
     mkdir(OutFolder);
 end
 if strcmp(S.post_process.savename,'structured')
-    cond = 1;
-    ct = 1;
-    while cond
-        result_filename = [S.subject.name '_v' num2str(ct)];
-        if ~isfile(fullfile(OutFolder,[result_filename '.mat']))
-            cond = 0;
+    if S.solver.run_as_batch_job
+        result_filename = [S.subject.name '_job' num2str(S.solver.job_id)];
+    else
+        cond = 1;
+        ct = 1;
+        while cond
+            result_filename = [S.subject.name '_v' num2str(ct)];
+            if ~isfile(fullfile(OutFolder,[result_filename '.mat']))
+                cond = 0;
+            end
+            ct = ct+1;
         end
-        ct = ct+1;
     end
 end
 if isempty(S.post_process.result_filename)

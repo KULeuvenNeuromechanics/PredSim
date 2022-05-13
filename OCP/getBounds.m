@@ -130,18 +130,21 @@ end
 
 %% Adjust bounds based on settings
 if ~isempty(S.bounds.coordinates)
-    [new_lower_bounds,new_upper_bounds] = unpack_name_value_combinations(S.bounds.coordinates,coordinate_names,[1,1]);
+    [new_lb,new_ub] = unpack_name_value_combinations(S.bounds.coordinates,coordinate_names,[1,1]);
+    
+    new_lb(model_info.ExtFunIO.jointi.rotations) = new_lb(model_info.ExtFunIO.jointi.rotations)*pi/180;
+    new_ub(model_info.ExtFunIO.jointi.rotations) = new_ub(model_info.ExtFunIO.jointi.rotations)*pi/180;
     
     for i = 1:NCoord
         coordinate = coordinate_names{i};
         coord_idx = model_info.ExtFunIO.coordi.(coordinate);
     
-        if ~isnan(new_lower_bounds(i))
-            bounds.Qs.lower(coord_idx) = new_lower_bounds(i);
+        if ~isnan(new_lb(i))
+            bounds.Qs.lower(coord_idx) = new_lb(i);
         end
     
-        if ~isnan(new_upper_bounds(i))
-            bounds.Qs.upper(coord_idx) = new_upper_bounds(i);
+        if ~isnan(new_ub(i))
+            bounds.Qs.upper(coord_idx) = new_ub(i);
         end
     end
 
