@@ -35,7 +35,7 @@ S.subject.IG_selection_gaitCyclePercent = 50;
 osim_path = fullfile(pathRepo,'Subjects',S.subject.name,[S.subject.name '.osim']);
 
 % Do you want to run the simulation as a batch job (parallel computing toolbox)
-S.solver.run_as_batch_job = 1;
+S.solver.run_as_batch_job = 0;
 
 %% Optional inputs
 % see README.md in the main folder for information about these optional
@@ -59,7 +59,7 @@ S.solver.run_as_batch_job = 1;
 
 % % S.misc - miscellanious
 % S.misc.v_max_s             = ;
-% S.misc.visualize_bounds = 1;
+% S.misc.visualize_bounds    = 1;
 % S.misc.gaitmotion_type     = '';
 % S.misc.msk_geom_eq         = '';
 % S.misc.poly_order.lower    = ;
@@ -69,8 +69,8 @@ S.solver.run_as_batch_job = 1;
 % % S.post_process
 % S.post_process.make_plot = '';
 % S.post_process.savename  = '';
-% S.post_process.rerun   = 1;
-% S.post_process.result_filename = 'Fal_s1_mtp_v2';
+S.post_process.rerun   = 1;
+S.post_process.result_filename = 'Fal_s1_mtp_v2';
 
 % % S.solver
 % S.solver.linear_solver  = '';
