@@ -961,7 +961,7 @@ if strcmp(S.misc.gaitmotion_type,'HalfGaitCycle')
         e_a_GC(:,model_info.ExtFunIO.symQs.ActOpp) = -e_a_GC(:,model_info.ExtFunIO.symQs.ActOpp);
     end
     
-elseif S.Periodic
+elseif strcmp(S.misc.gaitmotion_type,'FullGaitCycle')
     % detect heelstrike
     [IC1i_c,IC1i_s,HS1] = getHeelstrikeSimulation(GRFk_opt,N);
         
