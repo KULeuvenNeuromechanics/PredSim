@@ -1,13 +1,26 @@
 function [S] = osim2dll(S,osim_path)
+% --------------------------------------------------------------------------
+% osim2dll
+%   Matlab shell for the python workflow
+%   
+% INPUT:
+%   - S -
+%   * setting structure S
 %
-% Matlab shell for the python workflow
+%   - osim_path -
+%   * path to the OpenSim model file (.osim)
 %
+% OUTPUT:
+%   - S -
+%   * setting structure S
 % 
-% Author: Lars D'Hondt
+% Original author: Lars D'Hondt
+% Original date: 07/March/2022
 %
-% Date: 07/March/2022
-%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Last edit by: 
+% Last edit date: 
+% --------------------------------------------------------------------------
+
 
 % extract name of opensim model file
 [~,osim_file_name,~] = fileparts(osim_path);

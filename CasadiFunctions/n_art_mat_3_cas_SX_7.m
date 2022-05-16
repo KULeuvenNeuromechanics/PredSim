@@ -1,10 +1,33 @@
-% This function returns the polynomials for approximating the muscle-tendon
-% lengths, velocities and moment-arms.
-%
-% Authors: Original code from Wouter Aerts, adapted by Antoine Falisse
-% Date: 12/19/2018
-%
 function [mat,diff_mat_q] = n_art_mat_3_cas_SX_7(q, nr_coefficients,expoVal)
+% --------------------------------------------------------------------------
+% n_art_mat_3_cas_SX_7
+%    This function returns the polynomials for approximating the muscle-tendon
+%    lengths, velocities and moment-arms.
+%   
+% INPUT:
+%   - q -
+%   * 
+%
+%   - nr_coefficients -
+%   * 
+% 
+%   - expoVal -
+%   * 
+%
+% OUTPUT:
+%   - mat -
+%   * 
+%
+%   - diff_mat_q -
+%   * 
+% 
+% Original author: Original code from Wouter Aerts, adapted by Antoine Falisse
+% Original date: 12/19/2018
+%
+% Last edit by: 
+% Last edit date: 
+% --------------------------------------------------------------------------
+
 import casadi.*
 n_dof = length(q(1,:));
 q_all = SX(1,4);

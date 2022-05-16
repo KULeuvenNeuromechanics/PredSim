@@ -1,21 +1,25 @@
 function [f_casadi] = createCasadi_GenHelper(S,model_info)
-%createCasadi_GenHelper
+% --------------------------------------------------------------------------
+% createCasadi_GenHelper
 %   Function to create general Casadi functions.
 %
 % INPUT:
-%   model_info
-%   Struct with model info
-%
-%   N_musc_cross
-%   Array with number of muscles crossing specific joinst, e.g. [27 13 12]
-%   This will be part of model_info later, see issue on github.
+%   - S -
+%   * setting structure S
+% 
+%   - model_info -
+%   * structure with all the model information based on the OpenSim model
 %
 % OUTPUT:
-%   f_casadi
+%   - f_casadi -
 %   Struct that contains all casadi functions.
 %
 % Original authors: Dhruv Gupta, Lars D'Hondt, Tom Buurke
 % Original date: 01/12/2021
+%
+% Last edit by: 
+% Last edit date: 
+% --------------------------------------------------------------------------
 
 import casadi.*
 

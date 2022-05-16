@@ -1,49 +1,91 @@
-% This function computes the muscle energy expenditure based on the model
-% of Bhargava et al. (2004). This function provides a smooth approximation of
-% the original functions using tanh approximations for use in optimization
-% problems.
+function [energy_total,Adot,Mdot,Sdot,Wdot,energy_model] = ...
+    getMetabolicEnergySmooth2004all(exc,act,lMtilde,vM,Fce,Fpass,...
+        musclemass,pctst,Fiso,Fmax,modelmass,b)
+% --------------------------------------------------------------------------
+% getMetabolicEnergySmooth2004all
+%    This function computes the muscle energy expenditure based on the model
+%    of Bhargava et al. (2004). This function provides a smooth approximation of
+%    the original functions using tanh approximations for use in optimization
+%    problems.
 %
-% Author: Antoine Falisse
-% Date: 01/22/2019
+%    Note: we did not include the length dependence of the maintenance heat rate.
+%      In OpenSim, they use a Piecewise Linear Function
+%      https://github.com/opensim-org/opensim-core/blob/master/OpenSim/Simulation/Model/Bhargava2004MuscleMetabolicsProbe.cpp#L103
+%    Note: we consider some lengthening heat rate, i.e. 
+%      get_use_force_dependent_shortening_prop_constant is true (OpenSim)
+%   
+% INPUT:
+%   - exc -
+%   * muscle excitations
 %
-% Note: we did not include the length dependence of the maintenance heat rate.
-%   In OpenSim, they use a Piecewise Linear Function
-%   https://github.com/opensim-org/opensim-core/blob/master/OpenSim/Simulation/Model/Bhargava2004MuscleMetabolicsProbe.cpp#L103
-% Note: we consider some lengthening heat rate, i.e. 
-%   get_use_force_dependent_shortening_prop_constant is true (OpenSim)
+%   - act -
+%   * muscle activations
 %
-% INPUTS:
-%   exc: muscle excitations
-%   act: muscle activations
-%   lMtilde: normalized muscle fiber lengths
-%   vM: muscle fiber velocities (positive is lengthening)
-%   Fce: muscle force from contractile element 
+%   - lMtilde -
+%   * normalized muscle fiber lengths
+%
+%   - vM -
+%   * muscle fiber velocities (positive is lengthening)
+%
+%   - Fce -
+%   * muscle force from contractile element 
 %       (length + velocity components but not passive component; FMo.*Fcetilde)
-%   Fpass: muscle force from passive element (FMo.*Fpetilde)
-%   musclemass: mass of muscle, mass = PCSA*rho*lMopt, PCSA = Fmax/sigma
-%       Note: rho is density (1058.7 kg/m³) and sigma is tension
-%   pctst: percentage of slow twitch fibers (0-1)
-%   vcemax: maximal muscle fiber velocities (default is 10*lMopt)
-%   Fiso: normalized muscle forces from active f-l relationship (FMltilde)
-%   Fmax: maximal isometric muscle forces
-%   modelmass: mass of the musculoskeletal model
-%   b: parameter determining transition smoothness for tanh approximations
 %
-% OUTPUTS:
-%   energy_total: total metabolic energy rate
-%   Adot: energy rate from activation
-%   Mdot: energy rate from maintenance
-%   Sdot: energy rate from shortening and lengthening
-%   Wdot: energy rate from mechanical work 
-%   energy_model: energy rate from energy_total including basal rate
+%   - Fpass -
+%   * muscle force from passive element (FMo.*Fpetilde)
+%
+%   - musclemass -
+%   * mass of muscle, mass = PCSA*rho*lMopt, PCSA = Fmax/sigma
+%       Note: rho is density (1058.7 kg/m³) and sigma is tension
+%
+%   - pctst -
+%   * percentage of slow twitch fibers (0-1)
+%
+%   - vcemax -
+%   * maximal muscle fiber velocities (default is 10*lMopt)
+%
+%   - Fiso -
+%   * normalized muscle forces from active f-l relationship (FMltilde)
+%
+%   - Fmax -
+%   * maximal isometric muscle forces
+%
+%   - modelmass -
+%   * mass of the musculoskeletal model
+%
+%   - b -
+%   * parameter determining transition smoothness for tanh approximations
+%
+% OUTPUT:
+%   - energy_total -
+%   * total metabolic energy rate
+%   
+%   - Adot -
+%   * energy rate from activation
+%   
+%   - Mdot -
+%   * energy rate from maintenance
+%   
+%   - Sdot -
+%   * energy rate from shortening and lengthening
+%   
+%   - Wdot -
+%   * energy rate from mechanical work 
+%   
+%   - energy_model -
+%   * energy rate from energy_total including basal rate
+%
 %       energy_total: energy rate from totalHeatRate and Wdot
 %       totalHeatRate: energy rate from Adot, Mdot and Sdot
 %       Note: energy_total might be different than the sum of the different
 %             components if the total heat rate was clamped to one.
-
-function [energy_total,Adot,Mdot,Sdot,Wdot,energy_model] = ...
-    getMetabolicEnergySmooth2004all(exc,act,lMtilde,vM,Fce,Fpass,...
-        musclemass,pctst,Fiso,Fmax,modelmass,b)
+% 
+% Original author: Antoine Falisse
+% Original date: 01/22/2019
+%
+% Last edit by: 
+% Last edit date: 
+% --------------------------------------------------------------------------
 
 %% Parameters
 % Percentage of slow twitch (st) and fast twitch (ft) fibers

@@ -1,10 +1,23 @@
-% This function returns the specific tensions in the muscles
-% The data come from Uchida et al. (2016).
-%
-% Author: Antoine Falisse
-% Date: 12/19/2018
-%         
 function sigma = getSpecificTensions(muscleNames)
+% --------------------------------------------------------------------------
+% getSpecificTensions
+%    This function returns the specific tensions in the muscles
+%    The data come from Uchida et al. (2016).
+%   
+% INPUT:
+%   - muscleNames -
+%   * 
+%
+% OUTPUT:
+%   - sigma -
+%   * 
+% 
+% Original author: Antoine Falisse
+% Original date: 12/19/2018
+%
+% Last edit by: 
+% Last edit date: 
+% --------------------------------------------------------------------------
 
     sigma_data.glut_med1_r = 0.74455;
     sigma_data.glut_med2_r = 0.75395;

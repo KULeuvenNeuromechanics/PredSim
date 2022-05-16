@@ -1,5 +1,23 @@
 function write_motionFile_v40(q, fname)
-% Author: Dhruv Gupta 12/02/21
+% --------------------------------------------------------------------------
+% write_motionFile_v40
+%   (Explanation)
+%   
+% INPUT:
+%   - q -
+%   * 
+%
+%   - fname -
+%   * 
+% 
+% OUTPUT:
+% 
+% Original author: Dhruv Gupta
+% Original date: 12/02/21
+%
+% Last edit by: 
+% Last edit date: 
+% --------------------------------------------------------------------------
 
 fid = fopen(fname, 'w');	
 if fid == -1								

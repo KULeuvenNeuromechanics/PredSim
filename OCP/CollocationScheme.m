@@ -1,14 +1,36 @@
-% This script returns matrices needed for setting the collocation problem. 
-% This function is copied from an example (direct_collocation.m) from the 
-% CasADi example pack
-%
-% Author: Antoine Falisse
-% Date: 12/19/2018
-%
-% INPUTS:   d is the degree of the interpolating polynomial
-%           method is 'radau' or 'legendre'
-
 function [tau_root,C,D,B] = CollocationScheme(d,method)
+% --------------------------------------------------------------------------
+% CollocationScheme
+%    This script returns matrices needed for setting the collocation problem. 
+%    This function is copied from an example (direct_collocation.m) from the 
+%    CasADi example pack
+%   
+% INPUT:
+%   - d -
+%   * degree of the interpolating polynomial
+%
+%   - method -
+%   * 'radau' or 'legendre'
+%
+% OUTPUT:
+%   - tau_root -
+%   * 
+% 
+%   - C -
+%   * 
+% 
+%   - D -
+%   * 
+% 
+%   - B -
+%   * 
+% 
+% Original author: Antoine Falisse
+% Original date: 12/19/2018
+%
+% Last edit by: 
+% Last edit date: 
+% --------------------------------------------------------------------------
 
 import casadi.*
 

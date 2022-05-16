@@ -1,20 +1,25 @@
 function [f_lMT_vMT_dM] = createCasadi_MSKGeometry(S,model_info)
+% --------------------------------------------------------------------------
 %createCasadi_MSKGeometry 
 %   Function to create Casadi functions for musculoskeletal geometry.
 % 
 % INPUT:
-%   MainPath
-%   * Main path
-%  
-%   model_info
-%   * Model info struct
+%   - S -
+%   * setting structure S
+% 
+%   - model_info -
+%   * structure with all the model information based on the OpenSim model
 % 
 % OUTPUT:
-%   f_lMT_vMT_dM
+%   - f_lMT_vMT_dM -
 %   * Casadi function for musculoskeletal geometry.
 % 
 % Original authors: Lars D'Hondt, Dhruv Gupta, Tom Buurke
 % Original date: 01/12/2021
+%
+% Last edit by: 
+% Last edit date: 
+% --------------------------------------------------------------------------
 
 
 %% Polynomial approximation
