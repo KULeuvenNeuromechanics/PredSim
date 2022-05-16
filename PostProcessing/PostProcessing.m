@@ -31,4 +31,6 @@ R.Qddots_rad(:,model_info.ExtFunIO.jointi.rotations) = R.Qddots(:,model_info.Ext
 
 
 
-
+%%
+load(Outname,'w_opt','stats','setup','R','model_info');
+save(Outname,'w_opt','stats','setup','R','model_info');

@@ -28,7 +28,7 @@ import casadi.*
 % Check for existing file with polynomial approximation, and load if it
 % exists. We only perform muscle analysis and fitting if the result is not 
 % yet available, because the analysis takes long.
-if isfile(fullfile(S.misc.subject_path,S.misc.msk_geom_name))
+if isfile(fullfile(S.misc.subject_path,S.misc.msk_geom_name)) && isempty(S.misc.msk_geom_bounds)
     f_lMT_vMT_dM = Function.load(fullfile(S.misc.subject_path,S.misc.msk_geom_name));
 else
     % Assemble polynomial approximation from coefficients
