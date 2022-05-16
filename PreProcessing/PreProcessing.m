@@ -50,3 +50,4 @@ model_info = get_passive_moment_info(S,model_info);
 model_info = update_model_info(S,osim_path,model_info);
 
 
+end
