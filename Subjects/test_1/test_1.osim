@@ -1685,7 +1685,7 @@
 							<!--Transform function of the generalized coordinates used to        represent the amount of displacement along a specified axis.-->
 							<PolynomialFunction name="function">
 								<!--Coefficients of a polynomial function, from highest to lowest order.Polynomial order is n-1, where n is the number of coefficients.-->
-								<coefficients>0.001361865030733 0.008246355307836 0.008254171289682 -0.006906452095655 -0.004289706800117</coefficients>
+								<coefficients>0.001361865030733 0.0082463553078360001 0.008254171289682 -0.006906452095655 -0.0042897068001170003</coefficients>
 							</PolynomialFunction>
 						</TransformAxis>
 						<TransformAxis name="translation2">
@@ -1696,7 +1696,7 @@
 							<!--Transform function of the generalized coordinates used to        represent the amount of displacement along a specified axis.-->
 							<PolynomialFunction name="function">
 								<!--Coefficients of a polynomial function, from highest to lowest order.Polynomial order is n-1, where n is the number of coefficients.-->
-								<coefficients>-0.003682035888653 0.005244918500589 -0.395650452843852</coefficients>
+								<coefficients>-0.0036820358886529999 0.0052449185005890003 -0.39565045284385197</coefficients>
 							</PolynomialFunction>
 						</TransformAxis>
 						<TransformAxis name="translation3">
@@ -2007,7 +2007,7 @@
 							<!--Orientation offset (in radians) of this frame in its parent frame, expressed as a frame-fixed x-y-z rotation sequence.-->
 							<orientation>0 0 0</orientation>
 						</PhysicalOffsetFrame>
-					</frames>					
+					</frames>
 				</PinJoint>
 				<CustomJoint name="hip_l">
 					<!--Path to a Component that satisfies the Socket 'parent_frame' of type PhysicalFrame (description: The parent frame for the joint.).-->
@@ -2255,7 +2255,7 @@
 							<!--Transform function of the generalized coordinates used to        represent the amount of displacement along a specified axis.-->
 							<PolynomialFunction name="function">
 								<!--Coefficients of a polynomial function, from highest to lowest order.Polynomial order is n-1, where n is the number of coefficients.-->
-								<coefficients>0.001361865030733 0.008246355307836 0.008254171289682 -0.006906452095655 -0.004289706800117</coefficients>
+								<coefficients>0.001361865030733 0.0082463553078360001 0.008254171289682 -0.006906452095655 -0.0042897068001170003</coefficients>
 							</PolynomialFunction>
 						</TransformAxis>
 						<TransformAxis name="translation2">
@@ -2266,7 +2266,7 @@
 							<!--Transform function of the generalized coordinates used to        represent the amount of displacement along a specified axis.-->
 							<PolynomialFunction name="function">
 								<!--Coefficients of a polynomial function, from highest to lowest order.Polynomial order is n-1, where n is the number of coefficients.-->
-								<coefficients>-0.003682035888653 0.005244918500589 -0.395650452843852</coefficients>
+								<coefficients>-0.0036820358886529999 0.0052449185005890003 -0.39565045284385197</coefficients>
 							</PolynomialFunction>
 						</TransformAxis>
 						<TransformAxis name="translation3">
@@ -2577,7 +2577,7 @@
 							<!--Orientation offset (in radians) of this frame in its parent frame, expressed as a frame-fixed x-y-z rotation sequence.-->
 							<orientation>0 0 0</orientation>
 						</PhysicalOffsetFrame>
-					</frames>					
+					</frames>
 				</PinJoint>
 				<CustomJoint name="back">
 					<!--Path to a Component that satisfies the Socket 'parent_frame' of type PhysicalFrame (description: The parent frame for the joint.).-->
@@ -10031,6 +10031,118 @@
 					<!--The transition velocity, default is 0.01 (m/s).-->
 					<transition_velocity>0.20000000000000001</transition_velocity>
 				</SmoothSphereHalfSpaceForce>
+				<ActivationCoordinateActuator name="actuator_arm_flex_l">
+					<!--Minimum allowed value for control signal. Used primarily when solving for control values.-->
+					<min_control>-1</min_control>
+					<!--Maximum allowed value for control signal. Used primarily when solving for control values.-->
+					<max_control>1</max_control>
+					<!--Name of the generalized coordinate to which the actuator applies.-->
+					<coordinate>arm_flex_l</coordinate>
+					<!--The maximum generalized force produced by this actuator.-->
+					<optimal_force>150</optimal_force>
+					<!--Larger value means activation changes more slowly (units: seconds; default: 0.01 seconds).-->
+					<activation_time_constant>0.035000000000000003</activation_time_constant>
+					<!--Value of activation in the default state (default: 0.5).-->
+					<default_activation>0</default_activation>
+				</ActivationCoordinateActuator>
+				<ActivationCoordinateActuator name="actuator_arm_add_l">
+					<!--Minimum allowed value for control signal. Used primarily when solving for control values.-->
+					<min_control>-1</min_control>
+					<!--Maximum allowed value for control signal. Used primarily when solving for control values.-->
+					<max_control>1</max_control>
+					<!--Name of the generalized coordinate to which the actuator applies.-->
+					<coordinate>arm_add_l</coordinate>
+					<!--The maximum generalized force produced by this actuator.-->
+					<optimal_force>150</optimal_force>
+					<!--Larger value means activation changes more slowly (units: seconds; default: 0.01 seconds).-->
+					<activation_time_constant>0.035000000000000003</activation_time_constant>
+					<!--Value of activation in the default state (default: 0.5).-->
+					<default_activation>0</default_activation>
+				</ActivationCoordinateActuator>
+				<ActivationCoordinateActuator name="actuator_arm_rot_l">
+					<!--Minimum allowed value for control signal. Used primarily when solving for control values.-->
+					<min_control>-1</min_control>
+					<!--Maximum allowed value for control signal. Used primarily when solving for control values.-->
+					<max_control>1</max_control>
+					<!--Name of the generalized coordinate to which the actuator applies.-->
+					<coordinate>arm_rot_l</coordinate>
+					<!--The maximum generalized force produced by this actuator.-->
+					<optimal_force>150</optimal_force>
+					<!--Larger value means activation changes more slowly (units: seconds; default: 0.01 seconds).-->
+					<activation_time_constant>0.035000000000000003</activation_time_constant>
+					<!--Value of activation in the default state (default: 0.5).-->
+					<default_activation>0</default_activation>
+				</ActivationCoordinateActuator>
+				<ActivationCoordinateActuator name="actuator_arm_flex_r">
+					<!--Minimum allowed value for control signal. Used primarily when solving for control values.-->
+					<min_control>-1</min_control>
+					<!--Maximum allowed value for control signal. Used primarily when solving for control values.-->
+					<max_control>1</max_control>
+					<!--Name of the generalized coordinate to which the actuator applies.-->
+					<coordinate>arm_flex_r</coordinate>
+					<!--The maximum generalized force produced by this actuator.-->
+					<optimal_force>150</optimal_force>
+					<!--Larger value means activation changes more slowly (units: seconds; default: 0.01 seconds).-->
+					<activation_time_constant>0.035000000000000003</activation_time_constant>
+					<!--Value of activation in the default state (default: 0.5).-->
+					<default_activation>0</default_activation>
+				</ActivationCoordinateActuator>
+				<ActivationCoordinateActuator name="actuator_arm_add_r">
+					<!--Minimum allowed value for control signal. Used primarily when solving for control values.-->
+					<min_control>-1</min_control>
+					<!--Maximum allowed value for control signal. Used primarily when solving for control values.-->
+					<max_control>1</max_control>
+					<!--Name of the generalized coordinate to which the actuator applies.-->
+					<coordinate>arm_add_r</coordinate>
+					<!--The maximum generalized force produced by this actuator.-->
+					<optimal_force>150</optimal_force>
+					<!--Larger value means activation changes more slowly (units: seconds; default: 0.01 seconds).-->
+					<activation_time_constant>0.035000000000000003</activation_time_constant>
+					<!--Value of activation in the default state (default: 0.5).-->
+					<default_activation>0</default_activation>
+				</ActivationCoordinateActuator>
+				<ActivationCoordinateActuator name="actuator_arm_rot_r">
+					<!--Minimum allowed value for control signal. Used primarily when solving for control values.-->
+					<min_control>-1</min_control>
+					<!--Maximum allowed value for control signal. Used primarily when solving for control values.-->
+					<max_control>1</max_control>
+					<!--Name of the generalized coordinate to which the actuator applies.-->
+					<coordinate>arm_rot_r</coordinate>
+					<!--The maximum generalized force produced by this actuator.-->
+					<optimal_force>150</optimal_force>
+					<!--Larger value means activation changes more slowly (units: seconds; default: 0.01 seconds).-->
+					<activation_time_constant>0.035000000000000003</activation_time_constant>
+					<!--Value of activation in the default state (default: 0.5).-->
+					<default_activation>0</default_activation>
+				</ActivationCoordinateActuator>
+				<ActivationCoordinateActuator name="actuator_elbow_flex_l">
+					<!--Minimum allowed value for control signal. Used primarily when solving for control values.-->
+					<min_control>-1</min_control>
+					<!--Maximum allowed value for control signal. Used primarily when solving for control values.-->
+					<max_control>1</max_control>
+					<!--Name of the generalized coordinate to which the actuator applies.-->
+					<coordinate>elbow_flex_l</coordinate>
+					<!--The maximum generalized force produced by this actuator.-->
+					<optimal_force>150</optimal_force>
+					<!--Larger value means activation changes more slowly (units: seconds; default: 0.01 seconds).-->
+					<activation_time_constant>0.035000000000000003</activation_time_constant>
+					<!--Value of activation in the default state (default: 0.5).-->
+					<default_activation>0</default_activation>
+				</ActivationCoordinateActuator>
+				<ActivationCoordinateActuator name="actuator_elbow_flex_r">
+					<!--Minimum allowed value for control signal. Used primarily when solving for control values.-->
+					<min_control>-1</min_control>
+					<!--Maximum allowed value for control signal. Used primarily when solving for control values.-->
+					<max_control>1</max_control>
+					<!--Name of the generalized coordinate to which the actuator applies.-->
+					<coordinate>elbow_flex_r</coordinate>
+					<!--The maximum generalized force produced by this actuator.-->
+					<optimal_force>150</optimal_force>
+					<!--Larger value means activation changes more slowly (units: seconds; default: 0.01 seconds).-->
+					<activation_time_constant>0.035000000000000003</activation_time_constant>
+					<!--Value of activation in the default state (default: 0.5).-->
+					<default_activation>0</default_activation>
+				</ActivationCoordinateActuator>
 			</objects>
 			<groups>
 				<ObjectGroup name="R_hip_abd">
@@ -10170,7 +10282,7 @@
 					<orientation>0 0 0</orientation>
 					<!--Radius of the sphere (default: 0).-->
 					<radius>0.032000000000000001</radius>
-				</ContactSphere>				
+				</ContactSphere>
 				<ContactSphere name="s4_r">
 					<!--Path to a Component that satisfies the Socket 'frame' of type PhysicalFrame (description: The frame to which this geometry is attached.).-->
 					<socket_frame>/bodyset/calcn_r</socket_frame>
@@ -10181,7 +10293,7 @@
 					<!--Radius of the sphere (default: 0).-->
 					<radius>0.032000000000000001</radius>
 				</ContactSphere>
-                <ContactSphere name="s5_r">
+				<ContactSphere name="s5_r">
 					<!--Path to a Component that satisfies the Socket 'frame' of type PhysicalFrame (description: The frame to which this geometry is attached.).-->
 					<socket_frame>/bodyset/toes_r</socket_frame>
 					<!--Location of geometry center in the PhysicalFrame.-->
@@ -10230,7 +10342,7 @@
 					<orientation>0 0 0</orientation>
 					<!--Radius of the sphere (default: 0).-->
 					<radius>0.032000000000000001</radius>
-				</ContactSphere>				
+				</ContactSphere>
 				<ContactSphere name="s4_l">
 					<!--Path to a Component that satisfies the Socket 'frame' of type PhysicalFrame (description: The frame to which this geometry is attached.).-->
 					<socket_frame>/bodyset/calcn_l</socket_frame>
@@ -10241,7 +10353,7 @@
 					<!--Radius of the sphere (default: 0).-->
 					<radius>0.032000000000000001</radius>
 				</ContactSphere>
-                <ContactSphere name="s5_l">
+				<ContactSphere name="s5_l">
 					<!--Path to a Component that satisfies the Socket 'frame' of type PhysicalFrame (description: The frame to which this geometry is attached.).-->
 					<socket_frame>/bodyset/toes_l</socket_frame>
 					<!--Location of geometry center in the PhysicalFrame.-->

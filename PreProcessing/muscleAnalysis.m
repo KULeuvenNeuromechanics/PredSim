@@ -1,4 +1,4 @@
-function [MuscleData] = muscleAnalysis(S,osim_path,model_info)
+function [MuscleData, varargout] = muscleAnalysis(S,osim_path,model_info,varargin)
 %
 % Analyse the musculoskeletal geometry of the given osim model.
 %   1) Create a dummy motion
@@ -15,7 +15,7 @@ function [MuscleData] = muscleAnalysis(S,osim_path,model_info)
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-MA_path = fullfile(S.path_main,'Subjects',S.subject.name,'MuscleAnalysis');
+MA_path = fullfile(S.misc.subject_path, '/MuscleAnalysis');
 if ~isfolder(MA_path)
     mkdir(MA_path);
 end
@@ -45,7 +45,11 @@ muscle_names = model_info.muscle_info.muscle_names;
 
 % sizes and indices
 n_coord = length(coordinate_names);
-n_data_points = 5000;
+if length(varargin)>=1
+    n_data_points = varargin{1};
+else
+    n_data_points = 5000;
+end
 
 % default bounds
 Q_bounds = [-30;30]*ones(1,n_coord);
@@ -93,9 +97,8 @@ write_motionFile_v40(q_in,pathDummyMotion)
 
 %% Run analysis
 % Narrow down coordinates to analyse, to save time. The floating base dofs
-% should never have muscles crossing. The arms are not muscle-driven
-idx_coord_analyse = setdiff(1:n_coord,[model_info.ExtFunIO.jointi.floating_base,...
-    model_info.ExtFunIO.jointi.arm_l,model_info.ExtFunIO.jointi.arm_r]);
+% should never have muscles crossing.
+idx_coord_analyse = setdiff(1:n_coord,model_info.ExtFunIO.jointi.floating_base);
 
 % import the opensim API
 import org.opensim.modeling.*
@@ -145,6 +148,8 @@ for m = 1:length(muscle_names)
     end
 end
 
-
+if nargout==2
+    varargout{1} = Qs;
+end
 
 
