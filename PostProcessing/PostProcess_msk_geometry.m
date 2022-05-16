@@ -62,28 +62,9 @@ rmse_dM = squeeze(sqrt(mean(Delta_dM.^2,2)));
 [id,jd] = find(squeeze(rmse_dM) >0.003);
 
 
-% delta_lMT = Delta_lMT./MuscleData.lMT;
-% delta_dM = Delta_dM./MuscleData.dM;
-
 %%
-% max(abs(Delta_lMT),[],"all")
-% max(abs(Delta_dM),[],"all")
-% 
-% max(abs(delta_lMT),[],"all")
-% max(abs(delta_dM),[],"all")
-
-%%
-% to do: how to bring this to user?
-%
-% [il,jl] = find(abs(Delta_lMT)>=0.003);
-% 
-% tmp = abs(Delta_dM)>=0.003;
-% tmp = squeeze(sum(tmp,1));
-% [id,jd] = find(tmp);
-% model_info.muscle_info.muscle_names(id)'
-% model_info.ExtFunIO.coord_names.all(jd)
-
-
-%%
+R.lMT = lMT;
+R.vMT = vMT;
+R.dM = dM;
 
 end

@@ -262,11 +262,6 @@ if ~isfield(S.subject,'muscle_pass_stiff_scale')
     S.subject.muscle_pass_stiff_scale = [];
 end
 
-% muscle symmetry
-if ~isfield(S.subject,'muscle_sym')
-    S.subject.muscle_sym = [];
-end
-
 % tendon stiffness
 if ~isfield(S.subject,'tendon_stiff')
     S.subject.tendon_stiff = [];
@@ -388,11 +383,6 @@ end
 % weight on muscle activations
 if ~isfield(S.weights,'a')
     S.weights.a = 2000; 
-end
-
-% weight on mtp excitations
-if ~isfield(S.weights,'e_mtp')
-    S.weights.e_mtp = 10^6; 
 end
 
 % weight on slack controls

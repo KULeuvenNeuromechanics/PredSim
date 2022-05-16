@@ -95,13 +95,7 @@ muscle_info.parameters = parameters;
 %% scale muscle-tendon parameters based on user-defined settings
 muscle_info = scale_MTparameters(S,muscle_info);
 
-%% impose symmetry on the muscle-tendon parameters
-if ~isempty(S.subject.muscle_sym) && S.subject.muscle_sym
-    model_info = impose_symmetry_MTparameters(S,model_info);
-end
-
 %% calculate muscle-tendon parameter values that depend on others
-
 for i=1:NMuscle
     % shift tendon stiffness curve based on its stiffness
     tendon_stiff_shift_i = getShift(muscle_info.parameters(i).tendon_stiff);
