@@ -597,18 +597,21 @@ q_opt_unsc.rad = Qs_opt(1:end-1,:).*repmat(...
     scaling.Qs,size(Qs_opt(1:end-1,:),1),1);
 % Convert in degrees
 q_opt_unsc.deg = q_opt_unsc.rad;
-q_opt_unsc.deg(:,model_info.ExtFunIO.jointi.rotations) = q_opt_unsc.deg(:,model_info.ExtFunIO.jointi.rotations).*180/pi;
+q_opt_unsc.deg(:,model_info.ExtFunIO.jointi.rotations) ...
+    = q_opt_unsc.deg(:,model_info.ExtFunIO.jointi.rotations).*180/pi;
 % Qs (1:N)
 q_opt_unsc_all.rad = Qs_opt.*repmat(scaling.Qs,size(Qs_opt,1),1);
 % Convert in degrees
 q_opt_unsc_all.deg = q_opt_unsc_all.rad;
-q_opt_unsc_all.deg(:,model_info.ExtFunIO.jointi.rotations) = q_opt_unsc_all.deg(:,model_info.ExtFunIO.jointi.rotations).*180/pi;
+q_opt_unsc_all.deg(:,model_info.ExtFunIO.jointi.rotations) ...
+    = q_opt_unsc_all.deg(:,model_info.ExtFunIO.jointi.rotations).*180/pi;
 % Qdots (1:N-1)
 qdot_opt_unsc.rad = Qdots_opt(1:end-1,:).*repmat(...
     scaling.Qdots,size(Qdots_opt(1:end-1,:),1),1);
 % Convert in degrees
 qdot_opt_unsc.deg = qdot_opt_unsc.rad;
-qdot_opt_unsc.deg(:,model_info.ExtFunIO.jointi.rotations) = qdot_opt_unsc.deg(:,model_info.ExtFunIO.jointi.rotations).*180/pi;
+qdot_opt_unsc.deg(:,model_info.ExtFunIO.jointi.rotations) ...
+    = qdot_opt_unsc.deg(:,model_info.ExtFunIO.jointi.rotations).*180/pi;
 % Qdots (1:N)
 qdot_opt_unsc_all.rad =Qdots_opt.*repmat(scaling.Qdots,size(Qdots_opt,1),1);
 % Muscle activations (1:N-1)
@@ -633,13 +636,15 @@ e_a_opt_unsc = e_a_opt;
 q_col_opt_unsc.rad = Qs_col_opt.*repmat(scaling.Qs,size(Qs_col_opt,1),1);
 % Convert in degrees
 q_col_opt_unsc.deg = q_col_opt_unsc.rad;
-q_col_opt_unsc.deg(:,model_info.ExtFunIO.jointi.rotations) = q_col_opt_unsc.deg(:,model_info.ExtFunIO.jointi.rotations).*180/pi;
+q_col_opt_unsc.deg(:,model_info.ExtFunIO.jointi.rotations) ...
+    = q_col_opt_unsc.deg(:,model_info.ExtFunIO.jointi.rotations).*180/pi;
 % Qdots
 qdot_col_opt_unsc.rad = Qdots_col_opt.*repmat(...
     scaling.Qdots,size(Qdots_col_opt,1),1);
 % Convert in degrees
 qdot_col_opt_unsc.deg = qdot_col_opt_unsc.rad;
-qdot_col_opt_unsc.deg(:,model_info.ExtFunIO.jointi.rotations) = qdot_col_opt_unsc.deg(:,model_info.ExtFunIO.jointi.rotations).*180/pi;
+qdot_col_opt_unsc.deg(:,model_info.ExtFunIO.jointi.rotations) ...
+    = qdot_col_opt_unsc.deg(:,model_info.ExtFunIO.jointi.rotations).*180/pi;
 % Muscle activations
 a_col_opt_unsc = a_col_opt.*repmat(...
     scaling.a,size(a_col_opt,1),size(a_col_opt,2));
@@ -652,7 +657,8 @@ qdotdot_col_opt_unsc.rad = ...
     qdotdot_col_opt.*repmat(scaling.Qdotdots,size(qdotdot_col_opt,1),1);
 % Convert in degrees
 qdotdot_col_opt_unsc.deg = qdotdot_col_opt_unsc.rad;
-qdotdot_col_opt_unsc.deg(:,model_info.ExtFunIO.jointi.rotations) = qdotdot_col_opt_unsc.deg(:,model_info.ExtFunIO.jointi.rotations).*180/pi;
+qdotdot_col_opt_unsc.deg(:,model_info.ExtFunIO.jointi.rotations) ...
+    = qdotdot_col_opt_unsc.deg(:,model_info.ExtFunIO.jointi.rotations).*180/pi;
 % Time derivative of muscle-tendon forces
 dFTtilde_col_opt_unsc = dFTtilde_col_opt.*repmat(...
     scaling.dFTtilde,size(dFTtilde_col_opt,1),size(dFTtilde_col_opt,2));

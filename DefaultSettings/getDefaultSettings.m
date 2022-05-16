@@ -132,6 +132,16 @@ if ~isfield(S.misc,'msk_geom_bounds')
     S.misc.msk_geom_bounds = [];
 end
 
+% rmse threshold for muscle-tendon length approximation
+if ~isfield(S.misc,'threshold_lMT_fit')
+    S.misc.threshold_lMT_fit = 0.003;
+end
+
+% rmse threshold for muscle-tendon momentarm approximation
+if ~isfield(S.misc,'threshold_dM_fit')
+    S.misc.threshold_dM_fit = 0.003;
+end
+
 % visualize IG and bounds
 if ~isfield(S.misc,'visualize_bounds')
     S.misc.visualize_bounds = 0;

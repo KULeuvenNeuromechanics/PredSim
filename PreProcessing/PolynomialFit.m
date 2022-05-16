@@ -44,7 +44,6 @@ muscle_spanning_joint_INFO = model_info.muscle_info.muscle_spanning_joint_info;
 q_all = MuscleData.q;
 
 max_order = S.misc.poly_order.upper;
-threshold = 0.003; % 3mm
 nr_samples = length(q_all(:,1));
 
 lMT_all_error = zeros(length(muscle_sel), 1);
@@ -86,7 +85,8 @@ for m_nr=1:length(muscle_sel)
         lMT_error_rms = sqrt(mean((lMT - lMT_recon).^2));
         dm_error_rms = sqrt(mean((dM - dM_recon).^2));
         
-        criterion_full_filled = lMT_error_rms<=threshold & max(dm_error_rms)<=threshold;
+        criterion_full_filled = lMT_error_rms<=S.misc.threshold_lMT_fit ...
+            & max(dm_error_rms)<=S.misc.threshold_dM_fit;
         if order==max_order
             criterion_full_filled = 1;
         end
@@ -111,7 +111,7 @@ figure();
 hold on;
 plot(lMT_all_error)
 xlimits = get(gca, 'XLim');
-plot(xlimits, [threshold, threshold], 'r', 'linewidth', 2)
+plot(xlimits, [1, 1]*S.misc.threshold_lMT_fit, 'r', 'linewidth', 2)
 title('RMS error on the approximated muscle-tendon length')
 ylabel('RMS error (m)')
 
@@ -119,7 +119,7 @@ figure();
 hold on;
 plot(max(DM_all_error, [], 2))
 xlimits = get(gca, 'XLim');
-plot(xlimits, [threshold, threshold], 'r', 'linewidth', 2)
+plot(xlimits, [1, 1]*S.misc.threshold_dM_fit, 'r', 'linewidth', 2)
 title('maximal RMS error on the approximated muscle moment arm')
 ylabel('RMS error (m)')
 

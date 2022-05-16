@@ -58,13 +58,15 @@ S.solver.run_as_batch_job = 0;
 % S.metabolicE.model  = '';
 
 % % S.misc - miscellanious
-% S.misc.v_max_s             = ;
-% S.misc.visualize_bounds    = 1;
-% S.misc.gaitmotion_type     = '';
-% S.misc.msk_geom_eq         = '';
-% S.misc.poly_order.lower    = ;
-% S.misc.poly_order.upper    = ;
+% S.misc.v_max_s              = ;
+% S.misc.visualize_bounds     = 1;
+% S.misc.gaitmotion_type      = '';
+% S.misc.msk_geom_eq          = '';
+% S.misc.poly_order.lower     = ;
+% S.misc.poly_order.upper     = ;
 % S.misc.msk_geom_bounds      = {{'knee_angle_l','knee_angle_r'},-120,10};
+% S.misc.threshold_lMT_fit    = ;
+% S.misc.threshold_lMT_fit    = ;
 
 % % S.post_process
 % S.post_process.make_plot = '';
