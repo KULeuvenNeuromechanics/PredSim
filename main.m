@@ -71,13 +71,13 @@ S.solver.run_as_batch_job = 0;
 % % S.post_process
 % S.post_process.make_plot = '';
 % S.post_process.savename  = '';
-S.post_process.rerun   = 1;
-S.post_process.result_filename = 'Fal_s1_mtp_v2';
+% S.post_process.rerun   = 1;
+% S.post_process.result_filename = 'Fal_s1_mtp_v2';
 
 % % S.solver
 % S.solver.linear_solver  = '';
 % S.solver.tol_ipopt      = ;
-S.solver.max_iter       = 5;
+% S.solver.max_iter       = 5;
 % S.solver.parallel_mode  = '';
 % S.solver.N_threads      = ;
 % S.solver.N_meshes       = ;
@@ -89,11 +89,10 @@ S.solver.CasADi_path    = 'C:\GBW_MyPrograms\casadi_3_5_5';
 S.subject.mass              = 62;
 % S.subject.IG_pelvis_y       = ;
 S.subject.v_pelvis_x_trgt   = 1.33;
-% S.subject.IG_bounds = ;
+% S.subject.IK_Bounds = ;
 % S.subject.muscle_strength   = ;
 % S.subject.muscle_pass_stiff_shift = ;
 % S.subject.muscle_pass_stiff_scale = ;
-% S.subject.muscle_sym        = 1;
 % S.subject.tendon_stiff      = ;
 S.subject.mtp_type          = '2022paper';
 % S.subject.MT_params         = ;
@@ -110,7 +109,6 @@ S.subject.set_limit_torque_coefficients_selected_dofs = {{'mtp_angle_l','mtp_ang
 % S.weights.e_arm     = ;
 % S.weights.pass_torq = ;
 % S.weights.a         = ;
-% S.weights.e_mtp     = ;
 % S.weights.slack_ctrl = ;
 
 
