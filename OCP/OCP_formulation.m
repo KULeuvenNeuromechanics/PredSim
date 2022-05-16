@@ -369,29 +369,38 @@ for j=1:d
     % Contraction dynamics (implicit formulation)
     eq_constr{end+1} = Hilldiffj;
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    % Constraints to prevent parts of the skeleton to penetrate each
-    % other.
+    % Constraints to prevent parts of the skeleton to penetrate each other.
     % Origins calcaneus (transv plane) at minimum 9 cm from each other.
-    Qconstr = f_casadi.J_nn_2(Tj(model_info.ExtFunIO.origin.calcn_r([1 3]),1) - ...
-        Tj(model_info.ExtFunIO.origin.calcn_l([1 3]),1));
-    ineq_constr3{end+1} = Qconstr;
+    if ~isempty(model_info.ExtFunIO.origin.calcn_r) &&  ~isempty(model_info.ExtFunIO.origin.calcn_l)
+        Qconstr = f_casadi.J_nn_2(Tj(model_info.ExtFunIO.origin.calcn_r([1 3]),1) - ...
+            Tj(model_info.ExtFunIO.origin.calcn_l([1 3]),1));
+        ineq_constr3{end+1} = Qconstr;
+    end
     % Constraint to prevent the arms to penetrate the skeleton
     % Origins femurs and ipsilateral hands (transv plane) at minimum
     % 18 cm from each other.
-    Qconstr = f_casadi.J_nn_2(Tj(model_info.ExtFunIO.origin.femur_r([1 3]),1) - ...
-        Tj(model_info.ExtFunIO.origin.hand_r([1 3]),1));
-    ineq_constr4{end+1} = Qconstr;
-    Qconstr = f_casadi.J_nn_2(Tj(model_info.ExtFunIO.origin.femur_l([1 3]),1) - ...
-        Tj(model_info.ExtFunIO.origin.hand_l([1 3]),1));
-    ineq_constr4{end+1} = Qconstr;
+    if ~isempty(model_info.ExtFunIO.origin.femur_r) &&  ~isempty(model_info.ExtFunIO.origin.hand_r)
+        Qconstr = f_casadi.J_nn_2(Tj(model_info.ExtFunIO.origin.femur_r([1 3]),1) - ...
+            Tj(model_info.ExtFunIO.origin.hand_r([1 3]),1));
+        ineq_constr4{end+1} = Qconstr;
+    end
+    if ~isempty(model_info.ExtFunIO.origin.femur_l) &&  ~isempty(model_info.ExtFunIO.origin.hand_l)
+        Qconstr = f_casadi.J_nn_2(Tj(model_info.ExtFunIO.origin.femur_l([1 3]),1) - ...
+            Tj(model_info.ExtFunIO.origin.hand_l([1 3]),1));
+        ineq_constr4{end+1} = Qconstr;
+    end
     % Origins tibia (transv plane) at minimum 11 cm from each other.
-    Qconstr = f_casadi.J_nn_2(Tj(model_info.ExtFunIO.origin.tibia_r([1 3]),1) - ...
-        Tj(model_info.ExtFunIO.origin.tibia_l([1 3]),1));
-    ineq_constr5{end+1} = Qconstr;
+    if ~isempty(model_info.ExtFunIO.origin.tibia_r) &&  ~isempty(model_info.ExtFunIO.origin.tibia_l)
+        Qconstr = f_casadi.J_nn_2(Tj(model_info.ExtFunIO.origin.tibia_r([1 3]),1) - ...
+            Tj(model_info.ExtFunIO.origin.tibia_l([1 3]),1));
+        ineq_constr5{end+1} = Qconstr;
+    end
     % Origins toes (transv plane) at minimum 10 cm from each other.
-    Qconstr = f_casadi.J_nn_2(Tj(model_info.ExtFunIO.origin.toes_r([1 3]),1) - ...
-        Tj(model_info.ExtFunIO.origin.toes_l([1 3]),1));
-    ineq_constr6{end+1} = Qconstr;
+    if ~isempty(model_info.ExtFunIO.origin.toes_r) &&  ~isempty(model_info.ExtFunIO.origin.toes_l)
+        Qconstr = f_casadi.J_nn_2(Tj(model_info.ExtFunIO.origin.toes_r([1 3]),1) - ...
+            Tj(model_info.ExtFunIO.origin.toes_l([1 3]),1));
+        ineq_constr6{end+1} = Qconstr;
+    end
 
 end % End loop over collocation points
 
@@ -424,10 +433,30 @@ opti.subject_to(coll_eq_constr == 0);
 % inequality constraints (logical indexing not possible in MX arrays)
 opti.subject_to(coll_ineq_constr1(:) >= 0);
 opti.subject_to(coll_ineq_constr2(:) <= 1/tact);
-opti.subject_to(S.bounds.calcn_dist.lower.^2 < coll_ineq_constr3(:) < 4);
-opti.subject_to(S.bounds.femur_hand_dist.lower.^2 < coll_ineq_constr4(:) < 4);
-opti.subject_to(S.bounds.tibia_dist.lower.^2 < coll_ineq_constr5(:) < 4);
-opti.subject_to(S.bounds.toes_dist.lower.^2 < coll_ineq_constr6(:) < 4);
+if ~isempty(coll_ineq_constr3)
+    opti.subject_to(S.bounds.calcn_dist.lower.^2 < coll_ineq_constr3(:) < 4);
+else
+    disp('   Minimal distance between calcanei not constrained. To do so, please use "calcn_r" and "calcn_l" as body names in the OpenSim model.')
+end
+if ~isempty(coll_ineq_constr4)
+    opti.subject_to(S.bounds.femur_hand_dist.lower.^2 < coll_ineq_constr4(:) < 4);
+end
+if isempty(model_info.ExtFunIO.origin.femur_r) || isempty(model_info.ExtFunIO.origin.hand_r)
+    disp('   Minimal distance between right arm and body not constrained. To do so, please use "femur_r" and "hand_r" as body names in the OpenSim model.')
+end
+if isempty(model_info.ExtFunIO.origin.femur_l) || isempty(model_info.ExtFunIO.origin.hand_l)
+    disp('   Minimal distance between left arm and body not constrained. To do so, please use "femur_l" and "hand_l" as body names in the OpenSim model.')
+end
+if ~isempty(coll_ineq_constr5)
+    opti.subject_to(S.bounds.tibia_dist.lower.^2 < coll_ineq_constr5(:) < 4);
+else
+    disp('   Minimal distance between tibias not constrained. To do so, please use "tibia_r" and "tibia_l" as body names in the OpenSim model.')
+end
+if ~isempty(coll_ineq_constr6)
+    opti.subject_to(S.bounds.toes_dist.lower.^2 < coll_ineq_constr6(:) < 4);
+else
+    disp('   Minimal distance between toes not constrained. To do so, please use "toes_r" and "toes_l" as body names in the OpenSim model.')
+end
 
 
 % Loop over mesh points
@@ -470,7 +499,7 @@ if strcmp(S.misc.gaitmotion_type,'HalfGaitCycle')
     end
 
 else
-    opti.subject_to(Qs([1:3,5:end],end) - Qs([1:3,5:end],1) == 0);
+    opti.subject_to(Qs(model_info.ExtFunIO.symQs.QsFullGC,end) - Qs(model_info.ExtFunIO.symQs.QsFullGC,1) == 0);
     opti.subject_to(Qdots(:,end) - Qdots(:,1) == 0);
     % Muscle activations
     opti.subject_to(a(:,end) - a(:,1) == 0);
@@ -487,6 +516,48 @@ dist_trav_tot = Qs_nsc(model_info.ExtFunIO.jointi.base_forward,end) - ...
     Qs_nsc(model_info.ExtFunIO.jointi.base_forward,1);
 vel_aver_tot = dist_trav_tot/tf;
 opti.subject_to(vel_aver_tot - S.subject.v_pelvis_x_trgt == 0)
+
+% optional constraints
+if strcmp(S.misc.gaitmotion_type,'HalfGaitCycle')
+    % lower bound on distance traveled
+    if ~isempty(S.bounds.dist_trav.lower)
+        opti.subject_to(dist_trav_tot >= S.bounds.dist_trav.lower/2)
+    end
+    % upper bound on step length for right foot (left foot is already symmetric
+    if ~isempty(S.bounds.SLL.upper) || ~isempty(S.bounds.SLR.upper)
+        if ~isempty(model_info.ExtFunIO.origin.calcn_r) &&  ~isempty(model_info.ExtFunIO.origin.calcn_l)
+            [step_length_r,~] = f_casadi.f_getStepLength(Qs_nsc(:,1),Qs_nsc(:,end));
+            if ~isempty(S.bounds.SLL.upper)
+                opti.subject_to(step_length_r <= S.bounds.SLL.upper)
+            elseif ~isempty(S.bounds.SLR.upper)
+                opti.subject_to(step_length_r <= S.bounds.SLR.upper)
+            end
+        else
+            disp('   Unable to constrain step length. To do so, please use "calcn_r" and "calcn_l" as body names in the OpenSim model.')
+        end
+    end
+
+elseif strcmp(S.misc.gaitmotion_type,'FullGaitCycle')
+    % lower bound on distance traveled
+    if ~isempty(S.bounds.dist_trav.lower)
+        opti.subject_to(dist_trav_tot >= S.bounds.dist_trav.lower)
+    end
+    % upper bound on step length for left and/or right foot
+    if ~isempty(S.bounds.SLL.upper) || ~isempty(S.bounds.SLR.upper)
+        if ~isempty(model_info.ExtFunIO.origin.calcn_r) &&  ~isempty(model_info.ExtFunIO.origin.calcn_l)
+            [step_length_r,step_length_l] = f_casadi.f_getStepLength(Qs_nsc(:,1),Qs_nsc(:,end));
+            if ~isempty(S.bounds.SLL.upper)
+                opti.subject_to(step_length_l <= S.bounds.SLL.upper)
+            end
+            if ~isempty(S.bounds.SLR.upper)
+                opti.subject_to(step_length_r <= S.bounds.SLR.upper)
+            end
+        else
+            disp('   Unable to constrain step length. To do so, please use "calcn_r" and "calcn_l" as body names in the OpenSim model.')
+        end
+    end
+end
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Scale cost function
 Jall_sc = sum(Jall)/dist_trav_tot;

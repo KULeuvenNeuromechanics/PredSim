@@ -37,7 +37,7 @@ Qs_IK.colheaders{1,1} = 'time';
 % Add the IK of every joint, in the defined order
 for i = 1:length(coordinate_names)
     coordinate = coordinate_names{i};
-    idx_coord_Qsall = find(strcmp(Qsall.labels,coordinate),1,"first");
+    idx_coord_Qsall = find(strcmp(Qsall.labels,coordinate),1,'first');
     if isempty(idx_coord_Qsall)
         Qs_IK.(coordinate) = zeros(size(Qs_IK.time));
     else

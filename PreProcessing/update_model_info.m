@@ -60,7 +60,8 @@ model_info.ExtFunIO.jointi.nq.torqAct      = length(model_info.ExtFunIO.jointi.t
 model_info.ExtFunIO.jointi.nq.rot          = length(model_info.ExtFunIO.jointi.rotations);
 model_info.ExtFunIO.jointi.nq.trnsl        = length(model_info.ExtFunIO.jointi.translations);
 
-%% Model symmetry (for half gait cycle simulations)
+%% Model symmetry 
+% for half gait cycle simulations
 ActOpp = find(ismember(model_info.ExtFunIO.symQs.QsOpp(:),model_info.ExtFunIO.jointi.torqueActuated));
 ActInvA = setdiff(1:model_info.ExtFunIO.jointi.nq.torqAct,ActOpp);
 
@@ -74,17 +75,14 @@ model_info.ExtFunIO.symQs.ActInvA = ActInvA;
 model_info.ExtFunIO.symQs.ActInvB = ActInvB;
 model_info.ExtFunIO.symQs.ActOpp = ActOpp;
 
+% for full gait cycle simulations
+model_info.ExtFunIO.symQs.QsFullGC = setdiff(1:Ncoords,model_info.ExtFunIO.jointi.base_forward);
 
 %% Pelvis height used for initial guess
 model_info = get_IG_pelvis_y(S,osim_path,model_info);
 
 % add osim_path so it will be included in saved results
 model_info.osim_path = osim_path;
-
-
-
-
-
 
 
 

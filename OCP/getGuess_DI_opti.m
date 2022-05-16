@@ -34,7 +34,6 @@ function guess = getGuess_DI_opti(S,model_info,scaling,d)
 N = S.solver.N_meshes; % number of mesh intervals
 nq = model_info.ExtFunIO.jointi.nq;
 NMuscle = model_info.muscle_info.NMuscle;
-jointi = model_info.ExtFunIO.coordi;
 coordinate_names = model_info.ExtFunIO.coord_names.all;
 
 %%
@@ -70,11 +69,6 @@ for i=1:nq.all
     guess.Qs_all(:,coord_idx) = Qs_spline.data(:,strcmp(Qs_guess_IG.colheaders(1,:),coordinate));
     guess.Qdots_all(:,coord_idx) = Qdots_spline.data(:,strcmp(Qs_guess_IG.colheaders(1,:),coordinate));
     guess.Qdotdots_all(:,coord_idx) = Qdotdots_spline.data(:,strcmp(Qs_guess_IG.colheaders(1,:),coordinate));
-%     if contains(coordinate,'mtp')
-%         guess.Qs_all(:,coord_idx) = zeros(size(guess.Qs_all,1),1);
-%         guess.Qdots_all(:,coord_idx) = zeros(size(guess.Qdots_all,1),1);
-%         guess.Qdotdots_all(:,coord_idx) = zeros(size(guess.Qdotdots_all,1),1);
-%     end
 end
     
 % Interpolation
@@ -87,9 +81,11 @@ guess.Qs = interp1(round(Qs_time,4),guess.Qs_all,round(interval,4));
 guess.Qs(:,model_info.ExtFunIO.jointi.base_forward) = guess.Qs(:,model_info.ExtFunIO.jointi.base_forward) - ....
     guess.Qs(1,model_info.ExtFunIO.jointi.base_forward);
 
-% Adjust pelvis height
-guess.Qs(:,model_info.ExtFunIO.coordi.pelvis_ty) = guess.Qs(:,model_info.ExtFunIO.coordi.pelvis_ty) ...
-    - mean(guess.Qs(:,model_info.ExtFunIO.coordi.pelvis_ty)) + model_info.IG_pelvis_y;
+if S.subject.adapt_IG_pelvis_y
+    % Adjust pelvis height
+    guess.Qs(:,model_info.ExtFunIO.coordi.pelvis_ty) = guess.Qs(:,model_info.ExtFunIO.coordi.pelvis_ty) ...
+        - mean(guess.Qs(:,model_info.ExtFunIO.coordi.pelvis_ty)) + model_info.IG_pelvis_y;
+end
 
 % Interpolation
 guess.Qdots = interp1(round(Qs_time,4),guess.Qdots_all,round(interval,4));

@@ -24,7 +24,7 @@ function [S] = getDefaultSettings(S)
 
 % minimal muscle activation, a number between 0 and 1
 if ~isfield(S.bounds.a,'lower')
-    S.bounds.a.lower = 0;
+    S.bounds.a.lower = 0.05;
 end
 
 % minimal distance between orginins calcanei, in meters
@@ -64,12 +64,12 @@ end
 
 % upper bound on final time, in seconds
 if ~isfield(S.bounds.t_final,'upper')
-    S.bounds.t_final.upper = [];
+    S.bounds.t_final.upper = 2;
 end
 
 % lower bound on final time, in seconds
 if ~isfield(S.bounds.t_final,'lower')
-    S.bounds.t_final.lower = [];
+    S.bounds.t_final.lower = 0.1;
 end
 
 % manually overwrite coordinate bounds
@@ -254,6 +254,11 @@ if ~isfield(S.subject,'IG_pelvis_y')
    S.subject.IG_pelvis_y = [];
 end
 
+% adapt pelvis height of the data-informed initial guess based on IG_pelvis_y
+if ~isfield(S.subject,'adapt_IG_pelvis_y')
+   S.subject.adapt_IG_pelvis_y = 0;
+end
+
 % average velocity you want the model to have, in meters per second
 if ~isfield(S.subject,'v_pelvis_x_trgt')
     S.subject.v_pelvis_x_trgt = 1.25;
@@ -326,12 +331,16 @@ end
 % muscle spasticity
 if ~isfield(S.subject,'spasticity')
     S.subject.spasticity = []; 
+else
+    warning('spasticity is not yet implemented.')
 end
 
-% % muscle coordination
-% if ~isfield(S.subject,'muscle_coordination')
-%     S.subject.muscle_coordination = []; 
-% end
+% muscle coordination
+if ~isfield(S.subject,'muscle_coordination')
+    S.subject.muscle_coordination = []; 
+else
+    warning('muscle coordination is not yet implemented.')
+end
 
 % damping coefficient for all degrees of freedon
 if ~isfield(S.subject,'damping_coefficient_all_dofs')

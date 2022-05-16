@@ -47,5 +47,10 @@ f_casadi.lT_vT = lT_vT;
 %% Create Casadi functions for metabolic energy.
 [f_casadi.getMetabolicEnergySmooth2004all] = createCasadi_E_Metab(S,model_info);
 
+%% Create Casadi function to get step length
+if ~isempty(model_info.ExtFunIO.origin.calcn_r) &&  ~isempty(model_info.ExtFunIO.origin.calcn_l)
+    [f_casadi.f_getCalcnOriginInWorldFrame,f_casadi.f_getStepLength] = createCasadi_StepLength(S,model_info);
+end
+
 
 end

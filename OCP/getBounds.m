@@ -185,7 +185,7 @@ bounds.Qdotdots.lower(model_info.ExtFunIO.symQs.QdotsInvA) =...
 
 
 %% Muscle activations
-bounds.a.lower = 0.05*ones(1,NMuscle);
+bounds.a.lower = S.bounds.a.lower*ones(1,NMuscle);
 bounds.a.upper = ones(1,NMuscle);
 
 %% Muscle-tendon forces
@@ -208,10 +208,13 @@ bounds.a_a.upper = ones(1,model_info.ExtFunIO.jointi.nq.torqAct);
 bounds.e_a.lower = -ones(1,model_info.ExtFunIO.jointi.nq.torqAct);
 bounds.e_a.upper = ones(1,model_info.ExtFunIO.jointi.nq.torqAct);
 
-
 %% Final time
-bounds.tf.lower = 0.1;
-bounds.tf.upper = 1;
+bounds.tf.lower = S.bounds.t_final.lower;
+if strcmp(S.misc.gaitmotion_type,'HalfGaitCycle')
+    bounds.tf.upper = S.bounds.t_final.upper/2;
+else
+    bounds.tf.upper = S.bounds.t_final.upper;
+end
 
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Scaling
