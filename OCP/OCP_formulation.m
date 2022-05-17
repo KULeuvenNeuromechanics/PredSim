@@ -81,16 +81,14 @@ pctsts = struct_array_to_double_array(model_info.muscle_info.parameters,'slow_tw
 MuscleMass = struct_array_to_double_array(model_info.muscle_info.parameters,'muscle_mass');
 
 %% Get bounds and initial guess
-% model_info.ExtFunIO.jointi.base_lateral = 6;
-% model_info.ExtFunIO.symQs.QsOpp = model_info.ExtFunIO.symQs.QsOpp(model_info.ExtFunIO.symQs.QsOpp~=model_info.ExtFunIO.jointi.base_lateral);
 
 [bounds,scaling] = getBounds(S,model_info);
-scaling.Qs(model_info.ExtFunIO.coordi.lumbar_extension) = 2*0.872;
-bounds.Qs.upper(model_info.ExtFunIO.coordi.lumbar_extension) = 1;
-bounds.Qs.lower(model_info.ExtFunIO.coordi.lumbar_extension) = -1;
-scaling.Qs(model_info.ExtFunIO.coordi.pelvis_tilt) = 2*0.5236;
-bounds.Qs.upper(model_info.ExtFunIO.coordi.pelvis_tilt) = 1;
-bounds.Qs.lower(model_info.ExtFunIO.coordi.pelvis_tilt) = -1;
+% scaling.Qs(model_info.ExtFunIO.coordi.lumbar_extension) = 2*0.872;
+% bounds.Qs.upper(model_info.ExtFunIO.coordi.lumbar_extension) = 1;
+% bounds.Qs.lower(model_info.ExtFunIO.coordi.lumbar_extension) = -1;
+% scaling.Qs(model_info.ExtFunIO.coordi.pelvis_tilt) = 2*0.5236;
+% bounds.Qs.upper(model_info.ExtFunIO.coordi.pelvis_tilt) = 1;
+% bounds.Qs.lower(model_info.ExtFunIO.coordi.pelvis_tilt) = -1;
 
 if strcmp(S.subject.IG_selection,'quasi-random')
     guess = getGuess_QR_opti(S,model_info,scaling,d);
