@@ -16,6 +16,10 @@ Besides that, the code was also adapted in accordance with recent (October 2020)
 - support for parallel computing
 - formulation with opti
 
+### Installation instructions
+
+Clone this repo, including the opensim-AD submodule (clone with the `--recursive` flag, or run `git submodule update --init` later)
+
 ### Create all input for the simulations
 
 When using a new/adapted musclulosketal model, you have to execute three steps to create the surrogate models and equations needed for optimization. An example of these steps are shown in the matlab script **./ConvertOsimModel/Example_PrepareOptimimzation.m** 
