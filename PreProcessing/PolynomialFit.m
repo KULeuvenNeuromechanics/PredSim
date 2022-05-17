@@ -133,7 +133,9 @@ title('Order of the polynomial approximation')
 ylabel('Order')
 
 %%
+save
 model_info.muscle_info.polyFit.MuscleInfo = MuscleInfo;
+
 
 end
 

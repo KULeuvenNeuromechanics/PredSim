@@ -25,7 +25,9 @@ R.Qddots_rad(:,model_info.ExtFunIO.jointi.rotations) = R.Qddots(:,model_info.Ext
 
 [R] = PostProcess_muscletendon_dynamics(S,model_info,f_casadi,R);
 
-
+Outname = fullfile(S.subject.save_folder,[S.post_process.result_filename '.mat']);
+load(Outname,'w_opt','stats','setup','model_info');
+save(Outname,'w_opt','stats','setup','R','model_info');
 
 
 

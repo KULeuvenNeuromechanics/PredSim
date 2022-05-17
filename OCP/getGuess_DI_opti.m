@@ -63,6 +63,8 @@ interval = Qs_time(time_expi.Qs(1)):step:Qs_time(time_expi.Qs(2));
 guess.Qs = interp1(round(Qs_time,4),guess.Qs_all,round(interval,4));
 guess.Qs(:,model_info.ExtFunIO.jointi.base_forward) = guess.Qs(:,model_info.ExtFunIO.jointi.base_forward) - ....
     guess.Qs(1,model_info.ExtFunIO.jointi.base_forward);
+guess.Qs(:,model_info.ExtFunIO.jointi.base_lateral) = guess.Qs(:,model_info.ExtFunIO.jointi.base_lateral) - ....
+    guess.Qs(1,model_info.ExtFunIO.jointi.base_lateral);
 
 % Adjust pelvis height
 guess.Qs(:,model_info.ExtFunIO.coordi.pelvis_ty) = guess.Qs(:,model_info.ExtFunIO.coordi.pelvis_ty) ...
@@ -123,7 +125,6 @@ else
     guess.FTtilde = [guess.FTtilde; guess.FTtilde(1,:)];
     guess.a_a = [guess.a_a; guess.a_a(1,:)];
 end
-
 
 %% Final time
 % The final time is function of the imposed speed

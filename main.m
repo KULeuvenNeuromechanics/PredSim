@@ -21,7 +21,7 @@ S.misc.main_path = pathRepo;
 
 %% Required inputs
 % name of the subject
-S.subject.name = 'Fal_s1_mtp'; 
+S.subject.name = 'Fal_s1_mtp_psoasTorsoCross'; 
 
 % path to folder where you want to store the results of the OCP
 S.subject.save_folder  = fullfile(pathRepoFolder,'PredSimResults',S.subject.name); 
@@ -35,7 +35,7 @@ S.subject.IG_selection_gaitCyclePercent = 50;
 osim_path = fullfile(pathRepo,'Subjects',S.subject.name,[S.subject.name '.osim']);
 
 % Do you want to run the simulation as a batch job (parallel computing toolbox)
-S.solver.run_as_batch_job = 0;
+S.solver.run_as_batch_job = 1;
 
 %% Optional inputs
 % see README.md in the main folder for information about these optional
@@ -64,7 +64,7 @@ S.solver.run_as_batch_job = 0;
 % S.misc.msk_geom_eq         = '';
 % S.misc.poly_order.lower    = ;
 % S.misc.poly_order.upper    = ;
-% S.misc.msk_geom_bounds      = {{'knee_angle_l','knee_angle_r'},-120,10};
+S.misc.msk_geom_bounds      = {{'lumbar_extension'},-50,50};
 
 % % S.post_process
 % S.post_process.make_plot = '';
@@ -80,7 +80,7 @@ S.solver.run_as_batch_job = 0;
 % S.solver.N_threads      = ;
 % S.solver.N_meshes       = ;
 % S.solver.par_cluster_name = ;
-S.solver.CasADi_path    = 'C:\GBW_MyPrograms\casadi_3_5_5';
+S.solver.CasADi_path    = 'C:\Users\u0145647\OneDrive - KU Leuven\KU Leuven\casadi-windows-matlabR2016a-v3.5.5';
 
 
 % % S.subject
