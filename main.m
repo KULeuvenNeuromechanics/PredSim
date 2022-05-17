@@ -21,7 +21,7 @@ S.misc.main_path = pathRepo;
 
 %% Required inputs
 % name of the subject
-S.subject.name = 'Fal_s1_mtp_psoasTorsoCross'; 
+S.subject.name = 'Fal_s1'; 
 
 % path to folder where you want to store the results of the OCP
 S.subject.save_folder  = fullfile(pathRepoFolder,'PredSimResults',S.subject.name); 
@@ -35,7 +35,7 @@ S.subject.IG_selection_gaitCyclePercent = 50;
 osim_path = fullfile(pathRepo,'Subjects',S.subject.name,[S.subject.name '.osim']);
 
 % Do you want to run the simulation as a batch job (parallel computing toolbox)
-S.solver.run_as_batch_job = 1;
+S.solver.run_as_batch_job = 0;
 
 %% Optional inputs
 % see README.md in the main folder for information about these optional

@@ -81,8 +81,8 @@ pctsts = struct_array_to_double_array(model_info.muscle_info.parameters,'slow_tw
 MuscleMass = struct_array_to_double_array(model_info.muscle_info.parameters,'muscle_mass');
 
 %% Get bounds and initial guess
-model_info.ExtFunIO.jointi.base_lateral = 6;
-model_info.ExtFunIO.symQs.QsOpp = model_info.ExtFunIO.symQs.QsOpp(model_info.ExtFunIO.symQs.QsOpp~=model_info.ExtFunIO.jointi.base_lateral);
+% model_info.ExtFunIO.jointi.base_lateral = 6;
+% model_info.ExtFunIO.symQs.QsOpp = model_info.ExtFunIO.symQs.QsOpp(model_info.ExtFunIO.symQs.QsOpp~=model_info.ExtFunIO.jointi.base_lateral);
 
 [bounds,scaling] = getBounds(S,model_info);
 scaling.Qs(model_info.ExtFunIO.coordi.lumbar_extension) = 2*0.872;
