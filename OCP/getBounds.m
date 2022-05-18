@@ -272,5 +272,7 @@ bounds.Qs_0.lower = bounds.Qs.lower;
 bounds.Qs_0.upper = bounds.Qs.upper;
 bounds.Qs_0.lower(model_info.ExtFunIO.jointi.base_forward) = 0;
 bounds.Qs_0.upper(model_info.ExtFunIO.jointi.base_forward) = 0;
+bounds.Qs_0.lower(model_info.ExtFunIO.jointi.base_lateral) = 0;
+bounds.Qs_0.upper(model_info.ExtFunIO.jointi.base_lateral) = 0;
 
 end

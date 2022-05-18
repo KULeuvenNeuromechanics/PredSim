@@ -21,7 +21,7 @@ S.misc.main_path = pathRepo;
 
 %% Required inputs
 % name of the subject
-S.subject.name = 'Fal_s1_mtp'; 
+S.subject.name = 'Fal_s1'; 
 
 % path to folder where you want to store the results of the OCP
 S.subject.save_folder  = fullfile(pathRepoFolder,'PredSimResults',S.subject.name); 
@@ -46,9 +46,9 @@ S.solver.run_as_batch_job = 0;
 % S.bounds.calcn_dist.lower   = ;
 % S.bounds.toes_dist.lower    = ;
 % S.bounds.tibia_dist.lower   = ;
-S.bounds.SLL.upper          = 0.4;
+% S.bounds.SLL.upper          = ;
 % S.bounds.SLR.upper          = ;
-S.bounds.dist_trav.lower    = 0.8;
+% S.bounds.dist_trav.lower    = ;
 % S.bounds.t_final.upper      = ;
 % S.bounds.t_final.lower      = ;
 % S.bounds.coordinates        = {'pelvis_tilt',-30,30};
@@ -58,15 +58,13 @@ S.bounds.dist_trav.lower    = 0.8;
 % S.metabolicE.model  = '';
 
 % % S.misc - miscellanious
-% S.misc.v_max_s              = ;
-% S.misc.visualize_bounds     = 1;
-% S.misc.gaitmotion_type      = '';
-% S.misc.msk_geom_eq          = '';
-% S.misc.poly_order.lower     = ;
-% S.misc.poly_order.upper     = ;
-% S.misc.msk_geom_bounds      = {{'knee_angle_l','knee_angle_r'},-120,10};
-% S.misc.threshold_lMT_fit    = ;
-% S.misc.threshold_lMT_fit    = ;
+% S.misc.v_max_s             = ;
+% S.misc.visualize_bounds    = 1;
+% S.misc.gaitmotion_type     = '';
+% S.misc.msk_geom_eq         = '';
+% S.misc.poly_order.lower    = ;
+% S.misc.poly_order.upper    = ;
+S.misc.msk_geom_bounds      = {{'lumbar_extension'},-50,50};
 
 % % S.post_process
 % S.post_process.make_plot = '';
@@ -77,7 +75,7 @@ S.bounds.dist_trav.lower    = 0.8;
 % % S.solver
 % S.solver.linear_solver  = '';
 % S.solver.tol_ipopt      = ;
-S.solver.max_iter       = 5;
+% S.solver.max_iter       = 5;
 % S.solver.parallel_mode  = '';
 % S.solver.N_threads      = ;
 % S.solver.N_meshes       = ;

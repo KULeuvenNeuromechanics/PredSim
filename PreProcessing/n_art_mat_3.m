@@ -1,33 +1,14 @@
 function [mat,diff_mat_q] = n_art_mat_3(q, order)
-% --------------------------------------------------------------------------
-% n_art_mat_3
-%   This function returns the polynomials for approximating the muscle-tendon
-%   lengths, velocities and moment-arms.
-%   
-% INPUT:
-%   - q -
-%   * 
+% This function returns the polynomials for approximating the muscle-tendon
+% lengths, velocities and moment-arms.
 %
-%   - order -
-%   * 
-%
-% OUTPUT:
-%   - mat -
-%   * 
-%
-%   - diff_mat_q -
-%   * 
+% Authors: Original code from Wouter Aerts, adapted by Antoine Falisse
+% Date: 12/19/2018
 % 
-% Original author: Original code from Wouter Aerts, adapted by Antoine Falisse
-% Original date: 12/19/2018
-%
-% Last edit by: 
-% Last edit date: 
-% --------------------------------------------------------------------------
-
+% Adapted to 6 degrees of freedom by Dhruv Gupta on May 12, 2022
 n_dof = length(q(1,:));
 nr_points = length(q(:,1));
-q_all = zeros(nr_points, 4);
+q_all = zeros(nr_points, 6);
 for dof_nr = 1:n_dof
     q_all(:,dof_nr) = q(:,dof_nr);
 end
@@ -53,7 +34,21 @@ for n_q1 = 0:order
                 n_q4s = 0:order-n_q1-n_q2-n_q3;
             end
             for n_q4 = n_q4s
-                nr_coefficients = nr_coefficients + 1;
+                if n_dof<5
+                    n_q5s = 0;
+                else
+                    n_q5s = 0:order-n_q1-n_q2-n_q3-n_q4;
+                end
+                for n_q5 = n_q5s
+                    if n_dof<6
+                        n_q6s = 0;
+                    else
+                        n_q6s = 0:order-n_q1-n_q2-n_q3-n_q4-n_q5;
+                    end
+                    for n_q6 = n_q6s
+                        nr_coefficients = nr_coefficients + 1;
+                    end
+                end
             end
         end
     end
@@ -81,18 +76,34 @@ for n_q1 = 0:order
                 n_q4s = 0:order-n_q1-n_q2-n_q3;
             end
             for n_q4 = n_q4s
-                mat(:,coeff_nr) = q(:,1).^n_q1.*q(:,2).^n_q2.*q(:,3).^n_q3.*q(:,4).^n_q4;
-                
-                diff_mat_q1 = n_q1*q(:,1).^(n_q1-1).*q(:,2).^n_q2.*q(:,3).^n_q3.*q(:,4).^n_q4;
-                diff_mat_q2 = q(:,1).^n_q1.*n_q2.*q(:,2).^(n_q2-1).*q(:,3).^n_q3.*q(:,4).^n_q4;
-                diff_mat_q3 = q(:,1).^n_q1.*q(:,2).^n_q2.*n_q3.*q(:,3).^(n_q3-1).*q(:,4).^n_q4;
-                diff_mat_q4 = q(:,1).^n_q1.*q(:,2).^n_q2.*q(:,3).^n_q3.*n_q4.*q(:,4).^(n_q4-1);
-                
-                for dof_nr = 1:n_dof
-                    eval(['diff_mat_q(:,coeff_nr,dof_nr) = diff_mat_q', num2str(dof_nr), ';']);
+                if n_dof<5
+                    n_q5s = 0;
+                else
+                    n_q5s = 0:order-n_q1-n_q2-n_q3-n_q4;
                 end
-                
-                coeff_nr = coeff_nr + 1;
+                for n_q5 = n_q5s
+                    if n_dof<6
+                        n_q6s = 0;
+                    else
+                        n_q6s = 0:order-n_q1-n_q2-n_q3-n_q4-n_q5;
+                    end
+                    for n_q6 = n_q6s
+                        mat(:,coeff_nr) = q(:,1).^n_q1.*q(:,2).^n_q2.*q(:,3).^n_q3.*q(:,4).^n_q4.*q(:,5).^n_q5.*q(:,6).^n_q6;
+
+                        diff_mat_q1 = n_q1*q(:,1).^(n_q1-1).*q(:,2).^n_q2.*q(:,3).^n_q3.*q(:,4).^n_q4.*q(:,5).^n_q5.*q(:,6).^n_q6;
+                        diff_mat_q2 = q(:,1).^n_q1.*n_q2.*q(:,2).^(n_q2-1).*q(:,3).^n_q3.*q(:,4).^n_q4.*q(:,5).^n_q5.*q(:,6).^n_q6;
+                        diff_mat_q3 = q(:,1).^n_q1.*q(:,2).^n_q2.*n_q3.*q(:,3).^(n_q3-1).*q(:,4).^n_q4.*q(:,5).^n_q5.*q(:,6).^n_q6;
+                        diff_mat_q4 = q(:,1).^n_q1.*q(:,2).^n_q2.*q(:,3).^n_q3.*n_q4.*q(:,4).^(n_q4-1).*q(:,5).^n_q5.*q(:,6).^n_q6;
+                        diff_mat_q5 = q(:,1).^n_q1.*q(:,2).^n_q2.*q(:,3).^n_q3.*q(:,4).^n_q4.*n_q5.*q(:,5).^(n_q5-1).*q(:,6).^n_q6;
+                        diff_mat_q6 = q(:,1).^n_q1.*q(:,2).^n_q2.*q(:,3).^n_q3.*q(:,4).^n_q4.*q(:,5).^n_q5.*n_q6.*q(:,6).^(n_q6-1);
+
+                        for dof_nr = 1:n_dof
+                            eval(['diff_mat_q(:,coeff_nr,dof_nr) = diff_mat_q', num2str(dof_nr), ';']);
+                        end
+
+                        coeff_nr = coeff_nr + 1;
+                    end
+                end
             end
         end
     end
