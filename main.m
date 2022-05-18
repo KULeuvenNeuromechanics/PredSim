@@ -80,7 +80,7 @@ S.solver.run_as_batch_job = 0;
 % S.solver.N_threads      = ;
 % S.solver.N_meshes       = ;
 % S.solver.par_cluster_name = ;
-S.solver.CasADi_path    = 'C:\GBW_MyPrograms\casadi_3_5_5';
+S.solver.CasADi_path    = 'C:\Users\mat950\Documents\Software\Download\Casadi';
 
 
 % % S.subject
@@ -109,6 +109,13 @@ S.subject.set_limit_torque_coefficients_selected_dofs = {{'mtp_angle_l','mtp_ang
 % S.weights.a         = ;
 % S.weights.slack_ctrl = ;
 
+% %S.Cpp2Dll: required inputs to convert .osim to .dll
+% optional: if you want to install the opensimExe
+S.Cpp2Dll.PathCpp2Dll_Exe = InstallOsim2Dll_Exe('C:\Temp\TestInstall'); %(optional: if you want to install the opensimExe)
+S.Cpp2Dll.compiler = 'Visual Studio 15 2017 Win64';
+S.Cpp2Dll.export3DSegmentOrigins={'calcn_r', 'calcn_l', 'femur_r', 'femur_l',...
+    'hand_r','hand_l', 'tibia_r', 'tibia_l', 'toes_r', 'toes_l'};
+S.Cpp2Dll.verbose_mode = 0; % 0 for no outputs from cmake
 
 %% Run predictive simulations
 if S.solver.run_as_batch_job
