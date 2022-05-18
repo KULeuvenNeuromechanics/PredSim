@@ -390,4 +390,77 @@ if ~isfield(S.weights,'slack_ctrl')
     S.weights.slack_ctrl = 0.001; 
 end
 
+%% .osim 2 dll
+
+% settings for functions to conver .osim model to expression graph (.dll)
+% file to solve inverse dynamics
+
+if ~isfield(S,'Cpp2Dll')
+    % select compiler for cpp projects 
+    %   Visual studio 2015: 'Visual Studio 14 2015 Win64'
+    %   Visual studio 2017: 'Visual Studio 15 2017 Win64'
+    S.Cpp2Dll.compiler = 'Visual Studio 15 2017 Win64';
+    % Path with exectuables to create .cpp file. You can use the function 
+    % S.Cpp2Dll.PathCpp2Dll_Exe = InstallOsim2Dll_Exe(ExeDir) to download 
+    % this exectuable with the input 'ExeDir' to folder in which you want to
+    % install the executable. The output argument of this function gives
+    % you the path to the folder with the exectutable
+    S.Cpp2Dll.PathCpp2Dll_Exe = [];
+    % Export 3D segment origins.
+    S.Cpp2Dll.export3DSegmentOrigins=[];
+    % If you want to choose the order of the joints and coordinate outputs
+    S.Cpp2Dll.jointsOrder = [];
+    S.Cpp2Dll.coordinatesOrder = [];
+    % Export total GRFs; If True, right and left 3D GRFs (in this order) are exported.
+    % % Set False or do not pass as argument to not export those variables.
+    S.Cpp2Dll.exportGRFs = true;
+    % Export separate GRFs. If True, right and left 3D GRFs (in this order) 
+    % are exported for each of the contact spheres.Set False or do not pass
+    % as argument to not export those variables.
+    S.Cpp2Dll.exportSeparateGRFs = true;
+    % # Export GRMs. If True, right and left 3D GRMs (in this order) are exported.
+    %  Set False or do not pass as argument to not export those variables.
+    S.Cpp2Dll.exportGRMs = true;
+    % Export contact sphere vertical deformation power. If True, right and left
+    % vertical deformation power of all contact spheres are exported.Set False
+    % or do not pass as argument to not export those variables.
+    S.Cpp2Dll.exportContactPowers = false;
+    % 0: only warnings and errors
+    % 1: all information on building .dll file
+    S.Cpp2Dll.verbose_mode = 1;
+else
+    if ~isfield(S.Cpp2Dll,'compiler')
+        S.Cpp2Dll.compiler = 'Visual Studio 15 2017 Win64';
+    end
+    if ~isfield(S.Cpp2Dll,'PathCpp2Dll_Exe')
+        S.Cpp2Dll.PathCpp2Dll_Exe = [];
+    end
+    if ~isfield(S.Cpp2Dll,'export3DSegmentOrigins')
+        S.Cpp2Dll.export3DSegmentOrigins = [];
+    end
+    if ~isfield(S.Cpp2Dll,'jointsOrder')
+        S.Cpp2Dll.jointsOrder = [];
+    end
+    if ~isfield(S.Cpp2Dll,'coordinatesOrder')
+        S.Cpp2Dll.coordinatesOrder = [];
+    end
+    if ~isfield(S.Cpp2Dll,'exportGRFs')
+        S.Cpp2Dll.exportGRFs = true;
+    end
+    if ~isfield(S.Cpp2Dll,'exportSeparateGRFs')
+        S.Cpp2Dll.exportSeparateGRFs = true;
+    end
+    if ~isfield(S.Cpp2Dll,'exportGRMs')
+        S.Cpp2Dll.exportGRMs = true;
+    end
+    if ~isfield(S.Cpp2Dll,'exportContactPowers')
+        S.Cpp2Dll.exportContactPowers = true;
+    end  
+    if ~isfield(S.Cpp2Dll,'verbose_mode')
+        S.Cpp2Dll.verbose_mode = true;
+    end  
+end
+
+
+
 end

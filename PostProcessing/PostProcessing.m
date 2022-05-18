@@ -33,4 +33,6 @@ save(Outname,'w_opt','stats','setup','R','model_info');
 
 
 
-
+%%
+load(Outname,'w_opt','stats','setup','R','model_info');
+save(Outname,'w_opt','stats','setup','R','model_info');
