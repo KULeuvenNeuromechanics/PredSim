@@ -11,7 +11,7 @@ clc
 % add repository to workspace
 [pathHere,~,~] = fileparts(mfilename('fullpath'));
 [pathRepo,~,~] = fileparts(pathHere);
-addpath([pathRepo '/PreProcessing'])
+addpath([pathRepo '/OCP'])
 
 % load model info
 load(fullfile(pathRepo,'Subjects/test_1/default_model_info.mat'))
