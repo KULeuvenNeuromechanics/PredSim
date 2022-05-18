@@ -1,201 +1,138 @@
-Predictive simulations human movement
+*Use the table of contensts to easily navigate this README. Click on the three lines next to README.md just above this sentence.*
+
+Predictive Simulations of Human Movement
 ============
 
-This repository is a fork of the code and data to generate three-dimensional muscle-driven predictive simulations of human gait as described in: Falisse A, Serrancoli G, Dembia C, Gillis J, Jonkers J, De Groote F. 2019 Rapid predictive simulations with complex musculoskeletal models suggest that diverse healthy and pathological human gaits can emerge from similar control strategies. Journal of the Royal Society Interface 16: 20190402. http://dx.doi.org/10.1098/rsif.2019.0402. 
+This repository is a rework of the code and data to generate three-dimensional muscle-driven predictive simulations of human gait as described in: Falisse A, Serrancoli G, Dembia C, Gillis J, Jonkers J, De Groote F. 2019 Rapid predictive simulations with complex musculoskeletal models suggest that diverse healthy and pathological human gaits can emerge from similar control strategies. Journal of the Royal Society Interface 16: 20190402. http://dx.doi.org/10.1098/rsif.2019.0402. You can find the original repository here: https://github.com/antoinefalisse/3dpredictsim
 
-In this repository the original code of Falisse et al. was adapted to:
+In general, hard coded variables were removed as much as possible and put in a settings structure the user can adapt. This results in:
 
-- Simulate walking with external support of an exoskeleton
-- Simulate model with mtp joint
-- Simulate Rajagopal model
-- Make input-output a bit easier (in my opinion)
+- More easily use a diffent model (other number of joints or muscles)
+- Make input-output a bit easier
+- More easily change the (musculo-skeletal) parameters of the simulation
 
 Besides that, the code was also adapted in accordance with recent (October 2020) adjustments in the original repository of Falisse et al.
 
-- Adjusted version of the collocation scheme (now really being an orthogonal radau scheme).
-- support for parallel computing
-- formulation with opti
-
-### Installation instructions
-
-Clone this repo, including the opensim-AD submodule (clone with the `--recursive` flag, or run `git submodule update --init` later)
-
-### Create all input for the simulations
-
-When using a new/adapted musclulosketal model, you have to execute three steps to create the surrogate models and equations needed for optimization. An example of these steps are shown in the matlab script **./ConvertOsimModel/Example_PrepareOptimimzation.m** 
-
-A summary of the steps:
-
-#### 1. Polynomial fitting
-
-The funciton FitPolynomials create a surrogate model, based on polynomial functions, to compute muscle-tendon lengths and moment arms from the joint kinematics. 
-
-- First, we create a sample of joint angles (i.e. dummy motion) and run muscle analysis on this dummy motion to create a training dataset. Note that running the muscle analysis takes about 20 minutes. 
-- Second, we fit the polynomials functions and save it in a spefici folder (input argument PolyFolder). You'll have to point to this folder using the settings *S.PolyFolder* when running the optimization
-
-#### 2. Create casadi functions
-
-In the next step we read the muscle-tendon parameters from the model, combine it with the polynomial functions and create a casadi function for most of the equations used in the optimization. This includes:
-
-- Equations for metabolic energy
-- Equations for muscle dynamics
-- Equations for activation dynamaics
-- Casadi version of the polynomial functions
-- ....
-
-These functions are saved in a specific folder (input argument CasadiFunc_Folders). You'll have to point to this folder using the settings *S.CasadiFunc_Folders* when running the optimization
-
-#### 3. Automatically create .dll files
-
-You have to provide a .cpp file that solves inverse dynamics with the current model you are using. Note that creating this .cpp file (with the correct modelling parameters) is still a manual step. The conversion from .cpp to .dll is automized in the function CreateDllFileFromCpp, which you can download here https://github.com/MaartenAfschrift/CreateDll_PredSim
-
-#### 4. Run your simulation
-
-You can now run your tracking or predictive simulations when pointing to the correct:
-
-- Folder with polynomial functions: **S.PolyFolder**
-- Casadi functions:  **S.CasadiFunc_Folders**
-- .dll files including the file used:
-  - the optimization: **S.ExternalFunction**
-  - the post processing: **S.ExternalFunction2**
-
-
-
-### Run Tracking and predictive simulations
-
-You can run the tracking and predictive simulations using the functions in the folder **OCP**. This includes
-
-**Gait 92 model**:  (https://simtk-confluence.stanford.edu/display/OpenSim/Gait+2392+and+2354+Models)
-
-- f_PredSim_Gait92.m solves the predictive simulations with the gait 92 model
-- f_TrackSim_Gait92.m solves the tracking simulations with the gait 92 model [not finished yet]
-- f_LoadSim_Gait92.m post processing/analysis from the simulated states and controls (both tracking and predictive simulations). 
-
-**Rajagopal model**:  (https://simtk.org/projects/full_body)
-
-- f_PredSim_Rajagopal.m sovles the predictive simulations with the gait 92 model
-- f_TrackSim_Rajagopal.m solves the tracking simulations with the Rajagopal model
-- f_LoadSim_Rajagopal.m post processing/analysis from the simulated states and controls (both tracking and predictive simulations). 
-
-This functions requires a matlabstructure (here S) with the settings for the optimization as input. The default settings for the optimization are added to this settings structure using the function *GetDefaultSettings(S)*. You can find an overview of the settings below.
-
-Typically you well run the optimization with a specific setup structure and then analyse the simulation results. As an example:
-
-```matlab
-% settings....
-S.ResultsFolder = 'NameFolderSimResults';
-S.savename      = 'Resuls_DefaultGait92';
-
-% her also other required settings
-
-% Run simulation
-f_PredSim_Gait92(S);     % run the optimization
-f_LoadSim_Gait92(S.ResultsFolder,S.savename) % post-process simulation results
-```
-
-
-
-### Plot output
-
-You can use the function PlotResults_3DSim the create a default figure with a summary of the results. You can easily add multiple simulations to this figure. For example
-
-
-
-```matlab
-
-%.....
-% simulation walking 1.25 m/s
-S.v_tgt = 1.25;
-S.savename = 'WalkingNormal'
-f_PredSim_Gait92(S);     % run the optimization
-f_LoadSim_Gait92(S.ResultsFolder,S.savename) % post-process simulation results (saves results as S.savename with the extension _pp)
-
-% simulate walking 0.5 m/s
-S.v_tgt = 0.5;
-S.savename = 'WalkingSlow'
-f_PredSim_Gait92(S);     % run the optimization
-f_LoadSim_Gait92(S.ResultsFolder,S.savename) % post-process simulation results (saves results as S.savename with the extension _pp)
-
-% plot figure to compare results (with the three optional input arguments here)
-h = figure(); 	% new figure with handle
-PlotResults_3DSim(fullfile(S.ResultsFolder,'WalkingNormal_pp.mat'),[1 0 0],'Normal',h,1.25,'speed'); 	% plot results of normal walking
-PlotResults_3DSim(fullfile(S.ResultsFolder,'WalkingSlow_pp.mat'),[0 0 1],'Slow',h,0.5,'speed'); 	% plot results of slow walking on same figure
-
-```
-
-
-
-#### Settings- Required
-
-- **PolyFolder**: Folder with the surrogate model for the muscle-tendon length and moment arms (from step 1 of the section "Create all input for the simulations"). This path to the folder is relative to the folder (./Polynomials) [string]
-- **CasadiFunc_Folders**: Name of the folder with the casadifunctions (exported in step 2 of the section "Create all input for the simulations"). This path to the folder is relative to the folder (./CasadiFunctions) [string]
-- **v_tgt**: imposed walking speed [double]
-- **ModelName**: select type of musculoskeletal model. Currently the two options are (1) Gait92 or (2) Rajagopal [string] 
-- **Mass**: mass of the subject in kg [double]
-- **ExternalFunc:** Name of the .dll file used in the optimization (used for solving inverse dynamics). This file should be in the folder *./ExternalFunctions*. See step three of the section "Create all input for the simulations". [string].
-- **ExternalFunc2:** Name of the .dll file used for post processing. This file should be in the folder *./ExternalFunctions*. See step three of the section "Create all input for the simulations" [string]
-- **ResultsFolder**: folder the save the results [string]
-- **Savename**: the of the results file [string]
-
-
-
-#### Settings - optional
-
-**Simulated motion**
-
-- **Symmetric**: simulate symmetric motion (i.e. half a gait cycle), default is true [boolean]
-- **Periodic**: simulate a periodic motion (i.e. full gait cycle), default is false [boolean]
-
-**Settings formulation and solving NLP**
-
-- **N**: number of mesh intervals (default is 50) [double]
-- **NThreads**: number of threads for parallel computing (default is 2) [double]
-- **linear_solver**: default is mumps [string]
-- **tol_ipopt:** tolerance of ipopt solver
-- **parallelMode**: default is thread
-
-**Weights **
-
-- **W.E**: weight metabolic energy rate (default is 500)
-- **W.Ak**: weight joint accelerations (default is 50000)
-- **W.ArmE**: weight arm excitations (default is 10^6)
-- **W.passMom**: weight passive torques (default is 1000)
-- **W.A**: weight muscle activations (default is 2000)
-- **W.exp_E**: power metabolic energy (default is 2)
-- **W.Mtp**: weight mtp excitations (default is 10^6)
-- **W.u**: weight on excitations arms actuators (default is 0.001)
-- **W.Lumbar: ** weight on miniizing lumbar activations (in Rajagopal model) (default is 10^5)
-
-**Initial guess** (Note: I should improve this in the future)
-
-- **IGmodeID**: initial guess based on (1)walking motion, (2) running motion, (3) previous solution in the *Results* folder, (4) previous solution in the *./IG/data folder* default is (1)
-
-- **IGsel**: (1) quasi random initial guess (2) data-based initial guess (default is 2)
-
-- **IKfile_guess**: relative path to IK file used for initial guess (used when IGsel = 2 and IGmodeID is 1 or 2). Default is *OpenSimModel\IK_Guess_Default.mat*
-
-- **savename_ig**: name of the IK file used for initial guess (used when IGmodelID is 4). This file should be in *./IG/data folder*. [string]
-
-- **ResultsF_ig:** name of Folder with IK file for setting *savename_ig* (see above) when IGmodelID is 3 [string].
-
-- **IG_PelvisY**: height of the pelvis in the quasi-random initial guess (in m) [double]
-
-**Adapting bounds**
-
-- **IKfile_Bounds**: relative path to IK file used to determine bounds (i.e. 3 times ROM in IK file for all DOFs). Default is *OpenSimModel\IK_Guess_Default.mat*
-- **Bounds.ActLower**: lower bound on all muscle activations
-- **Bounds.ActLowerHip**: lower bound on activation of the hip muscles
-- **Bounds.ActLowerKnee**: lower bound on activation of the knee muscles
-- **S.Bounds.ActLowerAnkle**: lower bound on activation of the ankle muscles
-
-**Kinematic constraints**
-
-- **Constr.calcn:** minimal distance between calcneneus (origin) in the transversal plane. default is 0.09m [double]
-- **Constr.toes:** minimal distance between toes (origin) in the transversal plane. default is 0.09m [double]
-- **Constr.tibia:** minimal distance between tibia(?s) (origin) in the transversal plane. default is 0.09m [double]
-
-**Exoskeleton control **
-
-- **DataSet**: name of the folder with exoskeleton assistance profile (saved in the folder *./Data*) with a .mat file named *torque_profile.mat*. This mat file should contain the variables *time* and *torque* with the torque profile for one full stride.
-- **ExoBool:** Boolean to select if you want to include the torque profile (i.e. use exoskeleton)
-- **ExoScale:** scale factor for the torque profile.
+- Adjusted version of the collocation scheme (now really being an orthogonal radau scheme)
+- Support for parallel computing
+- Formulation with opti
+
+Lastly, seperate pieces of code where put together to streamline performing predictive simulations:
+
+- Automatic conversion of an OpenSim model to the external function (executable called from the workflow)
+- Perorming Muscle Analysis and polynomial fitting (integrated into the workflow)
+
+
+## Code Structure
+
+- main
+	- getDefaultSettings
+	- pre-processing
+		- osim2dll
+		- get_model_info
+		- read_and_scale_MTparameters
+			- getMTparameters
+			- scale_MTparameters
+		- get_musculoskeletal_geometry 
+			- muscle_analysis
+			- polynomial_fit
+		- update_model_info
+	- createCasadiFunctions
+	- OCP_formulations
+	- post-processing
+
+## Installation Instruction
+
+## How to use the software
+
+## Settings
+
+All user-defined settings are stored in structure *S*. In *main.m* you have to specify the required settings and are free to change/add the optional settings. 
+
+### Required
+
+- **S.subject.save_results**: path to the folder where you want to store the results of the OCP. If the path does not exist yet on your machine, it will be created automatically.
+- **S.subject.name**: the name or code of the subject you are simulating.
+- **S.subject.IG_selection**: either choose "quasi-random" or give the path to a .mot file you want to use as initial guess.
+- **S.subject.IG_bounds**: give the path to a .mot file on which IG_bounds will be based.
+
+### Optional
+
+#### S.bounds
+
+- **S.bounds.a.lower**: minimal muscle activation. Provide a number between 0 and 1. Default is *0* [double]
+- **S.bounds.calcn_dist.lower**: minimal distance between calcanei (origin) in the transversal plane. Default is *0.09* m [double]
+- **S.bounds.toes_dist.lower**: minimal distance between toes (origin) in the transversal plane. Default is *0.10* m [double]
+- **S.bounds.tibia_dist.lower**: minimal distance between tibiae (origin) in the transversal plane. Default is *0.11* m [double]
+- **S.bounds.SLL.upper**: upper bound on left step length in meters. Default is *[]* m [double]
+- **S.bounds.SLR.upper**: upper bound on right step length in meters. Default is *[]* m [double]
+- **S.bounds.dist_trav.lower**: lower bound on distance travelled in meters. Default is *[]* m [double]
+- **S.bounds.t_final.upper**: upper bound on final time in seconds. Default is *[]* s [double]
+- **S.bounds.t_final.lower**: lower bound on final time in seconds. Default is *[]* s [double]
+
+#### S.metabolicE - metabolic energy
+
+- **S.metabolicE.tanh_b**: hyperbolic tangeant smoothing factor used in the metabolic cost calculation. Default is *100* [double]
+- **S.metabolicE.model**: the name of the metabolic energy model used. Default is *Bhargava2004* https://doi.org/10.1016/S0021-9290(03)00239-2 [char]. Other options are:
+	- *Umberger2003* https://doi.org/10.1080/1025584031000091678
+	- *Umberger2010* https://doi.org/10.1098/rsif.2010.0084
+	- *Uchida2016* https://doi.org/10.1371/journal.pone.0150378
+
+#### S.misc - miscellanious
+
+- **S.misc.v_max_s**: maximal contraction velocity identifier. Default is *0* [double] :warning: ***TO CHECK***
+- **S.misc.gaitmotion_type**: type of gait simulation. Default is *HalfGaitCycle* [char] :warning: ***list all other options***
+- **S.misc.msk_geom_eq**: type of equation to approximate musculo-skeletal geometry (moment arm and muscle-tendon lengths wrt. joint angle). Default is *polynomials* [char] :warning: ***list all other options***
+- **S.misc.poly_order.lower**: minimal order of polynomial function. Default is *3* [double]
+- **S.misc.poly_order.upper**: maximal order of polynomial function. Default is *9* [double]
+
+#### S.post_process
+
+- **S.post_process.make_plot**: boolean to plot post processing results. Default is *0* :warning: ***TO CHECK: possible to make it a string array?***
+- **S.post_process.savename**: name used for saving the result files. Either choose your own naming or *structured*. Default is *structured* [char] :warning: ***add how the structured name looks like?***
+
+#### S.solver
+
+- **S.solver.linear_solver**: solver algorithm used for the OCP. Default is *mumps* [char] :warning: ***add different options***
+- **S.solver.tol_ipopt**: the power (10^-x) the dual infeasibility has to reach before the OCP can be regarded as solved; a higher number gives a more precise answer. Default is *4* [double]
+- **S.solver.max_iter**: maximal amount of itereations after wich the solver will stop. Default is *10000* [double]
+- **S.solver.parallel_mode**: type of parallel computing. Default is *thread* [char]. Other options are:
+	- ... :warning: ***add other option(s)***
+- **S.solver.N_threads**: number of threads in parallel mode. Default is *4* [double]
+- **S.solver.N_meshes**: number of mesh intervals. Default is *50* [double]
+
+#### S.subject
+
+- **S.subject.save_folder**: folder path to store the intermediate subject specific results (muscle analysis etc.). This setting is created automatically.
+- **S.subject.mass**: mass of the subject in kilograms. Default is *[]* kilograms [double]. If left empty, it will be overwritten by the mass extracted from the OpenSim model.
+- **s.subject.IG_pelvis_y**: height from the ground of the pelvis for the initial guess, in meters. Default is *[]* m [double]. I left empty, it will be overwritten by pelvis height extracted from the OpenSim model.
+- **S.subject.v_pelvis_x_trgt**: average velocity you want the model to have, in meters per second. Default is *1.25* m/s [double]
+- **S.subject.muscle_strength**: structure with scaling factors for muscle strength. Default is *[]*. 
+	- :warning: ***ad something about the possibility to choose either musclewise or jointwise strength scaling***
+	- :warning: ***retink how to write down the information about this setting***
+- **S.subject.muscle_stiff**: structure with scaling factors for muscle stiffness. Default is *[]*. 
+	- :warning: ***ad something about the possibility to choose either musclewise or jointwise scaling***
+	- :warning: ***retink how to write down the information about this setting***
+- **S.subject.muscle_sym**: structure discribing muscle symetries. Default is *[]*.
+	- :warning: ***retink how to write down the information about this setting***
+- **S.subject.tendon_stiff**: structure with tendon stiffnesses. Default is *[]*. 
+	- :warning: ***ad something about the possibility to choose either musclewise or jointwise changing of tendon stiffness***
+	- :warning: ***retink how to write down the information about this setting***
+- **S.subject.mtp_type**: type of mtp joint you want to use in the simulation. Default is *[]* :warning: ***ask Lars to further clarify this setting***
+- **S.subject.MT_params**: muscle tendon properties. Default is *[]*
+	- :warning: ***rethink this; should there be a reference to the muscle_strength, muscle_stiff and tendon_stiff?***
+- **S.subject.spasticity**: muscle spasticity. Default is *[]*
+	- :warning: ***follow up***
+- **S.subject.muscle_coordination**: muscle coordination.
+	- :warning: ***currently commented out; follow this up***
+	
+#### S.weights
+
+- **S.weights.E**: weight on metabolic energy rate. Default is *500* [double]
+- **S.weights.E_exp**: exponent for the metabolic energy rate. Default is *2* [double]
+- **S.weights.q_dotdot**: weight on joint accelerations. Default is *50000* [double]
+- **S.weights.e_arm**: weight on arm excitations. Default is *10^6* [double]
+- **S.weights.pass_torq**: weight on passive torques. Default is *1000* [double]
+- **S.weights.a**: weight on muscle activations. Default is *2000* [double]
+- **S.weights.e_mtp**: weight on mtp excitation. Default is *10^6* [double]
+- **S.weights.slack_ctrl**: weight on slack controls. Default is *0.001* [double]

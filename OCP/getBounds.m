@@ -115,7 +115,7 @@ bounds.Qdotdots.upper = bounds.Qdotdots.upper + 3*Qdotdots_range;
 %% manual adjustment
 % For several joints, we manually adjust the bounds
 % floating base tx
-bounds.Qs.upper(model_info.ExtFunIO.jointi.floating_base(4)) = 2;  
+bounds.Qs.upper(model_info.ExtFunIO.jointi.floating_base(4)) = 4;  
 bounds.Qs.lower(model_info.ExtFunIO.jointi.floating_base(4)) = 0;
 % Pelvis_ty
 bounds.Qs.upper(model_info.ExtFunIO.jointi.floating_base(5)) = model_info.IG_pelvis_y*1.2;
@@ -141,7 +141,12 @@ if S.subject.v_pelvis_x_trgt > 1.33
     % Shoulder flexion
     bounds.Qs.lower(idx_shoulder_flex) = -50*pi/180;
     % Pelvis tx
-    bounds.Qdots.upper(model_info.ExtFunIO.jointi.floating_base(4)) = 4;
+    bounds.Qdots.upper(model_info.ExtFunIO.jointi.floating_base(4)) = 8;
+end
+
+if strcmp(S.misc.gaitmotion_type,'HalfGaitCycle')
+    bounds.Qdots.upper(model_info.ExtFunIO.jointi.floating_base(4)) = ...
+        bounds.Qdots.upper(model_info.ExtFunIO.jointi.floating_base(4))/2;
 end
 
 %% Adjust bounds based on settings
