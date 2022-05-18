@@ -21,7 +21,7 @@ S.misc.main_path = pathRepo;
 
 %% Required inputs
 % name of the subject
-S.subject.name = 'Fal_s1_mtp'; 
+S.subject.name = 'Fal_s1'; 
 
 % path to folder where you want to store the results of the OCP
 S.subject.save_folder  = fullfile(pathRepoFolder,'PredSimResults',S.subject.name); 
@@ -64,7 +64,7 @@ S.solver.run_as_batch_job = 0;
 % S.misc.msk_geom_eq         = '';
 % S.misc.poly_order.lower    = ;
 % S.misc.poly_order.upper    = ;
-% S.misc.msk_geom_bounds      = {{'knee_angle_l','knee_angle_r'},-120,10};
+S.misc.msk_geom_bounds      = {{'lumbar_extension'},-50,50};
 
 % % S.post_process
 % S.post_process.make_plot = '';

@@ -63,6 +63,8 @@ interval = Qs_time(time_expi.Qs(1)):step:Qs_time(time_expi.Qs(2));
 guess.Qs = interp1(round(Qs_time,4),guess.Qs_all,round(interval,4));
 guess.Qs(:,model_info.ExtFunIO.jointi.base_forward) = guess.Qs(:,model_info.ExtFunIO.jointi.base_forward) - ....
     guess.Qs(1,model_info.ExtFunIO.jointi.base_forward);
+guess.Qs(:,model_info.ExtFunIO.jointi.base_lateral) = guess.Qs(:,model_info.ExtFunIO.jointi.base_lateral) - ....
+    guess.Qs(1,model_info.ExtFunIO.jointi.base_lateral);
 
 % Adjust pelvis height
 guess.Qs(:,model_info.ExtFunIO.coordi.pelvis_ty) = guess.Qs(:,model_info.ExtFunIO.coordi.pelvis_ty) ...
@@ -97,16 +99,21 @@ if strcmp(S.misc.gaitmotion_type,'HalfGaitCycle')
     inv_X_Qs = zeros(1,nq.all);
     inv_X_Qs(1,model_info.ExtFunIO.symQs.QsInvA) = guess.Qs(1,model_info.ExtFunIO.symQs.QsInvB);
     inv_X_Qdots = zeros(1,nq.all);
-    inv_X_Qdots(1,model_info.ExtFunIO.symQs.QdotsInvA) = guess.Qs(1,model_info.ExtFunIO.symQs.QdotsInvB);
+    inv_X_Qdots(1,model_info.ExtFunIO.symQs.QdotsInvA) = guess.Qdots(1,model_info.ExtFunIO.symQs.QdotsInvB);
     % For other joints, we take the opposite right and left
-    inv_X_Qs(model_info.ExtFunIO.symQs.QsOpp) = ...
-        -guess.Qs(1,model_info.ExtFunIO.symQs.QsOpp);           
-    inv_X_Qdots(model_info.ExtFunIO.symQs.QsOpp) = ...
-        -guess.Qdots(1,model_info.ExtFunIO.symQs.QsOpp);           
+    inv_X_Qs(model_info.ExtFunIO.symQs.QsOpp) = -guess.Qs(1,model_info.ExtFunIO.symQs.QsOpp);           
+    inv_X_Qdots(model_info.ExtFunIO.symQs.QsOpp) = -guess.Qdots(1,model_info.ExtFunIO.symQs.QsOpp);           
+    inv_X_Qdots(1,model_info.ExtFunIO.symQs.base_lateral) = -guess.Qdots(1,model_info.ExtFunIO.symQs.base_lateral);
+
     dx = guess.Qs(end,model_info.ExtFunIO.jointi.base_forward) - ...
         guess.Qs(end-1,model_info.ExtFunIO.jointi.base_forward);
     inv_X_Qs(model_info.ExtFunIO.jointi.base_forward) = ...
         guess.Qs(end,model_info.ExtFunIO.jointi.base_forward) + dx;
+    
+    dz = guess.Qs(end,model_info.ExtFunIO.jointi.base_lateral) - ...
+        guess.Qs(end-1,model_info.ExtFunIO.jointi.base_lateral);
+    inv_X_Qs(model_info.ExtFunIO.jointi.base_lateral) = ...
+        guess.Qs(end,model_info.ExtFunIO.jointi.base_lateral) + dz;
 
     guess.Qs = [guess.Qs; inv_X_Qs];
     guess.Qdots = [guess.Qdots; inv_X_Qdots];
@@ -123,7 +130,6 @@ else
     guess.FTtilde = [guess.FTtilde; guess.FTtilde(1,:)];
     guess.a_a = [guess.a_a; guess.a_a(1,:)];
 end
-
 
 %% Final time
 % The final time is function of the imposed speed
