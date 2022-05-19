@@ -33,7 +33,7 @@ if exist('HS1','var')
     clear HS1
 end
 
-% increase threshold untill you have at least on frame above the threshold
+% increase threshold untill you have at least one frame above the threshold
 nFramesBelow= sum(GRFk_opt(:,2)<threshold);
 while nFramesBelow == 0
     threshold = threshold + 1;

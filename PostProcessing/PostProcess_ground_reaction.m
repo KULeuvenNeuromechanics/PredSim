@@ -29,44 +29,51 @@ function [R] = PostProcess_ground_reaction(S,model_info,f_casadi,R)
 % Last edit date: 
 % --------------------------------------------------------------------------
 
-N = size(R.Qs,1);
+N = size(R.kinematics.Qs,1);
 
 import casadi.*
 [F] = load_external_function(S);
 
 
 QsQdots = zeros(N,2*model_info.ExtFunIO.jointi.nq.all);
-QsQdots(:,1:2:end) = R.Qs_rad;
-QsQdots(:,2:2:end) = R.Qdots_rad;
+QsQdots(:,1:2:end) = R.kinematics.Qs_rad;
+QsQdots(:,2:2:end) = R.kinematics.Qdots_rad;
 
 Foutk_opt = zeros(N,F.nnz_out);
 
 for i = 1:N
     % ID moments
-    [res] = F([QsQdots(i,:)';R.Qddots_rad(i,:)']);
+    [res] = F([QsQdots(i,:)';R.kinematics.Qddots_rad(i,:)']);
     Foutk_opt(i,:) = full(res);
 end
 
 % Ground Reaction Forces
-R.GRFs = Foutk_opt(:,[model_info.ExtFunIO.GRFs.right_foot,model_info.ExtFunIO.GRFs.left_foot]);
-R.colheaders.GRF = {'fore_aft_r','vertical_r','lateral_r','fore_aft_l','vertical_l','lateral_l'};
+R.ground_reaction.GRF_r = Foutk_opt(:,model_info.ExtFunIO.GRFs.right_foot);
+R.ground_reaction.GRF_l = Foutk_opt(:,model_info.ExtFunIO.GRFs.left_foot);
+R.colheaders.GRF = {'fore_aft','vertical','lateral'};
 
 % Ground Reaction Moments
-R.GRMs = Foutk_opt(:,[model_info.ExtFunIO.GRMs.right_total,model_info.ExtFunIO.GRMs.left_total]);
+R.ground_reaction.GRM_r = Foutk_opt(:,model_info.ExtFunIO.GRMs.right_total);
+R.ground_reaction.GRM_l = Foutk_opt(:,model_info.ExtFunIO.GRMs.left_total);
 
 % Center of Pressure
-COP = zeros(size(R.GRFs));
-for i = 1:N
-    if R.GRFs(i,2) > 20
-        COP(i,1) = R.GRMs(i,3)./R.GRFs(i,2);
-        COP(i,3) = -R.GRMs(i,1)./R.GRFs(i,2);
-    end
-    if R.GRFs(i,5) > 20
-        COP(i,4) = R.GRMs(i,6)./R.GRFs(i,5);
-        COP(i,6) = -R.GRMs(i,4)./R.GRFs(i,5);
-    end
-end
-R.COP = COP;
+COP_r = zeros(size(R.ground_reaction.GRF_r));
+COP_l = COP_r;
+
+idx_stance_r = find(R.ground_reaction.GRF_r(:,2) > 20);
+idx_stance_l = find(R.ground_reaction.GRF_l(:,2) > 20);
+
+COP_r(idx_stance_r,1) = R.ground_reaction.GRM_r(idx_stance_r,3)./R.ground_reaction.GRF_r(idx_stance_r,2);
+COP_r(idx_stance_r,3) = -R.ground_reaction.GRM_r(idx_stance_r,1)./R.ground_reaction.GRF_r(idx_stance_r,2);
+
+COP_l(idx_stance_l,1) = R.ground_reaction.GRM_l(idx_stance_l,3)./R.ground_reaction.GRF_l(idx_stance_l,2);
+COP_l(idx_stance_l,3) = -R.ground_reaction.GRM_l(idx_stance_l,1)./R.ground_reaction.GRF_l(idx_stance_l,2);
+
+R.ground_reaction.COP_r = COP_r;
+R.ground_reaction.COP_l = COP_l;
+
+R.ground_reaction.idx_stance_r = idx_stance_r;
+R.ground_reaction.idx_stance_l = idx_stance_l;
 
 
 

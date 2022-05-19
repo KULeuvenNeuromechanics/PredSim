@@ -70,7 +70,7 @@ function [energy_total,Adot,Mdot,Sdot,Wdot,energy_model] = ...
 %   * energy rate from shortening and lengthening
 %   
 %   - Wdot -
-%   * energy rate from mechanical work 
+%   * energy rate from positive mechanical work 
 %   
 %   - energy_model -
 %   * energy rate from energy_total including basal rate

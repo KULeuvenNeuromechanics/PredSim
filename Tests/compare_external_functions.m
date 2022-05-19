@@ -100,80 +100,85 @@ QsQdots_MX(2:2:end) = Qdots_MX(:);
 res1_MX = F1([QsQdots_MX;Qddots_MX]);
 res2_MX = F2([QsQdots_MX;Qddots_MX]);
 
+%%
+
+% figure
+% subplot(121)
+% spy(jacobian(res1_MX,[Qs_MX;Qdots_MX;Qddots_MX]));
+% xlabel('Qs, Qdots, Qddots')
+% title('old external function')
+% xline(n_coord+0.5,'--k')
+% xline(2*n_coord+0.5,'--k')
+% cnt = n_coord;
+% yline(cnt+0.5,'--k')
+% cnt = cnt + length(fields(IO1.origin))*3;
+% yline(cnt+0.5,'--k')
+% cnt = cnt + length(fields(IO1.GRFs))*3;
+% yline(cnt+0.5,'--k')
+% cnt = cnt + length(fields(IO1.GRMs))*3;
+% yline(cnt+0.5,'--k')
+% cnt = cnt + length(fields(IO1.P_contact_deformation_y));
+% yline(cnt+0.5,'--k')
+% ylim([0,cnt+1])
+% xlim([0,n_coord*3+1])
+% 
+% 
+% subplot(122)
+% spy(jacobian(res2_MX,[Qs_MX;Qdots_MX;Qddots_MX]));
+% axis tight
+% xlabel('Qs, Qdots, Qddots')
+% title('new external function')
+% xline(n_coord+0.5,'--k')
+% xline(2*n_coord+0.5,'--k')
+% cnt = n_coord;
+% yline(cnt+0.5,'--k')
+% cnt = cnt + length(fields(IO1.origin))*3;
+% yline(cnt+0.5,'--k')
+% cnt = cnt + length(fields(IO1.GRFs))*3;
+% yline(cnt+0.5,'--k')
+% cnt = cnt + length(fields(IO1.GRMs))*3;
+% yline(cnt+0.5,'--k')
+% cnt = cnt + length(fields(IO1.P_contact_deformation_y));
+% yline(cnt+0.5,'--k')
+% ylim([0,cnt+1])
+% xlim([0,n_coord*3+1])
+% 
+% sgtitle('Full Jacobian sparsity')
+
+
 figure
-subplot(121)
-spy(jacobian(res1_MX,[Qs_MX;Qdots_MX;Qddots_MX]));
-xlabel('Qs, Qdots, Qddots')
-title('old external function')
-xline(n_coord+0.5,'--k')
-xline(2*n_coord+0.5,'--k')
-cnt = n_coord;
-yline(cnt+0.5,'--k')
-cnt = cnt + length(fields(IO1.origin))*3;
-yline(cnt+0.5,'--k')
-cnt = cnt + length(fields(IO1.GRFs))*3;
-yline(cnt+0.5,'--k')
-cnt = cnt + length(fields(IO1.GRMs))*3;
-yline(cnt+0.5,'--k')
-cnt = cnt + length(fields(IO1.P_contact_deformation_y));
-yline(cnt+0.5,'--k')
-ylim([0,cnt+1])
-xlim([0,n_coord*3+1])
-
-
-subplot(122)
-spy(jacobian(res2_MX,[Qs_MX;Qdots_MX;Qddots_MX]));
-axis tight
-xlabel('Qs, Qdots, Qddots')
-title('new external function')
-xline(n_coord+0.5,'--k')
-xline(2*n_coord+0.5,'--k')
-cnt = n_coord;
-yline(cnt+0.5,'--k')
-cnt = cnt + length(fields(IO1.origin))*3;
-yline(cnt+0.5,'--k')
-cnt = cnt + length(fields(IO1.GRFs))*3;
-yline(cnt+0.5,'--k')
-cnt = cnt + length(fields(IO1.GRMs))*3;
-yline(cnt+0.5,'--k')
-cnt = cnt + length(fields(IO1.P_contact_deformation_y));
-yline(cnt+0.5,'--k')
-ylim([0,cnt+1])
-xlim([0,n_coord*3+1])
-
-sgtitle('Full Jacobian sparsity')
-
-
-figure
-subplot(121)
+subplot(3,2,[1,3])
 cnt = n_coord + length(fields(IO1.origin))*3;
 spy(jacobian(res1_MX(1:cnt),[Qs_MX;Qdots_MX;Qddots_MX]));
 xlabel('Qs, Qdots, Qddots')
+ylabel('positions    ID torques')
 title('old external function')
-xline(n_coord+0.5,'--k')
-xline(2*n_coord+0.5,'--k')
+xline(n_coord+0.5,'-','Color',[1,1,1]*0.6)
+xline(2*n_coord+0.5,'-','Color',[1,1,1]*0.6)
 cnt = n_coord;
-yline(cnt+0.5,'--k')
+yline(cnt+0.5,'-','Color',[1,1,1]*0.6)
 cnt = cnt + length(fields(IO1.origin))*3;
-yline(cnt+0.5,'--k')
 ylim([0,cnt+1])
 xlim([0,n_coord*3+1])
+set(gca,'XTick',[1,n_coord,n_coord*2,n_coord*3])
+set(gca,'YTick',[1,n_coord,cnt])
 
-
-subplot(122)
+subplot(3,2,[2,4])
 cnt = n_coord + length(fields(IO1.origin))*3;
 spy(jacobian(res2_MX(1:cnt),[Qs_MX;Qdots_MX;Qddots_MX]));
 axis tight
 xlabel('Qs, Qdots, Qddots')
+ylabel('positions    ID torques')
 title('new external function')
-xline(n_coord+0.5,'--k')
-xline(2*n_coord+0.5,'--k')
+xline(n_coord+0.5,'-','Color',[1,1,1]*0.6)
+xline(2*n_coord+0.5,'-','Color',[1,1,1]*0.6)
 cnt = n_coord;
-yline(cnt+0.5,'--k')
+yline(cnt+0.5,'-','Color',[1,1,1]*0.6)
 cnt = cnt + length(fields(IO1.origin))*3;
-yline(cnt+0.5,'--k')
 ylim([0,cnt+1])
 xlim([0,n_coord*3+1])
+set(gca,'XTick',[1,n_coord,n_coord*2,n_coord*3])
+set(gca,'YTick',[1,n_coord,cnt])
 
 sgtitle('OCP Jacobian sparsity')
 

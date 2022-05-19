@@ -27,16 +27,10 @@ function [R] = PostProcess_write_motion_file(S,model_info,f_casadi,R)
 % Last edit date: 
 % --------------------------------------------------------------------------
 
-if strcmp(S.misc.gaitmotion_type,'HalfGaitCycle')
-    t_mesh = [R.t_mesh(1:end-1),R.t_mesh(1:end-1)+R.t_mesh(end),...
-            R.t_mesh(1:end-1)+R.t_mesh(end)*2,R.t_mesh(1:end-1)+R.t_mesh(end)*3];
-else
-    t_mesh = [R.t_mesh(1:end-1),R.t_mesh(1:end-1)+R.t_mesh(end)];
-end
 
-q_opt_GUI_GC_1 = [R.Qs];
-q_opt_GUI_GC_1(:,model_info.ExtFunIO.jointi.rotations) =...
-    q_opt_GUI_GC_1(:,model_info.ExtFunIO.jointi.rotations)*pi/180;
+t_mesh = [R.time.mesh_GC(1:end-1),R.time.mesh_GC(1:end-1)+R.time.mesh_GC(end)];
+
+q_opt_GUI_GC_1 = [R.kinematics.Qs_rad];
 q_opt_GUI_GC_2 = q_opt_GUI_GC_1;
 q_opt_GUI_GC_2(:,model_info.ExtFunIO.jointi.base_forward) =...
     q_opt_GUI_GC_2(:,model_info.ExtFunIO.jointi.base_forward) +...
@@ -46,7 +40,7 @@ JointAngle.labels = [{'time'},model_info.ExtFunIO.coord_names.all(:)'];
 % Joint angles
 q_opt_GUI_GC = [t_mesh',[q_opt_GUI_GC_1;q_opt_GUI_GC_2]];
 % Muscle activations (to have muscles turning red when activated).
-Acts_GC = R.a;
+Acts_GC = R.muscles.a;
 Acts_GC_GUI = [Acts_GC;Acts_GC];
 % Combine data joint angles and muscle activations
 JointAngleMuscleAct.data = [q_opt_GUI_GC,Acts_GC_GUI];

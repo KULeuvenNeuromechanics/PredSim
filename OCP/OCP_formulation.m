@@ -28,8 +28,8 @@ t0 = tic;
 
 %% User inputs (typical settings structure)
 % settings for optimization
-N           = S.solver.N_meshes; % number of mesh intervals
-W           = S.weights; % weights optimization
+N = S.solver.N_meshes; % number of mesh intervals
+W = S.weights; % weights optimization
 nq          = model_info.ExtFunIO.jointi.nq; % lengths of coordinate subsets
 
 %% Load external functions
@@ -755,6 +755,12 @@ for i=1:N
 end
 tgrid_ext(end)=tf_opt;
 
+if strcmp(S.misc.gaitmotion_type,'HalfGaitCycle')
+    t_mesh_GC = [tgrid(1:end-1),tgrid(1:end)+tgrid(end)];
+else
+    t_mesh_GC = tgrid;
+end
+
 %% Assert average speed
 dist_trav_opt = q_opt_unsc_all.rad(end,model_info.ExtFunIO.jointi.base_forward) - ...
     q_opt_unsc_all.rad(1,model_info.ExtFunIO.jointi.base_forward); % distance traveled
@@ -1172,25 +1178,25 @@ end
 %% Convert joint accelerations to °/s^2
 Qdotdots_GC(:,model_info.ExtFunIO.jointi.rotations) = Qdotdots_GC(:,model_info.ExtFunIO.jointi.rotations)*180/pi;
 
-
 %% Save the results
 % Structure Results_all
-R.S             = S;
-R.obj           = contributionCost;
-R.t_mesh        = tgrid;
-R.t_coll        = tgrid_ext;
+R.S = S;
+R.objective = contributionCost;
+R.time.mesh = tgrid;
+R.time.coll = tgrid_ext;
+R.time.mesh_GC = t_mesh_GC;
 R.colheaders.coordinates = model_info.ExtFunIO.coord_names.all;
 R.colheaders.muscles = model_info.muscle_info.muscle_names;
-R.Qs            = Qs_GC;
-R.Qdots         = Qdots_GC;
-R.Qddots        = Qdotdots_GC;
-R.a             = Acts_GC;
-R.da            = dActs_GC;
-R.FTtilde       = FTtilde_GC;
-R.dFTtilde      = dFTtilde_GC;
-R.a_torqAct     = a_a_GC;
-R.e_torqAct     = e_a_GC;
-R.T_torqAct     = T_a_GC;
+R.kinematics.Qs = Qs_GC;
+R.kinematics.Qdots = Qdots_GC;
+R.kinematics.Qddots = Qdotdots_GC;
+R.muscles.a = Acts_GC;
+R.muscles.da = dActs_GC;
+R.muscles.FTtilde = FTtilde_GC;
+R.muscles.dFTtilde = dFTtilde_GC;
+R.torque_actuators.a = a_a_GC;
+R.torque_actuators.e = e_a_GC;
+R.torque_actuators.T = T_a_GC;
 
 Outname = fullfile(S.subject.save_folder,[S.post_process.result_filename '.mat']);
 save(Outname,'w_opt','stats','setup','R','model_info');

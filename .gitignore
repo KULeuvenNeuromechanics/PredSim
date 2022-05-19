@@ -3,3 +3,6 @@
 *.asv
 *.sto
 *.log
+
+/opensimAD/*
+/Subjects/Fal_s1_mtp_v2

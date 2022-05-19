@@ -29,31 +29,31 @@ function [R] = PostProcess_msk_geometry(S,model_info,f_casadi,R)
 % --------------------------------------------------------------------------
 
 
-N = size(R.Qs,1);
+N = size(R.kinematics.Qs,1);
 NMuscle = model_info.muscle_info.NMuscle;
 
 %% Get approximated geometry from CasADi function
-R.lMT = zeros(N,NMuscle);
-R.vMT = zeros(N,NMuscle);
-R.dM = zeros(N,NMuscle,size(R.Qs,2));
+R.muscles.lMT = zeros(N,NMuscle);
+R.muscles.vMT = zeros(N,NMuscle);
+R.muscles.dM = zeros(N,NMuscle,size(R.kinematics.Qs,2));
 
 for i=1:N
 
-    [lMTj,vMTj,dMj] =  f_casadi.lMT_vMT_dM(R.Qs_rad(i,:)',R.Qdots_rad(i,:)');
+    [lMTj,vMTj,dMj] =  f_casadi.lMT_vMT_dM(R.kinematics.Qs_rad(i,:)',R.kinematics.Qdots_rad(i,:)');
 
-    R.lMT(i,:) = full(lMTj);
-    R.vMT(i,:) = full(vMTj);
-    R.dM(i,:,:) = full(dMj);
+    R.muscles.lMT(i,:) = full(lMTj);
+    R.muscles.vMT(i,:) = full(vMTj);
+    R.muscles.dM(i,:,:) = full(dMj);
 
 end
 
 
 %% Get reference geometry from OpenSim model
-[MuscleData] = muscleAnalysisAPI(S,model_info.osim_path,model_info,R.Qs_rad);
+[MuscleData] = muscleAnalysisAPI(S,model_info.osim_path,model_info,R.kinematics.Qs_rad);
 
 %% Compare
-Delta_lMT = R.lMT - MuscleData.lMT;
-Delta_dM = R.dM - MuscleData.dM;
+Delta_lMT = R.muscles.lMT - MuscleData.lMT;
+Delta_dM = R.muscles.dM - MuscleData.dM;
 
 rmse_lMT = sqrt(mean(Delta_lMT.^2,1));
 rmse_dM = squeeze(sqrt(mean(Delta_dM.^2,1)));
@@ -76,6 +76,6 @@ if ~isempty(id)
     end
 end
 
-%%
+
 
 end

@@ -19,9 +19,11 @@ addpath(pathDefaultSettings)
 [S] = initializeSettings();
 S.misc.main_path = pathRepo;
 
+addpath([S.misc.main_path '\VariousFunctions'])
+
 %% Required inputs
 % name of the subject
-S.subject.name = 'Fal_s1'; 
+S.subject.name = 'Fal_s1_mtp'; 
 
 % path to folder where you want to store the results of the OCP
 S.subject.save_folder  = fullfile(pathRepoFolder,'PredSimResults',S.subject.name); 
@@ -64,23 +66,23 @@ S.solver.run_as_batch_job = 0;
 % S.misc.msk_geom_eq         = '';
 % S.misc.poly_order.lower    = ;
 % S.misc.poly_order.upper    = ;
-S.misc.msk_geom_bounds      = {{'lumbar_extension'},-50,50};
+% S.misc.msk_geom_bounds      = {{'lumbar_extension'},-50,50};
 
 % % S.post_process
 % S.post_process.make_plot = '';
 % S.post_process.savename  = '';
-% S.post_process.rerun   = 1;
-% S.post_process.result_filename = 'Fal_s1_mtp_v2';
+S.post_process.rerun   = 1;
+S.post_process.result_filename = 'Fal_s1_mtp_v14';
 
 % % S.solver
 % S.solver.linear_solver  = '';
 % S.solver.tol_ipopt      = ;
-% S.solver.max_iter       = 5;
+S.solver.max_iter       = 5;
 % S.solver.parallel_mode  = '';
 % S.solver.N_threads      = ;
 % S.solver.N_meshes       = ;
 % S.solver.par_cluster_name = ;
-S.solver.CasADi_path    = 'C:\Users\mat950\Documents\Software\Download\Casadi';
+% S.solver.CasADi_path    = 'C:\Users\mat950\Documents\Software\Download\Casadi';
 
 
 % % S.subject
@@ -96,9 +98,9 @@ S.subject.mtp_type          = '2022paper';
 % S.subject.MT_params         = ;
 % S.subject.spasticity        = ;
 % S.subject.muscle_coordination = ;
-S.subject.set_stiffness_coefficient_selected_dofs = {{'mtp_angle_l','mtp_angle_r'},17};
-S.subject.set_damping_coefficient_selected_dofs = {{'mtp_angle_l','mtp_angle_r'},0.5};
-S.subject.set_limit_torque_coefficients_selected_dofs = {{'mtp_angle_l','mtp_angle_r'},[0,0,0,0],[0,0]};
+S.subject.set_stiffness_coefficient_selected_dofs = {{'mtp_angle_l','mtp_angle_r'},25};
+S.subject.set_damping_coefficient_selected_dofs = {{'mtp_angle_l','mtp_angle_r'},2};
+% S.subject.set_limit_torque_coefficients_selected_dofs = {{'mtp_angle_l','mtp_angle_r'},[0,0,0,0],[0,0]};
 
 % % S.weights
 % S.weights.E         = ;
@@ -111,10 +113,9 @@ S.subject.set_limit_torque_coefficients_selected_dofs = {{'mtp_angle_l','mtp_ang
 
 % %S.Cpp2Dll: required inputs to convert .osim to .dll
 % optional: if you want to install the opensimExe
-S.Cpp2Dll.PathCpp2Dll_Exe = InstallOsim2Dll_Exe('C:\Temp\TestInstall'); %(optional: if you want to install the opensimExe)
-S.Cpp2Dll.compiler = 'Visual Studio 15 2017 Win64';
-S.Cpp2Dll.export3DSegmentOrigins={'calcn_r', 'calcn_l', 'femur_r', 'femur_l',...
-    'hand_r','hand_l', 'tibia_r', 'tibia_l', 'toes_r', 'toes_l'};
+S.Cpp2Dll.PathCpp2Dll_Exe = InstallOsim2Dll_Exe('C:\GBW_MyPrograms\Osim2Dll_exe'); %(optional: if you want to install the opensimExe)
+% S.Cpp2Dll.compiler = 'Visual Studio 15 2017 Win64';
+% S.Cpp2Dll.export3DSegmentOrigins = ;
 S.Cpp2Dll.verbose_mode = 0; % 0 for no outputs from cmake
 
 %% Run predictive simulations

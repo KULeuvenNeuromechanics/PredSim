@@ -34,5 +34,5 @@ tact = ones(1,model_info.muscle_info.NMuscle)*model_info.muscle_info.tact;
 % Deactivation time constant
 tdeact = ones(1,model_info.muscle_info.NMuscle)*model_info.muscle_info.tdeact; 
 
-R.e = computeExcitationRaasch(R.a,R.da,tdeact,tact);
+R.muscles.e = computeExcitationRaasch(R.muscles.a,R.muscles.da,tdeact,tact);
 

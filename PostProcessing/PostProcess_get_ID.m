@@ -29,24 +29,24 @@ function [R] = PostProcess_get_ID(S,model_info,f_casadi,R)
 % Last edit date: 
 % --------------------------------------------------------------------------
 
-N = size(R.Qs,1);
+N = size(R.kinematics.Qs,1);
 
 import casadi.*
 [F] = load_external_function(S);
 
 
 QsQdots = zeros(N,2*model_info.ExtFunIO.jointi.nq.all);
-QsQdots(:,1:2:end) = R.Qs_rad;
-QsQdots(:,2:2:end) = R.Qdots_rad;
+QsQdots(:,1:2:end) = R.kinematics.Qs_rad;
+QsQdots(:,2:2:end) = R.kinematics.Qdots_rad;
 
 Foutk_opt = zeros(N,F.nnz_out);
 
 for i = 1:N
     % ID moments
-    [res] = F([QsQdots(i,:)';R.Qddots_rad(i,:)']);
+    [res] = F([QsQdots(i,:)';R.kinematics.Qddots_rad(i,:)']);
     Foutk_opt(i,:) = full(res);
 end
 
-R.Tid = Foutk_opt(:,1:model_info.ExtFunIO.jointi.nq.all);
+R.kinetics.T_ID = Foutk_opt(:,1:model_info.ExtFunIO.jointi.nq.all);
 
 

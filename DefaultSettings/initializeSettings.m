@@ -26,6 +26,7 @@ S.post_process = [];
 S.solver       = [];
 S.subject      = [];
 S.weights      = [];
+S.Cpp2Dll      = [];
 
 % bounds have an .upper and .lower field
 S.bounds.a          = [];
