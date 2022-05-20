@@ -40,6 +40,7 @@ for i=1:n_coord
     idx2(i) = IO2.coordi.(coord_names{i});
 end
 
+coord_names_all = [coord_names,fieldnames(IO2.coordi)];
 
 %%
 
@@ -177,8 +178,8 @@ yline(cnt+0.5,'-','Color',[1,1,1]*0.6)
 cnt = cnt + length(fields(IO1.origin))*3;
 ylim([0,cnt+1])
 xlim([0,n_coord*3+1])
-set(gca,'XTick',[1,n_coord,n_coord*2,n_coord*3])
-set(gca,'YTick',[1,n_coord,cnt])
+set(gca,'XTick',[n_coord,n_coord*2,n_coord*3])
+set(gca,'YTick',[n_coord,cnt])
 
 sgtitle('OCP Jacobian sparsity')
 

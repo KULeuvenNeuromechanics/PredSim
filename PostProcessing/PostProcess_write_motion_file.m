@@ -30,7 +30,7 @@ function [R] = PostProcess_write_motion_file(S,model_info,f_casadi,R)
 
 t_mesh = [R.time.mesh_GC(1:end-1),R.time.mesh_GC(1:end-1)+R.time.mesh_GC(end)];
 
-q_opt_GUI_GC_1 = [R.kinematics.Qs_rad];
+q_opt_GUI_GC_1 = [R.kinematics.Qs];
 q_opt_GUI_GC_2 = q_opt_GUI_GC_1;
 q_opt_GUI_GC_2(:,model_info.ExtFunIO.jointi.base_forward) =...
     q_opt_GUI_GC_2(:,model_info.ExtFunIO.jointi.base_forward) +...

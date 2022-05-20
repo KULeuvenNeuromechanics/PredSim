@@ -37,7 +37,7 @@ S.subject.IG_selection_gaitCyclePercent = 50;
 osim_path = fullfile(pathRepo,'Subjects',S.subject.name,[S.subject.name '.osim']);
 
 % Do you want to run the simulation as a batch job (parallel computing toolbox)
-S.solver.run_as_batch_job = 0;
+S.solver.run_as_batch_job = 1;
 
 %% Optional inputs
 % see README.md in the main folder for information about these optional
@@ -72,17 +72,17 @@ S.solver.run_as_batch_job = 0;
 % S.post_process.make_plot = '';
 % S.post_process.savename  = '';
 S.post_process.rerun   = 1;
-S.post_process.result_filename = 'Fal_s1_mtp_v14';
+S.post_process.result_filename = 'Fal_s1_mtp_job148';
 
 % % S.solver
 % S.solver.linear_solver  = '';
 % S.solver.tol_ipopt      = ;
-S.solver.max_iter       = 5;
+% S.solver.max_iter       = 5;
 % S.solver.parallel_mode  = '';
-% S.solver.N_threads      = ;
+% S.solver.N_threads      = 6;
 % S.solver.N_meshes       = ;
 % S.solver.par_cluster_name = ;
-% S.solver.CasADi_path    = 'C:\Users\mat950\Documents\Software\Download\Casadi';
+S.solver.CasADi_path    = 'C:\GBW_MyPrograms\casadi_3_5_5';
 
 
 % % S.subject
