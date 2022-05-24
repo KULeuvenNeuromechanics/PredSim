@@ -588,10 +588,6 @@ diary(Outname);
 % adjusts for that.
 [w_opt,stats] = solve_NLPSOL(opti,options);
 
-% % for debug purpose: load raw results
-% Outname = fullfile(S.subject.save_folder,[S.post_process.result_filename '.mat']);
-% load(Outname,'w_opt','stats');
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 diary off
 % Extract results
@@ -602,7 +598,17 @@ setup.scaling = scaling;
 setup.guess = guess;
 
 Outname = fullfile(S.subject.save_folder,[S.post_process.result_filename '.mat']);
-save(Outname,'w_opt','stats','setup','model_info','S','');
+save(Outname,'w_opt','stats','setup','model_info','S');
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% To salvage results after a botched post-processing attempt, use code
+% below and comment out rest of this section.
+% Outname = fullfile(S.subject.save_folder,[S.post_process.result_filename '.mat']);
+% load(Outname,'w_opt','stats','setup','model_info','R');
+% scaling = setup.scaling;
+% S = R.S;
+% clear 'R'
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Essential post processing
@@ -867,9 +873,9 @@ contributionCost.relativeValues = 1/(dist_trav_opt)*[E_costf,A_costf,...
     QdotdotArm_costf]./J_optf*100;
 contributionCost.relativeValuesRound2 = ...
     round(contributionCost.relativeValues,2);
-contributionCost.labels = {'metabolicEnergy','muscleActivation',...
-    'actuatorExcitation','jointAccelerations','passiveTorques','dadt','dFdt',...
-    'armAccelerations'};
+contributionCost.labels = {'metabolic energy','muscle activation',...
+    'actuator excitation','joint accelerations','limit torques','dadt','dFdt',...
+    'arm accelerations'};
 
 % assertCost should be 0
 assertCost = abs(J_optf - 1/(dist_trav_opt)*(E_costf+A_costf + Arm_costf + ...
@@ -1187,6 +1193,7 @@ R.time.coll = tgrid_ext;
 R.time.mesh_GC = t_mesh_GC;
 R.colheaders.coordinates = model_info.ExtFunIO.coord_names.all;
 R.colheaders.muscles = model_info.muscle_info.muscle_names;
+R.colheaders.objective = contributionCost.labels;
 R.kinematics.Qs = Qs_GC;
 R.kinematics.Qdots = Qdots_GC;
 R.kinematics.Qddots = Qdotdots_GC;

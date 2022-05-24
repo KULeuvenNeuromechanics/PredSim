@@ -1,12 +1,11 @@
-function [R] = PostProcess_muscle_excitations(S,model_info,f_casadi,R)
+function [R] = PostProcess_muscle_excitations(model_info,f_casadi,R)
 % --------------------------------------------------------------------------
 % PostProcess_muscle_excitations
-%   This function computes the muscle excitations
-% 
-% INPUT:
-%   - S -
-%   * setting structure S
+%   This function computes muscle excitations from time derivative of muscle 
+%   activations using Raasch's model.
+%   More details in De Groote et al. (2009): DOI: 10.1080/10255840902788587
 %
+% INPUT:
 %   - model_info -
 %   * structure with all the model information based on the OpenSim model
 % 
@@ -34,5 +33,6 @@ tact = ones(1,model_info.muscle_info.NMuscle)*model_info.muscle_info.tact;
 % Deactivation time constant
 tdeact = ones(1,model_info.muscle_info.NMuscle)*model_info.muscle_info.tdeact; 
 
+%
 R.muscles.e = computeExcitationRaasch(R.muscles.a,R.muscles.da,tdeact,tact);
 

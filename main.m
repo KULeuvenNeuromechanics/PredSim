@@ -23,7 +23,7 @@ addpath([S.misc.main_path '\VariousFunctions'])
 
 %% Required inputs
 % name of the subject
-S.subject.name = 'Fal_s1_mtp'; 
+S.subject.name = 'Fal_s1_mtp_v2'; 
 
 % path to folder where you want to store the results of the OCP
 S.subject.save_folder  = fullfile(pathRepoFolder,'PredSimResults',S.subject.name); 
@@ -37,7 +37,7 @@ S.subject.IG_selection_gaitCyclePercent = 50;
 osim_path = fullfile(pathRepo,'Subjects',S.subject.name,[S.subject.name '.osim']);
 
 % Do you want to run the simulation as a batch job (parallel computing toolbox)
-S.solver.run_as_batch_job = 1;
+S.solver.run_as_batch_job = 0;
 
 %% Optional inputs
 % see README.md in the main folder for information about these optional
@@ -72,7 +72,8 @@ S.solver.run_as_batch_job = 1;
 % S.post_process.make_plot = '';
 % S.post_process.savename  = '';
 S.post_process.rerun   = 1;
-S.post_process.result_filename = 'Fal_s1_mtp_job148';
+S.post_process.result_filename = 'Fal_s1_mtp_v2_job149';
+% S.post_process.result_filename = 'Fal_s1_mtp_job148';
 
 % % S.solver
 % S.solver.linear_solver  = '';

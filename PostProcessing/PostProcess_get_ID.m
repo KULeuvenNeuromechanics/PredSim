@@ -1,4 +1,4 @@
-function [R] = PostProcess_get_ID(S,model_info,f_casadi,R)
+function [R] = PostProcess_get_ID(model_info,f_casadi,R)
 % --------------------------------------------------------------------------
 % PostProcess_get_ID
 %   This function calculates the inverse dynamic joint torques/forces by 
@@ -6,9 +6,6 @@ function [R] = PostProcess_get_ID(S,model_info,f_casadi,R)
 %   the results to the struct with results.
 % 
 % INPUT:
-%   - S -
-%   * setting structure S
-%
 %   - model_info -
 %   * structure with all the model information based on the OpenSim model
 % 
@@ -32,8 +29,7 @@ function [R] = PostProcess_get_ID(S,model_info,f_casadi,R)
 N = size(R.kinematics.Qs,1);
 
 import casadi.*
-[F] = load_external_function(S);
-
+[F] = load_external_function(R.S);
 
 QsQdots = zeros(N,2*model_info.ExtFunIO.jointi.nq.all);
 QsQdots(:,1:2:end) = R.kinematics.Qs_rad;

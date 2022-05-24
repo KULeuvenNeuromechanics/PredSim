@@ -1,12 +1,9 @@
-function [R] = PostProcess_write_motion_file(S,model_info,f_casadi,R)
+function [R] = PostProcess_write_motion_file(model_info,f_casadi,R)
 % --------------------------------------------------------------------------
 % PostProcess_write_motion_file
-%   This function creates a motionfile with 2 steps of predicted gait
+%   This function creates a motionfile with 2 steps of predicted gait.
 % 
 % INPUT:
-%   - S -
-%   * setting structure S
-%
 %   - model_info -
 %   * structure with all the model information based on the OpenSim model
 % 
@@ -51,6 +48,6 @@ for i = 1:model_info.muscle_info.NMuscle
         [model_info.muscle_info.muscle_names{i},'/activation'];
 end
 JointAngleMuscleAct.inDeg = 'true';
-filenameJointAngles = fullfile(S.subject.save_folder,[S.post_process.result_filename '.mot']);
+filenameJointAngles = fullfile(R.S.subject.save_folder,[R.S.post_process.result_filename '.mot']);
 write_motionFile_v40(JointAngleMuscleAct, filenameJointAngles);
 

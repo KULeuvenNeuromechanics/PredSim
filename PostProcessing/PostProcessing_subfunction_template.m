@@ -1,12 +1,11 @@
-function [R] = PostProcessing_subfunction_template(S,model_info,f_casadi,R)
+function [R] = PostProcessing_subfunction_template(model_info,f_casadi,R)
 % --------------------------------------------------------------------------
 % PostProcessing_subfunction_template
-%   Template function for post-processing
+%   When adding post-processing steps, please implement them in a function
+%   following this template. Call that function from the indicated section
+%   of "/PostProcessing/PostProcessing.m". 
 % 
 % INPUT:
-%   - S -
-%   * setting structure S
-%
 %   - model_info -
 %   * structure with all the model information based on the OpenSim model
 % 
@@ -18,10 +17,10 @@ function [R] = PostProcessing_subfunction_template(S,model_info,f_casadi,R)
 %
 % OUTPUT:
 %   - R -
-%   * struct with simulation results
+%   * struct with simulation results, presumably with additional fields
 % 
-% Original author: Lars D'Hondt
-% Original date: 10/May/2022
+% Original author: (...)
+% Original date: (...)
 %
 % Last edit by: 
 % Last edit date: 
@@ -29,7 +28,7 @@ function [R] = PostProcessing_subfunction_template(S,model_info,f_casadi,R)
 
 
 
-
+% your code here %
 
 
 

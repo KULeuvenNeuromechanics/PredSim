@@ -1,7 +1,10 @@
 function [fig_hand] = plot_figure_generic(R,model_info,coord_muscle_names_sel,vartype,varargin)
 % --------------------------------------------------------------------------
-% plot_figure_single_property
-%   Plots a figure that shows a single property (e.g. 
+% plot_figure_generic
+%   Plots a figure with any combination of coordinate-related variables, or
+%   muscle-related variables. This function is very generic, you are
+%   adviced to create your own figure template function rather than
+%   customising this one.
 % 
 % INPUT:
 %   - R -
@@ -84,11 +87,15 @@ if ~isempty(intersect(R.colheaders.coordinates,coord_muscle_names_sel))
 % when plotting muscles
 elseif ~isempty(intersect(R.colheaders.muscles,coord_muscle_names_sel))
     colheaders = R.colheaders.muscles;
+    metabolic_model = 'Bhargava2004';
+    if isfield(R.metabolics,R.S.metabolicE.model)
+        metabolic_model = R.S.metabolicE.model;
+    end
     for i=1:nv
         if isfield(R.muscles,vartype{i})
             ydata{i} = R.muscles.(vartype{i});
-        elseif isfield(R.metabolics.Bhargava2004,vartype{i})
-            ydata{i} = R.metabolics.Bhargava2004.(vartype{i});
+        elseif isfield(R.metabolics.(metabolic_model),vartype{i})
+            ydata{i} = R.metabolics.(metabolic_model).(vartype{i});
         end
     end
 end
@@ -106,26 +113,33 @@ if nv == 1
     nh = nh1;
 end
 
-% create figure
+
+%% Set figure size and position on screen
+% fraction of screen size
+fsh = min(nh/8,1);
+fsv = min(nv/5,1);
+% screen size
+scs = get(0,'ScreenSize');
+scs(4) = scs(4) - 150;
+scs(3) = scs(3) - 4;
+% figure size
+fig_size = [fsh*scs(3), fsv*scs(4)];
+% figure position
+fposh = fig_pos*(scs(3)-fig_size(1))+2;
+fposv = (scs(4)-fig_size(2))/2;
+fig_pos = [fposh,fposv];
+
+%% Create or select figure
+% If there was no figure handle provided, create a figure for this handle
 if ~exist('fig_hand','var')
-    % fraction of screen size
-    fsh = min(nh/8,1);
-    fsv = min(nv/5,1);
-    % screen size
-    scs = get(0,'ScreenSize');
-    scs(4) = scs(4) - 150;
-    scs(3) = scs(3) - 4;
-    % figure size
-    fsize = [fsh*scs(3), fsv*scs(4)];
-    % figure position
-    fposh = fig_pos*(scs(3)-fsize(1))+2;
-    fposv = (scs(4)-fsize(2))/2;
-    % create
-    fig_hand = figure('Position',[fposh,fposv,fsize]);
+    fig_hand = figure;
 end
-
-
+% set position and size of figure
+fig_hand.Position = [fig_pos,fig_size];
+% select figure
 figure(fig_hand)
+
+%%
 cnt_var = 1;
 cnt_y = 1;
 
@@ -165,7 +179,11 @@ for i=1:nsp
 
 end
 
-legend('Interpreter',lgInt);
+lgh = legend('Location','northwest','Interpreter',lgInt);
 
-
+if nsp<nv*nh
+    lgh.Position(1) = lgh.Position(1)+1/(nh+1);
+else
+%     lgh.Position(2) = lgh.Position(2)-1/(nv*2);
+end
 

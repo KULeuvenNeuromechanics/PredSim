@@ -1,4 +1,4 @@
-function [R] = PostProcess_ground_reaction(S,model_info,f_casadi,R)
+function [R] = PostProcess_ground_reaction(model_info,f_casadi,R)
 % --------------------------------------------------------------------------
 % PostProcess_ground_reaction
 %   This function calculates the ground reaction forces and moments by 
@@ -6,9 +6,6 @@ function [R] = PostProcess_ground_reaction(S,model_info,f_casadi,R)
 %   the results to the struct with results.
 % 
 % INPUT:
-%   - S -
-%   * setting structure S
-%
 %   - model_info -
 %   * structure with all the model information based on the OpenSim model
 % 
@@ -32,7 +29,7 @@ function [R] = PostProcess_ground_reaction(S,model_info,f_casadi,R)
 N = size(R.kinematics.Qs,1);
 
 import casadi.*
-[F] = load_external_function(S);
+[F] = load_external_function(R.S);
 
 
 QsQdots = zeros(N,2*model_info.ExtFunIO.jointi.nq.all);
@@ -60,8 +57,10 @@ R.ground_reaction.GRM_l = Foutk_opt(:,model_info.ExtFunIO.GRMs.left_total);
 COP_r = zeros(size(R.ground_reaction.GRF_r));
 COP_l = COP_r;
 
-idx_stance_r = find(R.ground_reaction.GRF_r(:,2) > 20);
-idx_stance_l = find(R.ground_reaction.GRF_l(:,2) > 20);
+idx = find(R.ground_reaction.GRF_r(:,2) < 20,1,'first');
+idx_stance_r = (1:idx-1)';
+trh = min(R.ground_reaction.GRF_r(idx_stance_r,2));
+idx_stance_l = find(R.ground_reaction.GRF_l(:,2) > trh);
 
 COP_r(idx_stance_r,1) = R.ground_reaction.GRM_r(idx_stance_r,3)./R.ground_reaction.GRF_r(idx_stance_r,2);
 COP_r(idx_stance_r,3) = -R.ground_reaction.GRM_r(idx_stance_r,1)./R.ground_reaction.GRF_r(idx_stance_r,2);

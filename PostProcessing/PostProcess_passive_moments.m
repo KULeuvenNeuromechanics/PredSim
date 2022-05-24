@@ -1,13 +1,10 @@
-function [R] = PostProcess_passive_moments(S,model_info,f_casadi,R)
+function [R] = PostProcess_passive_moments(model_info,f_casadi,R)
 % --------------------------------------------------------------------------
 % PostProcess_passive_moments
 %   This function computes the different contributions to the passive joint
 %   moments.
 % 
 % INPUT:
-%   - S -
-%   * setting structure S
-%
 %   - model_info -
 %   * structure with all the model information based on the OpenSim model
 % 

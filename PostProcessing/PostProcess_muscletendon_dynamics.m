@@ -1,13 +1,10 @@
-function [R] = PostProcess_muscletendon_dynamics(S,model_info,f_casadi,R)
+function [R] = PostProcess_muscletendon_dynamics(model_info,f_casadi,R)
 % --------------------------------------------------------------------------
 % PostProcess_muscletendon_dynamics
 %   This function computes the muscle-tendon forces, fiber lenghts- and
 %   velocities, and tendon lengts- and velocities.
 % 
 % INPUT:
-%   - S -
-%   * setting structure S
-%
 %   - model_info -
 %   * structure with all the model information based on the OpenSim model
 % 

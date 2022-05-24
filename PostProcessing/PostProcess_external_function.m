@@ -1,4 +1,4 @@
-function [R] = PostProcess_external_function(S,model_info,f_casadi,R)
+function [R] = PostProcess_external_function(model_info,f_casadi,R)
 % --------------------------------------------------------------------------
 % PostProcess_external_function
 %   This function evaluates the external function for the optimal
@@ -31,7 +31,7 @@ function [R] = PostProcess_external_function(S,model_info,f_casadi,R)
 N = size(R.Qs,1);
 
 import casadi.*
-[F] = load_external_function(S);
+[F] = load_external_function(R.S);
 
 
 QsQdots = zeros(N,2*model_info.ExtFunIO.jointi.nq.all);
