@@ -31,13 +31,30 @@ figure_savename = 'test_dll';
 % These settings are defined by several fields:
 %   - name -
 %   * String. Name assigned to the figure, and by default
-%       appended to the filename when saving the figure.
+%   appended to the filename when saving the figure.
 %
 %   - dofs -
-%   * Cell array of strings. 
+%   * Cell array of strings. Can contain coordinate names OR muscle names.
+%   Alternatively, 'all_coords' will use all coordinates from the 1st
+%   result. Enter 'custom' to use variables that do not exist for individual
+%   coordinates or muscles.
+%
+%   - variables -
+%   * Cell array of strings. Containsone or more variable names. e.g. 'Qs'
+%   to plot coordinate positions, 'a' to plot muscle activity. Variables
+%   that do not rely on coordinates or muscles (e.g. GRFs)
+%
+%   - savepath -
+%   * String. Full path + filename used to save the figure. Does not
+%   include file extension.
+%
+%   - filetype -
+%   * Cell array of strings. File extensions to save the figure as, leave
+%   empty to not save the figure. Supported types are: 'png', 'jpg', 'eps'
+%
 %
 
-% 'C:\Users\u0150099\Documents\PredSim_dev\test_results\test_dll_angles'
+
 
 % initilise the counter for dynamic indexing
 fig_count = 1;
@@ -49,13 +66,13 @@ figure_settings(fig_count).savepath = fullfile(figure_folder,[figure_savename '_
 figure_settings(fig_count).filetype = {};
 fig_count = fig_count+1;
 
-% figure_settings(fig_count).name = 'selected_angles';
-% figure_settings(fig_count).dofs = {'hip_flexion_r','hip_adduction_r','knee_angle_r',...
-%     'ankle_angle_r','subtalar_angle_r','mtp_angle_r'};
-% figure_settings(fig_count).variables = {'Qs'};
-% figure_settings(fig_count).savepath = fullfile(figure_folder,[figure_savename '_' figure_settings(fig_count).name]);
-% figure_settings(fig_count).filetype = {};
-% fig_count = fig_count+1;
+figure_settings(fig_count).name = 'selected_angles';
+figure_settings(fig_count).dofs = {'hip_flexion_r','hip_adduction_r','hip_rotation_r','knee_angle_r',...
+    'ankle_angle_r','subtalar_angle_r','mtp_angle_r'};
+figure_settings(fig_count).variables = {'Qs'};
+figure_settings(fig_count).savepath = fullfile(figure_folder,[figure_savename '_' figure_settings(fig_count).name]);
+figure_settings(fig_count).filetype = {};
+fig_count = fig_count+1;
 
 % figure_settings(fig_count).name = 'torques';
 % figure_settings(fig_count).dofs = {'all_coords'};
