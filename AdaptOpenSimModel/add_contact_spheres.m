@@ -1,125 +1,99 @@
+function [] = add_contact_spheres(osim_path,contact_spheres)
+% --------------------------------------------------------------------------
+% add_contact_spheres
+%   This functions adds contact spheres to the .osim model, and defines a
+%   SmoothSphereHalfSpaceForce between each contact sphere and the ground.
+% 
+% INPUT:
+%   - osim_path -
+%   * path to the OpenSim model file (.osim)
+% 
+%   - contact_spheres -
+%   * cell array of structs describing a contact sphere. 
+%     Example cell:
+%       % name of parent body
+%       contact_spheres(1).body = 'calcn_r';
+%       % name of contact sphere
+%       contact_spheres(1).name = 's1_r';
+%       % location in parent frame
+%       contact_spheres(1).location = [0.0019 -0.01 -0.0038];
+%       % radius of sphere
+%       contact_spheres(1).radius = 0.032;
+% 
+%
+% Original author: Lars D'Hondt
+% Original date: 27/May/2022
+%
+% Last edit by: 
+% Last edit date: 
+% --------------------------------------------------------------------------
 
 
-% Lars D'Hondt
-% 24/May/2022
+%% dynamic properties
+stiffness           = 1000000;
+dissipation         = 2.0;
+staticFriction      = 0.8;
+dynamicFriction     = 0.8;
+viscousFriction     = 0.5;
+transitionVelocity  = 0.2;
 
-
-clear
-clc
-
-
-% contact spheres right side
-csp = 1;
-
-contact_spheres(csp).body = 'calcn_r';
-contact_spheres(csp).name = 's1_r';
-contact_spheres(csp).location = [0.0019 -0.01 -0.0038];
-contact_spheres(csp).radius = 0.032;
-csp = csp+1;
-
-contact_spheres(csp).body = 'calcn_r';
-contact_spheres(csp).name = 's2_r';
-contact_spheres(csp).location = [0.1483 -0.01 -0.0287];
-contact_spheres(csp).radius = 0.032;
-csp = csp+1;
-
-contact_spheres(csp).body = 'calcn_r';
-contact_spheres(csp).name = 's3_r';
-contact_spheres(csp).location = [0.1330 -0.01 0.0516];
-contact_spheres(csp).radius = 0.032;
-csp = csp+1;
-
-contact_spheres(csp).body = 'calcn_r';
-contact_spheres(csp).name = 's4_r';
-contact_spheres(csp).location = [0.06623 -0.01 0.02636];
-contact_spheres(csp).radius = 0.032;
-csp = csp+1;
-
-contact_spheres(csp).body = 'toes_r';
-contact_spheres(csp).name = 's5_r';
-contact_spheres(csp).location = [0.06 -0.01 -0.01876];
-contact_spheres(csp).radius = 0.032;
-csp = csp+1;
-
-contact_spheres(csp).body = 'toes_r';
-contact_spheres(csp).name = 's6_r';
-contact_spheres(csp).location = [0.045 -0.01 0.06186];
-contact_spheres(csp).radius = 0.032;
-csp = csp+1;
-
-% mirror to get left side
-for i=1:length(contact_spheres)
-    contact_spheres(csp).body = [contact_spheres(i).body(1:end-1) 'l'];
-    contact_spheres(csp).name = [contact_spheres(i).name(1:end-1) 'l'];
-    contact_spheres(csp).location = contact_spheres(i).location;
-    contact_spheres(csp).location(3) = -contact_spheres(csp).location(3);
-    contact_spheres(csp).radius = contact_spheres(i).radius;
-    csp = csp+1;
-end
-
-
-
-
-%%
-
-
+%% load model
 import org.opensim.modeling.*;
-[pathHere,~,~] = fileparts(mfilename('fullpath'));
-
-osim_filename = 'Rajagopal2015_opensense';
-
-model = Model([pathHere '\' osim_filename '.osim']);
+model = Model(osim_path);
 
 
-% ground
+%% ground
 ground_body = model.getGround();
 groundContactSpace = ContactHalfSpace(Vec3(0,0,0),Vec3(0,0,-1.57),ground_body);
 groundContactSpace.setName('floor');
 model.addContactGeometry(groundContactSpace);
 
+%% loop over contact spheres
 for i=1:length(contact_spheres)
 
-    % spheres
+% add contact geometry
+    % get parent body
     body_i = model.getBodySet().get(contact_spheres(i).body);
-    contactSphereRadius = contact_spheres(i).radius;
-    contactSphereLoc = Vec3.createFromMat(contact_spheres(i).location);
-    
+    % construct sphere
     contact_sphere_1 = ContactSphere();
-    contact_sphere_1.setRadius(contactSphereRadius);
+    % set radius
+    contact_sphere_1.setRadius(contact_spheres(i).radius);
+    % set location
+    contactSphereLoc = Vec3.createFromMat(contact_spheres(i).location);
     contact_sphere_1.setLocation(contactSphereLoc);
+    % assign to parent frame
     contact_sphere_1.setFrame(body_i);
+    % set name
     contact_sphere_1.setName(contact_spheres(i).name);
-    model.addContactGeometry(contact_sphere_1);
+    % add to model
+    model.addContactGeometry(contact_sphere_1);   
     
-    
-    %%
-    stiffness           = 1000000;
-    dissipation         = 2.0;
-    staticFriction      = 0.8;
-    dynamicFriction     = 0.8;
-    viscousFriction     = 0.5;
-    transitionVelocity  = 0.2;
-    
+% add contact force
+    % construct force
     force_sphere_1 = SmoothSphereHalfSpaceForce();
+    % set name
     force_sphere_1.setName(['SmoothSphereHalfSpaceForce_' contact_spheres(i).name]);
+    % assign contact geometry and ground
     force_sphere_1.connectSocket_half_space(groundContactSpace)
     force_sphere_1.connectSocket_sphere(contact_sphere_1)
+    % set dynamic properties
     force_sphere_1.set_stiffness(stiffness);
     force_sphere_1.set_dissipation(dissipation);
     force_sphere_1.set_static_friction(staticFriction);
     force_sphere_1.set_dynamic_friction(dynamicFriction);
     force_sphere_1.set_viscous_friction(viscousFriction);
     force_sphere_1.set_transition_velocity(transitionVelocity);
+    % add to model
     model.addForce(force_sphere_1);
     
+    % clear variable names
     clear 'contact_sphere_1' 'force_sphere_1'
 
-
 end
-%%
-model.initSystem();
 
-model.print([pathHere '\' osim_filename '_test.osim']);
+%% save model
+model.initSystem();
+model.print(osim_path);
 
 
 
