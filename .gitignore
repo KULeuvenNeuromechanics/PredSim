@@ -8,4 +8,6 @@
 *.eps
 
 /opensimAD/*
-/Subjects/Fal_s1_mtp_v2
+/Subjects/*
+!/Subjects/Hamner_modified/Hamner_modified.osim
+/test_results

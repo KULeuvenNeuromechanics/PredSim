@@ -37,8 +37,8 @@ R.kinematics.Qddots_rad(:,model_info.ExtFunIO.jointi.rotations) = ...
     R.kinematics.Qddots(:,model_info.ExtFunIO.jointi.rotations)*pi/180;
 
 % misc info for quick access
-R.misc.body_mass = S.subject.mass;
-R.misc.body_weight = S.subject.mass*9.81;
+R.misc.body_mass = model_info.mass;
+R.misc.body_weight = model_info.mass*9.81;
 
 %% Call post-processing subfunctions
 % Do mind the order of the functions, since some of them use information
@@ -72,7 +72,7 @@ R.misc.body_weight = S.subject.mass*9.81;
 % Compute spatio-temporal characteristics of the full gait cycle.
 [R] = PostProcess_spatio_temporal(model_info,f_casadi,R);
 
-% Evaluate the metobiloc energetics for all implemented metabolic energy
+% Evaluate the metabolic energetics for all implemented metabolic energy
 % models.
 [R] = PostProcess_metabolic_energy(model_info,f_casadi,R);
 

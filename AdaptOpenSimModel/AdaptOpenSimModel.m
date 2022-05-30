@@ -20,12 +20,13 @@ clc
 [pathHere,~,~] = fileparts(mfilename('fullpath'));
 
 % .osim file to adapt
-path_osim_in = fullfile(pathHere,'.osim');
+path_osim_in = fullfile(pathHere,'Hamner_modified.osim');
 
 % adapted .osim file
-path_osim_out = fullfile(pathHere,'.osim');
+path_osim_out = fullfile(pathHere,'Hamner_modified_a.osim');
 
-
+add_actuators_bool = 1;
+add_contact_bool = 0;
 
 %% Define contact spheres
 
@@ -139,7 +140,10 @@ model.print(path_osim_out);
 
 
 %%
+if add_actuators_bool
+    add_actuators(path_osim_out,torq_act);
+end
+if add_contact_bool
+    add_contact_spheres(path_osim_out,contact_spheres)
+end
 
-add_actuators(path_osim_out,torq_act)
-
-% add_contact_spheres(path_osim_out,contact_spheres)

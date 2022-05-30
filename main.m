@@ -23,7 +23,7 @@ addpath([S.misc.main_path '\VariousFunctions'])
 
 %% Required inputs
 % name of the subject
-S.subject.name = 'Fal_s1_mtp_v2'; 
+S.subject.name = 'Hamner_modified';
 
 % path to folder where you want to store the results of the OCP
 S.subject.save_folder  = fullfile(pathRepoFolder,'PredSimResults',S.subject.name); 
@@ -66,14 +66,13 @@ S.solver.run_as_batch_job = 0;
 % S.misc.msk_geom_eq         = '';
 % S.misc.poly_order.lower    = ;
 % S.misc.poly_order.upper    = ;
-% S.misc.msk_geom_bounds      = {{'lumbar_extension'},-50,50};
+% S.misc.msk_geom_bounds      = {{'knee_angle_r','knee_angle_l'},-120,10};
 
 % % S.post_process
 % S.post_process.make_plot = '';
 % S.post_process.savename  = '';
-S.post_process.rerun   = 1;
-S.post_process.result_filename = 'Fal_s1_mtp_v2_job149';
-% S.post_process.result_filename = 'Fal_s1_mtp_job148';
+% S.post_process.rerun   = 1;
+% S.post_process.result_filename = '';
 
 % % S.solver
 % S.solver.linear_solver  = '';
@@ -87,7 +86,7 @@ S.solver.CasADi_path    = 'C:\GBW_MyPrograms\casadi_3_5_5';
 
 
 % % S.subject
-S.subject.mass              = 62;
+% S.subject.mass              = ;
 % S.subject.IG_pelvis_y       = ;
 S.subject.v_pelvis_x_trgt   = 1.33;
 % S.subject.IK_Bounds = ;
@@ -126,8 +125,4 @@ else
     run_pred_sim(S,osim_path);
 end
 
-
-%% Plot figures
-
-% plot_figures
 

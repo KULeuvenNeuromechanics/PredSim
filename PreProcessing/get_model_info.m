@@ -28,6 +28,13 @@ function [model_info] = get_model_info(S,osim_path)
 % extract name of opensim model file
 [~,osim_file_name,~] = fileparts(osim_path);
 
+%% Subject mass
+if isempty(S.subject.mass)
+    model_info.mass = getModelMass(osim_path);
+else
+    model_info.mass = S.subject.mass;
+end
+
 %% External function
 % load IO from external function
 % We load IO into a struct, because having a variable named "IO" conflicts
