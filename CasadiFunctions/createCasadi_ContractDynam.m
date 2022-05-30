@@ -13,16 +13,16 @@ function [f_forceEquilibrium_FtildeState_all_tendon,f_FiberLength_TendonForce_te
 %
 % OUTPUT:
 %   - f_forceEquilibrium_FtildeState_all_tendon -
-%   * 
+%   * function for force equilibrium between muscle fiber and tendon
 %
 %   - f_FiberLength_TendonForce_tendon -
-%   * 
+%   * function to compute fiber length of a muscle
 %
 %   - f_FiberVelocity_TendonForce_tendon -
-%   * 
+%   * function to compute fiber lenghtening velocity of a muscle
 %
 %   - f_lT_vT -
-%   * 
+%   * function to compute tendon length and lengthening velocity of a tendon
 % 
 % Original author: Ines Vandekerckhove, Tom Buurke & Dhruv Gupta, KU Leuven
 % Original date: 30-11-2021 

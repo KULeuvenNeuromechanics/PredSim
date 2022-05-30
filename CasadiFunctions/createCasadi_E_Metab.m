@@ -12,7 +12,10 @@ function [fgetMetabolicEnergySmooth2004all] = createCasadi_E_Metab(S,model_info)
 %
 % OUTPUT:
 %   - fgetMetabolicEnergySmooth2004all -
-%   * Casadi functions for metabolic energy
+%   * Casadi functions for metabolic energy based on
+%   L. J. Bhargava, M. G. Pandy, and F. C. Anderson, "A phenomenological model
+%   for estimating metabolic energy consumption in muscle contraction,” Journal 
+%   of biomechanics, vol. 37, no. 1, pp. 81–88, 2004.
 % 
 % Original author: Ines Vandekerckhove, KU Leuven
 % Original date: 01-12-2021

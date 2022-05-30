@@ -1,18 +1,18 @@
 function [St] = convert2double(St)
 % --------------------------------------------------------------------------
 % convert2double
-%   (Explanation)
+%   This function converts data in each field in a struct to type double.
 %   
 % INPUT:
 %   - St -
-%   * 
+%   * struct with fields that contain int32 values
 %
 % OUTPUT:
 %   - St -
-%   * 
+%   * struct with fields that contain double values
 % 
-% Original author: 
-% Original date: 
+% Original author: Dhruv Gupta
+% Original date: 4/Feb/2022
 %
 % Last edit by: 
 % Last edit date: 

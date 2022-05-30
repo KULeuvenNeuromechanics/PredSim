@@ -1,14 +1,37 @@
 function [pathBuildExternalFunction] = buildExternalFunction(filename, cpp_dir,...
     compiler, pathMain,varargin)
-%buildExternalFunction Builds external function based on opensim AD
-%modified version of the opensims source code using the installed
-%libraries.
-%   filename: name of the cpp file
-%   cpp_dir: folder with cpp file
-%   compiler: e.g. Visual Studio 15 2017 Win64
-%   pathMain: path to the main directory of the opensimAD folder (https://github.com/Lars-DHondt-KUL/opensimAD)
-%   varargin: 
-% %     (1) verbose_mode: 0 no output, 1 all output
+% --------------------------------------------------------------------------
+% buildExternalFunction
+%   Builds external function based on opensim AD modified version of the 
+%   OpenSim source code using the installed libraries.
+% 
+% INPUT:
+%   - filename -
+%   * name of the cpp file
+%
+%   - cpp_dir -
+%   * folder with cpp file
+% 
+%   - compiler -
+%   * e.g. Visual Studio 15 2017 Win64
+%
+%   - pathMain -
+%   * path to the main directory of the opensimAD folder 
+%   (https://github.com/Lars-DHondt-KUL/opensimAD)
+%
+%   - verbose_mode (optional input) -
+%   * 0 no output, 1 all output (default)
+% OUTPUT:
+%   - model_info -
+%   * structure with all the model information based on the OpenSim model
+% 
+% Original author: Maarten Afschrift
+% Original date: 17/May/2022
+%
+% Last edit by: 
+% Last edit date: 
+% --------------------------------------------------------------------------
+
 
 verbose_mode = 1;
 if ~isempty(varargin)

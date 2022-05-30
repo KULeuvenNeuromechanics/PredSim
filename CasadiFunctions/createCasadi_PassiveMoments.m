@@ -19,7 +19,10 @@ function [f_PassiveStiffnessMoments,f_PassiveDampingMoments,f_LimitTorques,...
 %   * M = -d*qdot
 %
 %   - f_LimitTorques -
-%   * exponential coordinate limit torques
+%   * exponential coordinate limit torques as modelled by:
+%   FRANK C. ANDERSON & MARCUS G. PANDY (1999) A Dynamic Optimization Solution 
+%   for Vertical Jumping in Three Dimensions, Computer Methods in Biomechanics
+%   and Biomedical Engineering, 2:3, 201-231, DOI: 10.1080/10255849908907988
 %
 %   - f_AllPassiveTorques -
 %   * total passive torques

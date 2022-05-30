@@ -2,7 +2,7 @@ function [f_getCalcnOriginInWorldFrame,f_getStepLength] = createCasadi_StepLengt
 % --------------------------------------------------------------------------
 % createCasadi_StepLength
 %   Create CasADi functions to describe the position of the calcaneus
-%   origin
+%   origin and the steplength.
 %
 % INPUT:
 %   - S -

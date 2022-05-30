@@ -8,8 +8,14 @@ function [MuscleData, varargout] = muscleAnalysis(S,osim_path,model_info,varargi
 %       3) Import the muscle-tendon lengths and moment arms, and store them
 %       along with the dummy motion.
 %
-%   note: The boundaries of the dummy motion are hard-coded. They should
-%       become user inputs in a future update;
+%   note 1: The boundaries of the dummy motion are hard-coded.
+%
+%   note 2: This function is replaced by muscleAnalysisAPI, because using
+%   the OpenSim API to evaluate muscle-tendon lengths and momentarms is 
+%   approximately 3 times faster than running a muscle analysis. The
+%   analysis brings the system to dynamic stage, while the API only
+%   requires position stage. In "\Tests\test_muscleAnalysisAPI.m", this
+%   function is used to perform a unit test of muscleAnalysisAPI.
 %   
 % INPUT:
 %   - S -
@@ -18,15 +24,17 @@ function [MuscleData, varargout] = muscleAnalysis(S,osim_path,model_info,varargi
 %   - osim_path -
 %   * path to the OpenSim model file (.osim)
 % 
-%   - varargin -
-%   * 
+%   - n_data_points (optional input) -
+%   * number of data points for the dummy motion. Default is 5000.
 %
 % OUTPUT:
 %   - MuscleData -
-%   * 
+%   * Structure with joint angles and according muscle-tendon lengths and
+%   momentarms. This will be used to fit expressions to the muscle-tendon 
+%   lengths and momentarms.
 %
-%   - varargout -
-%   * 
+%   - Qs (optional output, for testing purpose) -
+%   * Coordinate values of the dummy motion
 % 
 % Original author: Lars D'Hondt
 % Original date: 17/January/2022

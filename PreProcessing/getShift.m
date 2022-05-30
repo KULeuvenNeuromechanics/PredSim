@@ -1,4 +1,4 @@
-function shift = getShift(kT)
+function tendon_stiff_shift = getShift(tendon_stiff)
 % --------------------------------------------------------------------------
 % getShift
 %   This script returns the value used to shift the tendon force-length curve
@@ -9,14 +9,15 @@ function shift = getShift(kT)
 %   is 1.
 %   
 % INPUT:
-%   - kT -
-%   * 
+%   - tendon_stiff -
+%   * tendon stiffness (default 35)
 %
 % OUTPUT:
-%   - shift -
-%   * 
+%   - tendon_stiff_shift -
+%   * value with which the tendon force-length curve is shifted to
+%   compesate the new stiffness
 % 
-% Original author: 
+% Original author: Antoine Falisse
 % Original date: 
 %
 % Last edit by: 
@@ -24,16 +25,16 @@ function shift = getShift(kT)
 % --------------------------------------------------------------------------
 
 kT35 = 35;
-shift = 0;
+tendon_stiff_shift = 0;
 lTtilde = 1;
-fse = (exp(kT35.*(lTtilde - 0.995)))/5 - 0.25 + shift; 
+fse = (exp(kT35.*(lTtilde - 0.995)))/5 - 0.25 + tendon_stiff_shift; 
 fse_kt35 = fse;
 
-fse = (exp(kT.*(lTtilde - 0.995)))/5 - 0.25 + shift; 
+fse = (exp(tendon_stiff.*(lTtilde - 0.995)))/5 - 0.25 + tendon_stiff_shift; 
 fse_kt = fse;
 
-shift = fse_kt35-fse_kt;
-fse = (exp(kT.*(lTtilde - 0.995)))/5 - 0.25 + shift;
+tendon_stiff_shift = fse_kt35-fse_kt;
+fse = (exp(tendon_stiff.*(lTtilde - 0.995)))/5 - 0.25 + tendon_stiff_shift;
 
 % if sum(abs(fse - fse_kt35)>1e-12) ~= 0
 %     shift = NaN;

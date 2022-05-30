@@ -12,7 +12,7 @@ function [f_casadi] = createCasadi_GenHelper(S,model_info)
 %
 % OUTPUT:
 %   - f_casadi -
-%   Struct that contains all casadi functions.
+%   * Struct that contains all casadi functions.
 %
 % Original authors: Dhruv Gupta, Lars D'Hondt, Tom Buurke
 % Original date: 01/12/2021
@@ -61,14 +61,6 @@ for i=1:length(e_temp_pass_dof)
 end
 J_temp_pass_dof = J_temp_pass_dof/N_pass_dof;
 f_casadi.J_lim_torq = Function('f_J_lim_torq',{e_temp_pass_dof},{J_temp_pass_dof});
-
-% e_temp_musc_dof = SX.sym('e_temp_musc_dof',N_musc_dof);
-% J_temp_musc_dof = 0;
-% for i=1:length(e_temp_musc_dof)
-%     J_temp_musc_dof = J_temp_musc_dof + e_temp_musc_dof(i).^2;
-% end
-% J_temp_musc_dof = J_temp_musc_dof/N_musc_dof;
-% f_casadi.J_musc_dof = Function('f_J_musc_dof',{e_temp_musc_dof},{J_temp_musc_dof});
 
 % Function for 2 elements
 etemp2 = SX.sym('etemp2',2);

@@ -12,8 +12,10 @@ function [vM,vMtilde,varargout] = FiberVelocity_TendonForce_tendon(FTtile,...
 % Original author: Antoine Falisse
 % Original date: 12/19/2018
 %
-% Last edit by: 
-% Last edit date: 
+%   Adapted to allow assumption of constant pennation angle, by Lars D'Hondt.
+%   Adapted to return tendon lengthening velocity, by Lars D'Hondt
+% Last edit by: Lars D'Hondt
+% Last edit date: 30/May/2022
 % --------------------------------------------------------------------------
 
 lMo = ones(size(FTtile,1),1)*lMo_in;

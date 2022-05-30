@@ -59,6 +59,10 @@ function [energy_total,Adot,Mdot,Sdot,Wdot,energy_model] = ...
 % OUTPUT:
 %   - energy_total -
 %   * total metabolic energy rate
+%       energy_total: energy rate from totalHeatRate and Wdot
+%       totalHeatRate: energy rate from Adot, Mdot and Sdot
+%       Note: energy_total might be different than the sum of the different
+%             components if the total heat rate was clamped to one.
 %   
 %   - Adot -
 %   * energy rate from activation
@@ -75,11 +79,6 @@ function [energy_total,Adot,Mdot,Sdot,Wdot,energy_model] = ...
 %   - energy_model -
 %   * energy rate from energy_total including basal rate
 %
-%       energy_total: energy rate from totalHeatRate and Wdot
-%       totalHeatRate: energy rate from Adot, Mdot and Sdot
-%       Note: energy_total might be different than the sum of the different
-%             components if the total heat rate was clamped to one.
-% 
 % Original author: Antoine Falisse
 % Original date: 01/22/2019
 %
@@ -88,7 +87,7 @@ function [energy_total,Adot,Mdot,Sdot,Wdot,energy_model] = ...
 % --------------------------------------------------------------------------
 
 %% Parameters
-% Percentage of slow twitch (st) and fast twitch (ft) fibers
+% Ratio of slow twitch (st) and fast twitch (ft) fibers
 pctft = 1-pctst;      
 
 %% Twitch excitations

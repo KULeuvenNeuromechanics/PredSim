@@ -19,8 +19,8 @@ function [R] = PostProcessing_subfunction_template(model_info,f_casadi,R)
 %   - R -
 %   * struct with simulation results, presumably with additional fields
 % 
-% Original author: (...)
-% Original date: (...)
+% Original author: (First name Last name)
+% Original date: (Using "30/May/2022" format avoids confusion)
 %
 % Last edit by: 
 % Last edit date: 

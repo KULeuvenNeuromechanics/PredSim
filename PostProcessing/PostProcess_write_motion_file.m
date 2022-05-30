@@ -24,17 +24,16 @@ function [R] = PostProcess_write_motion_file(model_info,f_casadi,R)
 % Last edit date: 
 % --------------------------------------------------------------------------
 
-
+% Two gait cycles
 t_mesh = [R.time.mesh_GC(1:end-1),R.time.mesh_GC(1:end-1)+R.time.mesh_GC(end)];
-
+% Joint angles
 q_opt_GUI_GC_1 = [R.kinematics.Qs];
 q_opt_GUI_GC_2 = q_opt_GUI_GC_1;
 q_opt_GUI_GC_2(:,model_info.ExtFunIO.jointi.base_forward) =...
     q_opt_GUI_GC_2(:,model_info.ExtFunIO.jointi.base_forward) +...
     q_opt_GUI_GC_1(end,model_info.ExtFunIO.jointi.base_forward);
 JointAngle.labels = [{'time'},model_info.ExtFunIO.coord_names.all(:)'];
-% Two gait cycles
-% Joint angles
+
 q_opt_GUI_GC = [t_mesh',[q_opt_GUI_GC_1;q_opt_GUI_GC_2]];
 % Muscle activations (to have muscles turning red when activated).
 Acts_GC = R.muscles.a;

@@ -1,27 +1,28 @@
 function [guess,bounds] = AdaptGuess_UserInput(S,guess,bounds)
 % --------------------------------------------------------------------------
 % AdaptGuess_UserInput
-%   (Explanation)
+%   This function adapts the initial guess of muscle activations to comply
+%   with the bounds.
 %   
 % INPUT:
 %   - S -
 %   * setting structure S
 %
 %   - guess -
-%   * 
+%   * initial guess values for all optimisation variables
 % 
 %   - bounds -
-%   * 
+%   * boundaries for all optimisation variables
 %
 % OUTPUT:
 %   - guess -
-%   * 
+%   * initial guess values for all optimisation variables
 % 
 %   - bounds -
-%   * 
+%   * boundaries for all optimisation variables
 % 
-% Original author: 
-% Original date: 
+% Original author: Maarten Afschrift
+% Original date: 21/Oct/2020
 %
 % Last edit by: 
 % Last edit date: 

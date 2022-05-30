@@ -15,14 +15,14 @@ function guess = getGuess_DI_opti(S,model_info,scaling,d)
 %   * structure with all the model information based on the OpenSim model
 % 
 %   - scaling -
-%   * 
+%   * scale factors for all optimisation variables
 % 
 %   - d -
-%   * 
+%   * degree of the interpolating polynomial of the collocation scheme
 %
 % OUTPUT:
 %   - guess -
-%   * 
+%   * initial guess values for all optimisation variables
 % 
 % Original author: Antoine Falisse
 % Original date: 12/19/2018

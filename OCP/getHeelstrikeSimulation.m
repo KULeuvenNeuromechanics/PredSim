@@ -5,23 +5,24 @@ function [IC1i_c,IC1i_s,HS1] = getHeelstrikeSimulation(GRFk_opt,N)
 %   
 % INPUT:
 %   - GRFk_opt -
-%   * 
+%   * Ground reaction forces. Columns are x,y,z for right foot, then x,y,z
+%   for left foot.
 %
 %   - N -
-%   * 
+%   * Number of mesh intervals
 %
 % OUTPUT:
 %   - IC1i_c -
-%   * 
+%   * index of initial contact for controls
 %
 %   - IC1i_s -
-%   * 
+%   * index of initial contact for states
 %
 %   - HS1 -
-%   * 
+%   * which foot makes inital contact 'r' or 'l'
 % 
-% Original author: 
-% Original date: 
+% Original author: Maarten Afschrift
+% Original date: 29/Nov/2021
 %
 % Last edit by: 
 % Last edit date: 

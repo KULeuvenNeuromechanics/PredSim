@@ -16,10 +16,10 @@ function [bounds,scaling] = getBounds(S,model_info)
 %
 % OUTPUT:
 %   - bounds -
-%   * 
+%   * boundaries for all optimisation variables
 %
 %   - scaling -
-%   * 
+%   * scale factors for all optimisation variables
 % 
 % Original author: Antoine Falisse
 % Original date: 12/19/2018

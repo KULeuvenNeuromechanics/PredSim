@@ -14,16 +14,16 @@ function [tau_root,C,D,B] = CollocationScheme(d,method)
 %
 % OUTPUT:
 %   - tau_root -
-%   * 
+%   * Collocation points
 % 
 %   - C -
-%   * 
+%   * Coefficients of the collocation equation
 % 
 %   - D -
-%   * 
+%   * Coefficients of the continuity equation
 % 
 %   - B -
-%   * 
+%   * Coefficients of the quadrature function
 % 
 % Original author: Antoine Falisse
 % Original date: 12/19/2018

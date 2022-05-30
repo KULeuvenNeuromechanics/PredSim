@@ -1,5 +1,4 @@
-function [Indmusi,mai] = ...
-    MomentArmIndices_asym(muscleNames,muscle_spanning_joint_INFO)
+function [Indmusi,mai] = MomentArmIndices_asym(muscleNames,muscle_spanning_joint_INFO)
 % --------------------------------------------------------------------------
 % MomentArmIndices_asym
 %   This function returns the indices of the muscles actuating the different 
@@ -8,17 +7,18 @@ function [Indmusi,mai] = ...
 %   
 % INPUT:
 %   - muscleNames -
-%   * 
+%   * cell array with names of muscles
 %
 %   - muscle_spanning_joint_INFO -
-%   * 
+%   * table with a column for each coordinate and a row for each muscle. 1
+%   means this muscle and coordinate interact, 0 means they don't
 %
 % OUTPUT:
 %   - Indmusi -
-%   * 
+%   * struct with muscle indices that cross each joint
 %
 %   - mai -
-%   * 
+%   * indices of the coordinates that each muscle crosses
 % 
 % Original author: Antoine Falisse
 % Original date: 12/19/2018

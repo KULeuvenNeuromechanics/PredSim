@@ -1,11 +1,34 @@
 function [] = CreateDllFromFoo_Jac(filename, cpp_dir, compiler, pathMain, varargin)
-%CreateDllFromFoo_Jac Creates a .dll file from foo_jac.c
-%   Input arguments:
-%       (1) filename: name of the .cpp file
-%       (2) cpp_dir: directory .cpp file
-%       (3) compiler:  e.g. Visual Studio 15 2017 Win64
-%       (4) varargin: 
-%           (4.1) verbose_mode: 0 no output, 1 all output
+% --------------------------------------------------------------------------
+% CreateDllFromFoo_Jac
+%   Creates a .dll file from foo_jac.c
+% 
+% INPUT:
+%   - filename -
+%   * name of the cpp file
+%
+%   - cpp_dir -
+%   * folder with cpp file
+% 
+%   - compiler -
+%   * e.g. Visual Studio 15 2017 Win64
+%
+%   - pathMain -
+%   * path to the main directory of the opensimAD folder 
+%   (https://github.com/Lars-DHondt-KUL/opensimAD)
+%
+%   - verbose_mode (optional input) -
+%   * 0 no output, 1 all output (default)
+% OUTPUT:
+%   - model_info -
+%   * structure with all the model information based on the OpenSim model
+% 
+% Original author: Maarten Afschrift
+% Original date: 17/May/2022
+%
+% Last edit by: 
+% Last edit date: 
+% --------------------------------------------------------------------------
 
 % variable input arguments
 verbose_mode = 1;

@@ -1,24 +1,26 @@
 function [w_opt,stats] = solve_NLPSOL(opti,optionssol)
 % --------------------------------------------------------------------------
 % solve_NLPSOL
-%   (Explanation)
+%   This function reformulates the optimization problem as a NonLinear
+%   Program and calls a solver. Opti does not use bounds on variables but 
+%   constraints. This function adjusts for that.
 %   
 % INPUT:
 %   - opti -
-%   * 
+%   * optimization problem, given by an object of the Casadi.Opti class
 %
 %   - optionssol -
-%   * 
+%   * options for the solver
 %
 % OUTPUT:
 %   - w_opt -
-%   * 
+%   * array with solution for all optimization variables
 %
 %   - stats -
-%   * 
+%   * stats of the solver
 % 
-% Original author: 
-% Original date: 
+% Original author: Antoine Falisse
+% Original date: 22/Nov/2019
 %
 % Last edit by: 
 % Last edit date: 

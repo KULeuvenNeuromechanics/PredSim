@@ -1,8 +1,8 @@
 function Qs_IK = getIK(path_IK,model_info)
 % --------------------------------------------------------------------------
 % getIK
-%    This function returns the Qs (radian) given the path to the inverse
-%    kinematics file and the joints of interest.
+%   This function returns the coordinate positions (radian) given the path 
+%   to the inverse kinematics file and the joints of interest.
 %   
 % INPUT:
 %   - path_IK -
@@ -18,6 +18,7 @@ function Qs_IK = getIK(path_IK,model_info)
 % Original author: Antoine Falisse
 % Original date: 12/19/2018
 %
+%   updated to work for generic set of coordinates
 % Last edit by: Lars D'Hondt
 % Last edit date: 30 nov 2021
 % --------------------------------------------------------------------------

@@ -1,13 +1,28 @@
 function [S] = osim2dll(S,osim_path)
+% --------------------------------------------------------------------------
+% osim2dll
+%   This functions uses the OpenSim model to construct a CasADi external
+%   function (.dll file) that contains an implicit formulation of the
+%   skeletal- and contact dynamics. More information can be found here:
+%   https://github.com/Lars-DHondt-KUL/opensimAD 
+% 
+% INPUT:
+%   - S -
+%   * setting structure S
 %
-% Matlab shell for the python workflow
+%   - osim_path -
+%   * path to the OpenSim model file (.osim)
+% 
+% OUTPUT:
+%   - S -
+%   * setting structure S
+% 
+% Original author: Maarten Afschrift
+% Original date: 16/May/2022
 %
-%
-% Author: Maarten Afschrift
-%
-% Date: 16/May/2022
-%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Last edit by: 
+% Last edit date: 
+% --------------------------------------------------------------------------
 
 % path to the opensim-AD submodule
 pathFunction = mfilename('fullpath');

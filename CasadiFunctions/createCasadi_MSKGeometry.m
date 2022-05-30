@@ -1,6 +1,6 @@
 function [f_lMT_vMT_dM] = createCasadi_MSKGeometry(S,model_info)
 % --------------------------------------------------------------------------
-%createCasadi_MSKGeometry 
+% createCasadi_MSKGeometry 
 %   Function to create Casadi functions for musculoskeletal geometry.
 % 
 % INPUT:
@@ -30,7 +30,8 @@ import casadi.*
 % yet available, because the analysis takes long.
 if isfile(fullfile(S.misc.subject_path,S.misc.msk_geom_name)) && isempty(S.misc.msk_geom_bounds)
     f_lMT_vMT_dM = Function.load(fullfile(S.misc.subject_path,S.misc.msk_geom_name));
-else
+    
+elseif strcmp(S.misc.msk_geom_eq,'polynomials') 
     % Assemble polynomial approximation from coefficients
     muscle_spanning_info_m = model_info.muscle_info.muscle_spanning_joint_info(:,:);
     MuscleInfo_m.muscle    = model_info.muscle_info.polyFit.MuscleInfo.muscle(:);

@@ -14,8 +14,11 @@ function [err, FT, Fce, Fpass, Fiso, vMmax, massM] = ...
 % Original author: Antoine Falisse
 % Original date: 12/19/2018
 %
-% Last edit by: 
-% Last edit date: 
+%   Adapted to allow assumption of constant pennation angle, by Lars D'Hondt.
+%   Adapted to take parameters for muscle stiffness and strength as input, 
+%   by Lars D'Hondt.
+% Last edit by: Lars D'Hondt
+% Last edit date: 30/May/2022
 % --------------------------------------------------------------------------
 
 FMo = ones(size(a,1),1)*FMo_in;

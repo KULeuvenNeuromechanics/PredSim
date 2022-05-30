@@ -1,16 +1,16 @@
 function write_motionFile_v40(q, fname)
 % --------------------------------------------------------------------------
 % write_motionFile_v40
-%   (Explanation)
+%   Function to save data to a motion (.mot) file.
 %   
 % INPUT:
 %   - q -
-%   * 
+%   * q.labels: cell array with label for each data column
+%   * q.data: array with data where each row is a timeframe
+%   * q.inDeg: are the rotations in degrees? 'yes' or 'no'
 %
 %   - fname -
-%   * 
-% 
-% OUTPUT:
+%   * full path and name of the motion file to save
 % 
 % Original author: Dhruv Gupta
 % Original date: 12/02/21

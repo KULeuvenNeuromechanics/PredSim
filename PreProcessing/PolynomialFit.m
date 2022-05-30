@@ -23,7 +23,8 @@ function [model_info] = PolynomialFit(S,MuscleData,model_info)
 % Original date: 19/December/2018
 %
 % update:
-%   compatibility with generalized code structure
+%   Compatibility with generalized code structure. 
+%   Get muscle_spanning_joint_info from input 
 %
 % Last edit by: Lars D'Hondt
 % Last edit date: 05/April/2022
@@ -40,7 +41,7 @@ for m_nr = 1:length(MuscleData.muscle_names)
     end
 end
 
-muscle_spanning_joint_INFO = model_info.muscle_info.muscle_spanning_joint_info;
+muscle_spanning_joint_info = model_info.muscle_info.muscle_spanning_joint_info;
 q_all = MuscleData.q;
 
 max_order = S.misc.poly_order.upper;
@@ -53,7 +54,7 @@ order_all = zeros(length(muscle_sel), 1);
 for m_nr=1:length(muscle_sel)
     muscle_index = muscle_sel(m_nr);
     
-    index_dof_crossing = find(muscle_spanning_joint_INFO(muscle_index,:)==1);
+    index_dof_crossing = find(muscle_spanning_joint_info(muscle_index,:)==1);
     nr_dof_crossing = length(index_dof_crossing);
     
     lMT = MuscleData.lMT(:,muscle_index);

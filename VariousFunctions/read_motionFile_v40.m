@@ -2,7 +2,7 @@ function q = read_motionFile_v40(fname)
 % --------------------------------------------------------------------------
 % read_motionFile_v40
 %   This function reads a file in the format of a SIMM motion file
-%           and returns a data structure
+%   and returns a data structure
 %   
 % INPUT:
 %   - fname -

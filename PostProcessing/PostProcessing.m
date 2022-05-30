@@ -1,5 +1,25 @@
 function [] = PostProcessing(S,model_info,f_casadi)
-
+% --------------------------------------------------------------------------
+% PostProcessing
+%   This function calls subfunctions that post-process the simulation
+%   results.
+% 
+% INPUT:
+%   - S -
+%   * setting structure S
+%
+%   - model_info -
+%   * structure with all the model information based on the OpenSim model
+% 
+%   - f_casadi -
+%   * Struct containing all casadi functions.
+% 
+% Original author: Lars D'Hondt
+% Original date: May/2022
+%
+% Last edit by: 
+% Last edit date: 
+% --------------------------------------------------------------------------
 
 % load results
 Outname = fullfile(S.subject.save_folder,[S.post_process.result_filename '.mat']);
@@ -7,11 +27,14 @@ load(Outname,'R');
 
 % kinematics in radians
 R.kinematics.Qs_rad = R.kinematics.Qs;
-R.kinematics.Qs_rad(:,model_info.ExtFunIO.jointi.rotations) = R.kinematics.Qs(:,model_info.ExtFunIO.jointi.rotations)*pi/180;
+R.kinematics.Qs_rad(:,model_info.ExtFunIO.jointi.rotations) = ...
+    R.kinematics.Qs(:,model_info.ExtFunIO.jointi.rotations)*pi/180;
 R.kinematics.Qdots_rad = R.kinematics.Qdots;
-R.kinematics.Qdots_rad(:,model_info.ExtFunIO.jointi.rotations) = R.kinematics.Qdots(:,model_info.ExtFunIO.jointi.rotations)*pi/180;
+R.kinematics.Qdots_rad(:,model_info.ExtFunIO.jointi.rotations) = ...
+    R.kinematics.Qdots(:,model_info.ExtFunIO.jointi.rotations)*pi/180;
 R.kinematics.Qddots_rad = R.kinematics.Qddots;
-R.kinematics.Qddots_rad(:,model_info.ExtFunIO.jointi.rotations) = R.kinematics.Qddots(:,model_info.ExtFunIO.jointi.rotations)*pi/180;
+R.kinematics.Qddots_rad(:,model_info.ExtFunIO.jointi.rotations) = ...
+    R.kinematics.Qddots(:,model_info.ExtFunIO.jointi.rotations)*pi/180;
 
 % misc info for quick access
 R.misc.body_mass = S.subject.mass;

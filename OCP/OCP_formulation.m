@@ -30,7 +30,7 @@ t0 = tic;
 % settings for optimization
 N = S.solver.N_meshes; % number of mesh intervals
 W = S.weights; % weights optimization
-nq          = model_info.ExtFunIO.jointi.nq; % lengths of coordinate subsets
+nq = model_info.ExtFunIO.jointi.nq; % lengths of coordinate subsets
 
 %% Load external functions
 import casadi.*

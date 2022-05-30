@@ -12,8 +12,10 @@ function [lM,lMtilde,varargout] = ...
 % Original author: Antoine Falisse
 % Original date: 12/19/2018
 %
-% Last edit by: 
-% Last edit date: 
+%   Adapted to allow assumption of constant pennation angle, by Lars D'Hondt.
+%   Adapted to return tendon length, by Lars D'Hondt
+% Last edit by: Lars D'Hondt
+% Last edit date: 30/May/2022
 % --------------------------------------------------------------------------
 
 lMo = ones(size(FTtilde,1),1)*lMo_in;
@@ -24,12 +26,14 @@ alphao = ones(size(FTtilde,1),1)*alphao_in;
 lTtilde = (log(5*(FTtilde + 0.25 - shift))/aTendon + 0.995);
 
 % Hill-type muscle model: geometric relationships
-if(MuscMoAsmp == 0) % b = cst
+if(MuscMoAsmp == 0) % constantmuscle height/width
     lM = sqrt((lMo.*sin(alphao)).^2+(lMT-lTs.*lTtilde).^2);
-else    % alpha = cst = alphao
+else    % constant pennation angle (= alphao)
     lM = (lMT-lTs.*lTtilde)./cos(alphao);
 end
 lMtilde = lM./lMo;
+
+% Tendon length
 if nargout == 3
     varargout{1} = lTs.*lTtilde;
 end

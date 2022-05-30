@@ -1,14 +1,27 @@
 function [ExePath] = InstallOsim2Dll_Exe(ExeDir)
-%InstallOsim2Dll_Exe Downloads the compiled opensimAD python utilities to
-%convert .osim model to a .cpp file. The python code can be found in the
-%opensimAD submodule (see opensimAD/osimtocppexe.py) or on github
-%https://github.com/Lars-DHondt-KUL/opensimAD
-%   input arguments:
-%       (1): ExeDir: path to folder where you want to install the
-%       executable.
-%   output argument:
-%       (1): path to the folder with the executable (This is input setting
-%            S.Cpp2Dll.PathCpp2Dll_Exe in run_pred.m)
+% --------------------------------------------------------------------------
+% InstallOsim2Dll_Exe
+%   This functions Downloads the compiled opensimAD python utilities to
+%   convert .osim model to a .cpp file. The python code can be found in the
+%   opensimAD submodule (see opensimAD/osimtocppexe.py) or on github
+%   https://github.com/Lars-DHondt-KUL/opensimAD
+% 
+% INPUT:
+%   - ExeDir -
+%   * path to folder where you want to install the executable.
+%
+% OUTPUT:
+%   - ExePath -
+%   * path to the folder with the executable (This is input setting
+%   S.Cpp2Dll.PathCpp2Dll_Exe in run_pred.m)
+% 
+% Original author: Maarten Afschrift
+% Original date: 17/May/2022
+%
+% Last edit by: 
+% Last edit date: 
+% --------------------------------------------------------------------------
+
 
 % test if we have to create a new folder
 if ~isfolder(ExeDir)

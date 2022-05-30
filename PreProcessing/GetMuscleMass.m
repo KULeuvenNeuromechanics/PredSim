@@ -1,26 +1,26 @@
-function [massM,tensions] = GetMuscleMass(FMo,lMo,tensions)
+function [massM,specific_tension] = GetMuscleMass(FMo,lMo,specific_tension)
 % --------------------------------------------------------------------------
 % GetMuscleMass
-%   compute the mass of the muscle
+%   This function computes the mass of a muscle.
 %   
 % INPUT:
 %   - FMo -
-%   * 
+%   * Optimal active muscle force
 %
 %   - lMo -
-%   * 
+%   * Optimal muscle fiber length
 % 
-%   - tensions -
-%   * 
+%   - specific_tension -
+%   * Specific tension of muscle fibers
 %
 % OUTPUT:
 %   - massM -
-%   * 
+%   * mass of a muscle
 %
-%   - tensions -
-%   * 
+%   - specific_tension -
+%   * Specific tension of muscle fibers
 % 
-% Original author: 
+% Original author: Dhruv Gupta
 % Original date: 
 %
 % Last edit by: 
@@ -28,7 +28,7 @@ function [massM,tensions] = GetMuscleMass(FMo,lMo,tensions)
 % --------------------------------------------------------------------------
 
 volM = FMo.*lMo;
-massM = volM.*(1059.7)./(tensions*1e6);
+massM = volM.*(1059.7)./(specific_tension*1e6);
 
 end
 

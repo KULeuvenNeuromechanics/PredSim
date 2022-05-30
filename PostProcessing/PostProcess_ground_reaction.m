@@ -62,11 +62,15 @@ idx_stance_r = (1:idx-1)';
 trh = min(R.ground_reaction.GRF_r(idx_stance_r,2));
 idx_stance_l = find(R.ground_reaction.GRF_l(:,2) > trh);
 
-COP_r(idx_stance_r,1) = R.ground_reaction.GRM_r(idx_stance_r,3)./R.ground_reaction.GRF_r(idx_stance_r,2);
-COP_r(idx_stance_r,3) = -R.ground_reaction.GRM_r(idx_stance_r,1)./R.ground_reaction.GRF_r(idx_stance_r,2);
+COP_r(idx_stance_r,1) = R.ground_reaction.GRM_r(idx_stance_r,3)...
+    ./R.ground_reaction.GRF_r(idx_stance_r,2);
+COP_r(idx_stance_r,3) = -R.ground_reaction.GRM_r(idx_stance_r,1)...
+    ./R.ground_reaction.GRF_r(idx_stance_r,2);
 
-COP_l(idx_stance_l,1) = R.ground_reaction.GRM_l(idx_stance_l,3)./R.ground_reaction.GRF_l(idx_stance_l,2);
-COP_l(idx_stance_l,3) = -R.ground_reaction.GRM_l(idx_stance_l,1)./R.ground_reaction.GRF_l(idx_stance_l,2);
+COP_l(idx_stance_l,1) = R.ground_reaction.GRM_l(idx_stance_l,3)...
+    ./R.ground_reaction.GRF_l(idx_stance_l,2);
+COP_l(idx_stance_l,3) = -R.ground_reaction.GRM_l(idx_stance_l,1)...
+    ./R.ground_reaction.GRF_l(idx_stance_l,2);
 
 R.ground_reaction.COP_r = COP_r;
 R.ground_reaction.COP_l = COP_l;
