@@ -1,3 +1,11 @@
+### Important
+
+This is a work in progress
+
+- If you encounter an error or get an unexpected output, [check the issues](https://github.com/KULeuvenNeuromechanics/PredSim/issues). Please look at the existing issues before creating a new one, you might not be the first person to have this problem. Include error messages.
+- Feel free to suggest improvements. Submit a pull request with the changes, or create an issue with desciption of the change.
+- This readme is not up to date, but comments inside the code are.
+
 *Use the table of contensts to easily navigate this README. Click on the three lines next to README.md just above this sentence.*
 
 Predictive Simulations of Human Movement
