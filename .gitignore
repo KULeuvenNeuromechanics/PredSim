@@ -7,7 +7,7 @@
 *.jpg
 *.eps
 
-/opensimAD/*
-/Subjects/*
-!/Subjects/Hamner_modified/Hamner_modified.osim
-/test_results
+/opensimAD/
+
+
+
