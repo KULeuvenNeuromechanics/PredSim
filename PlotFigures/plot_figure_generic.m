@@ -15,16 +15,18 @@ function [fig_hand] = plot_figure_generic(R,model_info,coord_muscle_names_sel,va
 %
 %   - coord_muscle_names_sel - 
 %   * cell array with names of _coordinates OR muscles_ selected to plot
+%       coordinates take priority in case of mixed input
 %
 %   - vartype - 
 %   * cell array with names of variables, or name of a single variable to 
 %   plot for selected coordinates (e.g. Qs to plot angles)
 %
 %   - optional inputs - 
-%   * pass a figure handle to add plots to an existing figure, otherwise
-%       this function will make a new figure
-%   * pass an array of 3 doubles to use as RGB triplet for the new plot
-%   * pass a string to use as name in the legend
+%   * These inputs are recognised by variable type, so their order does not matter
+%   > figure handle: add plots to an existing figure (default = new figure)
+%   > array of 3 doubles: use as RGB triplet for the new plot (default = blue)
+%   > string or character array: use as name in the legend (default = filename)
+%   > 'right': align figure window to right side of screen (default = left)
 %
 % OUTPUT:
 %   - fig_hand -
@@ -38,6 +40,7 @@ function [fig_hand] = plot_figure_generic(R,model_info,coord_muscle_names_sel,va
 % --------------------------------------------------------------------------
 
 %% settings
+% Default settings:
 % figure on left side of screen 
 fig_pos = 0;
 % default color is blue
@@ -47,36 +50,45 @@ legName = R.S.post_process.result_filename;
 % use no interpreter for legend
 lgInt = 'none';
 
-% identify and unpack varargin
+% Use optional inputs to overwrite default settings
 for i=1:length(varargin)
     if isa(varargin{i},'matlab.ui.Figure')
+        % figure handle
         fig_hand = varargin{i};
+
     elseif isa(varargin{i},'double') && length(varargin{i})==3
+        % RGB triplet
         colr = varargin{i};
-    elseif isa(varargin{i},'string') || isa(varargin{i},'char')
-        legName = varargin{i};
-        lgInt = 'tex';
-    elseif strcmp(varargin{i},'right')
+
+    elseif isa(varargin{i},'char') && strcmp(varargin{i},'right')
+        % figure on right side of screen
         fig_pos = 1;
+
+    elseif isa(varargin{i},'string') || isa(varargin{i},'char')
+        % use given name for legend
+        legName = varargin{i};
+        % interpret tex
+        lgInt = 'tex';
+
     end
 end
 
+% make sure vartype is a cell array
 if isa(vartype,'string') || isa(vartype,'char')
     vartype1 = {vartype};
     vartype = vartype1;
 end
 
-% number of horizontal subplots
-nh = length(coord_muscle_names_sel);
-% number of vertical subplots
-nv = length(vartype);
-
 %% find results
-ydata = cell(nv,1);
-% when plotting coordinates
+nvar = length(vartype);
+% preallocate cell array to place data for plotting
+ydata = cell(nvar,1);
+
+% when plotting coordinates...
 if ~isempty(intersect(R.colheaders.coordinates,coord_muscle_names_sel))
     colheaders = R.colheaders.coordinates;
-    for i=1:nv
+    for i=1:nvar
+        %... expect kinematics and kinetics
         if isfield(R.kinematics,vartype{i})
             ydata{i} = R.kinematics.(vartype{i});
         elseif isfield(R.kinetics,vartype{i})
@@ -84,14 +96,17 @@ if ~isempty(intersect(R.colheaders.coordinates,coord_muscle_names_sel))
         end
     end
 
-% when plotting muscles
+% when plotting muscles...
 elseif ~isempty(intersect(R.colheaders.muscles,coord_muscle_names_sel))
     colheaders = R.colheaders.muscles;
-    metabolic_model = 'Bhargava2004';
+    %... select a metabolic energy model used for simulation
     if isfield(R.metabolics,R.S.metabolicE.model)
         metabolic_model = R.S.metabolicE.model;
+    else
+        metabolic_model = 'Bhargava2004';
     end
-    for i=1:nv
+    for i=1:nvar
+        %... expect muscles and metabolics
         if isfield(R.muscles,vartype{i})
             ydata{i} = R.muscles.(vartype{i});
         elseif isfield(R.metabolics.(metabolic_model),vartype{i})
@@ -100,19 +115,25 @@ elseif ~isempty(intersect(R.colheaders.muscles,coord_muscle_names_sel))
     end
 end
 
+% Remove vartype elements that are not recognised as a variable
 idx_found = find(~cellfun('isempty',ydata));
 vartype = vartype(idx_found);
 ydata = ydata(idx_found);
-nv = length(idx_found);
 
-%% determine figure layout
-% adapt subplot distribution
+% Remove coordinate or muscle names that were not recognised
+coord_muscle_names_sel = intersect(colheaders,coord_muscle_names_sel);
+
+%% Determine figure layout
+% number of horizontal subplots: column for each coordinate/muscle
+nh = length(coord_muscle_names_sel);
+% number of vertical subplots: row for every vartype
+nv = length(vartype);
+% If there would be only 1 row, let this variable run through multiple rows
 if nv == 1
     nh1 = ceil(sqrt(nh));
     nv = ceil(nh/nh1);
     nh = nh1;
 end
-
 
 %% Set figure size and position on screen
 % fraction of screen size

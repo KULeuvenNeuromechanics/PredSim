@@ -78,19 +78,32 @@ end
 %% save figures if wanted
 for j=1:length(figure_settings)
     if ~isempty(figure_settings(j).savepath) && ~isempty(figure_settings(j).filetype)
-        set(fig_hands{j},'PaperPositionMode','auto')
-        for i=1:length(figure_settings(j).filetype)
-            if ~iscell(figure_settings(j).filetype)
-                filetype = {figure_settings(j).filetype};
-            else
-                filetype = figure_settings(j).filetype;
+        % older versions of matlab do not have exportgraphics
+        if exist('exportgraphics')
+            for i=1:length(figure_settings(j).filetype)
+                if ~iscell(figure_settings(j).filetype)
+                    filetype = {figure_settings(j).filetype};
+                else
+                    filetype = figure_settings(j).filetype;
+                end
+                    exportgraphics(fig_hands{j},[figure_settings(j).savepath '.' filetype{i}],'Resolution',300);
             end
-            if strcmp(filetype(i),'png')
-                print(fig_hands{j},figure_settings(j).savepath,'-dpng','-r0')
-            elseif strcmp(filetype(i),'jpg') || strcmp(filetype(i),'jpeg')
-                print(fig_hands{j},figure_settings(j).savepath,'-djpeg','-r0')
-            elseif strcmp(filetype(i),'eps')
-                print(fig_hands{j},figure_settings(j).savepath,'-depsc')
+
+        else
+            set(fig_hands{j},'PaperPositionMode','auto')
+            for i=1:length(figure_settings(j).filetype)
+                if ~iscell(figure_settings(j).filetype)
+                    filetype = {figure_settings(j).filetype};
+                else
+                    filetype = figure_settings(j).filetype;
+                end
+                if strcmp(filetype(i),'png')
+                    print(fig_hands{j},figure_settings(j).savepath,'-dpng','-r0')
+                elseif strcmp(filetype(i),'jpg') || strcmp(filetype(i),'jpeg')
+                    print(fig_hands{j},figure_settings(j).savepath,'-djpeg','-r0')
+                elseif strcmp(filetype(i),'eps')
+                    print(fig_hands{j},figure_settings(j).savepath,'-depsc')
+                end
             end
         end
     end
