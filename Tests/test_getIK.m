@@ -1,7 +1,8 @@
+%--------------------------------------------------------------------------
 % Script to test the function getIK
 %
 % Author: Lars D'Hondt
-% Date: 1 dec 2021
+% Date: 1/Dec/2021
 %
 %--------------------------------------------------------------------------
 clear
@@ -10,11 +11,12 @@ clc
 % add repository to workspace
 [pathHere,~,~] = fileparts(mfilename('fullpath'));
 [pathRepo,~,~] = fileparts(pathHere);
-addpath([pathRepo '/PreProcessing'])
-% addpath([pathRepo '/PreProcessing'])
+addpath([pathRepo '/VariousFunctions'])
+
 
 % load model info
-load(fullfile(pathRepo,'Subjects/test_1/default_model_info.mat'))
+load(fullfile(pathRepo,'Subjects/Hamner_modified/F_Hamner_modified_IO.mat'))
+model_info.ExtFunIO = IO;
 
 %% create motion file
 % colheaders in random order
