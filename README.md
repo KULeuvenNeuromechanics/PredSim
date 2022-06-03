@@ -70,16 +70,16 @@ All user-defined settings are stored in structure *S*. In *main.m* you have to s
 
 #### S.bounds
 
-- **S.bounds.a.lower**: minimal muscle activation. Provide a number between 0 and 1. Default is *0* [double]
+- **S.bounds.a.lower**: minimal muscle activation. Provide a number between 0 and 1. Default is *0.05* [double]
 - **S.bounds.calcn_dist.lower**: minimal distance between calcanei (origin) in the transversal plane. Default is *0.09* m [double]
 - **S.bounds.toes_dist.lower**: minimal distance between toes (origin) in the transversal plane. Default is *0.10* m [double]
 - **S.bounds.tibia_dist.lower**: minimal distance between tibiae (origin) in the transversal plane. Default is *0.11* m [double]
 - **S.bounds.SLL.upper**: upper bound on left step length in meters. If not specified, no bound is implemented on left step length. 
 - **S.bounds.SLR.upper**: upper bound on right step length in meters. If not specified, no bound is implemented on left step length.
 - **S.bounds.dist_trav.lower**: lower bound on distance travelled over 1 gait cycle in meters. Note that if half gait cycle is being simulated, half of S.bounds.dist_trav.lower serves as the lower bound for total distance travelled. If not specified, no bound is implemented on left step length.
-- **S.bounds.t_final.upper**: upper bound on final time in seconds. If not specified, initial guess of final time is used as the lower bound of final time.
-- **S.bounds.t_final.lower**: lower bound on final time in seconds. If not specified, initial guess of final time is used as the lower bound of final time.
-- **S.bounds.coordinates**: Cell array where each row represents a bound. In each row, 1st entry is dof name(s) , 2nd entry is its lower bounds, and 3rd entry is its upper bounds. Insert nan to lower bounds to only overwrite upper bounds.
+- **S.bounds.t_final.lower**: upper bound on final time in seconds. Default is *0.1* s[double].
+- **S.bounds.t_final.upper**: lower bound on final time in seconds for full gait cycle simulation. Default is *2* s[double]. For half gait cycle simulation, half of this value gets implemented as upper bound for final time.
+- **S.bounds.coordinates**: Cell array where 1st entry is dof name(s) , 2nd entry is its lower bounds, and 3rd entry is its upper bounds. Insert nan to lower bounds to only overwrite upper bounds. For another bound, add 3 more entries. For example, {{'knee_angle_r','knee_angle_l'},-120,10,'pelvis_tilt',nan,30} implements limit of -120 and 10 on knee angles, and default lower bund with 30 upper bound for pelvis_tilt.
 
 #### S.metabolicE - metabolic energy
 
@@ -92,25 +92,13 @@ All user-defined settings are stored in structure *S*. In *main.m* you have to s
 
 #### S.misc - miscellanious
 
-- **S.misc.v_max_s**: maximal contraction velocity identifier. Default is *0* [double]
 - **S.misc.gaitmotion_type**: type of gait simulation. Default is *HalfGaitCycle* [char]. Other option is *FullGaitCycle* [char]
 - **S.misc.msk_geom_eq**: type of equation to approximate musculo-skeletal geometry (moment arm and muscle-tendon lengths wrt. joint angle). Default is *polynomials* [char]
 - **S.misc.threshold_lMT_fit**: Threshold RMSE on muscle-tendon length to accept the polynomial fit. Default is *0.003* m [double]
 - **S.misc.threshold_dM_fit**: Threshold RMSE on muscle-tendon momnt arm to accept the polynomial fit. Default is *0.003* m [double]
 - **S.misc.poly_order.lower**: minimal order of polynomial function. Default is *3* [double]
 - **S.misc.poly_order.upper**: maximal order of polynomial function. Default is *9* [double]
-- **S.misc.msk_geom_bounds**: Specify the lower and upper limit of specific coordinate in which the polynomial fitting is performed. Cell array where each row represents a bound. In each row, 1st entry is dof name(s) , 2nd entry is its lower bounds, and 3rd entry is its upper bounds. Insert nan to lower bounds to only overwrite upper bounds. Defaults values are:
-hip_flexion = [-50 50];
-hip_adduction = [-30 30];
-hip_rotation = [-30 30];
-knee_angle = [-90 0];
-ankle_angle = [-30 30];
-subtalar_angle = [-30 30];
-mtj_angle = [-30 30];
-mtp_angle = [-20 50];
-lumbar_extension = [-30 30];
-lumbar_bending = [-30 30];
-lumbar_rotation = [-30 30]; 
+- **S.misc.msk_geom_bounds**: Cell array where 1st entry is dof name(s) , 2nd entry is its lower bounds, and 3rd entry is its upper bounds. Insert nan to lower bounds to only overwrite upper bounds. For another bound, add 3 more entries. For example, {{'knee_angle_r','knee_angle_l'},-120,10,'pelvis_tilt',nan,30} implements limit of -120 and 10 on knee angles, and default lower bund with 30 upper bound for pelvis_tilt. Defaults values are defined in the function get_default_bounds_dummy_motion.m
 - **S.misc.visualize_bounds**: specify if bounds and initial guess are visualized (0 or 1). Default is *0.003* m [double]
 - **S.misc.dampingCoefficient**: damping coefficient of muscles. Default is *0.01* [double]. Used as damping value that is multiplied by the normalized muscle velocity, in the muscle velocity dependent term in calculation of normalized contractile element force of the muscle.
 - **S.misc.constant_pennation_angle**: specify if pennation angle of the muscles is supposed to stay constant (0 or 1). Default is *0* [double]
@@ -118,9 +106,9 @@ lumbar_rotation = [-30 30];
 #### S.post_process
 
 - **S.post_process.make_plot**: boolean to plot post processing results (0 or 1). Default is *0*.
-- **S.post_process.savename**: name used for saving the result files. Either choose your own naming or *structured*. Default is *structured* [char] :warning: ***add how the structured name looks like?***. Other option is *custom* [char].
 - **S.post_process.rerun**: boolean to rerun post-processing without solving OCP. Default is *0*.
-- **S.post_process.result_filename**: File name for results. :warning: ***used for .mot file, check if it is used for anything else***
+- **S.post_process.result_filename**: File name for results. Used for the name of .mat file that saves the results, diary of the OCP, and name of the .mot file of the output motion.
+- **S.post_process.savename**: If S.post_process.result_filename is empty, S.post_process.savename is used. Defaults is *structured* [char]. This uses the name of the .mat file of results is used as <subject name>_v<n>. Where <subjenctname> is defined in S.subject.name. n = 1 if <subject name>_v1.mat does not exist. n is increased until n is found such that <subject name>_v<n>.mat does not exist. To change this structuring process, change its implementation in run_pred_sim.m file.
 
 #### S.solver
 
