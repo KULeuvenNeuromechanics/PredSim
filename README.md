@@ -59,10 +59,12 @@ All user-defined settings are stored in structure *S*. In *main.m* you have to s
 
 ### Required
 
-- **S.subject.save_results**: path to the folder where you want to store the results of the OCP. If the path does not exist yet on your machine, it will be created automatically.
+- **S.subject.save_folder**: path to the folder where you want to store the results of the OCP. If the path does not exist yet on your machine, it will be created automatically.
 - **S.subject.name**: the name or code of the subject you are simulating.
 - **S.subject.IG_selection**: either choose "quasi-random" or give the path to a .mot file you want to use as initial guess.
-- **S.subject.IG_bounds**: give the path to a .mot file on which IG_bounds will be based.
+- **S.subject.IG_selection_gaitCyclePercent**: If S.subject.IG_selection is a .mot file, S.subject.IG_selection_gaitCyclePercent is required. Here, specify what percent of gait cycle does the .mot file contain. For example, if the .mot file has 2 gait cycles, S.subject.IG_selection_gaitCyclePercent is 200.
+- **S.solver.run_as_batch_job**: specify if the OCP is to be solved as a batch job (0 or 1). If solving as a batch, make sure batch processing is set up under parallel processing toolbox.
+- **osim_path**: path to the scaled opensim model of the subject.
 
 ### Optional
 
@@ -72,27 +74,41 @@ All user-defined settings are stored in structure *S*. In *main.m* you have to s
 - **S.bounds.calcn_dist.lower**: minimal distance between calcanei (origin) in the transversal plane. Default is *0.09* m [double]
 - **S.bounds.toes_dist.lower**: minimal distance between toes (origin) in the transversal plane. Default is *0.10* m [double]
 - **S.bounds.tibia_dist.lower**: minimal distance between tibiae (origin) in the transversal plane. Default is *0.11* m [double]
-- **S.bounds.SLL.upper**: upper bound on left step length in meters. Default is *[]* m [double]
-- **S.bounds.SLR.upper**: upper bound on right step length in meters. Default is *[]* m [double]
-- **S.bounds.dist_trav.lower**: lower bound on distance travelled in meters. Default is *[]* m [double]
-- **S.bounds.t_final.upper**: upper bound on final time in seconds. Default is *[]* s [double]
-- **S.bounds.t_final.lower**: lower bound on final time in seconds. Default is *[]* s [double]
+- **S.bounds.SLL.upper**: upper bound on left step length in meters. If not specified, no bound is implemented on left step length. 
+- **S.bounds.SLR.upper**: upper bound on right step length in meters. If not specified, no bound is implemented on left step length.
+- **S.bounds.dist_trav.lower**: lower bound on distance travelled over 1 gait cycle in meters. Note that if half gait cycle is being simulated, half of S.bounds.dist_trav.lower serves as the lower bound for total distance travelled. If not specified, no bound is implemented on left step length.
+- **S.bounds.t_final.upper**: upper bound on final time in seconds. If not specified, initial guess of final time is used as the lower bound of final time.
+- **S.bounds.t_final.lower**: lower bound on final time in seconds. If not specified, initial guess of final time is used as the lower bound of final time.
+- **S.bounds.coordinates**: Cell array where each row represents a bound. In each row, 1st entry is dof name(s) , 2nd entry is its lower bounds, and 3rd entry is its upper bounds. Insert nan to lower bounds to only overwrite upper bounds.
 
 #### S.metabolicE - metabolic energy
 
 - **S.metabolicE.tanh_b**: hyperbolic tangeant smoothing factor used in the metabolic cost calculation. Default is *100* [double]
-- **S.metabolicE.model**: the name of the metabolic energy model used. Default is *Bhargava2004* https://doi.org/10.1016/S0021-9290(03)00239-2 [char]. Other options are:
+- **S.metabolicE.model**: the name of the metabolic energy model used. Default is *Bhargava2004* https://doi.org/10.1016/S0021-9290(03)00239-2 [char]. Currently only Bhargava2004 model has been implemented. Other options are:
 	- *Umberger2003* https://doi.org/10.1080/1025584031000091678
 	- *Umberger2010* https://doi.org/10.1098/rsif.2010.0084
 	- *Uchida2016* https://doi.org/10.1371/journal.pone.0150378
 
+
 #### S.misc - miscellanious
 
-- **S.misc.v_max_s**: maximal contraction velocity identifier. Default is *0* [double] :warning: ***TO CHECK***
-- **S.misc.gaitmotion_type**: type of gait simulation. Default is *HalfGaitCycle* [char] :warning: ***list all other options***
-- **S.misc.msk_geom_eq**: type of equation to approximate musculo-skeletal geometry (moment arm and muscle-tendon lengths wrt. joint angle). Default is *polynomials* [char] :warning: ***list all other options***
+- **S.misc.v_max_s**: maximal contraction velocity identifier. Default is *0* [double]
+- **S.misc.gaitmotion_type**: type of gait simulation. Default is *HalfGaitCycle* [char]. Other option is *FullGaitCycle* [char]
+- **S.misc.msk_geom_eq**: type of equation to approximate musculo-skeletal geometry (moment arm and muscle-tendon lengths wrt. joint angle). Default is *polynomials* [char]
 - **S.misc.poly_order.lower**: minimal order of polynomial function. Default is *3* [double]
 - **S.misc.poly_order.upper**: maximal order of polynomial function. Default is *9* [double]
+- **S.misc.msk_geom_bounds**: Specify the lower and upper limit of specific coordinate in which the polynomial fitting is performed. Cell array where each row represents a bound. In each row, 1st entry is dof name(s) , 2nd entry is its lower bounds, and 3rd entry is its upper bounds. Insert nan to lower bounds to only overwrite upper bounds. Defaults values are:
+hip_flexion = [-50 50];
+hip_adduction = [-30 30];
+hip_rotation = [-30 30];
+knee_angle = [-90 0];
+ankle_angle = [-30 30];
+subtalar_angle = [-30 30];
+mtj_angle = [-30 30];
+mtp_angle = [-20 50];
+lumbar_extension = [-30 30];
+lumbar_bending = [-30 30];
+lumbar_rotation = [-30 30]; 
 
 #### S.post_process
 
