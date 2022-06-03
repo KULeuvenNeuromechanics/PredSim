@@ -95,6 +95,8 @@ All user-defined settings are stored in structure *S*. In *main.m* you have to s
 - **S.misc.v_max_s**: maximal contraction velocity identifier. Default is *0* [double]
 - **S.misc.gaitmotion_type**: type of gait simulation. Default is *HalfGaitCycle* [char]. Other option is *FullGaitCycle* [char]
 - **S.misc.msk_geom_eq**: type of equation to approximate musculo-skeletal geometry (moment arm and muscle-tendon lengths wrt. joint angle). Default is *polynomials* [char]
+- **S.misc.threshold_lMT_fit**: Threshold RMSE on muscle-tendon length to accept the polynomial fit. Default is *0.003* m [double]
+- **S.misc.threshold_dM_fit**: Threshold RMSE on muscle-tendon momnt arm to accept the polynomial fit. Default is *0.003* m [double]
 - **S.misc.poly_order.lower**: minimal order of polynomial function. Default is *3* [double]
 - **S.misc.poly_order.upper**: maximal order of polynomial function. Default is *9* [double]
 - **S.misc.msk_geom_bounds**: Specify the lower and upper limit of specific coordinate in which the polynomial fitting is performed. Cell array where each row represents a bound. In each row, 1st entry is dof name(s) , 2nd entry is its lower bounds, and 3rd entry is its upper bounds. Insert nan to lower bounds to only overwrite upper bounds. Defaults values are:
@@ -109,10 +111,13 @@ mtp_angle = [-20 50];
 lumbar_extension = [-30 30];
 lumbar_bending = [-30 30];
 lumbar_rotation = [-30 30]; 
+- **S.misc.visualize_bounds**: specify if bounds and initial guess are visualized (0 or 1). Default is *0.003* m [double]
+- **S.misc.dampingCoefficient**: damping coefficient of muscles. Default is *0.01* [double]. Used as damping value that is multiplied by the normalized muscle velocity, in the muscle velocity dependent term in calculation of normalized contractile element force of the muscle.
+- **S.misc.constant_pennation_angle**: specify if pennation angle of the muscles is supposed to stay constant (0 or 1). Default is *0* [double]
 
 #### S.post_process
 
-- **S.post_process.make_plot**: boolean to plot post processing results. Default is *0* :warning: ***TO CHECK: possible to make it a string array?***
+- **S.post_process.make_plot**: boolean to plot post processing results. Default is *0*.
 - **S.post_process.savename**: name used for saving the result files. Either choose your own naming or *structured*. Default is *structured* [char] :warning: ***add how the structured name looks like?***
 
 #### S.solver
