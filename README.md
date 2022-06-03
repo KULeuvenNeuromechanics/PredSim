@@ -117,8 +117,10 @@ lumbar_rotation = [-30 30];
 
 #### S.post_process
 
-- **S.post_process.make_plot**: boolean to plot post processing results. Default is *0*.
-- **S.post_process.savename**: name used for saving the result files. Either choose your own naming or *structured*. Default is *structured* [char] :warning: ***add how the structured name looks like?***
+- **S.post_process.make_plot**: boolean to plot post processing results (0 or 1). Default is *0*.
+- **S.post_process.savename**: name used for saving the result files. Either choose your own naming or *structured*. Default is *structured* [char] :warning: ***add how the structured name looks like?***. Other option is *custom* [char].
+- **S.post_process.rerun**: boolean to rerun post-processing without solving OCP. Default is *0*.
+- **S.post_process.result_filename**: File name for results.
 
 #### S.solver
 
