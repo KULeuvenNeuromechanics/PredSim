@@ -98,7 +98,7 @@ All user-defined settings are stored in structure *S*. In *main.m* you have to s
 - **S.misc.threshold_dM_fit**: Threshold RMSE on muscle-tendon momnt arm to accept the polynomial fit. Default is *0.003* m [double]
 - **S.misc.poly_order.lower**: minimal order of polynomial function. Default is *3* [double]
 - **S.misc.poly_order.upper**: maximal order of polynomial function. Default is *9* [double]
-- **S.misc.msk_geom_bounds**: Cell array where 1st entry is dof name(s) , 2nd entry is its lower bounds, and 3rd entry is its upper bounds. Insert nan to lower bounds to only overwrite upper bounds. For another bound, add 3 more entries. For example, {{'knee_angle_r','knee_angle_l'},-120,10,'pelvis_tilt',nan,30} implements limit of -120 and 10 on knee angles, and default lower bund with 30 upper bound for pelvis_tilt. Defaults values are defined in the function get_default_bounds_dummy_motion.m
+- **S.misc.msk_geom_bounds**: Cell array where 1st entry is dof name(s) , 2nd entry is its lower bounds, and 3rd entry is its upper bounds. Insert nan to lower bounds to only overwrite upper bounds. For another bound, add 3 more entries. For example, {{'knee_angle_r','knee_angle_l'},-120,10,'pelvis_tilt',nan,30} implements limit of -120 and 10 on knee angles, and default lower bund with 30 upper bound for pelvis_tilt. Defaults values are defined in the function get_default_bounds_dummy_motion.m file (https://github.com/KULeuvenNeuromechanics/PredSim/blob/master/PreProcessing/get_default_bounds_dummy_motion.m).
 - **S.misc.visualize_bounds**: specify if bounds and initial guess are visualized (0 or 1). Default is *0.003* m [double]
 - **S.misc.dampingCoefficient**: damping coefficient of muscles. Default is *0.01* [double]. Used as damping value that is multiplied by the normalized muscle velocity, in the muscle velocity dependent term in calculation of normalized contractile element force of the muscle.
 - **S.misc.constant_pennation_angle**: specify if pennation angle of the muscles is supposed to stay constant (0 or 1). Default is *0* [double]
@@ -108,42 +108,30 @@ All user-defined settings are stored in structure *S*. In *main.m* you have to s
 - **S.post_process.make_plot**: boolean to plot post processing results (0 or 1). Default is *0*.
 - **S.post_process.rerun**: boolean to rerun post-processing without solving OCP. Default is *0*.
 - **S.post_process.result_filename**: File name for results. Used for the name of .mat file that saves the results, diary of the OCP, and name of the .mot file of the output motion.
-- **S.post_process.savename**: If S.post_process.result_filename is empty, S.post_process.savename is used. Defaults is *structured* [char]. This uses the name of the .mat file of results is used as <subject name>_v<n>. Where <subjenctname> is defined in S.subject.name. n = 1 if <subject name>_v1.mat does not exist. n is increased until n is found such that <subject name>_v<n>.mat does not exist. To change this structuring process, change its implementation in run_pred_sim.m file.
+- **S.post_process.savename**: If S.post_process.result_filename is empty, S.post_process.savename is used. Defaults is *structured* [char]. This uses the name of the .mat file of results is used as <subject name>_v<n>. Where <subjenctname> is defined in S.subject.name. n = 1 if <subject name>_v1.mat does not exist. n is increased until n is found such that <subject name>_v<n>.mat does not exist. To change this structuring process, change its implementation in run_pred_sim.m file (https://github.com/KULeuvenNeuromechanics/PredSim/blob/master/run_pred_sim.m).
 
 #### S.solver
 
-- **S.solver.linear_solver**: solver algorithm used for the OCP. Default is *mumps* [char] :warning: ***add different options***
+- **S.solver.linear_solver**: solver algorithm used for the OCP. Default is *mumps* [char]
 - **S.solver.tol_ipopt**: the power (10^-x) the dual infeasibility has to reach before the OCP can be regarded as solved; a higher number gives a more precise answer. Default is *4* [double]
 - **S.solver.max_iter**: maximal amount of itereations after wich the solver will stop. Default is *10000* [double]
-- **S.solver.parallel_mode**: type of parallel computing. Default is *thread* [char]. Other options are:
-	- ... :warning: ***add other option(s)***
+- **S.solver.parallel_mode**: type of parallel computing. Default is *thread* [char].
 - **S.solver.N_threads**: number of threads in parallel mode. Default is *4* [double]
 - **S.solver.N_meshes**: number of mesh intervals. Default is *50* [double]
 
 #### S.subject
 
-- **S.subject.save_folder**: folder path to store the intermediate subject specific results (muscle analysis etc.). This setting is created automatically.
+- **S.subject.save_folder**: folder path to store the intermediate subject specific results (muscle analysis etc.). If the folder does not exist, it is created automatically.
 - **S.subject.mass**: mass of the subject in kilograms. Default is *[]* kilograms [double]. If left empty, it will be overwritten by the mass extracted from the OpenSim model.
-- **s.subject.IG_pelvis_y**: height from the ground of the pelvis for the initial guess, in meters. Default is *[]* m [double]. I left empty, it will be overwritten by pelvis height extracted from the OpenSim model.
+- **s.subject.IG_pelvis_y**: height from the ground of the pelvis for the quasi-random initial guess, in meters. Default is *[]* m [double]. I left empty, it will be overwritten by pelvis height extracted from the OpenSim model.
+- **s.subject.adapt_IG_pelvis_y**: boolean to adjust the trajectory of height of pelvis from the ground for data-informed initial guess. Default is *0*. 0 means the trajectory will not be changed. If 1, the trajectory will be changed such that the average value of the trajectory is equal to s.subject.IG_pelvis_y.
 - **S.subject.v_pelvis_x_trgt**: average velocity you want the model to have, in meters per second. Default is *1.25* m/s [double]
-- **S.subject.muscle_strength**: structure with scaling factors for muscle strength. Default is *[]*. 
-	- :warning: ***ad something about the possibility to choose either musclewise or jointwise strength scaling***
-	- :warning: ***retink how to write down the information about this setting***
-- **S.subject.muscle_stiff**: structure with scaling factors for muscle stiffness. Default is *[]*. 
-	- :warning: ***ad something about the possibility to choose either musclewise or jointwise scaling***
-	- :warning: ***retink how to write down the information about this setting***
-- **S.subject.muscle_sym**: structure discribing muscle symetries. Default is *[]*.
-	- :warning: ***retink how to write down the information about this setting***
-- **S.subject.tendon_stiff**: structure with tendon stiffnesses. Default is *[]*. 
-	- :warning: ***ad something about the possibility to choose either musclewise or jointwise changing of tendon stiffness***
-	- :warning: ***retink how to write down the information about this setting***
-- **S.subject.mtp_type**: type of mtp joint you want to use in the simulation. Default is *[]* :warning: ***ask Lars to further clarify this setting***
-- **S.subject.MT_params**: muscle tendon properties. Default is *[]*
-	- :warning: ***rethink this; should there be a reference to the muscle_strength, muscle_stiff and tendon_stiff?***
-- **S.subject.spasticity**: muscle spasticity. Default is *[]*
-	- :warning: ***follow up***
-- **S.subject.muscle_coordination**: muscle coordination.
-	- :warning: ***currently commented out; follow this up***
+- **S.subject.muscle_strength**: structure with scaling factors for muscle strength. This scales the max muscle force of the active muscle force. Default is *[]*, that is, no scaling. Input as a cell array where 1st input is the muscle(s) name, 2nd is the scale factor. If more than one scaling is to be performed, add 2 more inputs. For example, S.subject.muscle_strength = {{'soleus_l','soleus_r'},0.9,{'tib_ant_l'},1.1} will scale both soleus by a factor of 0.9 and tibialis anterior left by a scale of 1.1.
+- **S.subject.muscle_pass_stiff_scale**: structure with scaling factors for muscle passive stiffness. Default is *[]*, that is, no scaling. Input as a cell array where 1st input is the muscle(s) name, 2nd is the scale factor. If more than one scaling is to be performed, add 2 more inputs. For example, S.subject.muscle_pass_stiff_scale = {{'soleus_l','soleus_r'},0.9,{'tib_ant_l'},1.1} will scale both soleus by a factor of 0.9 and tibialis anterior left by a scale of 1.1.
+- **S.subject.muscle_pass_stiff_shift**: structure with scaling factors for muscle passive stiffness shift. This property shifts the start of passive muscle force from normalized muscle length = 1 to the valuse specified in S.subject.muscle_pass_stiff_shift. Default is *[]*, that is, no scaling. Input as a cell array where 1st input is the muscle(s) name, 2nd is the scale factore. If more than one scaling is to be performed, add 2 more inputs. For example, S.subject.muscle_pass_stiff_shift = {{'soleus_l','soleus_r'},0.9,{'tib_ant_l'},1.1} will scale both soleus by a factor of 0.9 and tibialis anterior left by a scale of 1.1.
+- **S.subject.tendon_stiff_scale**: structure with scaling factors for tendon stiffnesses. Default is *[]*, that is, no scaling. Input as a cell array where 1st input is the muscle(s) name, 2nd is the scale factor. If more than one scaling is to be performed, add 2 more inputs. For example, S.subject.tendon_stiff_scale = {{'soleus_l','soleus_r'},0.9,{'tib_ant_l'},1.1} will scale both soleus by a factor of 0.9 and tibialis anterior left by a scale of 1.1.
+- **S.subject.mtp_type**: type of mtp joint. Default is *''* [char]. The current implementation is the same as 2022 paper.
+- **S.subject.scale_MT_params**: scale muscle tendon properties that are read from opensim model. Default is *[]*, that is, no scaling. Input as a cell array where 1st input is the muscle(s) name, 2nd is what property you want to scale (FMo, lMo, lTs, alphao or vMmax), 3rd is the scale factor itself. If more than one scaling is to be performed, add 3 more inputs. For example, S.subject.scale_MT_params = {{'soleus_l','soleus_r'},'FMo',0.9,{'tib_ant_l'},'lTs',1.1} will scale max isometric force of both soleus by a factor of 0.9 and tendon slack length of tibialis anterior left by a scale of 1.1.
 	
 #### S.weights
 
