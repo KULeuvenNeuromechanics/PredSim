@@ -52,7 +52,7 @@ S.solver.run_as_batch_job = 0;
 % S.bounds.dist_trav.lower    = ;
 % S.bounds.t_final.upper      = ;
 % S.bounds.t_final.lower      = ;
-% S.bounds.coordinates        = {'pelvis_tilt',-30,30};
+% S.bounds.coordinates        = {'pelvis_tilt',-30,30,'pelvis_list',-30,30};
 
 % % S.metabolicE - metabolic energy
 % S.metabolicE.tanh_b = ;
@@ -65,7 +65,7 @@ S.solver.run_as_batch_job = 0;
 % S.misc.msk_geom_eq         = '';
 % S.misc.poly_order.lower    = ;
 % S.misc.poly_order.upper    = ;
-% S.misc.msk_geom_bounds      = {{'knee_angle_r','knee_angle_l'},-120,10};
+% S.misc.msk_geom_bounds      = {{'knee_angle_r','knee_angle_l'},-120,10,'pelvis_tilt',-30,30};
 
 % % S.post_process
 % S.post_process.make_plot = '';
@@ -90,7 +90,7 @@ S.solver.CasADi_path    = 'C:\GBW_MyPrograms\casadi_3_5_5';
 S.subject.v_pelvis_x_trgt   = 1.33;
 % S.subject.IK_Bounds = ;
 % S.subject.muscle_strength   = ;
-% S.subject.muscle_pass_stiff_shift = ;
+% S.subject.muscle_pass_stiff_shift = {{'soleus_l','soleus_r'},0.9,{'tib_ant_l'},1.1};
 % S.subject.muscle_pass_stiff_scale = ;
 % S.subject.tendon_stiff      = ;
 S.subject.mtp_type          = '2022paper';

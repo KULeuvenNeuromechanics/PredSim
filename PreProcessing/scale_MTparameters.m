@@ -27,9 +27,9 @@ muscleNames = muscle_info.muscle_names;
 NMuscle = muscle_info.NMuscle;
 
 %% unpack scaling settings of muscle-tendon parameters from .osim file
-if ~isempty(S.subject.MT_params)
+if ~isempty(S.subject.scale_MT_params)
     try
-        if mod(length(S.subject.MT_params),3)~=0
+        if mod(length(S.subject.scale_MT_params),3)~=0
             error('Expected input pattern is: property, muscle names, scale factor')
         end
         scale_MTparams.FMo = {};
@@ -38,13 +38,13 @@ if ~isempty(S.subject.MT_params)
         scale_MTparams.alphao = {};
         scale_MTparams.vMmax = {};
         MTproperties = fieldnames(scale_MTparams);
-        for i=1:mod(length(S.subject.MT_params),3)
-            idx_property = find(strcmp(MTproperties{:},S.subject.MT_params{i}));
+        for i=1:mod(length(S.subject.scale_MT_params),3)
+            idx_property = find(strcmp(MTproperties{:},S.subject.scale_MT_params{i}));
             if ~isempty(idx_property)
-                scale_MTparams.(MTproperties{idx_property}){end+1} = S.subject.MT_params{i+1};
-                scale_MTparams.(MTproperties{idx_property}){end+1} = S.subject.MT_params{i+2};
+                scale_MTparams.(MTproperties{idx_property}){end+1} = S.subject.scale_MT_params{i+1};
+                scale_MTparams.(MTproperties{idx_property}){end+1} = S.subject.scale_MT_params{i+2};
             else
-                error([S.subject.MT_params{i} 'is not an accepted muscle-tendon property. ',...
+                error([S.subject.scale_MT_params{i} 'is not an accepted muscle-tendon property. ',...
                     'Possible entries are: FMo, lMo, lTs, alphao, vMmax.'])
             end
         end
@@ -57,7 +57,7 @@ end
 scale_MTparams.muscle_strength = S.subject.muscle_strength;
 scale_MTparams.muscle_pass_stiff_scale = S.subject.muscle_pass_stiff_scale;
 scale_MTparams.muscle_pass_stiff_shift = S.subject.muscle_pass_stiff_shift;
-scale_MTparams.tendon_stiff = S.subject.tendon_stiff;
+scale_MTparams.tendon_stiff = S.subject.tendon_stiff_scale;
 
 
 %%

@@ -154,7 +154,7 @@ end
 
 % assume constant pennation angle instead of constant width
 if ~isfield(S.misc,'constant_pennation_angle')
-    S.misc.constant_pennation_angle = false;
+    S.misc.constant_pennation_angle = 0;
 end
 
 
@@ -278,8 +278,8 @@ if ~isfield(S.subject,'muscle_pass_stiff_scale')
 end
 
 % tendon stiffness
-if ~isfield(S.subject,'tendon_stiff')
-    S.subject.tendon_stiff = [];
+if ~isfield(S.subject,'tendon_stiff_scale')
+    S.subject.tendon_stiff_scale = [];
 end
 
 % initial guess inputs
@@ -324,8 +324,8 @@ if ~isfield(S.subject,'mtp_type')
 end
 
 % muscle tendon properties
-if ~isfield(S.subject,'MT_params')
-    S.subject.MT_params = []; 
+if ~isfield(S.subject,'scale_MT_params')
+    S.subject.scale_MT_params = []; 
 end
 
 % muscle spasticity
@@ -396,7 +396,7 @@ end
 
 % damping can be included in the passive torques
 if ~isfield(S.weights,'pass_torq_includes_damping')
-    S.weights.pass_torq_includes_damping = true; 
+    S.weights.pass_torq_includes_damping = 1; 
 end
 
 % weight on muscle activations
