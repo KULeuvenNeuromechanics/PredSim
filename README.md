@@ -133,6 +133,11 @@ All user-defined settings are stored in structure *S*. In *main.m* you have to s
 - **S.subject.tendon_stiff_scale**: structure with scaling factors for tendon stiffnesses. Default is *[]*, that is, no scaling. Input as a cell array where 1st input is the muscle(s) name, 2nd is the scale factor. If more than one scaling is to be performed, add 2 more inputs. For example, S.subject.tendon_stiff_scale = {{'soleus_l','soleus_r'},0.9,{'tib_ant_l'},1.1} will scale both soleus by a factor of 0.9 and tibialis anterior left by a scale of 1.1.
 - **S.subject.mtp_type**: type of mtp joint. Default is *''* [char]. The current implementation is the same as 2022 paper.
 - **S.subject.scale_MT_params**: scale muscle tendon properties that are read from opensim model. Default is *[]*, that is, no scaling. Input as a cell array where 1st input is the muscle(s) name, 2nd is what property you want to scale (FMo, lMo, lTs, alphao or vMmax), 3rd is the scale factor itself. If more than one scaling is to be performed, add 3 more inputs. For example, S.subject.scale_MT_params = {{'soleus_l','soleus_r'},'FMo',0.9,{'tib_ant_l'},'lTs',1.1} will scale max isometric force of both soleus by a factor of 0.9 and tendon slack length of tibialis anterior left by a scale of 1.1.
+- **S.subject.damping_coefficient_all_dofs**: damping coefficient for all coordinates (except coordinates connected to ground, generally pelvis (also called floating base)). Default is *0.1* Nms/rad [double]
+- **S.subject.set_damping_coefficient_selected_dofs**: damping coefficient can be specified here for each coordinate individually. For example, S.subject.set_damping_coefficient_selected_dofs = {{'hip_flexion_l','hip_flexion_r'},0.12,{'knee_angle_l'},0.11} will put damping coefficient of both hip flexions to 0.12 and that of knee angle left to 0.11. If not defined here for a particular coordinateS.subject.damping_coefficient_all_dofs will be used for that coordinate. Default is empty.
+- **S.subject.stiffness_coefficient_all_dofs**: stiffness coefficient for all coordinates (except coordinates connected to ground, generally pelvis (also called floating base)). Default in *0* Nm/rad [double]
+- **S.subject.set_stiffness_coefficient_selected_dofs**: stiffness coefficient can be specified here for each coordinate individually. For example, S.subject.set_stiffness_coefficient_selected_dofs = {{'hip_flexion_l','hip_flexion_r'},0.012,{'knee_angle_l'},0.011} will put stiffness coefficient of both hip flexions to 0.012 and that of knee angle left to 0.011. If not defined here for a particular coordiante, S.subject.damping_coefficient_all_dofs will be used for that coordinate. Default is empty.
+- **S.subject.set_limit_torque_coefficients_selected_dofs**: Default values of coordinate limit torques are defined in the function get_default_coord_limit_torque_coefficients.m (https://github.com/KULeuvenNeuromechanics/PredSim/blob/master/PreProcessing/get_default_coord_limit_torque_coefficients.m). If values other than these are to be used, they can be specified here.
 	
 #### S.weights
 
@@ -141,6 +146,6 @@ All user-defined settings are stored in structure *S*. In *main.m* you have to s
 - **S.weights.q_dotdot**: weight on joint accelerations. Default is *50000* [double]
 - **S.weights.e_arm**: weight on arm excitations. Default is *10^6* [double]
 - **S.weights.pass_torq**: weight on passive torques. Default is *1000* [double]
+- **S.weights.pass_torq_includes_damping**: specify if damping torque = damping coefficient * coordinate velocity is to be included in the cost function (0 or 1). Default is 1 [double].
 - **S.weights.a**: weight on muscle activations. Default is *2000* [double]
-- **S.weights.e_mtp**: weight on mtp excitation. Default is *10^6* [double]
 - **S.weights.slack_ctrl**: weight on slack controls. Default is *0.001* [double]
