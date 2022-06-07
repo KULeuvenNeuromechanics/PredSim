@@ -149,3 +149,15 @@ All user-defined settings are stored in structure *S*. In *main.m* you have to s
 - **S.weights.pass_torq_includes_damping**: specify if damping torque = damping coefficient * coordinate velocity is to be included in the cost function (0 or 1). Default is 1 [double].
 - **S.weights.a**: weight on muscle activations. Default is *2000* [double]
 - **S.weights.slack_ctrl**: weight on slack controls. Default is *0.001* [double]
+
+#### S.Cpp2Dll - These settn=ings are not used during creation of the external function, and not during the OCP
+- **S.Cpp2Dll.compiler**: select compiler for cpp projects. For example, 'Visual Studio 14 2015 Win64' or 'Visual Studio 15 2017 Win64'. Default is *Visual Studio 15 2017 Win64* [char]
+- **S.Cpp2Dll.PathCpp2Dll_Exe**: Path with exectuables to create .cpp file. You can use the function S.Cpp2Dll.PathCpp2Dll_Exe = InstallOsim2Dll_Exe(ExeDir) to download this exectuable with the input 'ExeDir' to folder in which you want to install the executable. The output argument of this function gives you the path to the folder with the exectutable. Default is empty.
+- **S.Cpp2Dll.export3DSegmentOrigins**: Export 3D segment origins. Default is S.Cpp2Dll.export3DSegmentOrigins = {'calcn_r', 'calcn_l', 'femur_r', 'femur_l', 'hand_r','hand_l', 'tibia_r', 'tibia_l', 'toes_r', 'toes_l'};
+- **S.Cpp2Dll.jointsOrder**: If you want to choose the order of the joints outputs. Default is empty, which uses the joint order of the .osim file.
+- **S.Cpp2Dll.coordinatesOrder**: If you want to choose the order of the coordinate outputs. Default is empty, which uses the coordinate order of the .osim file.
+- **S.Cpp2Dll.exportGRFs**: Export total GRFs (0 or 1). If True, right and left 3D GRFs (in this order) are exported. Set False or do not pass as argument to not export those variables. Default is 1.
+- **S.Cpp2Dll.exportSeparateGRFs**: Export separate GRFs (0 or 1). If True, right and left 3D GRFs (in this order) are exported for each of the contact spheres. Set False or do not pass as argument to not export those variables. Default is 1.
+- **S.Cpp2Dll.exportGRMs**: Export GRMs (0 or 1). If True, right and left 3D GRMs (in this order) are exported. Set False or do not pass as argument to not export those variables. Default is 1.
+- **S.Cpp2Dll.exportContactPowers**: Export contact sphere vertical deformation power (0 or 1). If True, right and left vertical deformation power of all contact spheres are exported. Set False or do not pass as argument to not export those variables. Default is 1.
+- **S.Cpp2Dll.verbose_mode**: Verbose mode (0 or 1). 0: only warnings and errors, 1: all information on building .dll file
