@@ -160,4 +160,4 @@ All user-defined settings are stored in structure *S*. In *main.m* you have to s
 - **S.Cpp2Dll.exportSeparateGRFs**: Export separate GRFs (0 or 1). If True, right and left 3D GRFs (in this order) are exported for each of the contact spheres. Set False or do not pass as argument to not export those variables. Default is 1.
 - **S.Cpp2Dll.exportGRMs**: Export GRMs (0 or 1). If True, right and left 3D GRMs (in this order) are exported. Set False or do not pass as argument to not export those variables. Default is 1.
 - **S.Cpp2Dll.exportContactPowers**: Export contact sphere vertical deformation power (0 or 1). If True, right and left vertical deformation power of all contact spheres are exported. Set False or do not pass as argument to not export those variables. Default is 1.
-- **S.Cpp2Dll.verbose_mode**: Verbose mode (0 or 1). 0: only warnings and errors, 1: all information on building .dll file
+- **S.Cpp2Dll.verbose_mode**: Verbose mode (0 or 1). 0: only warnings and errors, 1: all information on building .dll file.
