@@ -1,4 +1,31 @@
 function [nr_coefficients,expoVal]=calcCoeff(order,n_dof)
+% --------------------------------------------------------------------------
+% calcCoeff 
+% Function to compute the helper matricies used in making CasADi functio
+% that determine the muscle tendon length, velocity and moment arm using
+% polynomial fit.
+% 
+% INPUT:
+%   - order -
+%   * order of fit
+% 
+%   - n_dof -
+%   * number of degrees of freedom
+% 
+% OUTPUT:
+%   - nr_coefficients -
+%   * number of coefficients needed.
+% 
+%   - expoVal -
+%   * valuse of exponents.
+% 
+% Original authors: Dhruv Gupta
+% Original date: 30/11/2021
+%
+% Last edit by: 
+% Last edit date: 
+% --------------------------------------------------------------------------
+
 nr_coefficients = 0;
 for n_q1 = 0:order
     if n_dof<2

@@ -1,3 +1,17 @@
+% --------------------------------------------------------------------------
+% getHelperMatrices
+% Code to create helper matricies used in making CasADi function that
+% determine the muscle tendon length, velocity and moment arm using
+% polynomial fit.
+% 
+% Original author: Dhruv Gupta
+% Original date: 30/November/2021
+%
+% Last update:
+% Last edit by:
+% Last edit date:
+% --------------------------------------------------------------------------
+
 clear
 close all
 clc
