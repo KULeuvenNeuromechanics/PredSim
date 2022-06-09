@@ -15,7 +15,7 @@ This repository is a rework of the code and data to generate three-dimensional m
 
 In general, hard coded variables were removed as much as possible and put in a settings structure the user can adapt. This results in:
 
-- More easily use a diffent model (other number of joints or muscles)
+- More easily use a different model (other number of joints or muscles)
 - Make input-output a bit easier
 - More easily change the (musculo-skeletal) parameters of the simulation
 
@@ -55,7 +55,7 @@ Lastly, seperate pieces of code where put together to streamline performing pred
 
 ## Settings
 
-All user-defined settings are stored in structure *S*. In *main.m* you have to specify the required settings and are free to change/add the optional settings. 
+All user-defined settings are stored in structure *S*. In [*main.m*](https://github.com/KULeuvenNeuromechanics/PredSim/blob/master/main.m) you have to specify the required settings and are free to change/add the optional settings. 
 
 ### Required
 
@@ -77,14 +77,14 @@ All user-defined settings are stored in structure *S*. In *main.m* you have to s
 - **S.bounds.SLL.upper**: upper bound on left step length in meters. If not specified, no bound is implemented on left step length. 
 - **S.bounds.SLR.upper**: upper bound on right step length in meters. If not specified, no bound is implemented on left step length.
 - **S.bounds.dist_trav.lower**: lower bound on distance travelled over 1 gait cycle in meters. Note that if half gait cycle is being simulated, half of S.bounds.dist_trav.lower serves as the lower bound for total distance travelled. If not specified, no bound is implemented on left step length.
-- **S.bounds.t_final.lower**: upper bound on final time in seconds. Default is *0.1* s[double].
-- **S.bounds.t_final.upper**: lower bound on final time in seconds for full gait cycle simulation. Default is *2* s[double]. For half gait cycle simulation, half of this value gets implemented as upper bound for final time.
+- **S.bounds.t_final.lower**: lower bound on final time in seconds. Default is *0.1* s [double].
+- **S.bounds.t_final.upper**: upper bound on final time in seconds for full gait cycle simulation. Default is *2* s [double]. For half gait cycle simulation, half of this value gets implemented as upper bound for final time.
 - **S.bounds.coordinates**: Cell array where 1st entry is dof name(s) , 2nd entry is its lower bound, and 3rd entry is its upper bound. Insert 'nan' or [] to lower bounds to only overwrite upper bounds, or vice versa. For another bound, add 3 more entries. For example, {{'knee_angle_r','knee_angle_l'},-120,10,'pelvis_tilt',[],30} implements limit of -120° and 10° on knee angles, and default lower bound with 30° upper bound for pelvis_tilt. This setting changes the bounds of the optimization variables. When formulating the OCP, the variables are sclaed w.r.t. their bounds to improve conditioning. Changing these bounds can have a strong influence on convergence.
 
 #### S.metabolicE - metabolic energy
 
 - **S.metabolicE.tanh_b**: hyperbolic tangeant smoothing factor used in the metabolic cost calculation. Default is *100* [double]
-- **S.metabolicE.model**: the name of the metabolic energy model used. Default is [*Bhargava2004*]() https://doi.org/10.1016/S0021-9290(03)00239-2) [char]. Currently only Bhargava2004 model has been implemented. Other options that will be added in the future are:
+- **S.metabolicE.model**: the name of the metabolic energy model used. Default is [*Bhargava2004*](https://doi.org/10.1016/S0021-9290(03)00239-2) [char]. Currently only Bhargava2004 model has been implemented. Other options that will be added in the future are:
 	- [*Umberger2003*](https://doi.org/10.1080/1025584031000091678)
 	- [*Umberger2010*](https://doi.org/10.1098/rsif.2010.0084)
 	- [*Uchida2016*](https://doi.org/10.1371/journal.pone.0150378)
@@ -99,14 +99,14 @@ All user-defined settings are stored in structure *S*. In *main.m* you have to s
 - **S.misc.poly_order.lower**: minimal order of polynomial function. Default is *3* [double]
 - **S.misc.poly_order.upper**: maximal order of polynomial function. Default is *9* [double]
 - **S.misc.msk_geom_bounds**: Cell array where 1st entry is dof name(s) , 2nd entry is its lower bounds, and 3rd entry is its upper bounds. Insert nan to lower bounds to only overwrite upper bounds. For another bound, add 3 more entries. For example, {{'knee_angle_r','knee_angle_l'},-120,10,'pelvis_tilt',nan,30} implements limit of -120 and 10 on knee angles, and default lower bund with 30 upper bound for pelvis_tilt. Defaults values are defined in the function [get_default_bounds_dummy_motion.m file](https://github.com/KULeuvenNeuromechanics/PredSim/blob/master/PreProcessing/get_default_bounds_dummy_motion.m).
-- **S.misc.visualize_bounds**: specify if bounds and initial guess are visualized (no: 0, 1: yes). Default is *0* [double]
+- **S.misc.visualize_bounds**: specify if bounds and initial guess are visualized (0 or 1). Default is *0* [double]
 - **S.misc.dampingCoefficient**: damping coefficient of muscles. Default is *0.01* [double]. Used as damping value that is multiplied by the normalized muscle velocity, in the muscle velocity dependent term in calculation of normalized contractile element force of the muscle.
-- **S.misc.constant_pennation_angle**: specify if pennation angle of the muscles is supposed to stay constant (no: 0, 1: yes). Default is *0* [double]
+- **S.misc.constant_pennation_angle**: specify if pennation angle of the muscles is supposed to stay constant (0 or 1). Default is *0* [double]
 
 #### S.post_process
 
-- **S.post_process.make_plot**: boolean to plot post processing results (no: 0, 1: yes). Default is *0*.
-- **S.post_process.rerun**: boolean to rerun post-processing without solving OCP (no: 0, 1: yes). Default is *0*.
+- **S.post_process.make_plot**: boolean to plot post processing results (0 or 1). Default is *0*.
+- **S.post_process.rerun**: boolean to rerun post-processing without solving OCP (0 or 1). Default is *0*.
 - **S.post_process.result_filename**: File name for results. Used for the name of .mat file that saves the results, diary of the OCP, and name of the .mot file of the output motion. When rerunning post-processing of an existing result, giving this file name is required.
 - **S.post_process.savename**: Type of savename to use if S.post_process.result_filename is empty. Defaults is *structured* [char]. This uses the name of the .mat file of results is used as <S.subject.name>_v<n>. Where <S.subject.name> is defined in S.subject.name. n = 1 if <S.subject.name>_v1.mat does not exist. n is increased until n is found such that <S.subject.name>_v<n>.mat does not exist. To change this structuring process, change its implementation in [run_pred_sim.m file](https://github.com/KULeuvenNeuromechanics/PredSim/blob/master/run_pred_sim.m).
 
