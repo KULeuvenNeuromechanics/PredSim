@@ -65,7 +65,8 @@ for i=1:length(muscle_strength_vec)
     % calculate force
     [~,F_muscle_a,~] = f_get_forces(1,muscle_strength_vec(i),1,1);
     % add plot
-    p1=plot(lMtilde,F_muscle_a+F_muscle_p_0,'-','DisplayName',['muscle_strength = ' num2str(muscle_strength_vec(i))],'Color',plh0{i}.Color);
+    p1=plot(lMtilde,F_muscle_a+F_muscle_p_0,'-','DisplayName',...
+        ['muscle_strength = ' num2str(muscle_strength_vec(i))],'Color',plh0{i}.Color);
     lg1(end+1) = p1;
 end
 
@@ -98,13 +99,14 @@ for i=1:length(muscle_pass_stiff_shift_vec)
     % calculate force
     [~,~,F_muscle_p] = f_get_forces(1,1,1,muscle_pass_stiff_scale_vec(i));
     % add plot
-    p1=plot(lMtilde,F_muscle_a_0+F_muscle_p,'-','DisplayName',['muscle_pass_stiff_scale = ' num2str(muscle_pass_stiff_scale_vec(i))],'Color',plh0{i}.Color);
+    p1=plot(lMtilde,F_muscle_a_0+F_muscle_p,'-','DisplayName',...
+        ['muscle_pass_stiff_scale = ' num2str(muscle_pass_stiff_scale_vec(i))],'Color',plh0{i}.Color);
     lg1(end+1) = p1;
 end
 
 xlabel('Fiber length (1/lMo)')
 ylabel('Isometric fiber force (1/FMo)')
-title('Scaling passive muscle force')
+title('Scaling passive muscle stiffness')
 legend(lg1,'Location','southoutside','Interpreter','none')
 xlim([min(lMtilde),max(lMtilde)])
 ylim(ylm);
@@ -129,13 +131,14 @@ for i=1:length(muscle_pass_stiff_shift_vec)
     % calculate force
     [~,~,F_muscle_p] = f_get_forces(1,1,muscle_pass_stiff_shift_vec(i),1);
     % add plot
-    p1=plot(lMtilde,F_muscle_a_0+F_muscle_p,'-','DisplayName',['muscle_pass_stiff_shift = ' num2str(muscle_pass_stiff_shift_vec(i))],'Color',plh0{i}.Color);
+    p1=plot(lMtilde,F_muscle_a_0+F_muscle_p,'-','DisplayName',...
+        ['muscle_pass_stiff_shift = ' num2str(muscle_pass_stiff_shift_vec(i))],'Color',plh0{i}.Color);
     lg1(end+1) = p1;
 end
 
 xlabel('Fiber length (1/lMo)')
 ylabel('Isometric fiber force (1/FMo)')
-title('Shifting passive muscle force')
+title('Shifting passive muscle stiffness')
 legend(lg1,'Location','southoutside','Interpreter','none')
 xlim([min(lMtilde),max(lMtilde)])
 ylim(ylm);
@@ -143,10 +146,11 @@ grid on
 
 
 %%
-exportgraphics(f1,[pwd '/fig_muscle_tendon_properties_scaling.png'],'Resolution',300);
+exportgraphics(f1,[pwd '/fig_muscle_tendon_properties_scaling.png']);
 
 %%
-function [Fl_T, Fla_M, Flp_M] = f_get_forces_l(lTtilde,lMtilde, tendon_stiff,muscle_strength,muscle_pass_stiff_shift,muscle_pass_stiff_scale)
+function [Fl_T, Fla_M, Flp_M] = f_get_forces_l(lTtilde,lMtilde, tendon_stiff,...
+    muscle_strength,muscle_pass_stiff_shift,muscle_pass_stiff_scale)
 
 load('Fvparam.mat','Fvparam');
 load('Fpparam.mat','Fpparam');
