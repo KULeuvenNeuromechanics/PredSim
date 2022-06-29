@@ -36,7 +36,7 @@ To run this code you need to have the following software on your machine:
 - MATLAB. The code has been tested on MATLAB20XX and up.
 - OpenSim 4.3. [Download here](https://simtk.org/projects/opensim)
 - CasADi 3.5.5. [Download here](https://web.casadi.org/get/) 
-- Microsoft Visual Studio 20XX, the Community edition will suffice. [Download here](https://visualstudio.microsoft.com/downloads/)
+- Microsoft Visual Studio 2017 Community edition. [Download here](https://visualstudio.microsoft.com/vs/older-downloads/#visual-studio-2017-and-other-products)
 
 ## How to setup the code
 
