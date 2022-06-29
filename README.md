@@ -1,10 +1,10 @@
 ### Important
 
-This is a work in progress
+This repository is a work in progress
 
-- If you encounter an error or get an unexpected output, [check the issues](https://github.com/KULeuvenNeuromechanics/PredSim/issues). Please look at the existing issues before creating a new one, you might not be the first person to have this problem. Include error messages.
-- Feel free to suggest improvements. Submit a pull request with the changes, or create an issue with desciption of the change.
-- This readme is not up to date, but comments inside the code are.
+- If you encounter an error or get an unexpected output, [check the issues](https://github.com/KULeuvenNeuromechanics/PredSim/issues). Please look at the existing issues before creating a new one, you might not be the first person to have this problem. Include the error messages in the issue.
+- Feel free to suggest improvements. Submit a pull request with the changes, or create an issue with a desciption of the proposed change.
+- This ReadMe is still under construction. Though, comments inside the code are up to date.
 
 *Use the table of contensts to easily navigate this README. Click on the three lines next to README.md just above this sentence.*
 
@@ -30,39 +30,34 @@ Lastly, seperate pieces of code where put together to streamline performing pred
 - Automatic conversion of an OpenSim model to the external function (executable called from the workflow)
 - Perorming Muscle Analysis and polynomial fitting (integrated into the workflow)
 
+## Required software
 
-## Code Structure
+To run this code you need to have the following software on your machine:
+- MATLAB. The code has been tested on MATLAB20XX and up.
+- OpenSim 4.3. [Download here](https://simtk.org/projects/opensim)
+- CasADi 3.5.5. [Download here](https://web.casadi.org/get/) 
+- Microsoft Visual Studio 20XX, the Community edition will suffice. [Download here](https://visualstudio.microsoft.com/downloads/)
 
-- main
-	- getDefaultSettings
-	- pre-processing
-		- osim2dll
-		- get_model_info
-		- read_and_scale_MTparameters
-			- getMTparameters
-			- scale_MTparameters
-		- get_musculoskeletal_geometry 
-			- muscle_analysis
-			- polynomial_fit
-		- update_model_info
-	- createCasadiFunctions
-	- OCP_formulations
-	- post-processing
+## How to setup the code
 
-## Installation Instruction
+1. Get the OpenSim 4.3 API running on MATLAB. See [Setting up your Matlab Scripting Environment](https://simtk-confluence.stanford.edu:8443/display/OpenSim/Scripting+with+Matlab#ScriptingwithMatlab-MatlabSetupSettingupyourMatlabScriptingEnvironment)
+2. In main.m, change [S.solver.CasaADi_path](https://github.com/KULeuvenNeuromechanics/PredSim/blob/9fbbd43cf83617620e428d2c91f222c909a1349c/main.m#L84) to reflect the location where you installed CasADi. 
+3. In main.m, change [S.Cpp2Dll.PathCpp2Dll_Exe](https://github.com/KULeuvenNeuromechanics/PredSim/blob/9fbbd43cf83617620e428d2c91f222c909a1349c/main.m#L115) to specify where you want to have the executable installed that will convert the OpenSim models to the external function.
 
-## How to use the software
+After perfoming these steps, run the main script. If you don't receive any errors, and your results are the same as [these results](ADD LINK) you have succesfully intalled and set up the code. You are ready to do simulations. 
 
-## Settings
+## How to use the code - Settings
 
-All user-defined settings are stored in structure *S*. In [*main.m*](https://github.com/KULeuvenNeuromechanics/PredSim/blob/master/main.m) you have to specify the required settings and are free to change/add the optional settings. 
+The code is written such that as a user you only have to interact with [*main.m*](https://github.com/KULeuvenNeuromechanics/PredSim/blob/master/main.m).  
+
+All user-defined settings are stored in structure *S*. In main.m you have to specify the required settings and are free to change/add the optional settings. 
 
 ### Required
 
 - **S.subject.save_folder**: path to the folder where you want to store the results of the OCP. If the folder does not exist yet on your machine, it will be created automatically.
 - **S.subject.name**: the name or code of the subject you are simulating.
 - **S.subject.IG_selection**: either choose "quasi-random" or give the path to a .mot file you want to use as initial guess.
-- **S.subject.IG_selection_gaitCyclePercent**: If S.subject.IG_selection is a .mot file, S.subject.IG_selection_gaitCyclePercent is required. Here, specify what percent of gait cycle does the .mot file contain. For example, if the .mot file has 2 gait cycles, S.subject.IG_selection_gaitCyclePercent is 200.
+- **S.subject.IG_selection_gaitCyclePercent**: if S.subject.IG_selection is a .mot file, S.subject.IG_selection_gaitCyclePercent is required. Here, specify what percent of gait cycle does the .mot file contain. For example, if the .mot file has 2 gait cycles, S.subject.IG_selection_gaitCyclePercent is 200.
 - **S.solver.run_as_batch_job**: specify if the OCP is to be solved as a batch job (0: no, 1: yes). Batch processing requires the [Parallel Computing Toolbox](https://nl.mathworks.com/products/parallel-computing.html).
 - **osim_path**: path to the scaled opensim model of the subject.
 
