@@ -113,9 +113,9 @@ S.subject.set_damping_coefficient_selected_dofs = {{'mtp_angle_l','mtp_angle_r'}
 % %S.Cpp2Dll: required inputs to convert .osim to .dll
 % optional: if you want to install the opensimExe
 S.Cpp2Dll.PathCpp2Dll_Exe = InstallOsim2Dll_Exe('C:\GBW_MyPrograms\Osim2Dll_exe'); %(optional: if you want to install the opensimExe)
-% S.Cpp2Dll.compiler = 'Visual Studio 15 2017 Win64';
+S.Cpp2Dll.compiler = 'Visual Studio 15 2017 Win64';
 % S.Cpp2Dll.export3DSegmentOrigins = ;
-S.Cpp2Dll.verbose_mode = 0; % 0 for no outputs from cmake
+S.Cpp2Dll.verbose_mode = 1; % 0 for no outputs from cmake
 
 %% Run predictive simulations
 if S.solver.run_as_batch_job
