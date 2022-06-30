@@ -32,23 +32,25 @@ Lastly, seperate pieces of code where put together to streamline performing pred
 
 ## Required software
 
-To run this code you need to have the following software on your machine:
-- MATLAB. The code has been tested on MATLAB20XX and up.
+To run this code you need to have the following softwares on your machine:
+- MATLAB. The code has been tested on MATLAB2021b, MATLAB20XX....
 - OpenSim 4.3. [Download here](https://simtk.org/projects/opensim)
 - CasADi 3.5.5. [Download here](https://web.casadi.org/get/) 
 - Microsoft Visual Studio 2017 Community edition. [Download here](https://visualstudio.microsoft.com/vs/older-downloads/#visual-studio-2017-and-other-products)
+- CMake 3.2X.X. [Download here](https://cmake.org/download/)
 
 ## How to setup the code
 
-1. Get the OpenSim 4.3 API running on MATLAB. See [Setting up your Matlab Scripting Environment](https://simtk-confluence.stanford.edu:8443/display/OpenSim/Scripting+with+Matlab#ScriptingwithMatlab-MatlabSetupSettingupyourMatlabScriptingEnvironment)
-2. In main.m, change [S.solver.CasaADi_path](https://github.com/KULeuvenNeuromechanics/PredSim/blob/9fbbd43cf83617620e428d2c91f222c909a1349c/main.m#L84) to reflect the location where you installed CasADi. 
-3. In main.m, change [S.Cpp2Dll.PathCpp2Dll_Exe](https://github.com/KULeuvenNeuromechanics/PredSim/blob/9fbbd43cf83617620e428d2c91f222c909a1349c/main.m#L115) to specify where you want to have the executable installed that will convert the OpenSim models to the external function.
+1. Clone this repository to your machine. Do not put it in your OneDrive folder if you have one.
+2. Get the OpenSim 4.3 API running on MATLAB. See [Setting up your Matlab Scripting Environment](https://simtk-confluence.stanford.edu:8443/display/OpenSim/Scripting+with+Matlab#ScriptingwithMatlab-MatlabSetupSettingupyourMatlabScriptingEnvironment)
+3. In main.m, change [S.solver.CasaADi_path](https://github.com/KULeuvenNeuromechanics/PredSim/blob/9fbbd43cf83617620e428d2c91f222c909a1349c/main.m#L84) to reflect the location where you installed CasADi. 
+4. In main.m, change [S.Cpp2Dll.PathCpp2Dll_Exe](https://github.com/KULeuvenNeuromechanics/PredSim/blob/9fbbd43cf83617620e428d2c91f222c909a1349c/main.m#L115) to specify where you want to have the executable installed that will convert the OpenSim models to the external function. If you have a computer with KU Leuven restrictions, be sure to have this path go to your 'C:\GBW_MyPrograms' folder.
 
-After perfoming these steps, run the main script. If you don't receive any errors, and your results are the same as [these results](ADD LINK) you have succesfully intalled and set up the code. You are ready to do simulations. 
+After perfoming these steps, run the main script. If you don't receive any errors, and your results are the same as [these results](ADD LINK) you have succesfully intalled and set up the code. You are ready to do your own simulations.
 
 ## How to use the code - Settings
 
-The code is written such that as a user you only have to interact with [*main.m*](https://github.com/KULeuvenNeuromechanics/PredSim/blob/master/main.m).  
+The code is written such that as a user you only has to interact with [*main.m*](https://github.com/KULeuvenNeuromechanics/PredSim/blob/master/main.m).  
 
 All user-defined settings are stored in structure *S*. In main.m you have to specify the required settings and are free to change/add the optional settings. 
 
