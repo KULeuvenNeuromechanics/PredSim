@@ -3663,28 +3663,11 @@
 						</TransformAxis>
 					</SpatialTransform>
 				</CustomJoint>
-				<CustomJoint name="radioulnar_r">
+				<WeldJoint name="radioulnar_r">
 					<!--Path to a Component that satisfies the Socket 'parent_frame' of type PhysicalFrame (description: The parent frame for the joint.).-->
 					<socket_parent_frame>ulna_r_offset</socket_parent_frame>
 					<!--Path to a Component that satisfies the Socket 'child_frame' of type PhysicalFrame (description: The child frame for the joint.).-->
 					<socket_child_frame>radius_r_offset</socket_child_frame>
-					<!--List containing the generalized coordinates (q's) that parameterize this joint.-->
-					<coordinates>
-						<Coordinate name="pro_sup_r">
-							<!--The value of this coordinate before any value has been set. Rotational coordinate value is in radians and Translational in meters.-->
-							<default_value>1.51</default_value>
-							<!--The minimum and maximum values that the coordinate can range between. Rotational coordinate range in radians and Translational in meters.-->
-							<range>1.51 2.5707963299999999</range>
-							<!--Flag indicating whether or not the values of the coordinates should be limited to the range, above.-->
-							<clamped>false</clamped>
-							<!--Flag indicating whether or not the values of the coordinates should be constrained to the current (e.g. default) value, above.-->
-							<locked>true</locked>
-							<!--If specified, the coordinate can be prescribed by a function of time. It can be any OpenSim Function with valid second order derivatives.-->
-							<prescribed_function />
-							<!--Flag indicating whether or not the values of the coordinates should be prescribed according to the function above. It is ignored if the no prescribed function is specified.-->
-							<prescribed>false</prescribed>
-						</Coordinate>
-					</coordinates>
 					<!--Physical offset frames owned by the Joint that are typically used to satisfy the owning Joint's parent and child frame connections (sockets). PhysicalOffsetFrames are often used to describe the fixed transformation from a Body's origin to another location of interest on the Body (e.g., the joint center). When the joint is deleted, so are the PhysicalOffsetFrame components in this list.-->
 					<frames>
 						<PhysicalOffsetFrame name="ulna_r_offset">
@@ -3718,123 +3701,12 @@
 							<orientation>0 0 0</orientation>
 						</PhysicalOffsetFrame>
 					</frames>
-					<!--Defines how the child body moves with respect to the parent as a function of the generalized coordinates.-->
-					<SpatialTransform>
-						<!--3 Axes for rotations are listed first.-->
-						<TransformAxis name="rotation1">
-							<!--Names of the coordinates that serve as the independent variables         of the transform function.-->
-							<coordinates>pro_sup_r</coordinates>
-							<!--Rotation or translation axis for the transform.-->
-							<axis>0.056398030000000002 0.99840646 0.001952</axis>
-							<!--Transform function of the generalized coordinates used to        represent the amount of displacement along a specified axis.-->
-							<LinearFunction name="function">
-								<coefficients> 1 0</coefficients>
-							</LinearFunction>
-						</TransformAxis>
-						<TransformAxis name="rotation2">
-							<!--Names of the coordinates that serve as the independent variables         of the transform function.-->
-							<coordinates></coordinates>
-							<!--Rotation or translation axis for the transform.-->
-							<axis>0 1 0</axis>
-							<!--Transform function of the generalized coordinates used to        represent the amount of displacement along a specified axis.-->
-							<Constant name="function">
-								<value>0</value>
-							</Constant>
-						</TransformAxis>
-						<TransformAxis name="rotation3">
-							<!--Names of the coordinates that serve as the independent variables         of the transform function.-->
-							<coordinates></coordinates>
-							<!--Rotation or translation axis for the transform.-->
-							<axis>0.001952 0 -0.056398030000000002</axis>
-							<!--Transform function of the generalized coordinates used to        represent the amount of displacement along a specified axis.-->
-							<Constant name="function">
-								<value>0</value>
-							</Constant>
-						</TransformAxis>
-						<!--3 Axes for translations are listed next.-->
-						<TransformAxis name="translation1">
-							<!--Names of the coordinates that serve as the independent variables         of the transform function.-->
-							<coordinates></coordinates>
-							<!--Rotation or translation axis for the transform.-->
-							<axis>1 0 0</axis>
-							<!--Transform function of the generalized coordinates used to        represent the amount of displacement along a specified axis.-->
-							<MultiplierFunction name="function">
-								<function>
-									<Constant>
-										<value>0</value>
-									</Constant>
-								</function>
-								<scale>0.98133292180532405</scale>
-							</MultiplierFunction>
-						</TransformAxis>
-						<TransformAxis name="translation2">
-							<!--Names of the coordinates that serve as the independent variables         of the transform function.-->
-							<coordinates></coordinates>
-							<!--Rotation or translation axis for the transform.-->
-							<axis>0 1 0</axis>
-							<!--Transform function of the generalized coordinates used to        represent the amount of displacement along a specified axis.-->
-							<MultiplierFunction name="function">
-								<function>
-									<Constant>
-										<value>0</value>
-									</Constant>
-								</function>
-								<scale>0.98133292180532405</scale>
-							</MultiplierFunction>
-						</TransformAxis>
-						<TransformAxis name="translation3">
-							<!--Names of the coordinates that serve as the independent variables         of the transform function.-->
-							<coordinates></coordinates>
-							<!--Rotation or translation axis for the transform.-->
-							<axis>0 0 1</axis>
-							<!--Transform function of the generalized coordinates used to        represent the amount of displacement along a specified axis.-->
-							<MultiplierFunction name="function">
-								<function>
-									<Constant>
-										<value>0</value>
-									</Constant>
-								</function>
-								<scale>0.98133292180532405</scale>
-							</MultiplierFunction>
-						</TransformAxis>
-					</SpatialTransform>
-				</CustomJoint>
-				<CustomJoint name="radius_hand_r">
+				</WeldJoint>
+				<WeldJoint name="radius_hand_r">
 					<!--Path to a Component that satisfies the Socket 'parent_frame' of type PhysicalFrame (description: The parent frame for the joint.).-->
 					<socket_parent_frame>radius_r_offset</socket_parent_frame>
 					<!--Path to a Component that satisfies the Socket 'child_frame' of type PhysicalFrame (description: The child frame for the joint.).-->
 					<socket_child_frame>hand_r_offset</socket_child_frame>
-					<!--List containing the generalized coordinates (q's) that parameterize this joint.-->
-					<coordinates>
-						<Coordinate name="wrist_flex_r">
-							<!--The value of this coordinate before any value has been set. Rotational coordinate value is in radians and Translational in meters.-->
-							<default_value>0</default_value>
-							<!--The minimum and maximum values that the coordinate can range between. Rotational coordinate range in radians and Translational in meters.-->
-							<range>-1.22173048 1.22173048</range>
-							<!--Flag indicating whether or not the values of the coordinates should be limited to the range, above.-->
-							<clamped>false</clamped>
-							<!--Flag indicating whether or not the values of the coordinates should be constrained to the current (e.g. default) value, above.-->
-							<locked>true</locked>
-							<!--If specified, the coordinate can be prescribed by a function of time. It can be any OpenSim Function with valid second order derivatives.-->
-							<prescribed_function />
-							<!--Flag indicating whether or not the values of the coordinates should be prescribed according to the function above. It is ignored if the no prescribed function is specified.-->
-							<prescribed>false</prescribed>
-						</Coordinate>
-						<Coordinate name="wrist_dev_r">
-							<!--The value of this coordinate before any value has been set. Rotational coordinate value is in radians and Translational in meters.-->
-							<default_value>0</default_value>
-							<!--The minimum and maximum values that the coordinate can range between. Rotational coordinate range in radians and Translational in meters.-->
-							<range>-0.43633231 0.61086523999999998</range>
-							<!--Flag indicating whether or not the values of the coordinates should be limited to the range, above.-->
-							<clamped>false</clamped>
-							<!--Flag indicating whether or not the values of the coordinates should be constrained to the current (e.g. default) value, above.-->
-							<locked>true</locked>
-							<!--If specified, the coordinate can be prescribed by a function of time. It can be any OpenSim Function with valid second order derivatives.-->
-							<prescribed_function />
-							<!--Flag indicating whether or not the values of the coordinates should be prescribed according to the function above. It is ignored if the no prescribed function is specified.-->
-							<prescribed>false</prescribed>
-						</Coordinate>
-					</coordinates>
 					<!--Physical offset frames owned by the Joint that are typically used to satisfy the owning Joint's parent and child frame connections (sockets). PhysicalOffsetFrames are often used to describe the fixed transformation from a Body's origin to another location of interest on the Body (e.g., the joint center). When the joint is deleted, so are the PhysicalOffsetFrame components in this list.-->
 					<frames>
 						<PhysicalOffsetFrame name="radius_r_offset">
@@ -3868,87 +3740,7 @@
 							<orientation>0 0 0</orientation>
 						</PhysicalOffsetFrame>
 					</frames>
-					<!--Defines how the child body moves with respect to the parent as a function of the generalized coordinates.-->
-					<SpatialTransform>
-						<!--3 Axes for rotations are listed first.-->
-						<TransformAxis name="rotation1">
-							<!--Names of the coordinates that serve as the independent variables         of the transform function.-->
-							<coordinates>wrist_flex_r</coordinates>
-							<!--Rotation or translation axis for the transform.-->
-							<axis>0 0 1</axis>
-							<!--Transform function of the generalized coordinates used to        represent the amount of displacement along a specified axis.-->
-							<LinearFunction name="function">
-								<coefficients> 1 0</coefficients>
-							</LinearFunction>
-						</TransformAxis>
-						<TransformAxis name="rotation2">
-							<!--Names of the coordinates that serve as the independent variables         of the transform function.-->
-							<coordinates>wrist_dev_r</coordinates>
-							<!--Rotation or translation axis for the transform.-->
-							<axis>1 0 0</axis>
-							<!--Transform function of the generalized coordinates used to        represent the amount of displacement along a specified axis.-->
-							<LinearFunction name="function">
-								<coefficients> 1 0</coefficients>
-							</LinearFunction>
-						</TransformAxis>
-						<TransformAxis name="rotation3">
-							<!--Names of the coordinates that serve as the independent variables         of the transform function.-->
-							<coordinates></coordinates>
-							<!--Rotation or translation axis for the transform.-->
-							<axis>0 1 0</axis>
-							<!--Transform function of the generalized coordinates used to        represent the amount of displacement along a specified axis.-->
-							<Constant name="function">
-								<value>0</value>
-							</Constant>
-						</TransformAxis>
-						<!--3 Axes for translations are listed next.-->
-						<TransformAxis name="translation1">
-							<!--Names of the coordinates that serve as the independent variables         of the transform function.-->
-							<coordinates></coordinates>
-							<!--Rotation or translation axis for the transform.-->
-							<axis>1 0 0</axis>
-							<!--Transform function of the generalized coordinates used to        represent the amount of displacement along a specified axis.-->
-							<MultiplierFunction name="function">
-								<function>
-									<Constant>
-										<value>0</value>
-									</Constant>
-								</function>
-								<scale>0.98133292180532405</scale>
-							</MultiplierFunction>
-						</TransformAxis>
-						<TransformAxis name="translation2">
-							<!--Names of the coordinates that serve as the independent variables         of the transform function.-->
-							<coordinates></coordinates>
-							<!--Rotation or translation axis for the transform.-->
-							<axis>0 1 0</axis>
-							<!--Transform function of the generalized coordinates used to        represent the amount of displacement along a specified axis.-->
-							<MultiplierFunction name="function">
-								<function>
-									<Constant>
-										<value>0</value>
-									</Constant>
-								</function>
-								<scale>0.98133292180532405</scale>
-							</MultiplierFunction>
-						</TransformAxis>
-						<TransformAxis name="translation3">
-							<!--Names of the coordinates that serve as the independent variables         of the transform function.-->
-							<coordinates></coordinates>
-							<!--Rotation or translation axis for the transform.-->
-							<axis>0 0 1</axis>
-							<!--Transform function of the generalized coordinates used to        represent the amount of displacement along a specified axis.-->
-							<MultiplierFunction name="function">
-								<function>
-									<Constant>
-										<value>0</value>
-									</Constant>
-								</function>
-								<scale>0.98133292180532405</scale>
-							</MultiplierFunction>
-						</TransformAxis>
-					</SpatialTransform>
-				</CustomJoint>
+				</WeldJoint>
 				<CustomJoint name="acromial_l">
 					<!--Path to a Component that satisfies the Socket 'parent_frame' of type PhysicalFrame (description: The parent frame for the joint.).-->
 					<socket_parent_frame>torso_offset</socket_parent_frame>
@@ -4249,28 +4041,11 @@
 						</TransformAxis>
 					</SpatialTransform>
 				</CustomJoint>
-				<CustomJoint name="radioulnar_l">
+				<WeldJoint name="radioulnar_l">
 					<!--Path to a Component that satisfies the Socket 'parent_frame' of type PhysicalFrame (description: The parent frame for the joint.).-->
 					<socket_parent_frame>ulna_l_offset</socket_parent_frame>
 					<!--Path to a Component that satisfies the Socket 'child_frame' of type PhysicalFrame (description: The child frame for the joint.).-->
 					<socket_child_frame>radius_l_offset</socket_child_frame>
-					<!--List containing the generalized coordinates (q's) that parameterize this joint.-->
-					<coordinates>
-						<Coordinate name="pro_sup_l">
-							<!--The value of this coordinate before any value has been set. Rotational coordinate value is in radians and Translational in meters.-->
-							<default_value>1.5</default_value>
-							<!--The minimum and maximum values that the coordinate can range between. Rotational coordinate range in radians and Translational in meters.-->
-							<range>1.5 2.5707963299999999</range>
-							<!--Flag indicating whether or not the values of the coordinates should be limited to the range, above.-->
-							<clamped>false</clamped>
-							<!--Flag indicating whether or not the values of the coordinates should be constrained to the current (e.g. default) value, above.-->
-							<locked>true</locked>
-							<!--If specified, the coordinate can be prescribed by a function of time. It can be any OpenSim Function with valid second order derivatives.-->
-							<prescribed_function />
-							<!--Flag indicating whether or not the values of the coordinates should be prescribed according to the function above. It is ignored if the no prescribed function is specified.-->
-							<prescribed>false</prescribed>
-						</Coordinate>
-					</coordinates>
 					<!--Physical offset frames owned by the Joint that are typically used to satisfy the owning Joint's parent and child frame connections (sockets). PhysicalOffsetFrames are often used to describe the fixed transformation from a Body's origin to another location of interest on the Body (e.g., the joint center). When the joint is deleted, so are the PhysicalOffsetFrame components in this list.-->
 					<frames>
 						<PhysicalOffsetFrame name="ulna_l_offset">
@@ -4304,123 +4079,12 @@
 							<orientation>0 0 0</orientation>
 						</PhysicalOffsetFrame>
 					</frames>
-					<!--Defines how the child body moves with respect to the parent as a function of the generalized coordinates.-->
-					<SpatialTransform>
-						<!--3 Axes for rotations are listed first.-->
-						<TransformAxis name="rotation1">
-							<!--Names of the coordinates that serve as the independent variables         of the transform function.-->
-							<coordinates>pro_sup_l</coordinates>
-							<!--Rotation or translation axis for the transform.-->
-							<axis>-0.056398030000000002 -0.99840646 0.001952</axis>
-							<!--Transform function of the generalized coordinates used to        represent the amount of displacement along a specified axis.-->
-							<LinearFunction name="function">
-								<coefficients> 1 0</coefficients>
-							</LinearFunction>
-						</TransformAxis>
-						<TransformAxis name="rotation2">
-							<!--Names of the coordinates that serve as the independent variables         of the transform function.-->
-							<coordinates></coordinates>
-							<!--Rotation or translation axis for the transform.-->
-							<axis>0 1 0</axis>
-							<!--Transform function of the generalized coordinates used to        represent the amount of displacement along a specified axis.-->
-							<Constant name="function">
-								<value>0</value>
-							</Constant>
-						</TransformAxis>
-						<TransformAxis name="rotation3">
-							<!--Names of the coordinates that serve as the independent variables         of the transform function.-->
-							<coordinates></coordinates>
-							<!--Rotation or translation axis for the transform.-->
-							<axis>0.001952 -0 0.056398030000000002</axis>
-							<!--Transform function of the generalized coordinates used to        represent the amount of displacement along a specified axis.-->
-							<Constant name="function">
-								<value>0</value>
-							</Constant>
-						</TransformAxis>
-						<!--3 Axes for translations are listed next.-->
-						<TransformAxis name="translation1">
-							<!--Names of the coordinates that serve as the independent variables         of the transform function.-->
-							<coordinates></coordinates>
-							<!--Rotation or translation axis for the transform.-->
-							<axis>1 0 0</axis>
-							<!--Transform function of the generalized coordinates used to        represent the amount of displacement along a specified axis.-->
-							<MultiplierFunction name="function">
-								<function>
-									<Constant>
-										<value>0</value>
-									</Constant>
-								</function>
-								<scale>0.98133292180532405</scale>
-							</MultiplierFunction>
-						</TransformAxis>
-						<TransformAxis name="translation2">
-							<!--Names of the coordinates that serve as the independent variables         of the transform function.-->
-							<coordinates></coordinates>
-							<!--Rotation or translation axis for the transform.-->
-							<axis>0 1 0</axis>
-							<!--Transform function of the generalized coordinates used to        represent the amount of displacement along a specified axis.-->
-							<MultiplierFunction name="function">
-								<function>
-									<Constant>
-										<value>0</value>
-									</Constant>
-								</function>
-								<scale>0.98133292180532405</scale>
-							</MultiplierFunction>
-						</TransformAxis>
-						<TransformAxis name="translation3">
-							<!--Names of the coordinates that serve as the independent variables         of the transform function.-->
-							<coordinates></coordinates>
-							<!--Rotation or translation axis for the transform.-->
-							<axis>0 0 1</axis>
-							<!--Transform function of the generalized coordinates used to        represent the amount of displacement along a specified axis.-->
-							<MultiplierFunction name="function">
-								<function>
-									<Constant>
-										<value>0</value>
-									</Constant>
-								</function>
-								<scale>0.98133292180532405</scale>
-							</MultiplierFunction>
-						</TransformAxis>
-					</SpatialTransform>
-				</CustomJoint>
-				<CustomJoint name="radius_hand_l">
+				</WeldJoint>
+				<WeldJoint name="radius_hand_l">
 					<!--Path to a Component that satisfies the Socket 'parent_frame' of type PhysicalFrame (description: The parent frame for the joint.).-->
 					<socket_parent_frame>radius_l_offset</socket_parent_frame>
 					<!--Path to a Component that satisfies the Socket 'child_frame' of type PhysicalFrame (description: The child frame for the joint.).-->
 					<socket_child_frame>hand_l_offset</socket_child_frame>
-					<!--List containing the generalized coordinates (q's) that parameterize this joint.-->
-					<coordinates>
-						<Coordinate name="wrist_flex_l">
-							<!--The value of this coordinate before any value has been set. Rotational coordinate value is in radians and Translational in meters.-->
-							<default_value>0</default_value>
-							<!--The minimum and maximum values that the coordinate can range between. Rotational coordinate range in radians and Translational in meters.-->
-							<range>-1.22173048 1.22173048</range>
-							<!--Flag indicating whether or not the values of the coordinates should be limited to the range, above.-->
-							<clamped>false</clamped>
-							<!--Flag indicating whether or not the values of the coordinates should be constrained to the current (e.g. default) value, above.-->
-							<locked>true</locked>
-							<!--If specified, the coordinate can be prescribed by a function of time. It can be any OpenSim Function with valid second order derivatives.-->
-							<prescribed_function />
-							<!--Flag indicating whether or not the values of the coordinates should be prescribed according to the function above. It is ignored if the no prescribed function is specified.-->
-							<prescribed>false</prescribed>
-						</Coordinate>
-						<Coordinate name="wrist_dev_l">
-							<!--The value of this coordinate before any value has been set. Rotational coordinate value is in radians and Translational in meters.-->
-							<default_value>0</default_value>
-							<!--The minimum and maximum values that the coordinate can range between. Rotational coordinate range in radians and Translational in meters.-->
-							<range>-0.43633231 0.61086523999999998</range>
-							<!--Flag indicating whether or not the values of the coordinates should be limited to the range, above.-->
-							<clamped>false</clamped>
-							<!--Flag indicating whether or not the values of the coordinates should be constrained to the current (e.g. default) value, above.-->
-							<locked>true</locked>
-							<!--If specified, the coordinate can be prescribed by a function of time. It can be any OpenSim Function with valid second order derivatives.-->
-							<prescribed_function />
-							<!--Flag indicating whether or not the values of the coordinates should be prescribed according to the function above. It is ignored if the no prescribed function is specified.-->
-							<prescribed>false</prescribed>
-						</Coordinate>
-					</coordinates>
 					<!--Physical offset frames owned by the Joint that are typically used to satisfy the owning Joint's parent and child frame connections (sockets). PhysicalOffsetFrames are often used to describe the fixed transformation from a Body's origin to another location of interest on the Body (e.g., the joint center). When the joint is deleted, so are the PhysicalOffsetFrame components in this list.-->
 					<frames>
 						<PhysicalOffsetFrame name="radius_l_offset">
@@ -4454,87 +4118,7 @@
 							<orientation>0 0 0</orientation>
 						</PhysicalOffsetFrame>
 					</frames>
-					<!--Defines how the child body moves with respect to the parent as a function of the generalized coordinates.-->
-					<SpatialTransform>
-						<!--3 Axes for rotations are listed first.-->
-						<TransformAxis name="rotation1">
-							<!--Names of the coordinates that serve as the independent variables         of the transform function.-->
-							<coordinates>wrist_flex_l</coordinates>
-							<!--Rotation or translation axis for the transform.-->
-							<axis>0 0 1</axis>
-							<!--Transform function of the generalized coordinates used to        represent the amount of displacement along a specified axis.-->
-							<LinearFunction name="function">
-								<coefficients> 1 0</coefficients>
-							</LinearFunction>
-						</TransformAxis>
-						<TransformAxis name="rotation2">
-							<!--Names of the coordinates that serve as the independent variables         of the transform function.-->
-							<coordinates>wrist_dev_l</coordinates>
-							<!--Rotation or translation axis for the transform.-->
-							<axis>-1 0 0</axis>
-							<!--Transform function of the generalized coordinates used to        represent the amount of displacement along a specified axis.-->
-							<LinearFunction name="function">
-								<coefficients> 1 0</coefficients>
-							</LinearFunction>
-						</TransformAxis>
-						<TransformAxis name="rotation3">
-							<!--Names of the coordinates that serve as the independent variables         of the transform function.-->
-							<coordinates></coordinates>
-							<!--Rotation or translation axis for the transform.-->
-							<axis>0 -1 0</axis>
-							<!--Transform function of the generalized coordinates used to        represent the amount of displacement along a specified axis.-->
-							<Constant name="function">
-								<value>0</value>
-							</Constant>
-						</TransformAxis>
-						<!--3 Axes for translations are listed next.-->
-						<TransformAxis name="translation1">
-							<!--Names of the coordinates that serve as the independent variables         of the transform function.-->
-							<coordinates></coordinates>
-							<!--Rotation or translation axis for the transform.-->
-							<axis>1 0 0</axis>
-							<!--Transform function of the generalized coordinates used to        represent the amount of displacement along a specified axis.-->
-							<MultiplierFunction name="function">
-								<function>
-									<Constant>
-										<value>0</value>
-									</Constant>
-								</function>
-								<scale>0.98133292180532405</scale>
-							</MultiplierFunction>
-						</TransformAxis>
-						<TransformAxis name="translation2">
-							<!--Names of the coordinates that serve as the independent variables         of the transform function.-->
-							<coordinates></coordinates>
-							<!--Rotation or translation axis for the transform.-->
-							<axis>0 1 0</axis>
-							<!--Transform function of the generalized coordinates used to        represent the amount of displacement along a specified axis.-->
-							<MultiplierFunction name="function">
-								<function>
-									<Constant>
-										<value>0</value>
-									</Constant>
-								</function>
-								<scale>0.98133292180532405</scale>
-							</MultiplierFunction>
-						</TransformAxis>
-						<TransformAxis name="translation3">
-							<!--Names of the coordinates that serve as the independent variables         of the transform function.-->
-							<coordinates></coordinates>
-							<!--Rotation or translation axis for the transform.-->
-							<axis>0 0 1</axis>
-							<!--Transform function of the generalized coordinates used to        represent the amount of displacement along a specified axis.-->
-							<MultiplierFunction name="function">
-								<function>
-									<Constant>
-										<value>0</value>
-									</Constant>
-								</function>
-								<scale>0.98133292180532405</scale>
-							</MultiplierFunction>
-						</TransformAxis>
-					</SpatialTransform>
-				</CustomJoint>
+				</WeldJoint>
 			</objects>
 			<groups />
 		</JointSet>
@@ -6463,39 +6047,24 @@
 									<socket_z_coordinate>/jointset/knee_r/knee_angle_r</socket_z_coordinate>
 									<!--Function defining the x component of the point's location expressed in the Frame of the Point.-->
 									<x_location>
-										<MultiplierFunction>
-											<function>
-												<SimmSpline>
-													<x> -2.0944 -1.99997 -1.5708 -1.45752 -1.39626 -1.0472 -0.698132 -0.526391 -0.349066 -0.174533 0 0.00017453 0.00034907 0.0279253 0.0872665 0.174533 2.0944</x>
-													<y> 0.0155805 0.0179938 0.0275081 0.0296564 0.0307615 0.0365695 0.0422074 0.0450902 0.048391 0.0534299 0.0617576 0.0617669 0.0617762 0.0633083 0.066994 0.0733035 0.0573481</y>
-												</SimmSpline>
-											</function>
-											<scale>0.96673215203466201</scale>
-										</MultiplierFunction>
+										<PolynomialFunction name="function">
+											<!--Coefficients of a polynomial function, from highest to lowest order.Polynomial order is n-1, where n is the number of coefficients.-->
+											<coefficients>-0.003874748967180004 -0.0070066644026498936 0.011140916181820934 0.040595314885609482 0.060507938744784544</coefficients>
+										</PolynomialFunction>
 									</x_location>
 									<!--Function defining the y component of the point's location expressed in the Frame of the Point.-->
 									<y_location>
-										<MultiplierFunction>
-											<function>
-												<SimmSpline>
-													<x> -2.0944 -1.99997 -1.5708 -1.45752 -1.39626 -1.0472 -0.698132 -0.526391 -0.349066 -0.174533 0 0.00017453 0.00034907 0.0279253 0.0872665 0.174533 2.0944</x>
-													<y> 0.0234116 0.0237613 0.0251141 0.0252795 0.0253146 0.0249184 0.0242373 0.0238447 0.0234197 0.0227644 0.020984 0.0209814 0.0209788 0.0205225 0.0191754 0.0159554 -0.0673774</y>
-												</SimmSpline>
-											</function>
-											<scale>0.96673215203466201</scale>
-										</MultiplierFunction>
+										<PolynomialFunction name="function">
+											<!--Coefficients of a polynomial function, from highest to lowest order.Polynomial order is n-1, where n is the number of coefficients.-->
+											<coefficients>-0.00022156457223922345 -0.0022312994631277444 -0.0083373253465984579 -0.011203183013777093 0.019647602849190506</coefficients>
+										</PolynomialFunction>
 									</y_location>
 									<!--Function defining the z component of the point's location expressed in the Frame of the Point.-->
 									<z_location>
-										<MultiplierFunction>
-											<function>
-												<SimmSpline>
-													<x> -2.0944 0.1745</x>
-													<y> 0.0014 0.0014</y>
-												</SimmSpline>
-											</function>
-											<scale>0.96673215203466201</scale>
-										</MultiplierFunction>
+										<PolynomialFunction name="function">
+											<!--Coefficients of a polynomial function, from highest to lowest order.Polynomial order is n-1, where n is the number of coefficients.-->
+											<coefficients>0.0013534250128485262</coefficients>
+										</PolynomialFunction>
 									</z_location>
 								</MovingPathPoint>
 							</objects>
@@ -6592,39 +6161,24 @@
 									<socket_z_coordinate>/jointset/knee_r/knee_angle_r</socket_z_coordinate>
 									<!--Function defining the x component of the point's location expressed in the Frame of the Point.-->
 									<x_location>
-										<MultiplierFunction>
-											<function>
-												<SimmSpline>
-													<x> -2.0944 -1.99997 -1.5708 -1.45752 -1.39626 -1.0472 -0.698132 -0.526391 -0.349066 -0.174533 0 0.00017453 0.00034907 0.0279253 0.0872665 0.174533 2.0944</x>
-													<y> 0.00981097 0.0122243 0.0217371 0.0238851 0.0249902 0.0307959 0.0364187 0.0392871 0.0425654 0.0475764 0.0559586 0.0559681 0.0559776 0.0575419 0.0613368 0.0679503 0.0629332</y>
-												</SimmSpline>
-											</function>
-											<scale>0.96673215203466201</scale>
-										</MultiplierFunction>
+										<PolynomialFunction name="function">
+											<!--Coefficients of a polynomial function, from highest to lowest order.Polynomial order is n-1, where n is the number of coefficients.-->
+											<coefficients>-0.0038044177796781554 -0.0065509608678268293 0.012071803531269118 0.041220451822770829 0.054976109528556742</coefficients>
+										</PolynomialFunction>
 									</x_location>
 									<!--Function defining the y component of the point's location expressed in the Frame of the Point.-->
 									<y_location>
-										<MultiplierFunction>
-											<function>
-												<SimmSpline>
-													<x> -2.0944 -1.99997 -1.5708 -1.45752 -1.39626 -1.0472 -0.698132 -0.526391 -0.349066 -0.174533 0 0.00017453 0.00034907 0.0279253 0.0872665 0.174533 2.0944</x>
-													<y> 0.0224154 0.0227651 0.0241265 0.0242933 0.0243287 0.0239462 0.0233593 0.0230677 0.0228342 0.0226362 0.0217917 0.0217903 0.0217889 0.0215365 0.0206842 0.0183269 -0.0656205</y>
-												</SimmSpline>
-											</function>
-											<scale>0.96673215203466201</scale>
-										</MultiplierFunction>
+										<PolynomialFunction name="function">
+											<!--Coefficients of a polynomial function, from highest to lowest order.Polynomial order is n-1, where n is the number of coefficients.-->
+											<coefficients>-0.0007403317610398429 -0.0031450988781130031 -0.0062041404518135687 -0.00652615907196347 0.02057548401117177</coefficients>
+										</PolynomialFunction>
 									</y_location>
 									<!--Function defining the z component of the point's location expressed in the Frame of the Point.-->
 									<z_location>
-										<MultiplierFunction>
-											<function>
-												<SimmSpline>
-													<x> -2.0944 2.0944</x>
-													<y> -0.0146 -0.0146</y>
-												</SimmSpline>
-											</function>
-											<scale>0.96673215203466201</scale>
-										</MultiplierFunction>
+										<PolynomialFunction name="function">
+											<!--Coefficients of a polynomial function, from highest to lowest order.Polynomial order is n-1, where n is the number of coefficients.-->
+											<coefficients>-0.01411428941970606</coefficients>
+										</PolynomialFunction>
 									</z_location>
 								</MovingPathPoint>
 							</objects>
@@ -6711,39 +6265,24 @@
 									<socket_z_coordinate>/jointset/knee_r/knee_angle_r</socket_z_coordinate>
 									<!--Function defining the x component of the point's location expressed in the Frame of the Point.-->
 									<x_location>
-										<MultiplierFunction>
-											<function>
-												<SimmSpline>
-													<x> -2.0944 -1.99997 -1.5708 -1.45752 -1.39626 -1.0472 -0.698132 -0.526391 -0.349066 -0.174533 0 0.00017453 0.00034907 0.0279253 0.0872665 0.174533 2.0944</x>
-													<y> 0.0082733 0.0106866 0.0202042 0.022353 0.0234583 0.0292715 0.0349465 0.037871 0.0412569 0.0465287 0.0554632 0.0554735 0.0554837 0.0571717 0.061272 0.0684368 0.0648818</y>
-												</SimmSpline>
-											</function>
-											<scale>0.96673215203466201</scale>
-										</MultiplierFunction>
+										<PolynomialFunction name="function">
+											<!--Coefficients of a polynomial function, from highest to lowest order.Polynomial order is n-1, where n is the number of coefficients.-->
+											<coefficients>-0.004093881546477416 -0.0070056542803937742 0.013464963159637935 0.044039459738026823 0.054594923521990142</coefficients>
+										</PolynomialFunction>
 									</x_location>
 									<!--Function defining the y component of the point's location expressed in the Frame of the Point.-->
 									<y_location>
-										<MultiplierFunction>
-											<function>
-												<SimmSpline>
-													<x> -2.0944 -1.99997 -1.5708 -1.45752 -1.39626 -1.0472 -0.698132 -0.526391 -0.349066 -0.174533 0 0.00017453 0.00034907 0.0279253 0.0872665 0.174533 2.0944</x>
-													<y> 0.025599 0.0259487 0.0273124 0.0274796 0.0275151 0.0271363 0.0265737 0.0263073 0.0261187 0.0260129 0.0252923 0.0252911 0.0252898 0.0250526 0.0242191 0.0218288 -0.0685706</y>
-												</SimmSpline>
-											</function>
-											<scale>0.96673215203466201</scale>
-										</MultiplierFunction>
+										<PolynomialFunction name="function">
+											<!--Coefficients of a polynomial function, from highest to lowest order.Polynomial order is n-1, where n is the number of coefficients.-->
+											<coefficients>-0.00086740874997926908 -0.0035615599046132413 -0.0063898801209837444 -0.0061114783271970429 0.023941053700942943</coefficients>
+										</PolynomialFunction>
 									</y_location>
 									<!--Function defining the z component of the point's location expressed in the Frame of the Point.-->
 									<z_location>
-										<MultiplierFunction>
-											<function>
-												<SimmSpline>
-													<x> -2.0944 2.0944</x>
-													<y> 0.0018 0.0018</y>
-												</SimmSpline>
-											</function>
-											<scale>0.96673215203466201</scale>
-										</MultiplierFunction>
+										<PolynomialFunction name="function">
+											<!--Coefficients of a polynomial function, from highest to lowest order.Polynomial order is n-1, where n is the number of coefficients.-->
+											<coefficients>0.0017401178736623907</coefficients>
+										</PolynomialFunction>
 									</z_location>
 								</MovingPathPoint>
 							</objects>
@@ -6840,39 +6379,24 @@
 									<socket_z_coordinate>/jointset/knee_r/knee_angle_r</socket_z_coordinate>
 									<!--Function defining the x component of the point's location expressed in the Frame of the Point.-->
 									<x_location>
-										<MultiplierFunction>
-											<function>
-												<SimmSpline>
-													<x> -2.0944 -1.99997 -1.5708 -1.45752 -1.39626 -1.0472 -0.698132 -0.526391 -0.349066 -0.174533 0 0.00017453 0.00034907 0.0279253 0.0872665 0.174533 2.0944</x>
-													<y> 0.0142897 0.016703 0.0262145 0.0283623 0.0294674 0.0352709 0.0408785 0.0437291 0.0469704 0.0518742 0.0599557 0.0599647 0.0599738 0.0614577 0.0650351 0.0711867 0.0583766</y>
-												</SimmSpline>
-											</function>
-											<scale>0.96673215203466201</scale>
-										</MultiplierFunction>
+										<PolynomialFunction name="function">
+											<!--Coefficients of a polynomial function, from highest to lowest order.Polynomial order is n-1, where n is the number of coefficients.-->
+											<coefficients>-0.0037109491549196338 -0.0066279153980138023 0.010799085719473774 0.039460894886503645 0.058745160917814031</coefficients>
+										</PolynomialFunction>
 									</x_location>
 									<!--Function defining the y component of the point's location expressed in the Frame of the Point.-->
 									<y_location>
-										<MultiplierFunction>
-											<function>
-												<SimmSpline>
-													<x> -2.0944 -1.99997 -1.5708 -1.45752 -1.39626 -1.0472 -0.698132 -0.526391 -0.349066 -0.174533 0 0.00017453 0.00034907 0.0279253 0.0872665 0.174533 2.0944</x>
-													<y> 0.0215318 0.0218815 0.0232362 0.0234019 0.0234371 0.0230439 0.0223842 0.0220151 0.0216359 0.0210971 0.0195864 0.0195842 0.019582 0.01919 0.018008 0.0151073 -0.0653421</y>
-												</SimmSpline>
-											</function>
-											<scale>0.96673215203466201</scale>
-										</MultiplierFunction>
+										<PolynomialFunction name="function">
+											<!--Coefficients of a polynomial function, from highest to lowest order.Polynomial order is n-1, where n is the number of coefficients.-->
+											<coefficients>-0.00034300588695348783 -0.0023526794877463675 -0.0074976859882825283 -0.0097571530603291351 0.018357183163938723</coefficients>
+										</PolynomialFunction>
 									</y_location>
 									<!--Function defining the z component of the point's location expressed in the Frame of the Point.-->
 									<z_location>
-										<MultiplierFunction>
-											<function>
-												<SimmSpline>
-													<x> -2.0944 2.0944</x>
-													<y> 0.0165 0.0165</y>
-												</SimmSpline>
-											</function>
-											<scale>0.96673215203466201</scale>
-										</MultiplierFunction>
+										<PolynomialFunction name="function">
+											<!--Coefficients of a polynomial function, from highest to lowest order.Polynomial order is n-1, where n is the number of coefficients.-->
+											<coefficients>0.015951080508571917</coefficients>
+										</PolynomialFunction>
 									</z_location>
 								</MovingPathPoint>
 							</objects>
@@ -9798,39 +9322,24 @@
 									<socket_z_coordinate>/jointset/knee_l/knee_angle_l</socket_z_coordinate>
 									<!--Function defining the x component of the point's location expressed in the Frame of the Point.-->
 									<x_location>
-										<MultiplierFunction>
-											<function>
-												<SimmSpline>
-													<x> -2.0944 -1.99997 -1.5708 -1.45752 -1.39626 -1.0472 -0.698132 -0.526391 -0.349066 -0.174533 0 0.00017453 0.00034907 0.0279253 0.0872665 0.174533 2.0944</x>
-													<y> 0.0155805 0.0179938 0.0275081 0.0296564 0.0307615 0.0365695 0.0422074 0.0450902 0.048391 0.0534299 0.0617576 0.0617669 0.0617762 0.0633083 0.066994 0.0733035 0.0573481</y>
-												</SimmSpline>
-											</function>
-											<scale>0.96673215203466201</scale>
-										</MultiplierFunction>
+										<PolynomialFunction name="function">
+											<!--Coefficients of a polynomial function, from highest to lowest order.Polynomial order is n-1, where n is the number of coefficients.-->
+											<coefficients>-0.003874748967180004 -0.0070066644026498936 0.011140916181820934 0.040595314885609482 0.060507938744784544</coefficients>
+										</PolynomialFunction>
 									</x_location>
 									<!--Function defining the y component of the point's location expressed in the Frame of the Point.-->
 									<y_location>
-										<MultiplierFunction>
-											<function>
-												<SimmSpline>
-													<x> -2.0944 -1.99997 -1.5708 -1.45752 -1.39626 -1.0472 -0.698132 -0.526391 -0.349066 -0.174533 0 0.00017453 0.00034907 0.0279253 0.0872665 0.174533 2.0944</x>
-													<y> 0.0234116 0.0237613 0.0251141 0.0252795 0.0253146 0.0249184 0.0242373 0.0238447 0.0234197 0.0227644 0.020984 0.0209814 0.0209788 0.0205225 0.0191754 0.0159554 -0.0673774</y>
-												</SimmSpline>
-											</function>
-											<scale>0.96673215203466201</scale>
-										</MultiplierFunction>
+										<PolynomialFunction name="function">
+											<!--Coefficients of a polynomial function, from highest to lowest order.Polynomial order is n-1, where n is the number of coefficients.-->
+											<coefficients>-0.00022156457223922345 -0.0022312994631277444 -0.0083373253465984579 -0.011203183013777093 0.019647602849190506</coefficients>
+										</PolynomialFunction>
 									</y_location>
 									<!--Function defining the z component of the point's location expressed in the Frame of the Point.-->
 									<z_location>
-										<MultiplierFunction>
-											<function>
-												<SimmSpline>
-													<x> -2.0944 0.1745</x>
-													<y> -0.0014 -0.0014</y>
-												</SimmSpline>
-											</function>
-											<scale>0.96673215203466201</scale>
-										</MultiplierFunction>
+										<PolynomialFunction name="function">
+											<!--Coefficients of a polynomial function, from highest to lowest order.Polynomial order is n-1, where n is the number of coefficients.-->
+											<coefficients>-0.0013534250128485262</coefficients>
+										</PolynomialFunction>
 									</z_location>
 								</MovingPathPoint>
 							</objects>
@@ -9927,39 +9436,24 @@
 									<socket_z_coordinate>/jointset/knee_l/knee_angle_l</socket_z_coordinate>
 									<!--Function defining the x component of the point's location expressed in the Frame of the Point.-->
 									<x_location>
-										<MultiplierFunction>
-											<function>
-												<SimmSpline>
-													<x> -2.0944 -1.99997 -1.5708 -1.45752 -1.39626 -1.0472 -0.698132 -0.526391 -0.349066 -0.174533 0 0.00017453 0.00034907 0.0279253 0.0872665 0.174533 2.0944</x>
-													<y> 0.00981097 0.0122243 0.0217371 0.0238851 0.0249902 0.0307959 0.0364187 0.0392871 0.0425654 0.0475764 0.0559586 0.0559681 0.0559776 0.0575419 0.0613368 0.0679503 0.0629332</y>
-												</SimmSpline>
-											</function>
-											<scale>0.96673215203466201</scale>
-										</MultiplierFunction>
+										<PolynomialFunction name="function">
+											<!--Coefficients of a polynomial function, from highest to lowest order.Polynomial order is n-1, where n is the number of coefficients.-->
+											<coefficients>-0.0038044177796781554 -0.0065509608678268293 0.012071803531269118 0.041220451822770829 0.054976109528556742</coefficients>
+										</PolynomialFunction>
 									</x_location>
 									<!--Function defining the y component of the point's location expressed in the Frame of the Point.-->
 									<y_location>
-										<MultiplierFunction>
-											<function>
-												<SimmSpline>
-													<x> -2.0944 -1.99997 -1.5708 -1.45752 -1.39626 -1.0472 -0.698132 -0.526391 -0.349066 -0.174533 0 0.00017453 0.00034907 0.0279253 0.0872665 0.174533 2.0944</x>
-													<y> 0.0224154 0.0227651 0.0241265 0.0242933 0.0243287 0.0239462 0.0233593 0.0230677 0.0228342 0.0226362 0.0217917 0.0217903 0.0217889 0.0215365 0.0206842 0.0183269 -0.0656205</y>
-												</SimmSpline>
-											</function>
-											<scale>0.96673215203466201</scale>
-										</MultiplierFunction>
+										<PolynomialFunction name="function">
+											<!--Coefficients of a polynomial function, from highest to lowest order.Polynomial order is n-1, where n is the number of coefficients.-->
+											<coefficients>-0.0007403317610398429 -0.0031450988781130031 -0.0062041404518135687 -0.00652615907196347 0.02057548401117177</coefficients>
+										</PolynomialFunction>
 									</y_location>
 									<!--Function defining the z component of the point's location expressed in the Frame of the Point.-->
 									<z_location>
-										<MultiplierFunction>
-											<function>
-												<SimmSpline>
-													<x> -2.0944 2.0944</x>
-													<y> 0.0146 0.0146</y>
-												</SimmSpline>
-											</function>
-											<scale>0.96673215203466201</scale>
-										</MultiplierFunction>
+										<PolynomialFunction name="function">
+											<!--Coefficients of a polynomial function, from highest to lowest order.Polynomial order is n-1, where n is the number of coefficients.-->
+											<coefficients>0.01411428941970606</coefficients>
+										</PolynomialFunction>
 									</z_location>
 								</MovingPathPoint>
 							</objects>
@@ -10046,39 +9540,24 @@
 									<socket_z_coordinate>/jointset/knee_l/knee_angle_l</socket_z_coordinate>
 									<!--Function defining the x component of the point's location expressed in the Frame of the Point.-->
 									<x_location>
-										<MultiplierFunction>
-											<function>
-												<SimmSpline>
-													<x> -2.0944 -1.99997 -1.5708 -1.45752 -1.39626 -1.0472 -0.698132 -0.526391 -0.349066 -0.174533 0 0.00017453 0.00034907 0.0279253 0.0872665 0.174533 2.0944</x>
-													<y> 0.0082733 0.0106866 0.0202042 0.022353 0.0234583 0.0292715 0.0349465 0.037871 0.0412569 0.0465287 0.0554632 0.0554735 0.0554837 0.0571717 0.061272 0.0684368 0.0648818</y>
-												</SimmSpline>
-											</function>
-											<scale>0.96673215203466201</scale>
-										</MultiplierFunction>
+										<PolynomialFunction name="function">
+											<!--Coefficients of a polynomial function, from highest to lowest order.Polynomial order is n-1, where n is the number of coefficients.-->
+											<coefficients>-0.004093881546477416 -0.0070056542803937742 0.013464963159637935 0.044039459738026823 0.054594923521990142</coefficients>
+										</PolynomialFunction>
 									</x_location>
 									<!--Function defining the y component of the point's location expressed in the Frame of the Point.-->
 									<y_location>
-										<MultiplierFunction>
-											<function>
-												<SimmSpline>
-													<x> -2.0944 -1.99997 -1.5708 -1.45752 -1.39626 -1.0472 -0.698132 -0.526391 -0.349066 -0.174533 0 0.00017453 0.00034907 0.0279253 0.0872665 0.174533 2.0944</x>
-													<y> 0.025599 0.0259487 0.0273124 0.0274796 0.0275151 0.0271363 0.0265737 0.0263073 0.0261187 0.0260129 0.0252923 0.0252911 0.0252898 0.0250526 0.0242191 0.0218288 -0.0685706</y>
-												</SimmSpline>
-											</function>
-											<scale>0.96673215203466201</scale>
-										</MultiplierFunction>
+										<PolynomialFunction name="function">
+											<!--Coefficients of a polynomial function, from highest to lowest order.Polynomial order is n-1, where n is the number of coefficients.-->
+											<coefficients>-0.00086740874997926908 -0.0035615599046132413 -0.0063898801209837444 -0.0061114783271970429 0.023941053700942943</coefficients>
+										</PolynomialFunction>
 									</y_location>
 									<!--Function defining the z component of the point's location expressed in the Frame of the Point.-->
 									<z_location>
-										<MultiplierFunction>
-											<function>
-												<SimmSpline>
-													<x> -2.0944 2.0944</x>
-													<y> -0.0018 -0.0018</y>
-												</SimmSpline>
-											</function>
-											<scale>0.96673215203466201</scale>
-										</MultiplierFunction>
+										<PolynomialFunction name="function">
+											<!--Coefficients of a polynomial function, from highest to lowest order.Polynomial order is n-1, where n is the number of coefficients.-->
+											<coefficients>-0.0017401178736623907</coefficients>
+										</PolynomialFunction>
 									</z_location>
 								</MovingPathPoint>
 							</objects>
@@ -10175,39 +9654,24 @@
 									<socket_z_coordinate>/jointset/knee_l/knee_angle_l</socket_z_coordinate>
 									<!--Function defining the x component of the point's location expressed in the Frame of the Point.-->
 									<x_location>
-										<MultiplierFunction>
-											<function>
-												<SimmSpline>
-													<x> -2.0944 -1.99997 -1.5708 -1.45752 -1.39626 -1.0472 -0.698132 -0.526391 -0.349066 -0.174533 0 0.00017453 0.00034907 0.0279253 0.0872665 0.174533 2.0944</x>
-													<y> 0.0142897 0.016703 0.0262145 0.0283623 0.0294674 0.0352709 0.0408785 0.0437291 0.0469704 0.0518742 0.0599557 0.0599647 0.0599738 0.0614577 0.0650351 0.0711867 0.0583766</y>
-												</SimmSpline>
-											</function>
-											<scale>0.96673215203466201</scale>
-										</MultiplierFunction>
+										<PolynomialFunction name="function">
+											<!--Coefficients of a polynomial function, from highest to lowest order.Polynomial order is n-1, where n is the number of coefficients.-->
+											<coefficients>-0.0037109491549196338 -0.0066279153980138023 0.010799085719473774 0.039460894886503645 0.058745160917814031</coefficients>
+										</PolynomialFunction>
 									</x_location>
 									<!--Function defining the y component of the point's location expressed in the Frame of the Point.-->
 									<y_location>
-										<MultiplierFunction>
-											<function>
-												<SimmSpline>
-													<x> -2.0944 -1.99997 -1.5708 -1.45752 -1.39626 -1.0472 -0.698132 -0.526391 -0.349066 -0.174533 0 0.00017453 0.00034907 0.0279253 0.0872665 0.174533 2.0944</x>
-													<y> 0.0215318 0.0218815 0.0232362 0.0234019 0.0234371 0.0230439 0.0223842 0.0220151 0.0216359 0.0210971 0.0195864 0.0195842 0.019582 0.01919 0.018008 0.0151073 -0.0653421</y>
-												</SimmSpline>
-											</function>
-											<scale>0.96673215203466201</scale>
-										</MultiplierFunction>
+										<PolynomialFunction name="function">
+											<!--Coefficients of a polynomial function, from highest to lowest order.Polynomial order is n-1, where n is the number of coefficients.-->
+											<coefficients>-0.00034300588695348783 -0.0023526794877463675 -0.0074976859882825283 -0.0097571530603291351 0.018357183163938723</coefficients>
+										</PolynomialFunction>
 									</y_location>
 									<!--Function defining the z component of the point's location expressed in the Frame of the Point.-->
 									<z_location>
-										<MultiplierFunction>
-											<function>
-												<SimmSpline>
-													<x> -2.0944 2.0944</x>
-													<y> -0.0165 -0.0165</y>
-												</SimmSpline>
-											</function>
-											<scale>0.96673215203466201</scale>
-										</MultiplierFunction>
+										<PolynomialFunction name="function">
+											<!--Coefficients of a polynomial function, from highest to lowest order.Polynomial order is n-1, where n is the number of coefficients.-->
+											<coefficients>-0.015951080508571917</coefficients>
+										</PolynomialFunction>
 									</z_location>
 								</MovingPathPoint>
 							</objects>

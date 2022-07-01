@@ -33,7 +33,7 @@ S.subject.IG_selection = fullfile(S.misc.main_path,'OCP','IK_Bounds_Default.mot'
 S.subject.IG_selection_gaitCyclePercent = 50;
 
 % give the path to the osim model of your subject
-osim_path = fullfile(pathRepo,'Subjects',S.subject.name,[S.subject.name '_mtpPin_unlocked_os4.osim']);
+osim_path = fullfile(pathRepo,'Subjects',S.subject.name,[S.subject.name '_mtpPin_unlocked_os4_test.osim']);
 
 % Do you want to run the simulation as a batch job (parallel computing toolbox)
 S.solver.run_as_batch_job = 0;
