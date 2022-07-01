@@ -46,7 +46,7 @@ for i = 1:model_info.muscle_info.NMuscle
     JointAngleMuscleAct.labels{i+size(q_opt_GUI_GC,2)} = ...
         [model_info.muscle_info.muscle_names{i},'/activation'];
 end
-JointAngleMuscleAct.inDeg = 'true';
+JointAngleMuscleAct.inDeg = 'yes';
 filenameJointAngles = fullfile(R.S.subject.save_folder,[R.S.post_process.result_filename '.mot']);
 write_motionFile_v40(JointAngleMuscleAct, filenameJointAngles);
 

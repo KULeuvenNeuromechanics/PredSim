@@ -20,13 +20,13 @@ clc
 [pathHere,~,~] = fileparts(mfilename('fullpath'));
 
 % .osim file to adapt
-path_osim_in = fullfile(pathHere,'Hamner_modified.osim');
+path_osim_in = fullfile(pathHere,'subject1_mtpPin_unlocked_os4.osim');
 
 % adapted .osim file
-path_osim_out = fullfile(pathHere,'Hamner_modified_a.osim');
+path_osim_out = fullfile(pathHere,'subject1_mtpPin_unlocked_os4.osim');
 
 add_actuators_bool = 1;
-add_contact_bool = 0;
+add_contact_bool = 1;
 
 %% Define contact spheres
 
