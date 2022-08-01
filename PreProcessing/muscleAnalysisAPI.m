@@ -45,7 +45,7 @@ muscle_spanning_joint_info = model_info.muscle_info.muscle_spanning_joint_info;
 if length(varargin)==1
     argin3 = varargin{1};
     if size(argin3,1) == 1 && size(argin3,2) == 1
-        % if it's 1 element, its the number of data points
+        % if it's 1 element, it's the number of data points
         n_data_points = argin3;
     else
         % else, it's the entire dummy motion

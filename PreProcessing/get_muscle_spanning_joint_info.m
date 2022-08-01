@@ -1,4 +1,4 @@
-function [muscle_spanning_joint_info] = get_muscle_spanning_joint_info(S,osim_path,model_info)
+function [muscle_spanning_joint_info,varargout] = get_muscle_spanning_joint_info(S,osim_path,model_info)
 % --------------------------------------------------------------------------
 % get_muscle_spanning_joint_info
 %   Find out which muscles span wich joint, thus interacts with its
@@ -16,6 +16,13 @@ function [muscle_spanning_joint_info] = get_muscle_spanning_joint_info(S,osim_pa
 %
 % OUTPUT:
 %   - muscle_spanning_joint_info -
+%   * table with a column for each coordinate and a row for each muscle. 1
+%   means this muscle and coordinate interact, 0 means they don't
+%
+%   - Qs (optional output, for testing purpose) -
+%   * Coordinate values of the dummy motion
+%
+%   - muscle_spanning_joint_info_1 (optional output, alternative method) -
 %   * table with a column for each coordinate and a row for each muscle. 1
 %   means this muscle and coordinate interact, 0 means they don't
 %
@@ -56,7 +63,9 @@ model.setStateVariableValues(s,state_vars);
 model.realizePosition(s);
 
 dM = zeros(n_data_points,n_muscle,n_coord);
+lMT = dM;
 
+%% Option 1: based on momentarms
 % Loop through dummy states
 for j=1:n_data_points
     % Set each coordinate value
@@ -73,12 +82,62 @@ for j=1:n_data_points
         % Get moment arm for each joint
         for i=1:n_coord
             dM(j,m,i) = muscle_m.computeMomentArm(s,model.getCoordinateSet().get(coord_names{i}));
+            
         end
     end
 
 end
 
-muscle_spanning_joint_info = squeeze(sum(abs(dM), 1));
-muscle_spanning_joint_info(muscle_spanning_joint_info<=0.0001 & muscle_spanning_joint_info>=-0.0001) = 0;
-muscle_spanning_joint_info(muscle_spanning_joint_info~=0) = 1;
+muscle_spanning_joint_info_1 = squeeze(sum(abs(dM), 1));
+muscle_spanning_joint_info_1(muscle_spanning_joint_info_1<=0.0001 & muscle_spanning_joint_info_1>=-0.0001) = 0;
+muscle_spanning_joint_info_1(muscle_spanning_joint_info_1~=0) = 1;
 
+%% option 2: based on lengths
+% reference lengths
+lMT0 = zeros(1,n_muscle);
+state_vars.setToZero();
+model.setStateVariableValues(s,state_vars);
+model.realizePosition(s);
+for m=1:n_muscle
+    muscle_m = muscles.get(muscle_names{m});
+    lMT0(m) = muscle_m.getLength(s);          
+end
+
+% Loop through dummy states
+for j=1:n_data_points
+    % Set ONE coordinate value
+    for i=1:n_coord
+        state_vars.setToZero();
+        state_vars.set(model_info.ExtFunIO.coordi_OpenSimAPIstate.(coord_names{i}),Qs(j,i));
+        model.setStateVariableValues(s,state_vars);
+        model.realizePosition(s);
+    
+        % Loop over muscles
+        for m=1:n_muscle
+            muscle_m = muscles.get(muscle_names{m});
+    
+            lMT(j,m,i) = muscle_m.getLength(s);
+                
+        end
+    end
+
+end
+
+dlMT = lMT - lMT0;
+% dlMT = lMT - lMT(1,:,:);
+muscle_spanning_joint_info_2 = squeeze(mean(abs(dlMT), 1));
+muscle_spanning_joint_info_2(muscle_spanning_joint_info_2<=1e-5) = 0;
+muscle_spanning_joint_info_2(muscle_spanning_joint_info_2~=0) = 1;
+
+%%
+muscle_spanning_joint_info = muscle_spanning_joint_info_2;
+
+%%
+if nargout>=2
+    varargout{1} = Qs;
+end
+if nargout>=3
+    varargout{2} = muscle_spanning_joint_info_1;
+end
+
+end
