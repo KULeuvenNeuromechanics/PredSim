@@ -147,9 +147,9 @@ This new version of the code can automatically convert an OpenSim model to the e
 - **S.post_process.rerun**: 
 	- boolean to rerun post-processing without solving OCP (0 or 1). Default is *0*.
 - **S.post_process.result_filename**: 
-	- File name for results. Used for the name of .mat file that saves the results, diary of the OCP, and name of the .mot file of the output motion. When rerunning post-processing of an existing result, giving this file name is required.
+	- File name for results. Used for the name of .mat file that saves the results, diary of the OCP, and name of the .mot file of the output motion. When rerunning post-processing of an existing result, giving this file name is required. Default value is 
 - **S.post_process.savename**: 
-	- Type of savename to use if S.post_process.result_filename is empty. Defaults is *structured* [char]. This uses the name of the .mat file of results is used as <S.subject.name>_v<n>. Where <S.subject.name> is defined in S.subject.name. n = 1 if <S.subject.name>_v1.mat does not exist. n is increased until n is found such that <S.subject.name>_v<n>.mat does not exist. To change this structuring process, change its implementation in [run_pred_sim.m file](https://github.com/KULeuvenNeuromechanics/PredSim/blob/master/run_pred_sim.m).
+	- Type of savename to use if S.post_process.result_filename is empty. Defaults is *structured* [char]. This uses the name of the .mat file of results is used as <S.subject.name>_v\<n>. Where <S.subject.name> is defined in S.subject.name. n = 1 if <S.subject.name>_v1.mat does not exist. n is increased until n is found such that <S.subject.name>_v\<n>.mat does not exist. To change this structuring process, change its implementation in [run_pred_sim.m file](https://github.com/KULeuvenNeuromechanics/PredSim/blob/master/run_pred_sim.m). An alternative option is *datetime* [char], this uses <S.subject.name>\_\<yyyymmddTHHMMSS>. Where \<yyyymmddTHHMMSS> is the system date and time when creating the savename.
 
 #### S.solver
 

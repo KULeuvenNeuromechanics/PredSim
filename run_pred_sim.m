@@ -26,8 +26,8 @@ if S.post_process.rerun
 %     osim_path = model_info.osim_path;
 
 elseif isempty(S.post_process.result_filename)
-    % use a structured savename
     if strcmp(S.post_process.savename,'structured')
+        % use a structured savename
         if S.solver.run_as_batch_job
             result_filename = [S.subject.name '_job' num2str(S.solver.job_id)];
         else
@@ -42,6 +42,11 @@ elseif isempty(S.post_process.result_filename)
             end
         end
         S.post_process.result_filename = result_filename;
+
+    elseif strcmp(S.post_process.savename,'datetime')
+        % use system date and time
+        S.post_process.result_filename = [S.subject.name '_' datestr(datetime,30)];
+        
     end   
 end
 
