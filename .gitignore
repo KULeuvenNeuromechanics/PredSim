@@ -4,12 +4,22 @@
 *.sto
 *.log
 *.png
+!/FiguresForDocumentation/*.png
 *.jpg
 *.eps
 
-/opensimAD/
-/Subjects/
-!/Subjects/Hamner_modified/
-!/Subjects/Falisse_et_al_2022/
-!/FiguresForDocumentation/*.png
+opensimAD/*
+
+Subjects/*
+!Subjects/Hamner_modified/
+Subjects/Hamner_modified/*
+!Subjects/Hamner_modified/*.osim
+!Subjects/Hamner_modified/*.txt
+!Subjects/Hamner_modified/*.md
+
+!Subjects/Falisse_et_al_2022/
+Subjects/Falisse_et_al_2022/*
+!Subjects/Falisse_et_al_2022/*.osim
+!Subjects/Falisse_et_al_2022/*.txt
+!Subjects/Falisse_et_al_2022/*.md
 
