@@ -30,21 +30,25 @@ N_torq_act = model_info.ExtFunIO.jointi.nq.torqAct;
 N_pass_dof = model_info.ExtFunIO.jointi.nq.limTorq;
 
 %% Normalized sum of squared values
-e_temp_arms_dof = SX.sym('e_temp_arms_dof',N_arms_dof);
-J_temp_arms_dof = 0;
-for i=1:length(e_temp_arms_dof)
-    J_temp_arms_dof = J_temp_arms_dof + e_temp_arms_dof(i).^2;
+if N_arms_dof > 0
+    e_temp_arms_dof = SX.sym('e_temp_arms_dof',N_arms_dof);
+    J_temp_arms_dof = 0;
+    for i=1:length(e_temp_arms_dof)
+        J_temp_arms_dof = J_temp_arms_dof + e_temp_arms_dof(i).^2;
+    end
+    J_temp_arms_dof = J_temp_arms_dof/N_arms_dof;
+    f_casadi.J_arms_dof = Function('f_J_arms_dof',{e_temp_arms_dof},{J_temp_arms_dof});
 end
-J_temp_arms_dof = J_temp_arms_dof/N_arms_dof;
-f_casadi.J_arms_dof = Function('f_J_arms_dof',{e_temp_arms_dof},{J_temp_arms_dof});
 
-e_temp_torq_act = SX.sym('e_temp_torq_act',N_torq_act);
-J_temp_torq_act = 0;
-for i=1:length(e_temp_torq_act)
-    J_temp_torq_act = J_temp_torq_act + e_temp_torq_act(i).^2;
+if N_torq_act > 0
+    e_temp_torq_act = SX.sym('e_temp_torq_act',N_torq_act);
+    J_temp_torq_act = 0;
+    for i=1:length(e_temp_torq_act)
+        J_temp_torq_act = J_temp_torq_act + e_temp_torq_act(i).^2;
+    end
+    J_temp_torq_act = J_temp_torq_act/N_torq_act;
+    f_casadi.J_torq_act = Function('f_J_torq_act',{e_temp_torq_act},{J_temp_torq_act});
 end
-J_temp_torq_act = J_temp_torq_act/N_torq_act;
-f_casadi.J_torq_act = Function('f_J_torq_act',{e_temp_torq_act},{J_temp_torq_act});
 
 e_temp_noarms_dof = SX.sym('e_temp_noarms_dof',N_noarms_dof);
 J_temp_noarms_dof = 0;
@@ -99,7 +103,7 @@ end
 f_casadi.J_nn_3 = Function('f_J_nn_3',{e_temp_3},{J_temp_3});
 
 %% Normalized sum of values to a certain power
-% Function for 92 elements
+% Function for number of muscles elements
 e_temp_N_muscles_exp  = SX.sym('e_temp_N_muscles_exp',N_muscles);
 expo        = SX.sym('exp',1);
 J_temp_N_muscles_exp = 0;

@@ -41,8 +41,9 @@ f_casadi.lT_vT = lT_vT;
     f_casadi.AllPassiveTorques,f_casadi.AllPassiveTorques_cost] = createCasadi_PassiveMoments(S,model_info);
 
 %% Create Casadi functions for activation dynamics
-[f_casadi.ActuatorActivationDynamics] = createCasadi_ActDynam(S,model_info);
-
+if model_info.ExtFunIO.jointi.nq.torqAct > 0
+    [f_casadi.ActuatorActivationDynamics] = createCasadi_ActDynam(S,model_info);
+end
 
 %% Create Casadi functions for metabolic energy.
 [f_casadi.getMetabolicEnergySmooth2004all] = createCasadi_E_Metab(S,model_info);

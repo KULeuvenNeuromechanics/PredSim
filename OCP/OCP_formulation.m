@@ -161,15 +161,17 @@ opti.subject_to(bounds.Qdots.lower'*ones(1,d*N) < Qdots_col < ...
     bounds.Qdots.upper'*ones(1,d*N));
 opti.set_initial(Qdots_col, guess.Qdots_col');
 % Torque actuator activations at mesh points
-a_a = opti.variable(nq.torqAct,N+1);
-opti.subject_to(bounds.a_a.lower'*ones(1,N+1) < a_a < ...
-    bounds.a_a.upper'*ones(1,N+1));
-opti.set_initial(a_a, guess.a_a');
-% Torque actuator activations at collocation points
-a_a_col = opti.variable(nq.torqAct,d*N);
-opti.subject_to(bounds.a_a.lower'*ones(1,d*N) < a_a_col < ...
-    bounds.a_a.upper'*ones(1,d*N));
-opti.set_initial(a_a_col, guess.a_a_col');
+if nq.torqAct > 0
+    a_a = opti.variable(nq.torqAct,N+1);
+    opti.subject_to(bounds.a_a.lower'*ones(1,N+1) < a_a < ...
+        bounds.a_a.upper'*ones(1,N+1));
+    opti.set_initial(a_a, guess.a_a');
+    % Torque actuator activations at collocation points
+    a_a_col = opti.variable(nq.torqAct,d*N);
+    opti.subject_to(bounds.a_a.lower'*ones(1,d*N) < a_a_col < ...
+        bounds.a_a.upper'*ones(1,d*N));
+    opti.set_initial(a_a_col, guess.a_a_col');
+end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Define controls
@@ -179,10 +181,12 @@ opti.subject_to(bounds.vA.lower'*ones(1,N) < vA < ...
     bounds.vA.upper'*ones(1,N));
 opti.set_initial(vA, guess.vA');
 % Torque actuator excitations
-e_a = opti.variable(nq.torqAct, N);
-opti.subject_to(bounds.e_a.lower'*ones(1,N) < e_a < ...
-    bounds.e_a.upper'*ones(1,N));
-opti.set_initial(e_a, guess.e_a');
+if nq.torqAct > 0
+    e_a = opti.variable(nq.torqAct, N);
+    opti.subject_to(bounds.e_a.lower'*ones(1,N) < e_a < ...
+        bounds.e_a.upper'*ones(1,N));
+    opti.set_initial(e_a, guess.e_a');
+end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Define "slack" controls
@@ -213,12 +217,16 @@ Qskj        = [Qsk Qsj];
 Qdotsk      = MX.sym('Qdotsk',nq.all);
 Qdotsj      = MX.sym('Qdotsj',nq.all,d);
 Qdotskj     = [Qdotsk Qdotsj];
-a_ak        = MX.sym('a_ak',nq.torqAct);
-a_aj        = MX.sym('a_akmesh',nq.torqAct,d);
-a_akj       = [a_ak a_aj];
+if nq.torqAct > 0
+    a_ak        = MX.sym('a_ak',nq.torqAct);
+    a_aj        = MX.sym('a_akmesh',nq.torqAct,d);
+    a_akj       = [a_ak a_aj];
+end
 % Define CasADi variables for controls
 vAk     = MX.sym('vAk',NMuscle);
-e_ak    = MX.sym('e_ak',nq.torqAct);
+if nq.torqAct > 0
+    e_ak    = MX.sym('e_ak',nq.torqAct);
+end
 
 % Define CasADi variables for "slack" controls
 dFTtildej   = MX.sym('dFTtildej',NMuscle,d);
@@ -294,7 +302,9 @@ for j=1:d
     Qdotsp_nsc   = Qdotskj_nsc*C(:,j+1);
     FTtildep_nsc = FTtildekj_nsc*C(:,j+1);
     ap           = akj*C(:,j+1);
-    a_ap         = a_akj*C(:,j+1);
+    if nq.torqAct > 0
+        a_ap         = a_akj*C(:,j+1);
+    end
     % Append collocation equations
     % Dynamic constraints are scaled using the same scale
     % factors as the ones used to scale the states
@@ -307,19 +317,26 @@ for j=1:d
     eq_constr{end+1} = (h*qdotj_nsc - Qsp_nsc)./scaling.Qs';
     eq_constr{end+1} = (h*Aj_nsc(:,j) - Qdotsp_nsc)./scaling.Qdots';
     % Torque actuator activation dynamics (explicit formulation)
-    da_adtj = f_casadi.ActuatorActivationDynamics(e_ak,a_akj(:,j+1));
-    eq_constr{end+1} = (h*da_adtj - a_ap)./scaling.a_a;
-    
+    if nq.torqAct > 0
+        da_adtj = f_casadi.ActuatorActivationDynamics(e_ak,a_akj(:,j+1));
+        eq_constr{end+1} = (h*da_adtj - a_ap)./scaling.a_a;
+    end
+
     % Add contribution to the cost function
-    J = J + 1*(...
+    J = J + ...
         W.E          * B(j+1) *(f_casadi.J_muscles_exp(e_totj,W.E_exp))/model_info.mass*h + ...
         W.a          * B(j+1) *(f_casadi.J_muscles(akj(:,j+1)'))*h + ...
-        W.e_arm      * B(j+1) *(f_casadi.J_torq_act(e_ak))*h +...
         W.q_dotdot   * B(j+1) *(f_casadi.J_not_arms_dof(Aj(model_info.ExtFunIO.jointi.noarmsi,j)))*h + ...
         W.pass_torq  * B(j+1) *(f_casadi.J_lim_torq(Tau_passj_cost))*h + ...
         W.slack_ctrl * B(j+1) *(f_casadi.J_muscles(vAk))*h + ...
-        W.slack_ctrl * B(j+1) *(f_casadi.J_muscles(dFTtildej(:,j)))*h + ...
-        W.slack_ctrl * B(j+1) *(f_casadi.J_arms_dof(Aj(model_info.ExtFunIO.jointi.armsi,j)))*h);
+        W.slack_ctrl * B(j+1) *(f_casadi.J_muscles(dFTtildej(:,j)))*h;
+
+    if nq.torqAct > 0
+        J = J + W.e_arm      * B(j+1) *(f_casadi.J_torq_act(e_ak))*h;
+    end
+    if nq.arms > 0
+        J = J + W.slack_ctrl * B(j+1) *(f_casadi.J_arms_dof(Aj(model_info.ExtFunIO.jointi.armsi,j)))*h;
+    end
 
     
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -347,7 +364,7 @@ for j=1:d
         end
         
         % torque actuator
-        if ismember(i,model_info.ExtFunIO.jointi.torqueActuated)
+        if nq.torqAct > 0 && ismember(i,model_info.ExtFunIO.jointi.torqueActuated)
             idx_act_i = find(model_info.ExtFunIO.jointi.torqueActuated(:)==i);
             T_act_i = a_akj(idx_act_i,j+1).*scaling.ActuatorTorque(idx_act_i);
             Ti = Ti + T_act_i;
@@ -418,18 +435,25 @@ ineq_constr6 = vertcat(ineq_constr6{:});
 
 
 % Casadi function to get constraints and objective
-f_coll = Function('f_coll',{tfk,ak,aj,FTtildek,FTtildej,Qsk,Qsj,Qdotsk,...
-    Qdotsj,a_ak,a_aj,vAk,e_ak,dFTtildej,Aj},...
+coll_input_vars_def = {tfk,ak,aj,FTtildek,FTtildej,Qsk,Qsj,Qdotsk,Qdotsj,vAk,dFTtildej,Aj};
+if nq.torqAct > 0
+    coll_input_vars_def = [coll_input_vars_def,{a_ak,a_aj,e_ak}];
+end
+f_coll = Function('f_coll',coll_input_vars_def,...
     {eq_constr,ineq_constr1,ineq_constr2,ineq_constr3,...
     ineq_constr4,ineq_constr5,ineq_constr6,J});
+
 % assign function to multiple cores
 f_coll_map = f_coll.map(N,S.solver.parallel_mode,S.solver.N_threads);
+
 % evaluate function with opti variables
+coll_input_vars_eval = {tf,a(:,1:end-1), a_col, FTtilde(:,1:end-1), FTtilde_col,...
+    Qs(:,1:end-1), Qs_col, Qdots(:,1:end-1), Qdots_col, vA, dFTtilde_col, A_col};
+if nq.torqAct > 0
+    coll_input_vars_eval = [coll_input_vars_eval, {a_a(:,1:end-1), a_a_col, e_a}];
+end
 [coll_eq_constr,coll_ineq_constr1,coll_ineq_constr2,coll_ineq_constr3,...
-    coll_ineq_constr4,coll_ineq_constr5,coll_ineq_constr6,Jall] = f_coll_map(tf,...
-    a(:,1:end-1), a_col, FTtilde(:,1:end-1), FTtilde_col, Qs(:,1:end-1), ...
-    Qs_col, Qdots(:,1:end-1), Qdots_col, a_a(:,1:end-1), a_a_col, ...
-    vA, e_a, dFTtilde_col, A_col);
+    coll_ineq_constr4,coll_ineq_constr5,coll_ineq_constr6,Jall] = f_coll_map(coll_input_vars_eval{:});
 
 % equality constraints
 opti.subject_to(coll_eq_constr == 0);
@@ -471,7 +495,9 @@ for k=1:N
     FTtildekj = [FTtilde(:,k), FTtilde_col(:,(k-1)*d+1:k*d)];
     Qskj = [Qs(:,k), Qs_col(:,(k-1)*d+1:k*d)];
     Qdotskj = [Qdots(:,k), Qdots_col(:,(k-1)*d+1:k*d)];
-    a_akj = [a_a(:,k), a_a_col(:,(k-1)*d+1:k*d)];
+    if nq.torqAct > 0
+        a_akj = [a_a(:,k), a_a_col(:,(k-1)*d+1:k*d)];
+    end
 
     % Add equality constraints (next interval starts with end values of
     % states from previous interval)
@@ -479,7 +505,10 @@ for k=1:N
     opti.subject_to(FTtilde(:,k+1) == FTtildekj*D); % scaled
     opti.subject_to(Qs(:,k+1) == Qskj*D); % scaled
     opti.subject_to(Qdots(:,k+1) == Qdotskj*D); % scaled
-    opti.subject_to(a_a(:,k+1) == a_akj*D);
+    if nq.torqAct > 0
+        opti.subject_to(a_a(:,k+1) == a_akj*D);
+    end
+
 end % End loop over mesh points
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Additional path constraints
@@ -511,7 +540,9 @@ else
     % Muscle-tendon forces
     opti.subject_to(FTtilde(:,end) - FTtilde(:,1) == 0);
     % Torque actuator activations
-    opti.subject_to(a_a(:,end) - a_a(:,1) == 0);
+    if nq.torqAct > 0
+        opti.subject_to(a_a(:,end) - a_a(:,1) == 0);
+    end
 
 end
 % Average speed
@@ -635,14 +666,18 @@ Qdots_opt = reshape(w_opt(starti:starti+nq.all*(N+1)-1),nq.all,N+1)';
 starti = starti + nq.all*(N+1);
 Qdots_col_opt = reshape(w_opt(starti:starti+nq.all*(d*N)-1),nq.all,d*N)';
 starti = starti + nq.all*(d*N);
-a_a_opt = reshape(w_opt(starti:starti+nq.torqAct*(N+1)-1),nq.torqAct,N+1)';
-starti = starti + nq.torqAct*(N+1);
-a_a_col_opt = reshape(w_opt(starti:starti+nq.torqAct*(d*N)-1),nq.torqAct,d*N)';
-starti = starti + nq.torqAct*(d*N);
+if nq.torqAct > 0
+    a_a_opt = reshape(w_opt(starti:starti+nq.torqAct*(N+1)-1),nq.torqAct,N+1)';
+    starti = starti + nq.torqAct*(N+1);
+    a_a_col_opt = reshape(w_opt(starti:starti+nq.torqAct*(d*N)-1),nq.torqAct,d*N)';
+    starti = starti + nq.torqAct*(d*N);
+end
 vA_opt = reshape(w_opt(starti:starti+NMuscle*N-1),NMuscle,N)';
 starti = starti + NMuscle*N;
-e_a_opt = reshape(w_opt(starti:starti+nq.torqAct*N-1),nq.torqAct,N)';
-starti = starti + nq.torqAct*N;
+if nq.torqAct > 0
+    e_a_opt = reshape(w_opt(starti:starti+nq.torqAct*N-1),nq.torqAct,N)';
+    starti = starti + nq.torqAct*N;
+end
 dFTtilde_col_opt=reshape(w_opt(starti:starti+NMuscle*(d*N)-1),NMuscle,d*N)';
 starti = starti + NMuscle*(d*N);
 qdotdot_col_opt =reshape(w_opt(starti:starti+nq.all*(d*N)-1),nq.all,(d*N))';
@@ -660,8 +695,10 @@ Qs_mesh_col_opt=zeros(N*(d+1)+1,nq.all);
 Qs_mesh_col_opt(1:(d+1):end,:)= Qs_opt;
 Qdots_mesh_col_opt=zeros(N*(d+1)+1,nq.all);
 Qdots_mesh_col_opt(1:(d+1):end,:)= Qdots_opt;
-a_a_mesh_col_opt=zeros(N*(d+1)+1,nq.torqAct);
-a_a_mesh_col_opt(1:(d+1):end,:)= a_a_opt;
+if nq.torqAct > 0
+    a_a_mesh_col_opt=zeros(N*(d+1)+1,nq.torqAct);
+    a_a_mesh_col_opt(1:(d+1):end,:)= a_a_opt;
+end
 for k=1:N
     rangei = k*(d+1)-(d-1):k*(d+1);
     rangebi = (k-1)*d+1:k*d;
@@ -669,7 +706,9 @@ for k=1:N
     FTtilde_mesh_col_opt(rangei,:) = FTtilde_col_opt(rangebi,:);
     Qs_mesh_col_opt(rangei,:) = Qs_col_opt(rangebi,:);
     Qdots_mesh_col_opt(rangei,:) = Qdots_col_opt(rangebi,:);
-    a_a_mesh_col_opt(rangei,:) = a_a_col_opt(rangebi,:);
+    if nq.torqAct > 0
+        a_a_mesh_col_opt(rangei,:) = a_a_col_opt(rangebi,:);
+    end
 end
 
 %% Unscale results
@@ -702,17 +741,21 @@ a_opt_unsc = a_opt(1:end-1,:).*repmat(...
 % Muscle-tendon forces (1:N-1)
 FTtilde_opt_unsc = FTtilde_opt(1:end-1,:).*repmat(...
     scaling.FTtilde,size(FTtilde_opt(1:end-1,:),1),1);
-% Torque actuator activations (1:N-1)
-a_a_opt_unsc = a_a_opt(1:end-1,:);
-% Torque actuator activations (1:N)
-a_a_opt_unsc_all = a_a_opt;
+if nq.torqAct > 0
+    % Torque actuator activations (1:N-1)
+    a_a_opt_unsc = a_a_opt(1:end-1,:);
+    % Torque actuator activations (1:N)
+    a_a_opt_unsc_all = a_a_opt;
+end
 
 % Controls at mesh points
 % Time derivative of muscle activations (states)
 vA_opt_unsc = vA_opt.*repmat(scaling.vA,size(vA_opt,1),size(vA_opt,2));
 
 % Torque actuator excitations
-e_a_opt_unsc = e_a_opt;
+if nq.torqAct > 0
+    e_a_opt_unsc = e_a_opt;
+end
 % States at collocation points
 % Qs
 q_col_opt_unsc.rad = Qs_col_opt.*repmat(scaling.Qs,size(Qs_col_opt,1),1);
@@ -828,20 +871,27 @@ for k=1:N
         J_opt = J_opt + 1/(dist_trav_opt)*(...
             W.E*B(j+1)          *(f_casadi.J_muscles_exp(e_tot_opt_all,W.E_exp))/model_info.mass*h_opt + ...
             W.a*B(j+1)          *(f_casadi.J_muscles(a_col_opt(count,:)))*h_opt + ...
-            W.e_arm*B(j+1)      *(f_casadi.J_torq_act(e_a_opt(k,:)))*h_opt +...
             W.q_dotdot*B(j+1)   *(f_casadi.J_not_arms_dof(qdotdot_col_opt(count,model_info.ExtFunIO.jointi.noarmsi)))*h_opt + ...
             W.pass_torq*B(j+1)  *(f_casadi.J_lim_torq(Tau_passkj))*h_opt + ... 
             W.slack_ctrl*B(j+1) *(f_casadi.J_muscles(vA_opt(k,:)))*h_opt + ...
-            W.slack_ctrl*B(j+1) *(f_casadi.J_muscles(dFTtilde_col_opt(count,:)))*h_opt + ...
-            W.slack_ctrl*B(j+1) *(f_casadi.J_arms_dof(qdotdot_col_opt(count,model_info.ExtFunIO.jointi.armsi)))*h_opt);
+            W.slack_ctrl*B(j+1) *(f_casadi.J_muscles(dFTtilde_col_opt(count,:)))*h_opt);
+            
+        if nq.torqAct > 0
+            J_opt = J_opt + 1/(dist_trav_opt)*(W.e_arm*B(j+1)      *(f_casadi.J_torq_act(e_a_opt(k,:)))*h_opt);
 
-        
+            Actu_cost = Actu_cost + W.e_arm*B(j+1)*(f_casadi.J_arms_dof(e_a_opt(k,:)))*h_opt;
+        end
+        if nq.arms > 0
+            J_opt = J_opt + 1/(dist_trav_opt)*(W.slack_ctrl*B(j+1) *(f_casadi.J_arms_dof(qdotdot_col_opt(count,model_info.ExtFunIO.jointi.armsi)))*h_opt);
+
+            QdotdotArm_cost = QdotdotArm_cost + W.slack_ctrl*B(j+1)*...
+                (f_casadi.J_arms_dof(qdotdot_col_opt(count,model_info.ExtFunIO.jointi.armsi)))*h_opt;
+        end
+
         E_cost = E_cost + W.E*B(j+1)*...
             (f_casadi.J_muscles_exp(e_tot_opt_all,W.E_exp))/model_info.mass*h_opt;
         A_cost = A_cost + W.a*B(j+1)*...
-            (f_casadi.J_muscles(a_col_opt(count,:)))*h_opt;
-        Actu_cost = Actu_cost + W.e_arm*B(j+1)*...
-            (f_casadi.J_arms_dof(e_a_opt(k,:)))*h_opt;
+            (f_casadi.J_muscles(a_col_opt(count,:)))*h_opt;      
         Qdotdot_cost = Qdotdot_cost + W.q_dotdot*B(j+1)*...
             (f_casadi.J_not_arms_dof(qdotdot_col_opt(count,model_info.ExtFunIO.jointi.noarmsi)))*h_opt;
         Pass_cost = Pass_cost + W.pass_torq*B(j+1)*...
@@ -850,8 +900,6 @@ for k=1:N
             (f_casadi.J_muscles(vA_opt(k,:)))*h_opt;
         dFTtilde_cost = dFTtilde_cost + W.slack_ctrl*B(j+1)*...
             (f_casadi.J_muscles(dFTtilde_col_opt(count,:)))*h_opt;
-        QdotdotArm_cost = QdotdotArm_cost + W.slack_ctrl*B(j+1)*...
-            (f_casadi.J_arms_dof(qdotdot_col_opt(count,model_info.ExtFunIO.jointi.armsi)))*h_opt;
         count = count + 1;
     end
 end
@@ -1035,36 +1083,38 @@ if strcmp(S.misc.gaitmotion_type,'HalfGaitCycle')
         dFTtilde_GC(:,model_info.ExtFunIO.symQs.MusInvA) = dFTtilde_GC(:,model_info.ExtFunIO.symQs.MusInvB);
     end
  
-    % Torque actuator activations
-    a_a_GC = zeros(N*2,nq.torqAct);
-    a_a_GC(1:N-IC1i_s+1,:) = a_a_opt_unsc(IC1i_s:end,:);
-    a_a_GC(N-IC1i_s+2:N-IC1i_s+1+N,model_info.ExtFunIO.symQs.ActInvA) =...
-        a_a_opt_unsc(1:end,model_info.ExtFunIO.symQs.ActInvB);
-    a_a_GC(N-IC1i_s+2:N-IC1i_s+1+N,model_info.ExtFunIO.symQs.ActOpp) =...
-        -a_a_opt_unsc(1:end,model_info.ExtFunIO.symQs.ActOpp);
-    a_a_GC(N-IC1i_s+2+N:2*N,:) = a_a_opt_unsc(1:IC1i_s-1,:);
-    % If the first heel strike was on the left foot then we invert so that
-    % we always start with the right foot, for analysis purpose
-    if strcmp(HS1,'l')
-        a_a_GC(:,model_info.ExtFunIO.symQs.ActInvA) = a_a_GC(:,model_info.ExtFunIO.symQs.ActInvB);
-        a_a_GC(:,model_info.ExtFunIO.symQs.ActOpp) = -a_a_GC(:,model_info.ExtFunIO.symQs.ActOpp);
+    if nq.torqAct > 0
+        % Torque actuator activations
+        a_a_GC = zeros(N*2,nq.torqAct);
+        a_a_GC(1:N-IC1i_s+1,:) = a_a_opt_unsc(IC1i_s:end,:);
+        a_a_GC(N-IC1i_s+2:N-IC1i_s+1+N,model_info.ExtFunIO.symQs.ActInvA) =...
+            a_a_opt_unsc(1:end,model_info.ExtFunIO.symQs.ActInvB);
+        a_a_GC(N-IC1i_s+2:N-IC1i_s+1+N,model_info.ExtFunIO.symQs.ActOpp) =...
+            -a_a_opt_unsc(1:end,model_info.ExtFunIO.symQs.ActOpp);
+        a_a_GC(N-IC1i_s+2+N:2*N,:) = a_a_opt_unsc(1:IC1i_s-1,:);
+        % If the first heel strike was on the left foot then we invert so that
+        % we always start with the right foot, for analysis purpose
+        if strcmp(HS1,'l')
+            a_a_GC(:,model_info.ExtFunIO.symQs.ActInvA) = a_a_GC(:,model_info.ExtFunIO.symQs.ActInvB);
+            a_a_GC(:,model_info.ExtFunIO.symQs.ActOpp) = -a_a_GC(:,model_info.ExtFunIO.symQs.ActOpp);
+        end
+    
+        % Torque actuator excitations
+        e_a_GC = zeros(N*2,nq.torqAct);
+        e_a_GC(1:N-IC1i_s+1,:) = e_a_opt_unsc(IC1i_s:end,:);
+        e_a_GC(N-IC1i_s+2:N-IC1i_s+1+N,model_info.ExtFunIO.symQs.ActInvA) =...
+            e_a_opt_unsc(1:end,model_info.ExtFunIO.symQs.ActInvB);
+        e_a_GC(N-IC1i_s+2:N-IC1i_s+1+N,model_info.ExtFunIO.symQs.ActOpp) =...
+            -e_a_opt_unsc(1:end,model_info.ExtFunIO.symQs.ActOpp);
+        e_a_GC(N-IC1i_s+2+N:2*N,:) = e_a_opt_unsc(1:IC1i_s-1,:);
+        % If the first heel strike was on the left foot then we invert so that
+        % we always start with the right foot, for analysis purpose
+        if strcmp(HS1,'l')
+            e_a_GC(:,model_info.ExtFunIO.symQs.ActInvA) = e_a_GC(:,model_info.ExtFunIO.symQs.ActInvB);
+            e_a_GC(:,model_info.ExtFunIO.symQs.ActOpp) = -e_a_GC(:,model_info.ExtFunIO.symQs.ActOpp);
+        end
     end
 
-    % Torque actuator excitations
-    e_a_GC = zeros(N*2,nq.torqAct);
-    e_a_GC(1:N-IC1i_s+1,:) = e_a_opt_unsc(IC1i_s:end,:);
-    e_a_GC(N-IC1i_s+2:N-IC1i_s+1+N,model_info.ExtFunIO.symQs.ActInvA) =...
-        e_a_opt_unsc(1:end,model_info.ExtFunIO.symQs.ActInvB);
-    e_a_GC(N-IC1i_s+2:N-IC1i_s+1+N,model_info.ExtFunIO.symQs.ActOpp) =...
-        -e_a_opt_unsc(1:end,model_info.ExtFunIO.symQs.ActOpp);
-    e_a_GC(N-IC1i_s+2+N:2*N,:) = e_a_opt_unsc(1:IC1i_s-1,:);
-    % If the first heel strike was on the left foot then we invert so that
-    % we always start with the right foot, for analysis purpose
-    if strcmp(HS1,'l')
-        e_a_GC(:,model_info.ExtFunIO.symQs.ActInvA) = e_a_GC(:,model_info.ExtFunIO.symQs.ActInvB);
-        e_a_GC(:,model_info.ExtFunIO.symQs.ActOpp) = -e_a_GC(:,model_info.ExtFunIO.symQs.ActOpp);
-    end
-    
 elseif strcmp(S.misc.gaitmotion_type,'FullGaitCycle')
     % detect heelstrike
     [IC1i_c,IC1i_s,HS1] = getHeelstrikeSimulation(GRFk_opt,N);
@@ -1151,34 +1201,38 @@ elseif strcmp(S.misc.gaitmotion_type,'FullGaitCycle')
         dFTtilde_GC(:,model_info.ExtFunIO.symQs.MusInvA) = dFTtilde_GC(:,model_info.ExtFunIO.symQs.MusInvB);
     end
 
-    % Torque actuator activations
-    a_a_GC = zeros(N,nq.torqAct);
-    a_a_GC(1:N-IC1i_s+1,:) = a_a_opt_unsc(IC1i_s:end,:);
-    a_a_GC(N-IC1i_s+2:N,:) = a_a_opt_unsc(1:IC1i_s-1,:);
-    % If the first heel strike was on the left foot then we invert so that
-    % we always start with the right foot, for analysis purpose
-    if strcmp(HS1,'l')
-        a_a_GC(:,model_info.ExtFunIO.symQs.ActInvA) = a_a_GC(:,model_info.ExtFunIO.symQs.ActInvB);
-        a_a_GC(:,model_info.ExtFunIO.symQs.ActOpp) = -a_a_GC(:,model_info.ExtFunIO.symQs.ActOpp);
-    end
-    
-    % Torque actuator excitations
-    e_a_GC = zeros(N,nq.torqAct);
-    e_a_GC(1:N-IC1i_s+1,:) = e_a_opt_unsc(IC1i_s:end,:);
-    e_a_GC(N-IC1i_s+2:N,:) = e_a_opt_unsc(1:IC1i_s-1,:);
-    % If the first heel strike was on the left foot then we invert so that
-    % we always start with the right foot, for analysis purpose
-    if strcmp(HS1,'l')
-        e_a_GC(:,model_info.ExtFunIO.symQs.ActInvA) = e_a_GC(:,model_info.ExtFunIO.symQs.ActInvB);
-        e_a_GC(:,model_info.ExtFunIO.symQs.ActOpp) = -e_a_GC(:,model_info.ExtFunIO.symQs.ActOpp);
+    if nq.torqAct > 0
+        % Torque actuator activations
+        a_a_GC = zeros(N,nq.torqAct);
+        a_a_GC(1:N-IC1i_s+1,:) = a_a_opt_unsc(IC1i_s:end,:);
+        a_a_GC(N-IC1i_s+2:N,:) = a_a_opt_unsc(1:IC1i_s-1,:);
+        % If the first heel strike was on the left foot then we invert so that
+        % we always start with the right foot, for analysis purpose
+        if strcmp(HS1,'l')
+            a_a_GC(:,model_info.ExtFunIO.symQs.ActInvA) = a_a_GC(:,model_info.ExtFunIO.symQs.ActInvB);
+            a_a_GC(:,model_info.ExtFunIO.symQs.ActOpp) = -a_a_GC(:,model_info.ExtFunIO.symQs.ActOpp);
+        end
+        
+        % Torque actuator excitations
+        e_a_GC = zeros(N,nq.torqAct);
+        e_a_GC(1:N-IC1i_s+1,:) = e_a_opt_unsc(IC1i_s:end,:);
+        e_a_GC(N-IC1i_s+2:N,:) = e_a_opt_unsc(1:IC1i_s-1,:);
+        % If the first heel strike was on the left foot then we invert so that
+        % we always start with the right foot, for analysis purpose
+        if strcmp(HS1,'l')
+            e_a_GC(:,model_info.ExtFunIO.symQs.ActInvA) = e_a_GC(:,model_info.ExtFunIO.symQs.ActInvB);
+            e_a_GC(:,model_info.ExtFunIO.symQs.ActOpp) = -e_a_GC(:,model_info.ExtFunIO.symQs.ActOpp);
+        end
     end
 
 end
 
 %% Unscale actuator torques
-T_a_GC = zeros(size(a_a_GC));
-for i=1:nq.torqAct
-    T_a_GC(:,i) = a_a_GC(:,i).*scaling.ActuatorTorque(i);
+if nq.torqAct > 0
+    T_a_GC = zeros(size(a_a_GC));
+    for i=1:nq.torqAct
+        T_a_GC(:,i) = a_a_GC(:,i).*scaling.ActuatorTorque(i);
+    end
 end
 
 %% Convert joint accelerations to °/s^2
@@ -1201,10 +1255,15 @@ R.muscles.a = Acts_GC;
 R.muscles.da = dActs_GC;
 R.muscles.FTtilde = FTtilde_GC;
 R.muscles.dFTtilde = dFTtilde_GC;
-R.torque_actuators.a = a_a_GC;
-R.torque_actuators.e = e_a_GC;
-R.torque_actuators.T = T_a_GC;
-
+if nq.torqAct > 0
+    R.torque_actuators.a = a_a_GC;
+    R.torque_actuators.e = e_a_GC;
+    R.torque_actuators.T = T_a_GC;
+else
+    R.torque_actuators.a = [];
+    R.torque_actuators.e = [];
+    R.torque_actuators.T = [];
+end
 Outname = fullfile(S.subject.save_folder,[S.post_process.result_filename '.mat']);
 save(Outname,'w_opt','stats','setup','R','model_info');
 
