@@ -13,17 +13,20 @@ clc
 % Construct a cell array with full paths to files with saved results for
 % which you want to appear on the plotted figures.
 results_folder = fullfile(pathRepoFolder,'PredSimResults');
-result_paths{1} = fullfile([results_folder '\Hamner_modified\Hamner_modified_v1.mat']);
-% result_paths{2} = fullfile([results_folder '\Fal_s1_mtp_v2\Fal_s1_mtp_v2_job149.mat']);
+result_paths{1} = fullfile([results_folder '\CP3\CP3_v4.mat']);
+result_paths{2} = fullfile([results_folder '\CP3\CP3_v5.mat']);
+result_paths{3} = fullfile([results_folder '\CP3\CP3_v6.mat']);
+result_paths{4} = fullfile([results_folder '\CP3\CP3_v7.mat']);
 
 % Cell array with legend name for each result
-legend_names = {'test with default main.m script'};
+legend_names = {'half gait cycle (Nmesh = 50)','full gait cycle (Nmesh = 50)',...
+    'full gait cycle (Nmesh = 100)','full gait cycle (Nmesh = 100, QR)'};
 
 % Path to the folder where figures are saved
 figure_folder = results_folder;
 
 % Common part of the filename for all saved figures
-figure_savename = 'test_mainscript';
+figure_savename = 'CP3_MRI2_comparemeshes_IG';
 
 %% Settings for each figure to be made
 % "figure_settings" is a cell array where each cell contains a struct with
@@ -74,26 +77,33 @@ fig_count = fig_count+1;
 % figure_settings(fig_count).filetype = {};
 % fig_count = fig_count+1;
 
-% figure_settings(fig_count).name = 'torques';
-% figure_settings(fig_count).dofs = {'all_coords'};
-% figure_settings(fig_count).variables = {'T_ID'};
-% figure_settings(fig_count).savepath = fullfile(figure_folder,[figure_savename '_' figure_settings(fig_count).name]);
-% figure_settings(fig_count).filetype = {};
-% fig_count = fig_count+1;
+figure_settings(fig_count).name = 'torques';
+figure_settings(fig_count).dofs = {'all_coords'};
+figure_settings(fig_count).variables = {'T_ID'};
+figure_settings(fig_count).savepath = fullfile(figure_folder,[figure_savename '_' figure_settings(fig_count).name]);
+figure_settings(fig_count).filetype = {'jpeg'};
+fig_count = fig_count+1;
 
 figure_settings(fig_count).name = 'ankle_muscles';
 figure_settings(fig_count).dofs = {'soleus_r','med_gas_r','lat_gas_r','tib_ant_r'};
 figure_settings(fig_count).variables = {'a','FT','lMtilde','Wdot','Edot_gait'};
 figure_settings(fig_count).savepath = fullfile(figure_folder,[figure_savename '_' figure_settings(fig_count).name]);
-figure_settings(fig_count).filetype = {};
+figure_settings(fig_count).filetype = {'jpeg'};
 fig_count = fig_count+1;
 
-% figure_settings(fig_count).name = 'grfs';
-% figure_settings(fig_count).dofs = {'custom'};
-% figure_settings(fig_count).variables = {'GRF'};
-% figure_settings(fig_count).savepath = fullfile(figure_folder,[figure_savename '_' figure_settings(fig_count).name]);
-% figure_settings(fig_count).filetype = {};
-% fig_count = fig_count+1;
+figure_settings(fig_count).name = 'evert_muscles_l';
+figure_settings(fig_count).dofs = {'ext_dig_l','per_brev_l','per_long_l','per_tert_l'};
+figure_settings(fig_count).variables = {'a','FT','lMtilde','Wdot','Edot_gait'};
+figure_settings(fig_count).savepath = fullfile(figure_folder,[figure_savename '_' figure_settings(fig_count).name]);
+figure_settings(fig_count).filetype = {'jpeg'};
+fig_count = fig_count+1;
+
+figure_settings(fig_count).name = 'grfs';
+figure_settings(fig_count).dofs = {'custom'};
+figure_settings(fig_count).variables = {'GRF'};
+figure_settings(fig_count).savepath = fullfile(figure_folder,[figure_savename '_' figure_settings(fig_count).name]);
+figure_settings(fig_count).filetype = {'jpeg'};
+fig_count = fig_count+1;
 
 % figure_settings(fig_count).name = 'template';
 % figure_settings(fig_count).dofs = {'custom'};

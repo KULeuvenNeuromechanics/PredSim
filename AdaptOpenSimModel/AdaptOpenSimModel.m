@@ -20,10 +20,10 @@ clc
 [pathHere,~,~] = fileparts(mfilename('fullpath'));
 
 % .osim file to adapt
-path_osim_in = fullfile(pathHere,'subject1_mtpPin_unlocked_os4.osim');
+path_osim_in = fullfile(pathHere,'CP3_T0_MRI2_arms.osim');
 
 % adapted .osim file
-path_osim_out = fullfile(pathHere,'subject1_mtpPin_unlocked_os4.osim');
+path_osim_out = fullfile(pathHere,'CP3_T0_MRI2_arms_adapted.osim');
 
 add_actuators_bool = 1;
 add_contact_bool = 1;
