@@ -23,17 +23,21 @@ addpath([S.misc.main_path '\VariousFunctions'])
 
 %% Required inputs
 % name of the subject
-S.subject.name = 'Falisse_et_al_2022';
+S.subject.name = 'CP3';
 
 % path to folder where you want to store the results of the OCP
 S.subject.save_folder  = fullfile(pathRepoFolder,'PredSimResults',S.subject.name); 
 
 % either choose "quasi-random" or give the path to a .mot file you want to use as initial guess
-S.subject.IG_selection = fullfile(S.misc.main_path,'OCP','IK_Bounds_Default.mot');
-S.subject.IG_selection_gaitCyclePercent = 50;
+% S.subject.IG_selection = fullfile(S.misc.main_path,'OCP','IK_Bounds_Default.mot');
+S.subject.IG_selection = "C:\GBW_MyPrograms\PredSim_2022\Subjects\CP3\CP3_T0_07_MRI_IK_IG.mot";
+S.subject.IG_selection_gaitCyclePercent = 100;
+% S.subject.IG_selection = "quasi-random";
+
 
 % give the path to the osim model of your subject
-osim_path = fullfile(pathRepo,'Subjects',S.subject.name,[S.subject.name '.osim']);
+% osim_path = fullfile(pathRepo,'Subjects',S.subject.name,[S.subject.name '.osim']);
+osim_path = fullfile(pathRepo,'Subjects',S.subject.name,[S.subject.name '_T0_MRI2_arms_adapted.osim']);
 
 % Do you want to run the simulation as a batch job (parallel computing toolbox)
 S.solver.run_as_batch_job = 0;
@@ -61,7 +65,7 @@ S.solver.run_as_batch_job = 0;
 % % S.misc - miscellanious
 % S.misc.v_max_s             = ;
 % S.misc.visualize_bounds    = 1;
-% S.misc.gaitmotion_type     = '';
+S.misc.gaitmotion_type     = 'FullGaitCycle';
 % S.misc.msk_geom_eq         = '';
 % S.misc.poly_order.lower    = ;
 % S.misc.poly_order.upper    = ;
@@ -69,24 +73,24 @@ S.solver.run_as_batch_job = 0;
 
 % % S.post_process
 % S.post_process.make_plot = '';
-% S.post_process.savename  = 'datetime';
+% S.post_process.savename  = '';
 % S.post_process.rerun   = 1;
-% S.post_process.result_filename = '';
+% S.post_process.result_filename = 'CP3_v5';
 
 % % S.solver
 % S.solver.linear_solver  = '';
 % S.solver.tol_ipopt      = ;
-% S.solver.max_iter       = 5;
+% S.solver.max_iter       = 0;
 % S.solver.parallel_mode  = '';
-% S.solver.N_threads      = 6;
-% S.solver.N_meshes       = ;
+S.solver.N_threads      = 6;
+S.solver.N_meshes       = 100;
 % S.solver.par_cluster_name = ;
 S.solver.CasADi_path    = 'C:\GBW_MyPrograms\casadi_3_5_5';
 
 
 % % S.subject
-% S.subject.mass              = ;
-% S.subject.IG_pelvis_y       = ;
+S.subject.mass              = 30.15;
+S.subject.IG_pelvis_y       = 0.9385;
 S.subject.v_pelvis_x_trgt   = 1.33;
 % S.subject.IK_Bounds = ;
 % S.subject.muscle_strength   = ;
@@ -95,6 +99,8 @@ S.subject.v_pelvis_x_trgt   = 1.33;
 % S.subject.tendon_stiff      = ;
 S.subject.mtp_type          = '2022paper';
 % S.subject.MT_params         = ;
+% S.subject.MT_params_opt = "C:\GBW_MyPrograms\PredSim_2022\Subjects\CP3\highAct_simpleCostFunction_v2.mat";
+S.subject.MT_params_opt = [];
 % S.subject.spasticity        = ;
 % S.subject.muscle_coordination = ;
 S.subject.set_stiffness_coefficient_selected_dofs = {{'mtp_angle_l','mtp_angle_r'},25};

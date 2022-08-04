@@ -57,7 +57,7 @@ R.ground_reaction.GRM_l = Foutk_opt(:,model_info.ExtFunIO.GRMs.left_total);
 COP_r = zeros(size(R.ground_reaction.GRF_r));
 COP_l = COP_r;
 
-idx = find(R.ground_reaction.GRF_r(:,2) < 20,1,'first');
+idx = find(R.ground_reaction.GRF_r(:,2) < (model_info.mass*9.81*0.03),1,'first');
 idx_stance_r = (1:idx-1)';
 trh = min(R.ground_reaction.GRF_r(idx_stance_r,2));
 idx_stance_l = find(R.ground_reaction.GRF_l(:,2) > trh);

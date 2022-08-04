@@ -41,8 +41,8 @@ function [model_info] = read_and_scale_MTparameters(S,osim_path,model_info)
 % Original author: Lars D'Hondt
 % Original date: 18/March/2022
 %
-% Last edit by: 
-% Last edit date: 
+% Last edit by: Bram Van Den Bosch
+% Last edit date: 01/August/2022
 % --------------------------------------------------------------------------
 
 muscle_info = model_info.muscle_info;
@@ -69,7 +69,16 @@ muscle_strength = ones(1,NMuscle);
 muscle_pass_stiff_shift = ones(1,NMuscle);
 muscle_pass_stiff_scale = ones(1,NMuscle);
 
+%% read optimized muscle- and tendon parameters
 
+if ~isempty(S.subject.MT_params_opt)
+    optParams = importdata(S.subject.MT_params_opt);
+    FMo = optParams.Results.Param.Estimated.FMo;
+    lMo = optParams.Results.Param.Estimated.lMo;
+    lTs = optParams.Results.Param.Estimated.lTs;
+    alphao = optParams.Results.Param.Estimated.alphao;
+    tendon_stiff = optParams.Results.Param.Estimated.kT;
+end
 
 %% Organise in struct
 
