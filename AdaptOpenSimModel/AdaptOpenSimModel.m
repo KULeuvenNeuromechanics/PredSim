@@ -20,20 +20,13 @@ clc
 [pathHere,~,~] = fileparts(mfilename('fullpath'));
 
 % .osim file to adapt
-
 path_osim_in = fullfile(pathHere,'Falisse_et_al_2022.osim');
 
 % adapted .osim file
 path_osim_out = fullfile(pathHere,'Falisse_et_al_2022.osim');
 
-% path_osim_in = fullfile(pathHere,'CP3_T0_MRI2_arms.osim');
-
-% % adapted .osim file
-%path_osim_out = fullfile(pathHere,'CP3_T0_MRI2_arms_adapted.osim');
-
-
 add_actuators_bool = 1;
-add_contact_bool = 1;
+add_contact_bool = 0;
 
 %% Define contact spheres
 
