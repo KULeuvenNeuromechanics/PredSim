@@ -115,14 +115,22 @@ bounds.Qdotdots.upper = bounds.Qdotdots.upper + 3*Qdotdots_range;
 %% manual adjustment
 % For several joints, we manually adjust the bounds
 % floating base tx
-bounds.Qs.upper(model_info.ExtFunIO.jointi.floating_base(4)) = 4;  
-bounds.Qs.lower(model_info.ExtFunIO.jointi.floating_base(4)) = 0;
+bounds.Qs.upper(model_info.ExtFunIO.jointi.base_forward) = 4;  
+bounds.Qs.lower(model_info.ExtFunIO.jointi.base_forward) = 0;
 % Pelvis_ty
-bounds.Qs.upper(model_info.ExtFunIO.jointi.floating_base(5)) = model_info.IG_pelvis_y*1.2;
-bounds.Qs.lower(model_info.ExtFunIO.jointi.floating_base(5)) = model_info.IG_pelvis_y*0.5;
+if length(model_info.ExtFunIO.jointi.floating_base)==6
+    bounds.Qs.upper(model_info.ExtFunIO.jointi.floating_base(5)) = model_info.IG_pelvis_y*1.2;
+    bounds.Qs.lower(model_info.ExtFunIO.jointi.floating_base(5)) = model_info.IG_pelvis_y*0.5;
+    
+elseif length(model_info.ExtFunIO.jointi.floating_base)==3
+    bounds.Qs.upper(model_info.ExtFunIO.jointi.floating_base(3)) = model_info.IG_pelvis_y*1.2;
+    bounds.Qs.lower(model_info.ExtFunIO.jointi.floating_base(3)) = model_info.IG_pelvis_y*0.5;
+
+end
 % Pelvis_tz
-bounds.Qs.upper(model_info.ExtFunIO.jointi.floating_base(6)) = 0.1;
-bounds.Qs.lower(model_info.ExtFunIO.jointi.floating_base(6)) = -0.1;
+bounds.Qs.upper(model_info.ExtFunIO.jointi.base_lateral) = 0.1;
+bounds.Qs.lower(model_info.ExtFunIO.jointi.base_lateral) = -0.1;
+
 % Elbow
 bounds.Qs.lower(idx_elbow) = 0;
 % Mtp
@@ -141,12 +149,12 @@ if S.subject.v_pelvis_x_trgt > 1.33
     % Shoulder flexion
     bounds.Qs.lower(idx_shoulder_flex) = -50*pi/180;
     % Pelvis tx
-    bounds.Qdots.upper(model_info.ExtFunIO.jointi.floating_base(4)) = 8;
+    bounds.Qdots.upper(model_info.ExtFunIO.jointi.base_forward) = 8;
 end
 
 if strcmp(S.misc.gaitmotion_type,'HalfGaitCycle')
-    bounds.Qdots.upper(model_info.ExtFunIO.jointi.floating_base(4)) = ...
-        bounds.Qdots.upper(model_info.ExtFunIO.jointi.floating_base(4))/2;
+    bounds.Qdots.upper(model_info.ExtFunIO.jointi.base_forward) = ...
+        bounds.Qdots.upper(model_info.ExtFunIO.jointi.base_forward)/2;
 end
 
 %% Adjust bounds based on settings

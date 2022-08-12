@@ -391,36 +391,43 @@ for j=1:d
     eq_constr{end+1} = Hilldiffj;
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Constraints to prevent parts of the skeleton to penetrate each other.
-    % Origins calcaneus (transv plane) at minimum 9 cm from each other.
-    if ~isempty(model_info.ExtFunIO.origin.calcn_r) &&  ~isempty(model_info.ExtFunIO.origin.calcn_l)
-        Qconstr = f_casadi.J_nn_2(Tj(model_info.ExtFunIO.origin.calcn_r([1 3]),1) - ...
-            Tj(model_info.ExtFunIO.origin.calcn_l([1 3]),1));
-        ineq_constr3{end+1} = Qconstr;
-    end
-    % Constraint to prevent the arms to penetrate the skeleton
-    % Origins femurs and ipsilateral hands (transv plane) at minimum
-    % 18 cm from each other.
-    if ~isempty(model_info.ExtFunIO.origin.femur_r) &&  ~isempty(model_info.ExtFunIO.origin.hand_r)
-        Qconstr = f_casadi.J_nn_2(Tj(model_info.ExtFunIO.origin.femur_r([1 3]),1) - ...
-            Tj(model_info.ExtFunIO.origin.hand_r([1 3]),1));
-        ineq_constr4{end+1} = Qconstr;
-    end
-    if ~isempty(model_info.ExtFunIO.origin.femur_l) &&  ~isempty(model_info.ExtFunIO.origin.hand_l)
-        Qconstr = f_casadi.J_nn_2(Tj(model_info.ExtFunIO.origin.femur_l([1 3]),1) - ...
-            Tj(model_info.ExtFunIO.origin.hand_l([1 3]),1));
-        ineq_constr4{end+1} = Qconstr;
-    end
-    % Origins tibia (transv plane) at minimum 11 cm from each other.
-    if ~isempty(model_info.ExtFunIO.origin.tibia_r) &&  ~isempty(model_info.ExtFunIO.origin.tibia_l)
-        Qconstr = f_casadi.J_nn_2(Tj(model_info.ExtFunIO.origin.tibia_r([1 3]),1) - ...
-            Tj(model_info.ExtFunIO.origin.tibia_l([1 3]),1));
-        ineq_constr5{end+1} = Qconstr;
-    end
-    % Origins toes (transv plane) at minimum 10 cm from each other.
-    if ~isempty(model_info.ExtFunIO.origin.toes_r) &&  ~isempty(model_info.ExtFunIO.origin.toes_l)
-        Qconstr = f_casadi.J_nn_2(Tj(model_info.ExtFunIO.origin.toes_r([1 3]),1) - ...
-            Tj(model_info.ExtFunIO.origin.toes_l([1 3]),1));
-        ineq_constr6{end+1} = Qconstr;
+    if isfield(model_info.ExtFunIO,'origin')
+        % Origins calcaneus (transv plane) at minimum 9 cm from each other.
+        if isfield(model_info.ExtFunIO.origin,'calcn_r') && isfield(model_info.ExtFunIO.origin,'calcn_l') && ...
+                ~isempty(model_info.ExtFunIO.origin.calcn_r) &&  ~isempty(model_info.ExtFunIO.origin.calcn_l)
+            Qconstr = f_casadi.J_nn_2(Tj(model_info.ExtFunIO.origin.calcn_r([1 3]),1) - ...
+                Tj(model_info.ExtFunIO.origin.calcn_l([1 3]),1));
+            ineq_constr3{end+1} = Qconstr;
+        end
+        % Constraint to prevent the arms to penetrate the skeleton
+        % Origins femurs and ipsilateral hands (transv plane) at minimum
+        % 18 cm from each other.
+        if isfield(model_info.ExtFunIO.origin,'femur_r') && isfield(model_info.ExtFunIO.origin,'hand_r') && ...
+                ~isempty(model_info.ExtFunIO.origin.femur_r) &&  ~isempty(model_info.ExtFunIO.origin.hand_r)
+            Qconstr = f_casadi.J_nn_2(Tj(model_info.ExtFunIO.origin.femur_r([1 3]),1) - ...
+                Tj(model_info.ExtFunIO.origin.hand_r([1 3]),1));
+            ineq_constr4{end+1} = Qconstr;
+        end
+        if isfield(model_info.ExtFunIO.origin,'femur_l') && isfield(model_info.ExtFunIO.origin,'hand_l') && ...
+                ~isempty(model_info.ExtFunIO.origin.femur_l) &&  ~isempty(model_info.ExtFunIO.origin.hand_l)
+            Qconstr = f_casadi.J_nn_2(Tj(model_info.ExtFunIO.origin.femur_l([1 3]),1) - ...
+                Tj(model_info.ExtFunIO.origin.hand_l([1 3]),1));
+            ineq_constr4{end+1} = Qconstr;
+        end
+        % Origins tibia (transv plane) at minimum 11 cm from each other.
+        if isfield(model_info.ExtFunIO.origin,'tibia_r') && isfield(model_info.ExtFunIO.origin,'tibia_l') && ...
+                ~isempty(model_info.ExtFunIO.origin.tibia_r) &&  ~isempty(model_info.ExtFunIO.origin.tibia_l)
+            Qconstr = f_casadi.J_nn_2(Tj(model_info.ExtFunIO.origin.tibia_r([1 3]),1) - ...
+                Tj(model_info.ExtFunIO.origin.tibia_l([1 3]),1));
+            ineq_constr5{end+1} = Qconstr;
+        end
+        % Origins toes (transv plane) at minimum 10 cm from each other.
+        if isfield(model_info.ExtFunIO.origin,'toes_r') && isfield(model_info.ExtFunIO.origin,'toes_l') && ...
+                ~isempty(model_info.ExtFunIO.origin.toes_r) &&  ~isempty(model_info.ExtFunIO.origin.toes_l)
+            Qconstr = f_casadi.J_nn_2(Tj(model_info.ExtFunIO.origin.toes_r([1 3]),1) - ...
+                Tj(model_info.ExtFunIO.origin.toes_l([1 3]),1));
+            ineq_constr6{end+1} = Qconstr;
+        end
     end
 
 end % End loop over collocation points
@@ -461,31 +468,32 @@ opti.subject_to(coll_eq_constr == 0);
 % inequality constraints (logical indexing not possible in MX arrays)
 opti.subject_to(coll_ineq_constr1(:) >= 0);
 opti.subject_to(coll_ineq_constr2(:) <= 1/tact);
-if ~isempty(coll_ineq_constr3)
-    opti.subject_to(S.bounds.calcn_dist.lower.^2 < coll_ineq_constr3(:) < 4);
-else
-    disp('   Minimal distance between calcanei not constrained. To do so, please use "calcn_r" and "calcn_l" as body names in the OpenSim model.')
+if isfield(model_info.ExtFunIO,'origin')
+    if ~isempty(coll_ineq_constr3)
+        opti.subject_to(S.bounds.calcn_dist.lower.^2 < coll_ineq_constr3(:) < 4);
+    else
+        disp('   Minimal distance between calcanei not constrained. To do so, please use "calcn_r" and "calcn_l" as body names in the OpenSim model.')
+    end
+    if ~isempty(coll_ineq_constr4)
+        opti.subject_to(S.bounds.femur_hand_dist.lower.^2 < coll_ineq_constr4(:) < 4);
+    end
+    if isempty(model_info.ExtFunIO.origin.femur_r) || isempty(model_info.ExtFunIO.origin.hand_r)
+        disp('   Minimal distance between right arm and body not constrained. To do so, please use "femur_r" and "hand_r" as body names in the OpenSim model.')
+    end
+    if isempty(model_info.ExtFunIO.origin.femur_l) || isempty(model_info.ExtFunIO.origin.hand_l)
+        disp('   Minimal distance between left arm and body not constrained. To do so, please use "femur_l" and "hand_l" as body names in the OpenSim model.')
+    end
+    if ~isempty(coll_ineq_constr5)
+        opti.subject_to(S.bounds.tibia_dist.lower.^2 < coll_ineq_constr5(:) < 4);
+    else
+        disp('   Minimal distance between tibias not constrained. To do so, please use "tibia_r" and "tibia_l" as body names in the OpenSim model.')
+    end
+    if ~isempty(coll_ineq_constr6)
+        opti.subject_to(S.bounds.toes_dist.lower.^2 < coll_ineq_constr6(:) < 4);
+    else
+        disp('   Minimal distance between toes not constrained. To do so, please use "toes_r" and "toes_l" as body names in the OpenSim model.')
+    end
 end
-if ~isempty(coll_ineq_constr4)
-    opti.subject_to(S.bounds.femur_hand_dist.lower.^2 < coll_ineq_constr4(:) < 4);
-end
-if isempty(model_info.ExtFunIO.origin.femur_r) || isempty(model_info.ExtFunIO.origin.hand_r)
-    disp('   Minimal distance between right arm and body not constrained. To do so, please use "femur_r" and "hand_r" as body names in the OpenSim model.')
-end
-if isempty(model_info.ExtFunIO.origin.femur_l) || isempty(model_info.ExtFunIO.origin.hand_l)
-    disp('   Minimal distance between left arm and body not constrained. To do so, please use "femur_l" and "hand_l" as body names in the OpenSim model.')
-end
-if ~isempty(coll_ineq_constr5)
-    opti.subject_to(S.bounds.tibia_dist.lower.^2 < coll_ineq_constr5(:) < 4);
-else
-    disp('   Minimal distance between tibias not constrained. To do so, please use "tibia_r" and "tibia_l" as body names in the OpenSim model.')
-end
-if ~isempty(coll_ineq_constr6)
-    opti.subject_to(S.bounds.toes_dist.lower.^2 < coll_ineq_constr6(:) < 4);
-else
-    disp('   Minimal distance between toes not constrained. To do so, please use "toes_r" and "toes_l" as body names in the OpenSim model.')
-end
-
 
 % Loop over mesh points
 for k=1:N
@@ -517,9 +525,13 @@ if strcmp(S.misc.gaitmotion_type,'HalfGaitCycle')
     % Qs and Qdots
     opti.subject_to(Qs(model_info.ExtFunIO.symQs.QsInvA,end) - Qs(model_info.ExtFunIO.symQs.QsInvB,1) == 0);
     opti.subject_to(Qdots(model_info.ExtFunIO.symQs.QdotsInvA,end) - Qdots(model_info.ExtFunIO.symQs.QdotsInvB,1) == 0);
-    opti.subject_to(Qdots(model_info.ExtFunIO.jointi.base_lateral,end) + Qdots(model_info.ExtFunIO.jointi.base_lateral,1) == 0);
-    opti.subject_to(Qs(model_info.ExtFunIO.symQs.QsOpp,end) + Qs(model_info.ExtFunIO.symQs.QsOpp,1) == 0);
-    opti.subject_to(Qdots(model_info.ExtFunIO.symQs.QsOpp,end) + Qdots(model_info.ExtFunIO.symQs.QsOpp,1) == 0);
+    if ~isempty(model_info.ExtFunIO.jointi.base_lateral)
+        opti.subject_to(Qdots(model_info.ExtFunIO.jointi.base_lateral,end) + Qdots(model_info.ExtFunIO.jointi.base_lateral,1) == 0);
+    end
+    if ~isempty(model_info.ExtFunIO.symQs.QsOpp)
+        opti.subject_to(Qs(model_info.ExtFunIO.symQs.QsOpp,end) + Qs(model_info.ExtFunIO.symQs.QsOpp,1) == 0);
+        opti.subject_to(Qdots(model_info.ExtFunIO.symQs.QsOpp,end) + Qdots(model_info.ExtFunIO.symQs.QsOpp,1) == 0);
+    end
     % Muscle activations
     opti.subject_to(a(model_info.ExtFunIO.symQs.MusInvA,end) - a(model_info.ExtFunIO.symQs.MusInvB,1) == 0);
     % Muscle-tendon forces
@@ -636,7 +648,7 @@ save(Outname,'w_opt','stats','setup','model_info','S');
 % To salvage results after a botched post-processing attempt, use code
 % below and comment out rest of this section.
 % Outname = fullfile(S.subject.save_folder,[S.post_process.result_filename '.mat']);
-% load(Outname,'w_opt','stats','setup','model_info','R');
+% load(Outname,'w_opt','stats','setup','model_info','R','S');
 % scaling = setup.scaling;
 % S = R.S;
 % clear 'R'
@@ -879,7 +891,7 @@ for k=1:N
         if nq.torqAct > 0
             J_opt = J_opt + 1/(dist_trav_opt)*(W.e_arm*B(j+1)      *(f_casadi.J_torq_act(e_a_opt(k,:)))*h_opt);
 
-            Actu_cost = Actu_cost + W.e_arm*B(j+1)*(f_casadi.J_arms_dof(e_a_opt(k,:)))*h_opt;
+            Actu_cost = Actu_cost + W.e_arm*B(j+1)*(f_casadi.J_torq_act(e_a_opt(k,:)))*h_opt;
         end
         if nq.arms > 0
             J_opt = J_opt + 1/(dist_trav_opt)*(W.slack_ctrl*B(j+1) *(f_casadi.J_arms_dof(qdotdot_col_opt(count,model_info.ExtFunIO.jointi.armsi)))*h_opt);
@@ -906,7 +918,7 @@ end
 J_optf = full(J_opt);
 E_costf = full(E_cost);
 A_costf = full(A_cost);
-Arm_costf = full(Actu_cost);
+Actu_costf = full(Actu_cost);
 Qdotdot_costf = full(Qdotdot_cost);
 Pass_costf = full(Pass_cost);
 vA_costf = full(vA_cost);
@@ -914,10 +926,10 @@ dFTtilde_costf = full(dFTtilde_cost);
 QdotdotArm_costf = full(QdotdotArm_cost);
 
 contributionCost.absoluteValues = 1/(dist_trav_opt)*[E_costf,A_costf,...
-    Arm_costf,Qdotdot_costf,Pass_costf,vA_costf,dFTtilde_costf,...
+    Actu_costf,Qdotdot_costf,Pass_costf,vA_costf,dFTtilde_costf,...
     QdotdotArm_costf];
 contributionCost.relativeValues = 1/(dist_trav_opt)*[E_costf,A_costf,...
-    Arm_costf,Qdotdot_costf,Pass_costf,vA_costf,dFTtilde_costf,...
+    Actu_costf,Qdotdot_costf,Pass_costf,vA_costf,dFTtilde_costf,...
     QdotdotArm_costf]./J_optf*100;
 contributionCost.relativeValuesRound2 = ...
     round(contributionCost.relativeValues,2);
@@ -926,7 +938,7 @@ contributionCost.labels = {'metabolic energy','muscle activation',...
     'arm accelerations'};
 
 % assertCost should be 0
-assertCost = abs(J_optf - 1/(dist_trav_opt)*(E_costf+A_costf + Arm_costf + ...
+assertCost = abs(J_optf - 1/(dist_trav_opt)*(E_costf+A_costf + Actu_costf + ...
     Qdotdot_costf + Pass_costf + vA_costf + dFTtilde_costf + QdotdotArm_costf));
 
 assertCost2 = abs(stats.iterations.obj(end) - J_optf);
@@ -944,8 +956,8 @@ end
 % [coll_eq_constr_opt,coll_ineq_constr1_opt,coll_ineq_constr2_opt,coll_ineq_constr3_opt,...
 %     coll_ineq_constr4_opt,coll_ineq_constr5_opt,coll_ineq_constr6_opt,Jall_opt] = f_coll_map(tf_opt,...
 %     a_opt(1:end-1,:)', a_col_opt', FTtilde_opt(1:end-1,:)', FTtilde_col_opt', Qs_opt(1:end-1,:)', ...
-%     Qs_col_opt', Qdots_opt(1:end-1,:)', Qdots_col_opt', a_a_opt(1:end-1,:)', a_a_col_opt', ...
-%     vA_opt', e_a_opt', dFTtilde_col_opt', qdotdot_col_opt');
+%     Qs_col_opt', Qdots_opt(1:end-1,:)', Qdots_col_opt', ...
+%     vA_opt', dFTtilde_col_opt', qdotdot_col_opt', a_a_opt(1:end-1,:)', a_a_col_opt', e_a_opt');
 % 
 % Jall_sc_opt = full(sum(Jall_opt)/dist_trav_opt);
 % assertCost3 = abs(stats.iterations.obj(end) - Jall_sc_opt);
@@ -1115,6 +1127,34 @@ if strcmp(S.misc.gaitmotion_type,'HalfGaitCycle')
         end
     end
 
+
+    % Ground reaction forces
+    GRFs_opt = zeros(N*2,6);
+    GRFs_opt(1:N-IC1i_c+1,:) = GRFk_opt(IC1i_c:end,1:6);
+    GRFs_opt(N-IC1i_c+2:N-IC1i_c+1+N,:) = GRFk_opt(1:end,[4:6,1:3]);
+    GRFs_opt(N-IC1i_c+2:N-IC1i_c+1+N,[3,6]) = ...
+        -GRFs_opt(N-IC1i_c+2:N-IC1i_c+1+N,[3,6]);
+    GRFs_opt(N-IC1i_c+2+N:2*N,:) = GRFk_opt(1:IC1i_c-1,1:6);
+    % If the first heel strike was on the left foot then we invert so that
+    % we always start with the right foot, for analysis purpose
+    if strcmp(HS1,'l')
+        GRFs_opt(:,[4:6,1:3]) = GRFs_opt(:,:);
+        GRFs_opt(:,[3,6]) = -GRFs_opt(:,[3,6]);
+    end
+
+    % Joint torques
+    Ts_opt = zeros(N*2,size(Qs_opt,2));
+    Ts_opt(1:N-IC1i_c+1,1:nq.all) = Foutk_opt(IC1i_c:end,1:nq.all);
+    Ts_opt(N-IC1i_c+2:N-IC1i_c+1+N,model_info.ExtFunIO.symQs.QsInvA) = Foutk_opt(1:end,model_info.ExtFunIO.symQs.QsInvB);
+    Ts_opt(N-IC1i_c+2:N-IC1i_c+1+N,model_info.ExtFunIO.symQs.QsOpp) = -Foutk_opt(1:end,model_info.ExtFunIO.symQs.QsOpp);
+    Ts_opt(N-IC1i_c+2+N:2*N,1:nq.all) = Foutk_opt(1:IC1i_c-1,1:nq.all);
+    % If the first heel strike was on the left foot then we invert so that
+    % we always start with the right foot, for analysis purpose
+    if strcmp(HS1,'l')
+        Ts_opt(:,model_info.ExtFunIO.symQs.QsInvA) = Ts_opt(:,model_info.ExtFunIO.symQs.QsInvB);
+        Ts_opt(:,model_info.ExtFunIO.symQs.QsOpp) = -Ts_opt(:,model_info.ExtFunIO.symQs.QsOpp);
+    end
+
 elseif strcmp(S.misc.gaitmotion_type,'FullGaitCycle')
     % detect heelstrike
     [IC1i_c,IC1i_s,HS1] = getHeelstrikeSimulation(GRFk_opt,N);
@@ -1251,6 +1291,7 @@ R.colheaders.objective = contributionCost.labels;
 R.kinematics.Qs = Qs_GC;
 R.kinematics.Qdots = Qdots_GC;
 R.kinematics.Qddots = Qdotdots_GC;
+
 R.muscles.a = Acts_GC;
 R.muscles.da = dActs_GC;
 R.muscles.FTtilde = FTtilde_GC;
@@ -1264,6 +1305,10 @@ else
     R.torque_actuators.e = [];
     R.torque_actuators.T = [];
 end
+% R.kinetics.T_ID_0 = Ts_opt;
+% R.ground_reaction.GRF_r_0 = GRFs_opt(:,1:3);
+% R.ground_reaction.GRF_l_0 = GRFs_opt(:,4:6);
+
 Outname = fullfile(S.subject.save_folder,[S.post_process.result_filename '.mat']);
 save(Outname,'w_opt','stats','setup','R','model_info');
 

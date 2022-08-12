@@ -15,11 +15,12 @@ function specific_tension = getSpecificTensions(muscleNames)
 % Original author: Antoine Falisse
 % Original date: 12/19/2018
 %
-% Last edit by: 
-% Last edit date: 
+%   Edit: add values for muscle groups
+% Last edit by: Lars D'Hondt
+% Last edit date: 12/Aug/2022
 % --------------------------------------------------------------------------
 
-
+% Right muscles
 sigma_data.glut_med1_r = 0.74455;
 sigma_data.glut_med2_r = 0.75395;
 sigma_data.glut_med3_r = 0.75057;
@@ -67,6 +68,7 @@ sigma_data.extobl_r = 0.25;
 sigma_data.add_long_r = 0.74643;
 sigma_data.add_brev_r = 0.75263;
 
+% Left muscles
 sigma_data.glut_med1_l = 0.74455;
 sigma_data.glut_med2_l = 0.75395;
 sigma_data.glut_med3_l = 0.75057;
@@ -114,6 +116,21 @@ sigma_data.extobl_l = 0.25;
 sigma_data.add_long_l = 0.74643;
 sigma_data.add_brev_l = 0.75263;
 
+% Right muscle groups
+sigma_data.hamstrings_r = 0.62222;
+sigma_data.glut_max_r = 0.74455;
+sigma_data.iliopsoas_r = 1.5041;
+sigma_data.vasti_r = 0.55263;
+sigma_data.gastroc_r = 0.69865;
+
+%  Left muscle groups
+sigma_data.hamstrings_l = 0.62222;
+sigma_data.glut_max_l = 0.74455;
+sigma_data.iliopsoas_l = 1.5041;
+sigma_data.vasti_l = 0.55263;
+sigma_data.gastroc_l = 0.69865;
+
+% Get specific tension for selected muscles
 specific_tension = zeros(length(muscleNames),1);
 for i = 1:length(muscleNames)
     if isfield(sigma_data,muscleNames{i})
