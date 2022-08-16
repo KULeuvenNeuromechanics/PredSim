@@ -610,52 +610,57 @@ end
 % Scale cost function
 Jall_sc = sum(Jall)/dist_trav_tot;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 %%
-% Create NLP solver
-opti.minimize(Jall_sc);
-options.ipopt.hessian_approximation = 'limited-memory';
-options.ipopt.mu_strategy           = 'adaptive';
-options.ipopt.max_iter              = S.solver.max_iter;
-options.ipopt.linear_solver         = S.solver.linear_solver;
-options.ipopt.tol                   = 1*10^(-S.solver.tol_ipopt);
-options.ipopt.constr_viol_tol       = 1*10^(-S.solver.tol_ipopt);
-opti.solver('ipopt', options);
-% timer
-disp(['... OCP formulation done. Time elapsed ' num2str(toc(t0)) ' s'])
-% Create and save diary
-Outname = fullfile(S.subject.save_folder,[S.post_process.result_filename '_log.txt']);
-diary(Outname);
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Solve problem
-% Opti does not use bounds on variables but constraints. This function
-% adjusts for that.
-[w_opt,stats] = solve_NLPSOL(opti,options);
+if S.post_process.rerun_from_w
+    % For debugging only: load w_opt and reconstruct R before rerunning the post-processing.
+    Outname = fullfile(S.subject.save_folder,[S.post_process.result_filename '.mat']);
+    load(Outname,'w_opt','stats','setup','model_info','R','S');
+    scaling = setup.scaling;
+    S = R.S;
+    clear 'R'
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-diary off
-% Extract results
-% Create setup
-setup.tolerance.ipopt = S.solver.tol_ipopt;
-setup.bounds = bounds;
-setup.scaling = scaling;
-setup.guess = guess;
+else
+    % Create NLP solver
+    opti.minimize(Jall_sc);
+    options.ipopt.hessian_approximation = 'limited-memory';
+    options.ipopt.mu_strategy           = 'adaptive';
+    options.ipopt.max_iter              = S.solver.max_iter;
+    options.ipopt.linear_solver         = S.solver.linear_solver;
+    options.ipopt.tol                   = 1*10^(-S.solver.tol_ipopt);
+    options.ipopt.constr_viol_tol       = 1*10^(-S.solver.tol_ipopt);
+    opti.solver('ipopt', options);
+    % timer
+    disp(['... OCP formulation done. Time elapsed ' num2str(toc(t0)) ' s'])
+    % Create and save diary
+    Outname = fullfile(S.subject.save_folder,[S.post_process.result_filename '_log.txt']);
+    diary(Outname);
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    % Solve problem
+    % Opti does not use bounds on variables but constraints. This function
+    % adjusts for that.
+    [w_opt,stats] = solve_NLPSOL(opti,options);
+    
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    diary off
+    % Extract results
+    % Create setup
+    setup.tolerance.ipopt = S.solver.tol_ipopt;
+    setup.bounds = bounds;
+    setup.scaling = scaling;
+    setup.guess = guess;
+    
+    Outname = fullfile(S.subject.save_folder,[S.post_process.result_filename '.mat']);
+    save(Outname,'w_opt','stats','setup','model_info','S');
 
-Outname = fullfile(S.subject.save_folder,[S.post_process.result_filename '.mat']);
-save(Outname,'w_opt','stats','setup','model_info','S');
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% To salvage results after a botched post-processing attempt, use code
-% below and comment out rest of this section.
-% Outname = fullfile(S.subject.save_folder,[S.post_process.result_filename '.mat']);
-% load(Outname,'w_opt','stats','setup','model_info','R','S');
-% scaling = setup.scaling;
-% S = R.S;
-% clear 'R'
+end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Essential post processing
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+model_info.mass = 62;
+model_info.ExtFunIO.jointi.base_lateral = model_info.ExtFunIO.coordi.pelvis_tz;
 
 %% Read from the vector with optimization results
 
@@ -1305,9 +1310,9 @@ else
     R.torque_actuators.e = [];
     R.torque_actuators.T = [];
 end
-% R.kinetics.T_ID_0 = Ts_opt;
-% R.ground_reaction.GRF_r_0 = GRFs_opt(:,1:3);
-% R.ground_reaction.GRF_l_0 = GRFs_opt(:,4:6);
+R.kinetics.T_ID_0 = Ts_opt;
+R.ground_reaction.GRF_r_0 = GRFs_opt(:,1:3);
+R.ground_reaction.GRF_l_0 = GRFs_opt(:,4:6);
 
 Outname = fullfile(S.subject.save_folder,[S.post_process.result_filename '.mat']);
 save(Outname,'w_opt','stats','setup','R','model_info');
