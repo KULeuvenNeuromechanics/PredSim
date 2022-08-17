@@ -1284,7 +1284,7 @@ end
 Qdotdots_GC(:,model_info.ExtFunIO.jointi.rotations) = Qdotdots_GC(:,model_info.ExtFunIO.jointi.rotations)*180/pi;
 
 %% Save the results
-% Structure Results_all
+% Struct with results
 R.S = S;
 R.objective = contributionCost;
 R.time.mesh = tgrid;
@@ -1314,9 +1314,13 @@ R.kinetics.T_ID_0 = Ts_opt;
 R.ground_reaction.GRF_r_0 = GRFs_opt(:,1:3);
 R.ground_reaction.GRF_l_0 = GRFs_opt(:,4:6);
 
+% Save results
 Outname = fullfile(S.subject.save_folder,[S.post_process.result_filename '.mat']);
 save(Outname,'w_opt','stats','setup','R','model_info');
+disp(['Results saved as ' Outname])
+
+
+
 
 
 end
-

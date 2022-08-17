@@ -23,8 +23,7 @@ addpath([S.misc.main_path '\VariousFunctions'])
 
 %% Required inputs
 % name of the subject
-% S.subject.name = 'subject1_2D_v2';
-S.subject.name = 'Fal_s1';
+S.subject.name = 'subject1_2D_v2';
 
 % path to folder where you want to store the results of the OCP
 S.subject.save_folder  = fullfile(pathRepoFolder,'PredSimResults',S.subject.name); 
