@@ -21,8 +21,8 @@ function [] = add_pred_sim_to_batch(S,osim_path)
 % Original author: Lars D'Hondt
 % Original date: 09/May/2022
 %
-% Last edit by: 
-% Last edit date: 
+% Last edit by: Bram Van Den Bosch
+% Last edit date: 10/August/2022
 % --------------------------------------------------------------------------
 
 % Running a function as part of batch needs all paths that are called inside
@@ -41,7 +41,7 @@ additional_paths{end+1} = fullfile(S.misc.main_path,'PostProcessing');
 % Select parallel cluster
 all_par_clusters = parallel.clusterProfiles;
 if isfield(S.solver,'par_cluster_name') && ~isempty(S.solver.par_cluster_name)...
-        && ismember(par_cluster_name,all_par_clusters)
+        && ismember(S.solver.par_cluster_name,all_par_clusters)
     myCluster = parcluster(S.solver.par_cluster_name);
 else
     myCluster = parcluster;
@@ -53,7 +53,11 @@ if isfield(S.solver,'N_threads') && S.solver.N_threads > N_threads
     S.solver.N_threads = N_threads;
 end
 
-S.solver.job_id = myCluster.Jobs(end,1).ID+1;
+try myCluster.Jobs(end,1);
+    S.solver.job_id = myCluster.Jobs(end,1).ID+1;
+catch
+    S.solver.job_id = 1;
+end
 
 % Add job to batch
 batch(myCluster,'run_pred_sim',0,{S,osim_path},'CurrentFolder',S.misc.main_path,...
