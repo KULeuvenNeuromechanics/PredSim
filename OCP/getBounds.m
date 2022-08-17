@@ -24,8 +24,10 @@ function [bounds,scaling] = getBounds(S,model_info)
 % Original author: Antoine Falisse
 % Original date: 12/19/2018
 %
+%   Edit: When simulating a half gait cycle, the upper bound on pelvis_tx
+%   position should be halved, not the bound on its velocity.
 % Last edit by: Lars D'Hondt
-% Last edit date: 01 dec 2021
+% Last edit date: 17 aug 2022
 % --------------------------------------------------------------------------
 
 % Kinematics file for bounds -- input arguments
@@ -145,8 +147,8 @@ if S.subject.v_pelvis_x_trgt > 1.33
 end
 
 if strcmp(S.misc.gaitmotion_type,'HalfGaitCycle')
-    bounds.Qdots.upper(model_info.ExtFunIO.jointi.floating_base(4)) = ...
-        bounds.Qdots.upper(model_info.ExtFunIO.jointi.floating_base(4))/2;
+    bounds.Qs.upper(model_info.ExtFunIO.jointi.floating_base(4)) = ...
+        bounds.Qs.upper(model_info.ExtFunIO.jointi.floating_base(4))/2;
 end
 
 %% Adjust bounds based on settings
