@@ -1,17 +1,26 @@
-### Important
-
-This repository is a work in progress
-
-- If you encounter an error or get an unexpected output, [check the issues](https://github.com/KULeuvenNeuromechanics/PredSim/issues). Please look at the existing issues before creating a new one, you might not be the first person to have this problem. Include the error messages in the issue.
-- Feel free to suggest improvements. Submit a pull request with the changes, or create an issue with a desciption of the proposed change.
-- This ReadMe is still under construction. Though, comments inside the code are up to date.
 
 *Use the table of contensts to easily navigate this README. Click on the three lines next to README.md just above this sentence.*
 
 Predictive Simulations of Human Movement
 ============
 
-This repository is a rework of the code and data to generate three-dimensional muscle-driven predictive simulations of human gait as described in: Falisse A, Serrancoli G, Dembia C, Gillis J, Jonkers J, De Groote F. 2019 Rapid predictive simulations with complex musculoskeletal models suggest that diverse healthy and pathological human gaits can emerge from similar control strategies. Journal of the Royal Society Interface 16: 20190402. http://dx.doi.org/10.1098/rsif.2019.0402. You can find the original repository here: https://github.com/antoinefalisse/3dpredictsim
+This repository contains code and data to generate three-dimensional muscle-driven predictive simulations of human gait. The simulation framework is [developed by Falisse *et al.*](#citations). The implementation in this repo is aimed at letting you run simulations with your customized musculoskeletal models[*](#before-running-a-simulations).
+If you want to reproduce specific published results, you are adviced to visit the [repo corresponding to the paper](#citations).
+
+This repository is a work in progress
+- If you encounter an error or get an unexpected output, [check the issues](https://github.com/KULeuvenNeuromechanics/PredSim/issues). Please look at the existing issues before creating a new one, you might not be the first person to have this problem. Include the error messages in the issue.
+- Feel free to suggest improvements. Submit a pull request with the changes, or create an issue with a desciption of the proposed change.
+
+### Citations
+
+Please cite the original authors if you use this simulation framework.
+
+1. Falisse A, Serrancoli G, Dembia C, Gillis J, Jonkers J, De Groote F. 2019 Rapid predictive simulations with complex musculoskeletal models suggest that diverse healthy and pathological human gaits can emerge from similar control strategies. Journal of the Royal Society Interface 16: 20190402. http://dx.doi.org/10.1098/rsif.2019.0402. You can find the original repository here: https://github.com/antoinefalisse/3dpredictsim (MATLAB)
+ 
+2. Falisse A, Afschrift M, De Groote F. 2022 Modeling toes contributes to realistic stance knee mechanics in three-dimensional predictive simulations of walking. PLoS ONE 17(1): e0256311. https://doi.org/10.1371/journal.pone.0256311. You can find the original repository here: https://github.com/antoinefalisse/3dpredictsim_mtp (python)
+
+
+### If you are familiar with a previous version of this simulation framework, here is a rundown of the changes
 
 In general, hard coded variables were removed as much as possible and put in a settings structure the user can adapt. This results in:
 
@@ -25,7 +34,7 @@ Besides that, the code was also adapted in accordance with recent (October 2020)
 - Support for parallel computing
 - Formulation with opti
 
-Lastly, seperate pieces of code where put together to streamline performing predictive simulations:
+Lastly, seperate pieces of code were put together to streamline performing predictive simulations:
 
 - Automatic conversion of an OpenSim model to the external function (executable called from the workflow)
 - Perorming Muscle Analysis and polynomial fitting (integrated into the workflow)
@@ -34,20 +43,21 @@ Lastly, seperate pieces of code where put together to streamline performing pred
 
 To run this code you need to have the following softwares on your machine:
 
-*Important: if you have a computer restricted with KU Leuven ICTS policies, make sure to install the software in C:\GBW_MyPrograms*
+*Important: if you have a computer with KU Leuven BioMed Group policies, install the software in C:\GBW_MyPrograms\ to avoid problems when running executables.*
 
-- MATLAB. The code has been tested on MATLAB2021b, MATLAB20XX....
-- OpenSim 4.3. [Download here](https://simtk.org/projects/opensim)
+- MATLAB. The code has been tested on MATLAB2021b
+- OpenSim 4.3. [Download here](https://simtk.org/projects/opensim) Older versions do not work.
 - CasADi 3.5.5. [Download here](https://web.casadi.org/get/) 
-- Microsoft Visual Studio 2017 Community edition. [Download here](https://visualstudio.microsoft.com/vs/older-downloads/#visual-studio-2017-and-other-products)
-- CMake 3.2X.X. [Download here](https://cmake.org/download/)
+- Microsoft Visual Studio 2017 Community edition. [Download here](https://visualstudio.microsoft.com/vs/older-downloads/#visual-studio-2017-and-other-products) 
+- CMake. [Download here](https://cmake.org/download/) The code has been tested on CMake 3.22.0.
+
 
 ## How to setup the code
 
-1. Clone this repository to your machine. Do not put it in your OneDrive folder if you have one.
+1. Clone this repository to your machine. Do not put it in a OneDrive folder, this causes issues. If you have a computer with restricted permissions, make sure you have permission to run executables from the selected folder (For computers with KU Leuven BioMed Group policies, this is C:\GBW_MyPrograms\ ).
 2. Get the OpenSim 4.3 API running on MATLAB. See [Setting up your Matlab Scripting Environment](https://simtk-confluence.stanford.edu:8443/display/OpenSim/Scripting+with+Matlab#ScriptingwithMatlab-MatlabSetupSettingupyourMatlabScriptingEnvironment)
 3. In main.m, change [S.solver.CasaADi_path](https://github.com/KULeuvenNeuromechanics/PredSim/blob/9fbbd43cf83617620e428d2c91f222c909a1349c/main.m#L84) to reflect the location where you installed CasADi. 
-4. In main.m, change [S.Cpp2Dll.PathCpp2Dll_Exe](https://github.com/KULeuvenNeuromechanics/PredSim/blob/9fbbd43cf83617620e428d2c91f222c909a1349c/main.m#L115) to specify where you want to have the executable installed that will convert the OpenSim models to the external function. If you have a computer with KU Leuven restrictions, be sure to have this path go to your 'C:\GBW_MyPrograms' folder.
+4. In main.m, change [S.Cpp2Dll.PathCpp2Dll_Exe](https://github.com/KULeuvenNeuromechanics/PredSim/blob/9fbbd43cf83617620e428d2c91f222c909a1349c/main.m#L115) to specify where you want to have the executable installed that will convert the OpenSim models to the external function. If you have a computer with KU Leuven restrictions, be sure to have this path go into your 'C:\GBW_MyPrograms' folder.
 
 After perfoming these steps, run the main script. If you don't receive any errors, and your results are the same as [these results](ADD LINK) you have succesfully intalled and set up the code. You are ready to do your own simulations.
 
@@ -59,12 +69,17 @@ All user-defined settings are stored in structure *S*. In main.m you have to spe
 
 ### Before running a simulations
 
-This new version of the code can automatically convert an OpenSim model to the external function used in the simulations. This greatly simplifies the process of going from a subject-specific model to a predictive simulation. Nevertheless, you should take care of the model you use since **not all OpenSim models are suported**: 
+This code can automatically convert an OpenSim model to the external function used in the simulations. This greatly simplifies the process of going from a subject-specific model to a predictive simulation. Nevertheless, you should take care of the model you use since **not all OpenSim models are suported**: 
+- Model should be 3D.
 - Your model should not have locked joints. Locked joints would technically require having kinematic constraints, which is possible but makes the problem more complicated. Replace them with weld joints instead.
-- Your model needs to have ideal torque actuators for the arms and contact elements. You can use [_AdaptOpenSimModel.m_](https://github.com/KULeuvenNeuromechanics/PredSim/blob/master/AdaptOpenSimModel/AdaptOpenSimModel.m) to add the actuators and contact elements to your model.
-- SimmSplines are not supported as their implementation in OpenSim is not really compatible with algorithmic differentiation. Change them to Polynomials instead.
-- Constraints will be ignored (eg, coupling constraints).
-- OpenSimAD does not support all features of OpenSim. Make sure you verify what you are doing. We have only used OpenSimAD for specific applications.
+- Constraints on coordinates will be ignored (eg, coupling constraints).
+- Using SimmSplines to describe coordinates (e.g. Yamaguchi knee model) is not supported as the implementation in OpenSim is not really compatible with algorithmic differentiation. Change them to Polynomials instead. GeometryPaths can contain SimmSplines.
+- The kinematic chains starting at *acromial_l* and *acromial_r* will be interpreted as arms, legs start at *hip_l* and *hip_r*. A model is not required to have arms.
+- Your model needs to have contact elements. Only *SmoothSphereHalfSpaceForce* contact forces are supported. You can use [_AdaptOpenSimModel.m_](https://github.com/KULeuvenNeuromechanics/PredSim/blob/master/AdaptOpenSimModel/AdaptOpenSimModel.m) to add contact geometries and forces to your model.
+- Your model can have any Hill-type muscle model, but it will be implemented as a [DeGroote-Fregly muscle](https://doi.org/10.1007/s10439-016-1591-9).
+- Torque/force actuators of the class *ActivationCoordinateActuator* are supported. You can add actuators by running [_AdaptOpenSimModel.m_](https://github.com/KULeuvenNeuromechanics/PredSim/blob/master/AdaptOpenSimModel/AdaptOpenSimModel.m). Actuators are not required.
+- Ligament forces are not yet supported, but we plan to add them in the future.
+
 
 ### Required Settings
 
@@ -73,7 +88,7 @@ This new version of the code can automatically convert an OpenSim model to the e
 - **S.subject.name**: 
 	- the name or code of the subject you are simulating.
 - **S.subject.IG_selection**: 
-	- either choose "quasi-random" or give the path to a .mot file you want to use as initial guess.
+	- either choose 'quasi-random' or give the path to a .mot file you want to use as initial guess.
 - **S.subject.IG_selection_gaitCyclePercent**: 
 	- if S.subject.IG_selection is a .mot file, S.subject.IG_selection_gaitCyclePercent is required. Here, specify what percent of gait cycle does the .mot file contain. For example, if the .mot file has 2 gait cycles, S.subject.IG_selection_gaitCyclePercent is 200.
 - **S.solver.run_as_batch_job**: 
