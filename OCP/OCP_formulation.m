@@ -1264,7 +1264,10 @@ else
     R.torque_actuators.e = [];
     R.torque_actuators.T = [];
 end
+
+% save results
 Outname = fullfile(S.subject.save_folder,[S.post_process.result_filename '.mat']);
+disp(['Saving results as: ' Outname])
 save(Outname,'w_opt','stats','setup','R','model_info');
 
 
