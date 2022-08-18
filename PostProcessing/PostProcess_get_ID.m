@@ -32,10 +32,7 @@ import casadi.*
 [F] = load_external_function(R.S);
 
 QsQdots = zeros(N,2*model_info.ExtFunIO.jointi.nq.all);
-qs = R.kinematics.Qs_rad;
-% qs(:,3) = qs(:,3)+0.03;
-% QsQdots(:,1:2:end) = R.kinematics.Qs_rad;
-QsQdots(:,1:2:end) = qs;
+QsQdots(:,1:2:end) = R.kinematics.Qs_rad;
 QsQdots(:,2:2:end) = R.kinematics.Qdots_rad;
 
 Foutk_opt = zeros(N,F.nnz_out);

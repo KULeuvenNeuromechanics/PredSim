@@ -615,9 +615,12 @@ Jall_sc = sum(Jall)/dist_trav_tot;
 if S.post_process.rerun_from_w
     % For debugging only: load w_opt and reconstruct R before rerunning the post-processing.
     Outname = fullfile(S.subject.save_folder,[S.post_process.result_filename '.mat']);
+    clear 'S'
     load(Outname,'w_opt','stats','setup','model_info','R','S');
     scaling = setup.scaling;
-    S = R.S;
+    if exist('R','var')
+        S = R.S;
+    end
     clear 'R'
 
 else
@@ -658,10 +661,6 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Essential post processing
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-model_info.mass = 62;
-model_info.ExtFunIO.jointi.base_lateral = model_info.ExtFunIO.coordi.pelvis_tz;
-
 %% Read from the vector with optimization results
 
 NParameters = 1;
@@ -1270,6 +1269,28 @@ elseif strcmp(S.misc.gaitmotion_type,'FullGaitCycle')
         end
     end
 
+    % Ground reaction forces
+    GRFs_opt = zeros(N,6);
+    GRFs_opt(1:N-IC1i_c+1,:) = GRFk_opt(IC1i_c:end,1:6);
+    GRFs_opt(N-IC1i_c+2:N,:) = GRFk_opt(1:IC1i_c-1,1:6);
+    % If the first heel strike was on the left foot then we invert so that
+    % we always start with the right foot, for analysis purpose
+    if strcmp(HS1,'l')
+        GRFs_opt(:,[4:6,1:3]) = GRFs_opt(:,:);
+        GRFs_opt(:,[3,6]) = -GRFs_opt(:,[3,6]);
+    end
+
+    % Joint torques
+    Ts_opt = zeros(N,size(Qs_opt,2));
+    Ts_opt(1:N-IC1i_c+1,1:nq.all) = Foutk_opt(IC1i_c:end,1:nq.all);
+    Ts_opt(N-IC1i_c+2+N:2*N,1:nq.all) = Foutk_opt(1:IC1i_c-1,1:nq.all);
+    % If the first heel strike was on the left foot then we invert so that
+    % we always start with the right foot, for analysis purpose
+    if strcmp(HS1,'l')
+        Ts_opt(:,model_info.ExtFunIO.symQs.QsInvA) = Ts_opt(:,model_info.ExtFunIO.symQs.QsInvB);
+        Ts_opt(:,model_info.ExtFunIO.symQs.QsOpp) = -Ts_opt(:,model_info.ExtFunIO.symQs.QsOpp);
+    end
+    
 end
 
 %% Unscale actuator torques

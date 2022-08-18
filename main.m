@@ -23,16 +23,16 @@ addpath([S.misc.main_path '\VariousFunctions'])
 
 %% Required inputs
 % name of the subject
-S.subject.name = 'subject1_2D_v2';
+S.subject.name = 'subject1_2D';
 
 % path to folder where you want to store the results of the OCP
 S.subject.save_folder  = fullfile(pathRepoFolder,'PredSimResults',S.subject.name); 
 
 % either choose "quasi-random" or give the path to a .mot file you want to use as initial guess
-S.subject.IG_selection = fullfile(S.misc.main_path,'OCP','IK_Bounds_Default.mot');
-S.subject.IG_selection_gaitCyclePercent = 50;
-% S.subject.IG_selection = 'C:\GBW_MyPrograms\PredSimResults\subject1_2D_v2/subject1_2D_v2_v5.mot';
-% S.subject.IG_selection_gaitCyclePercent = 200;
+% S.subject.IG_selection = fullfile(S.misc.main_path,'OCP','IK_Bounds_Default.mot');
+% S.subject.IG_selection_gaitCyclePercent = 50;
+S.subject.IG_selection = 'C:\GBW_MyPrograms\PredSimResults\subject1_2D/subject1_2D_v6.mot';
+S.subject.IG_selection_gaitCyclePercent = 200;
 % S.subject.IG_selection = 'quasi-random';
 
 % give the path to the osim model of your subject
@@ -64,7 +64,7 @@ S.solver.run_as_batch_job = 0;
 % % S.misc - miscellanious
 % S.misc.v_max_s             = ;
 % S.misc.visualize_bounds    = 1;
-% S.misc.gaitmotion_type     = 'FullGaitCycle';
+S.misc.gaitmotion_type     = 'FullGaitCycle';
 % S.misc.msk_geom_eq         = '';
 % S.misc.poly_order.lower    = ;
 % S.misc.poly_order.upper    = ;
@@ -74,11 +74,11 @@ S.solver.run_as_batch_job = 0;
 % S.post_process.make_plot = '';
 % S.post_process.savename  = 'datetime';
 % S.post_process.rerun   = 1;
-% S.post_process.rerun_from_w = 1;
-% S.post_process.result_filename = 'Fal_s1_v2';
+S.post_process.rerun_from_w = 1;
+S.post_process.result_filename = 'subject1_2D_v7';
 
 % % S.solver
-% S.solver.linear_solver  = '';
+% S.solver.linear_solver  = 'ma86';
 % S.solver.tol_ipopt      = ;
 % S.solver.max_iter       = 5;
 % S.solver.parallel_mode  = '';
