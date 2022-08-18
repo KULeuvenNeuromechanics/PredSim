@@ -222,6 +222,10 @@ end
 % number of mesh intervals
 if ~isfield(S.solver,'N_meshes')
     S.solver.N_meshes = 50;
+    % by default, use double for full gait cycle
+    if strcmp(S.misc.gaitmotion_type,'FullGaitCycle')
+        S.solver.N_meshes = S.solver.N_meshes*2;
+    end
 end
 
 % path to CasADi installation folder

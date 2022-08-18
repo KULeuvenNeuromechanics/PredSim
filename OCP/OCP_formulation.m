@@ -1331,14 +1331,17 @@ else
     R.torque_actuators.e = [];
     R.torque_actuators.T = [];
 end
+
 R.kinetics.T_ID_0 = Ts_opt;
 R.ground_reaction.GRF_r_0 = GRFs_opt(:,1:3);
 R.ground_reaction.GRF_l_0 = GRFs_opt(:,4:6);
 
-% Save results
+
+% save results
 Outname = fullfile(S.subject.save_folder,[S.post_process.result_filename '.mat']);
+disp(['Saving results as: ' Outname])
 save(Outname,'w_opt','stats','setup','R','model_info');
-disp(['Results saved as ' Outname])
+
 
 
 
