@@ -13,12 +13,12 @@ clc
 % Construct a cell array with full paths to files with saved results for
 % which you want to appear on the plotted figures.
 results_folder = fullfile(pathRepoFolder,'PredSimResults');
-result_paths{1} = fullfile([results_folder '\subject1_2D\subject1_2D_v6.mat']);
-result_paths{2} = fullfile([results_folder '\subject1_2D\subject1_2D_v7.mat']);
+result_paths{1} = fullfile([results_folder '\subject1_2D\subject1_2D_v8.mat']);
+result_paths{2} = fullfile([results_folder '\PredSim_2D\PredSim_2D_v3.mat']);
 
 
 % Cell array with legend name for each result
-legend_names = {'half gc','full gc'};
+legend_names = {'old','new'};
 
 % Path to the folder where figures are saved
 figure_folder = results_folder;

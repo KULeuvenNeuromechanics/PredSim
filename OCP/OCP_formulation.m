@@ -1217,8 +1217,8 @@ elseif strcmp(S.misc.gaitmotion_type,'FullGaitCycle')
 
     % Time derivatives of muscle activations
     dActs_GC = zeros(N,NMuscle);
-    dActs_GC(1:N-IC1i_s+1,:) = vA_opt_unsc(IC1i_s:end,:);
-    dActs_GC(N-IC1i_s+2:N,:) = vA_opt_unsc(1:IC1i_s-1,:);
+    dActs_GC(1:N-IC1i_c+1,:) = vA_opt_unsc(IC1i_c:end,:);
+    dActs_GC(N-IC1i_c+2:N,:) = vA_opt_unsc(1:IC1i_c-1,:);
     % If the first heel strike was on the left foot then we invert so that
     % we always start with the right foot, for analysis purpose
     if strcmp(HS1,'l')
@@ -1283,7 +1283,7 @@ elseif strcmp(S.misc.gaitmotion_type,'FullGaitCycle')
     % Joint torques
     Ts_opt = zeros(N,size(Qs_opt,2));
     Ts_opt(1:N-IC1i_c+1,1:nq.all) = Foutk_opt(IC1i_c:end,1:nq.all);
-    Ts_opt(N-IC1i_c+2+N:2*N,1:nq.all) = Foutk_opt(1:IC1i_c-1,1:nq.all);
+    Ts_opt(N-IC1i_c+2:N,1:nq.all) = Foutk_opt(1:IC1i_c-1,1:nq.all);
     % If the first heel strike was on the left foot then we invert so that
     % we always start with the right foot, for analysis purpose
     if strcmp(HS1,'l')

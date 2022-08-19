@@ -15,8 +15,10 @@ addpath([pathRepo '/PostProcessing'])
 % which you want to appear on the plotted figures.
 results_folder = fullfile(pathRepoFolder,'PredSimResults');
 subj = 'subject1_2D';
-% subj = 'Fal_s1_mtp';
 result_paths{1} = fullfile(results_folder,subj,[subj '_v6.mat']);
+
+% subj = 'Fal_s1_mtp';
+% result_paths{1} = fullfile(results_folder,subj,[subj '_job269.mat']);
 
 load(result_paths{1},'R','model_info')
 
@@ -50,12 +52,12 @@ Ts2(:,model_info.ExtFunIO.symQs.QsOpp) = -Ts2(:,model_info.ExtFunIO.symQs.QsOpp)
 
 diff_Ts = Ts2 - Ts1;
 
-Ts01 = R.kinetics.T_ID_0(1:50,:);
-Ts02 = R.kinetics.T_ID_0(51:100,:);
-Ts02(:,model_info.ExtFunIO.symQs.QdotsInvA) = Ts02(:,model_info.ExtFunIO.symQs.QdotsInvB);
-Ts02(:,model_info.ExtFunIO.symQs.QsOpp) = -Ts02(:,model_info.ExtFunIO.symQs.QsOpp);
-
-diff_Ts0 = Ts02 - Ts01;
+% Ts01 = R.kinetics.T_ID_0(1:50,:);
+% Ts02 = R.kinetics.T_ID_0(51:100,:);
+% Ts02(:,model_info.ExtFunIO.symQs.QdotsInvA) = Ts02(:,model_info.ExtFunIO.symQs.QdotsInvB);
+% Ts02(:,model_info.ExtFunIO.symQs.QsOpp) = -Ts02(:,model_info.ExtFunIO.symQs.QsOpp);
+% 
+% diff_Ts0 = Ts02 - Ts01;
 
 %%
 
@@ -77,8 +79,15 @@ QsQdots2 = zeros(N,2*model_info.ExtFunIO.jointi.nq.all);
 QsQdots2(:,1:2:end) = Qs2;
 QsQdots2(:,2:2:end) = Qdots2;
 
+QsQdots3 = zeros(N,2*model_info.ExtFunIO.jointi.nq.all);
+Qs3 = Qs1;
+Qs3(:,model_info.ExtFunIO.jointi.base_forward) = Qs3(:,model_info.ExtFunIO.jointi.base_forward) + 1;
+QsQdots3(:,1:2:end) = Qs3;
+QsQdots3(:,2:2:end) = Qdots1;
+
 Foutk_opt1 = zeros(N,F.nnz_out);
 Foutk_opt2 = Foutk_opt1;
+Foutk_opt3 = Foutk_opt1;
 
 for i = 1:N
     % ID moments
@@ -86,7 +95,11 @@ for i = 1:N
     Foutk_opt1(i,:) = full(res1);
 
     [res2] = F([QsQdots2(i,:)';Qddots2(i,:)']);
-    Foutk_opt2(i,:) = full(res1);
+    Foutk_opt2(i,:) = full(res2);
+
+    [res3] = F([QsQdots3(i,:)';Qddots1(i,:)']);
+    Foutk_opt3(i,:) = full(res3);
+
 end
 
 % Foutk_opt1 = Foutk_opt(:,1:model_info.ExtFunIO.jointi.nq.all);
@@ -96,4 +109,42 @@ Foutk_opt2(:,model_info.ExtFunIO.symQs.QsOpp) = -Foutk_opt2(:,model_info.ExtFunI
 % Foutk_opt2 = Foutk_opt2(idx_gc_inv,:);
 
 diff = Foutk_opt2 - Foutk_opt1;
+
+%%
+clc
+
+N = size(Qs1,1);
+
+% load simulation result
+QsQdots1 = zeros(N,2*model_info.ExtFunIO.jointi.nq.all);
+QsQdots1(:,1:2:end) = Qs1;
+QsQdots1(:,2:2:end) = Qdots1;
+
+% same, but translate pelvis along x-axis
+Qs3 = Qs1;
+Qs3(:,model_info.ExtFunIO.jointi.base_forward) = Qs3(:,model_info.ExtFunIO.jointi.base_forward) +1;
+QsQdots3 = zeros(N,2*model_info.ExtFunIO.jointi.nq.all);
+QsQdots3(:,1:2:end) = Qs3;
+QsQdots3(:,2:2:end) = Qdots1;
+
+% get ID moments from external function
+Foutk_opt1 = zeros(N,F.nnz_out);
+Foutk_opt3 = Foutk_opt1;
+for i = 1:N
+    [res1] = F([QsQdots1(i,:)';Qddots1(i,:)']);
+    Foutk_opt1(i,:) = full(res1);
+
+    [res3] = F([QsQdots3(i,:)';Qddots1(i,:)']);
+    Foutk_opt3(i,:) = full(res3);
+
+end
+
+% test difference in output
+diff = Foutk_opt1-Foutk_opt3;
+max(abs(diff),[],'all')
+
+
+
+
+
 
