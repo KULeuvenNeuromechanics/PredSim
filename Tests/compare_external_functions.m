@@ -13,7 +13,7 @@ import casadi.*
 addpath([pathRepo '/PreProcessing'])
 
 % load 1st 
-name_1 = 'PredSim_2D';
+name_1 = 'Subject1_2D';
 F1  = external('F',fullfile(pathRepo,'Subjects',name_1,['F_' name_1 '.dll'])); 
 JF1  = external('jac_F',fullfile(pathRepo,'Subjects',name_1,['F_' name_1 '.dll'])); 
 
@@ -22,35 +22,36 @@ IO1 = IO;
 
 
 
-% % load 2nd
-% name_2 = 'Subject1_2D';
-% F2  = external('F',fullfile(pathRepo,'Subjects',name_2,['F_' name_2 '.dll'])); 
-% JF2  = external('jac_F',fullfile(pathRepo,'Subjects',name_2,['F_' name_2 '.dll'])); 
-% 
-% load(fullfile(pathRepo,'Subjects',name_2,['F_' name_2 '_IO.mat'])); 
-% IO2 = IO;
+% load 2nd
+name_2 = 'Subject1_2D_3D';
+F2  = external('F',fullfile(pathRepo,'Subjects',name_2,['F_' name_2 '.dll'])); 
+JF2  = external('jac_F',fullfile(pathRepo,'Subjects',name_2,['F_' name_2 '.dll'])); 
 
-F2 = external('F','C:\Users\u0150099\OneDrive - KU Leuven\PhD\algodiff\predictiveSimulations_2D\ExternalFunctions\PredSim_2D_pp.dll');
-IO2.coordi.pelvis_tilt  = 1; 
-IO2.coordi.pelvis_tx    = 2;
-IO2.coordi.pelvis_ty    = 3;
-IO2.coordi.hip_flexion_l        = 4;
-IO2.coordi.hip_flexion_r        = 5;
-IO2.coordi.knee_angle_l       = 6;
-IO2.coordi.knee_angle_r       = 7;
-IO2.coordi.ankle_angle_l      = 8;
-IO2.coordi.ankle_angle_r      = 9;
-IO2.coordi.lumbar_extension    = 10;
-IO2.GRFs.right_foot = [11,12];
-IO2.GRFs.left_foot = [13,14];
+load(fullfile(pathRepo,'Subjects',name_2,['F_' name_2 '_IO.mat'])); 
+IO2 = IO;
+
+% F2 = external('F','C:\Users\u0150099\OneDrive - KU Leuven\PhD\algodiff\predictiveSimulations_2D\ExternalFunctions\PredSim_2D_pp.dll');
+% IO2.coordi.pelvis_tilt  = 1; 
+% IO2.coordi.pelvis_tx    = 2;
+% IO2.coordi.pelvis_ty    = 3;
+% IO2.coordi.hip_flexion_l        = 4;
+% IO2.coordi.hip_flexion_r        = 5;
+% IO2.coordi.knee_angle_l       = 6;
+% IO2.coordi.knee_angle_r       = 7;
+% IO2.coordi.ankle_angle_l      = 8;
+% IO2.coordi.ankle_angle_r      = 9;
+% IO2.coordi.lumbar_extension    = 10;
+% IO2.GRFs.right_foot = [11,12];
+% IO2.GRFs.left_foot = [13,14];
 
 
 %%
-IO1_idx = [1:IO1.nCoordinates,IO1.GRFs.right_foot(1:2),IO1.GRFs.left_foot(1:2)];
-IO2_idx = [1:IO1.nCoordinates,IO2.GRFs.right_foot(1:2),IO2.GRFs.left_foot(1:2)];
+
 
 coord_names = fieldnames(IO1.coordi);
 n_coord = length(coord_names);
+n_coord2 = length(fieldnames(IO2.coordi));
+
 
 idx2 = zeros(n_coord,1);
 idx1 = (1:n_coord)';
@@ -58,7 +59,7 @@ for i=1:n_coord
     idx2(i) = IO2.coordi.(coord_names{i});
 end
 
-coord_names_all = [coord_names,fieldnames(IO2.coordi)];
+% coord_names_all = [coord_names,fieldnames(IO2.coordi)];
 
 idx1_r = [];
 idx1_l = [];
@@ -71,6 +72,9 @@ for i=1:n_coord
     end
 
 end
+
+IO1_idx = [idx1',IO1.GRFs.right_foot(1:2),IO1.GRFs.left_foot(1:2)];
+IO2_idx = [idx2',IO2.GRFs.right_foot(1:2),IO2.GRFs.left_foot(1:2)];
 
 %%
 
@@ -90,6 +94,7 @@ Qs1(idx1_l) = Qs1(idx1_r); % symmetric motion
 Qdots1 = (lhsdesign(n_coord,1)-0.5)*5*0;
 Qddots1 = (lhsdesign(n_coord,1)-0.5)*10*0;
 
+Qs2 = zeros(n_coord2,1);
 Qs2(idx2,1) = Qs1(idx1);
 Qdots2(idx2,1) = Qdots1(idx1);
 Qddots2(idx2,1) = Qddots1(idx1);
@@ -98,7 +103,7 @@ QsQdots1 = zeros(n_coord*2,1);
 QsQdots1(1:2:end) = Qs1(:);
 QsQdots1(2:2:end) = Qdots1(:);
 
-QsQdots2 = zeros(n_coord*2,1);
+QsQdots2 = zeros(n_coord2*2,1);
 QsQdots2(1:2:end) = Qs2(:);
 QsQdots2(2:2:end) = Qdots2(:);
 
@@ -109,11 +114,12 @@ res1 = full(res1);
 res1 = res1(IO1_idx);
 
 res2 = F2([QsQdots2;Qddots2]);
-res2 = full(res2);
-res2 = res2(IO2_idx);
+res2_0 = full(res2);
+% res2 = res2_0;
+res2 = res2_0(IO2_idx);
 
 res2_reo = res2;
-res2_reo(idx1) = res2(idx2);
+% res2_reo(idx1) = res2(idx2);
 
 %% 
 diff = res2_reo - res1;

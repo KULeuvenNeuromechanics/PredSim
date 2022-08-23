@@ -13,14 +13,14 @@ import casadi.*
 addpath([pathRepo '/PreProcessing'])
 
 
-% name_1 = 'subject1_2D_v6';
-name_1 = 'PredSim_2D';
-% F1  = external('F',fullfile(pathRepo,'Subjects',name_1,['F_' name_1 '.dll'])); 
+name_1 = 'subject1_2D_3D';
+% name_1 = 'PredSim_2D';
+F1  = external('F',fullfile(pathRepo,'Subjects',name_1,['F_' name_1 '.dll'])); 
 
 load(fullfile(pathRepo,'Subjects',name_1,['F_' name_1 '_IO.mat'])); 
 IO1 = IO;
 
-F1 = external('F','C:\Users\u0150099\OneDrive - KU Leuven\PhD\algodiff\predictiveSimulations_2D\ExternalFunctions\PredSim_2D_pp.dll');
+% F1 = external('F','C:\Users\u0150099\OneDrive - KU Leuven\PhD\algodiff\predictiveSimulations_2D\ExternalFunctions\PredSim_2D_pp.dll');
 % IO1.coordi.pelvis_tilt  = 1; 
 % IO1.coordi.pelvis_tx    = 2;
 % IO1.coordi.pelvis_ty    = 3;
