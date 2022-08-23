@@ -189,6 +189,7 @@ This code can automatically convert an OpenSim model to the external function us
 	- mass of the subject in kilograms. Default is *[]* kilograms [double]. Default is empty, it will be overwritten by the mass extracted from the OpenSim model.
 - **s.subject.IG_pelvis_y**: 
 	- height from the ground of the pelvis for the quasi-random initial guess, in meters. Default is *[]* m [double]. Default is empty, it will be overwritten by pelvis height extracted from the OpenSim model.
+	- s.subject.IG_pelvis_y is also used to establish bounds on vertical pelvis position.
 - **s.subject.adapt_IG_pelvis_y**: 
 	- boolean to adjust the trajectory of height of pelvis from the ground for data-informed initial guess. Default is *0*. 0 means the trajectory will not be changed. If 1, the trajectory will be changed such that the average value of the trajectory is equal to s.subject.IG_pelvis_y.
 - **S.subject.v_pelvis_x_trgt**: 
