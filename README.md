@@ -160,7 +160,7 @@ This code can automatically convert an OpenSim model to the external function us
 - **S.post_process.make_plot**: 
 	- boolean to plot post processing results (0 or 1). Default is *0*.
 - **S.post_process.rerun**: 
-	- boolean to rerun post-processing without solving OCP (0 or 1). Default is *0*.
+	- boolean to rerun post-processing without solving OCP (0 or 1). Default is *0*. If this option is set to 1, one should specify the S.post_process.result_filename.
 - **S.post_process.result_filename**: 
 	- File name for results. Used for the name of .mat file that saves the results, diary of the OCP, and name of the .mot file of the output motion. When rerunning post-processing of an existing result, giving this file name is required. Default value is 
 - **S.post_process.savename**: 
