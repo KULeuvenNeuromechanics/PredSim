@@ -160,7 +160,7 @@ end
 % when evaluating the external function, overwrite selected coordinate
 % positions with 0
 if ~isfield(S.misc,'coordPosZeroForExternal')
-    S.misc.coordPosZeroForExterna = [];
+    S.misc.coordPosZeroForExternal = [];
 end
 
 %% post_process
