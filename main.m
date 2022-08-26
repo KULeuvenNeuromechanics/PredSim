@@ -23,16 +23,15 @@ addpath([S.misc.main_path '\VariousFunctions'])
 
 %% Required inputs
 % name of the subject
-S.subject.name = 'Subject1_2D_3D';
+S.subject.name = 'Subject1_2D';
 
 % path to folder where you want to store the results of the OCP
 S.subject.save_folder  = fullfile(pathRepoFolder,'PredSimResults',S.subject.name); 
 
 % either choose "quasi-random" or give the path to a .mot file you want to use as initial guess
-S.subject.IG_selection = fullfile(S.misc.main_path,'OCP','IK_Bounds_Default.mot');
+S.subject.IG_selection = fullfile(S.misc.main_path,'OCP','IK_Guess_Default.mot');
 S.subject.IG_selection_gaitCyclePercent = 50;
-% S.subject.IG_selection = 'C:\GBW_MyProgr  = 200;
-% S.subject.IG_selection = 'quasi-random';
+
 
 % give the path to the osim model of your subject
 osim_path = fullfile(pathRepo,'Subjects',S.subject.name,[S.subject.name '.osim']);
@@ -68,13 +67,14 @@ S.solver.run_as_batch_job = 0;
 % S.misc.poly_order.lower    = ;
 % S.misc.poly_order.upper    = ;
 % S.misc.msk_geom_bounds      = {{'knee_angle_r','knee_angle_l'},-120,10,'pelvis_tilt',-30,30};
+S.misc.coordPosZeroForExternal = {'pelvis_tx'};
 
 % % S.post_process
 % S.post_process.make_plot = '';
 % S.post_process.savename  = 'datetime';
 % S.post_process.rerun   = 1;
 % S.post_process.rerun_from_w = 1;
-% S.post_process.result_filename = 'PredSim_2D_v1';
+% S.post_process.result_filename = 'Subject1_2D_v10';
 
 % % S.solver
 % S.solver.linear_solver  = 'ma86';
@@ -95,7 +95,7 @@ S.subject.v_pelvis_x_trgt   = 1.33;
 % S.subject.muscle_strength   = ;
 % S.subject.muscle_pass_stiff_shift = {{'soleus_l','soleus_r'},0.9,{'tib_ant_l'},1.1};
 % S.subject.muscle_pass_stiff_scale = ;
-% S.subject.tendon_stiff      = ;
+S.subject.tendon_stiff_scale      = {{'soleus_l','soleus_r','gastroc_r','gastroc_l'},0.5};
 % S.subject.mtp_type          = '2022paper';
 % S.subject.MT_params         = ;
 % S.subject.spasticity        = ;
@@ -105,12 +105,12 @@ S.subject.v_pelvis_x_trgt   = 1.33;
 % S.subject.set_limit_torque_coefficients_selected_dofs = {{'mtp_angle_l','mtp_angle_r'},[0,0,0,0],[0,0]};
 
 % % S.weights
-% S.weights.E         = ;
-% S.weights.E_exp     = ;
-% S.weights.q_dotdot  = ;
-% S.weights.e_arm     = ;
-% S.weights.pass_torq = ;
-% S.weights.a         = ;
+% S.weights.E         = 0;
+% S.weights.E_exp     = 1;
+% S.weights.q_dotdot  = 1;
+% S.weights.e_arm     = 1;
+% S.weights.pass_torq = 0;
+% S.weights.a         = 1;
 % S.weights.slack_ctrl = ;
 
 % %S.Cpp2Dll: required inputs to convert .osim to .dll

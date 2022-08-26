@@ -13,12 +13,12 @@ clc
 % Construct a cell array with full paths to files with saved results for
 % which you want to appear on the plotted figures.
 results_folder = fullfile(pathRepoFolder,'PredSimResults');
-result_paths{1} = fullfile([results_folder '\subject1_2D\subject1_2D_v8.mat']);
-result_paths{2} = fullfile([results_folder '\PredSim_2D\PredSim_2D_v3.mat']);
-
+result_paths{1} = fullfile([results_folder '\subject1_2D\subject1_2D_v10.mat']);
+result_paths{2} = fullfile([results_folder '\subject1_2D\subject1_2D_v15.mat']);
+% result_paths{3} = fullfile([results_folder '\subject1_2D\subject1_2D_v13.mat']);
 
 % Cell array with legend name for each result
-legend_names = {'old','new'};
+legend_names = {'costfunction 1','cost 2D paper','cost 3D paper w/o Edot'};
 
 % Path to the folder where figures are saved
 figure_folder = results_folder;
@@ -41,7 +41,7 @@ figure_savename = 'test_2D';
 %   coordinates or muscles.
 %
 %   - variables -
-%   * Cell array of strings. Containsone or more variable names. e.g. 'Qs'
+%   * Cell array of strings. Contains one or more variable names. e.g. 'Qs'
 %   to plot coordinate positions, 'a' to plot muscle activity. Variables
 %   that do not rely on coordinates or muscles (e.g. GRFs)
 %

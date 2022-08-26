@@ -341,7 +341,8 @@ for j=1:d
     
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Call external function (run inverse dynamics)
-    [Tj] = F([QsQdotskj_nsc(:,j+1);Aj_nsc(:,j)]);
+%     [Tj] = F([QsQdotskj_nsc(:,j+1);Aj_nsc(:,j)]);
+    [Tj] = evaluate_external_function(S,model_info,QsQdotskj_nsc(:,j+1),[], Aj_nsc(:,j));
 
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Add path constraints
@@ -980,7 +981,8 @@ Xk_Qdotdots_opt             = qdotdot_col_opt_unsc.rad(d:d:end,:);
 Foutk_opt                   = zeros(N,F.nnz_out);
 for i = 1:N
     % ID moments
-    [res] = F([Xk_Qs_Qdots_opt(i,:)';Xk_Qdotdots_opt(i,:)']);
+%     [res] = F([Xk_Qs_Qdots_opt(i,:)';Xk_Qdotdots_opt(i,:)']);
+    [res] = evaluate_external_function(S,model_info,Xk_Qs_Qdots_opt(i,:),[],Xk_Qdotdots_opt(i,:));
     Foutk_opt(i,:) = full(res);
 end
 GRFk_opt = Foutk_opt(:,[model_info.ExtFunIO.GRFs.right_foot model_info.ExtFunIO.GRFs.left_foot]);

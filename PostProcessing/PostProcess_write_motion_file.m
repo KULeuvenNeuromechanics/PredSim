@@ -35,6 +35,7 @@ q_opt_GUI_GC_2(:,model_info.ExtFunIO.jointi.base_forward) =...
 JointAngle.labels = [{'time'},model_info.ExtFunIO.coord_names.all(:)'];
 
 q_opt_GUI_GC = [t_mesh',[q_opt_GUI_GC_1;q_opt_GUI_GC_2]];
+
 % Muscle activations (to have muscles turning red when activated).
 Acts_GC = R.muscles.a;
 Acts_GC_GUI = [Acts_GC;Acts_GC];
