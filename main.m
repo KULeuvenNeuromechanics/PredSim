@@ -67,26 +67,25 @@ S.solver.run_as_batch_job = 0;
 % S.misc.poly_order.lower    = ;
 % S.misc.poly_order.upper    = ;
 % S.misc.msk_geom_bounds      = {{'knee_angle_r','knee_angle_l'},-120,10,'pelvis_tilt',-30,30};
-% S.misc.coordPosZeroForExternal = {'pelvis_tx'};
+S.misc.coordPosZeroForExternal = {'pelvis_tx'};
 
 % % S.post_process
 % S.post_process.make_plot = '';
 % S.post_process.savename  = 'datetime';
 % S.post_process.rerun   = 1;
 % S.post_process.rerun_from_w = 1;
-S.post_process.result_filename = 'Subject1_2D_jit_Ox_p6_openmp';
-% S.post_process.result_filename = 'Subject1_2D_no_jit_p6';
+% S.post_process.result_filename = 'Subject1_2D_v10';
 
 % % S.solver
 % S.solver.linear_solver  = 'ma86';
 % S.solver.tol_ipopt      = ;
 % S.solver.max_iter       = 5;
 % S.solver.parallel_mode  = '';
-S.solver.N_threads      = 6;
+% S.solver.N_threads      = 6;
 % S.solver.N_meshes       = 50;
 % S.solver.par_cluster_name = ;
 S.solver.CasADi_path    = 'C:\GBW_MyPrograms\casadi_3_5_5';
-S.Solver.jit = 1;
+
 
 % % S.subject
 % S.subject.mass              = ;
@@ -96,7 +95,7 @@ S.subject.v_pelvis_x_trgt   = 1.33;
 % S.subject.muscle_strength   = ;
 % S.subject.muscle_pass_stiff_shift = {{'soleus_l','soleus_r'},0.9,{'tib_ant_l'},1.1};
 % S.subject.muscle_pass_stiff_scale = ;
-% S.subject.tendon_stiff_scale      = {{'soleus_l','soleus_r','gastroc_r','gastroc_l'},0.5};
+S.subject.tendon_stiff_scale      = {{'soleus_l','soleus_r','gastroc_r','gastroc_l'},0.5};
 % S.subject.mtp_type          = '2022paper';
 % S.subject.MT_params         = ;
 % S.subject.spasticity        = ;

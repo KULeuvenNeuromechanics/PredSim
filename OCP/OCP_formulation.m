@@ -31,7 +31,6 @@ t0 = tic;
 N = S.solver.N_meshes; % number of mesh intervals
 W = S.weights; % weights optimization
 nq = model_info.ExtFunIO.jointi.nq; % lengths of coordinate subsets
-setup.derivatives =  'AD'; % Algorithmic differentiation
 
 %% Load external functions
 import casadi.*
@@ -39,8 +38,15 @@ import casadi.*
 % OpenSim/Simbody C++ API. This external function is compiled as a dll from
 % which we create a Function instance using CasADi in MATLAB. More details
 % about the external function can be found in the documentation.
-F  = external('F',fullfile(S.misc.subject_path,S.misc.external_function));
-
+pathmain = pwd;
+% [filepath,~,~] = fileparts(mfilename('fullpath'));
+% [pathRepo,~,~] = fileparts(filepath);
+% addpath(genpath(pathRepo));
+% Loading external functions.
+setup.derivatives =  'AD'; % Algorithmic differentiation
+cd(S.misc.subject_path)
+F  = external('F',S.misc.external_function);
+cd(pathmain);
 
 %% Collocation Scheme
 % We use a pseudospectral direct collocation method, i.e. we use Lagrange
@@ -627,18 +633,6 @@ else
     options.ipopt.linear_solver         = S.solver.linear_solver;
     options.ipopt.tol                   = 1*10^(-S.solver.tol_ipopt);
     options.ipopt.constr_viol_tol       = 1*10^(-S.solver.tol_ipopt);
-    if S.Solver.jit
-        copyfile(fullfile(S.misc.subject_path,S.misc.external_function),S.misc.main_path);
-        [~,osim_file_name,~] = fileparts(model_info.osim_path);
-        pathLib = fullfile(S.misc.main_path,'opensimAD','install-ExternalFunction',...
-            ['F_' osim_file_name],'lib',['F_' osim_file_name '.lib']);
-        copyfile(pathLib,S.misc.main_path);
-        options.jit = true;
-        options.compiler = 'shell'; % use system compiler
-        options.jit_options.flags = {'/Ox','/openmp'}; % optimize code for fast evaluation
-        options.jit_options.linker_flags = {['F_' osim_file_name '.lib']};
-        options.jit_options.verbose = true;
-    end
     opti.solver('ipopt', options);
     % timer
     disp(['... OCP formulation done. Time elapsed ' num2str(toc(t0)) ' s'])
@@ -653,11 +647,6 @@ else
     
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     diary off
-    % clean jit files
-    if S.Solver.jit
-        delete(fullfile(S.misc.main_path,['F_' osim_file_name '.lib']));
-        delete(fullfile(S.misc.main_path,['F_' osim_file_name '.dll']));
-    end
     % Extract results
     % Create setup
     setup.tolerance.ipopt = S.solver.tol_ipopt;
