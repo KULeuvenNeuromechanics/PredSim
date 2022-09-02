@@ -44,7 +44,7 @@ model = Model(osim_path);
 
 %% ground
 ground_body = model.getGround();
-groundContactSpace = ContactHalfSpace(Vec3(0,0,0),Vec3(0,0,-1.57),ground_body);
+groundContactSpace = ContactHalfSpace(Vec3(0,0,0),Vec3(0,0,-pi/2),ground_body);
 groundContactSpace.setName('floor');
 model.addContactGeometry(groundContactSpace);
 

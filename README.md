@@ -124,7 +124,7 @@ This code can automatically convert an OpenSim model to the external function us
 #### S.metabolicE - metabolic energy
 
 - **S.metabolicE.tanh_b**: 
-	- hyperbolic tangeant smoothing factor used in the metabolic cost calculation. Default is *100* [double]
+	- hyperbolic tangeant smoothing factor used in the metabolic cost calculation. Default is *10* [double]
 - **S.metabolicE.model**: 
 	- the name of the metabolic energy model used. Default is [*Bhargava2004*](https://doi.org/10.1016/S0021-9290(03)00239-2) [char]. Currently only Bhargava2004 model has been implemented. Other options that will be added in the future are:
 		- [*Umberger2003*](https://doi.org/10.1080/1025584031000091678)
@@ -160,7 +160,7 @@ This code can automatically convert an OpenSim model to the external function us
 - **S.post_process.make_plot**: 
 	- boolean to plot post processing results (0 or 1). Default is *0*.
 - **S.post_process.rerun**: 
-	- boolean to rerun post-processing without solving OCP (0 or 1). Default is *0*.
+	- boolean to rerun post-processing without solving OCP (0 or 1). Default is *0*. If this option is set to 1, one should specify the S.post_process.result_filename.
 - **S.post_process.result_filename**: 
 	- File name for results. Used for the name of .mat file that saves the results, diary of the OCP, and name of the .mot file of the output motion. When rerunning post-processing of an existing result, giving this file name is required. Default value is 
 - **S.post_process.savename**: 
@@ -189,6 +189,7 @@ This code can automatically convert an OpenSim model to the external function us
 	- mass of the subject in kilograms. Default is *[]* kilograms [double]. Default is empty, it will be overwritten by the mass extracted from the OpenSim model.
 - **s.subject.IG_pelvis_y**: 
 	- height from the ground of the pelvis for the quasi-random initial guess, in meters. Default is *[]* m [double]. Default is empty, it will be overwritten by pelvis height extracted from the OpenSim model.
+	- s.subject.IG_pelvis_y is also used to establish bounds on vertical pelvis position.
 - **s.subject.adapt_IG_pelvis_y**: 
 	- boolean to adjust the trajectory of height of pelvis from the ground for data-informed initial guess. Default is *0*. 0 means the trajectory will not be changed. If 1, the trajectory will be changed such that the average value of the trajectory is equal to s.subject.IG_pelvis_y.
 - **S.subject.v_pelvis_x_trgt**: 
@@ -231,7 +232,7 @@ This code can automatically convert an OpenSim model to the external function us
 - **S.weights.pass_torq**: 
 	- weight on passive torques. Default is *1000* [double]
 - **S.weights.pass_torq_includes_damping**: 
-	- specify if damping torque = damping coefficient * coordinate velocity is to be included in the cost function (0 or 1). Default is 1 [double].
+	- specify if damping torque = damping coefficient * coordinate velocity is to be included in the cost function (0 or 1). Default is 0 [double].
 - **S.weights.a**: 
 	- weight on muscle activations. Default is *2000* [double]
 - **S.weights.slack_ctrl**: 
