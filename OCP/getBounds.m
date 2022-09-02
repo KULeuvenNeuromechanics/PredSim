@@ -61,6 +61,8 @@ end
 idx_mtp = [];
 idx_arms = [model_info.ExtFunIO.jointi.arm_r,model_info.ExtFunIO.jointi.arm_l];
 idx_shoulder_flex = [];
+idx_shoulder_add = [];
+idx_shoulder_rot = [];
 idx_elbow = [];
 for i = 1:NCoord
     coordinate = coordinate_names{i};
@@ -85,9 +87,29 @@ for i = 1:NCoord
             idx_elbow(end+1) = coord_idx;
         elseif contains(coordinate,'flex')
             idx_shoulder_flex(end+1) = coord_idx;
+        elseif contains(coordinate,'add')
+            idx_shoulder_add(end+1) = coord_idx;
+        elseif contains(coordinate,'rot')
+            idx_shoulder_rot(end+1) = coord_idx;
         end
     end
 end
+
+%% Adjust bounds to be symmetric
+bounds.Qs.upper(model_info.ExtFunIO.symQs.QsInvA) =...
+    max(bounds.Qs.upper(model_info.ExtFunIO.symQs.QsInvA),bounds.Qs.upper(model_info.ExtFunIO.symQs.QsInvB));
+bounds.Qs.lower(model_info.ExtFunIO.symQs.QsInvA) =...
+    min(bounds.Qs.lower(model_info.ExtFunIO.symQs.QsInvA),bounds.Qs.lower(model_info.ExtFunIO.symQs.QsInvB));
+
+bounds.Qdots.upper(model_info.ExtFunIO.symQs.QdotsInvA) =...
+    max(bounds.Qdots.upper(model_info.ExtFunIO.symQs.QdotsInvA),bounds.Qdots.upper(model_info.ExtFunIO.symQs.QdotsInvB));
+bounds.Qdots.lower(model_info.ExtFunIO.symQs.QdotsInvA) =...
+    min(bounds.Qdots.lower(model_info.ExtFunIO.symQs.QdotsInvA),bounds.Qdots.lower(model_info.ExtFunIO.symQs.QdotsInvB));
+
+bounds.Qdotdots.upper(model_info.ExtFunIO.symQs.QdotsInvA) =...
+    max(bounds.Qdotdots.upper(model_info.ExtFunIO.symQs.QdotsInvA),bounds.Qdotdots.upper(model_info.ExtFunIO.symQs.QdotsInvB));
+bounds.Qdotdots.lower(model_info.ExtFunIO.symQs.QdotsInvA) =...
+    min(bounds.Qdotdots.lower(model_info.ExtFunIO.symQs.QdotsInvA),bounds.Qdotdots.lower(model_info.ExtFunIO.symQs.QdotsInvB));
 
 %% extend IK-based bounds
 idx_extend = [model_info.ExtFunIO.jointi.floating_base,...
@@ -101,6 +123,10 @@ idx_extend = [model_info.ExtFunIO.jointi.floating_base,...
 Qs_range = abs(bounds.Qs.upper - bounds.Qs.lower);
 bounds.Qs.lower(idx_extend) = bounds.Qs.lower(idx_extend) - 2*Qs_range(idx_extend);
 bounds.Qs.upper(idx_extend) = bounds.Qs.upper(idx_extend) + 2*Qs_range(idx_extend);
+
+% Only lower bounds of arm adduction and arm rotation are extended.
+idx_shoulder_add_rot = [idx_shoulder_add,idx_shoulder_rot];
+bounds.Qs.lower(idx_shoulder_add_rot) = bounds.Qs.lower(idx_shoulder_add_rot) - 2*Qs_range(idx_shoulder_add_rot);
 
 % The bounds are extended by 3 times the absolute difference between upper
 % and lower bounds.
@@ -135,11 +161,12 @@ bounds.Qdots.lower(idx_mtp) = -13;
 bounds.Qdotdots.upper(idx_mtp) = 500;
 bounds.Qdotdots.lower(idx_mtp) = -500;
 
+% Pelvis tilt
+bounds.Qs.lower(model_info.ExtFunIO.jointi.floating_base(1)) = -20*pi/180;
+
 % We adjust some bounds when we increase the speed to allow for the
 % generation of running motions.
 if S.subject.v_pelvis_x_trgt > 1.33
-    % Pelvis tilt
-    bounds.Qs.lower(model_info.ExtFunIO.jointi.floating_base(1)) = -20*pi/180;
     % Shoulder flexion
     bounds.Qs.lower(idx_shoulder_flex) = -50*pi/180;
     % Pelvis tx
@@ -173,21 +200,6 @@ if ~isempty(S.bounds.coordinates)
 
 end
 
-%% Adjust bounds to be symmetric
-bounds.Qs.upper(model_info.ExtFunIO.symQs.QsInvA) =...
-    max(bounds.Qs.upper(model_info.ExtFunIO.symQs.QsInvA),bounds.Qs.upper(model_info.ExtFunIO.symQs.QsInvB));
-bounds.Qs.lower(model_info.ExtFunIO.symQs.QsInvA) =...
-    min(bounds.Qs.lower(model_info.ExtFunIO.symQs.QsInvA),bounds.Qs.lower(model_info.ExtFunIO.symQs.QsInvB));
-
-bounds.Qdots.upper(model_info.ExtFunIO.symQs.QdotsInvA) =...
-    max(bounds.Qdots.upper(model_info.ExtFunIO.symQs.QdotsInvA),bounds.Qdots.upper(model_info.ExtFunIO.symQs.QdotsInvB));
-bounds.Qdots.lower(model_info.ExtFunIO.symQs.QdotsInvA) =...
-    min(bounds.Qdots.lower(model_info.ExtFunIO.symQs.QdotsInvA),bounds.Qdots.lower(model_info.ExtFunIO.symQs.QdotsInvB));
-
-bounds.Qdotdots.upper(model_info.ExtFunIO.symQs.QdotsInvA) =...
-    max(bounds.Qdotdots.upper(model_info.ExtFunIO.symQs.QdotsInvA),bounds.Qdotdots.upper(model_info.ExtFunIO.symQs.QdotsInvB));
-bounds.Qdotdots.lower(model_info.ExtFunIO.symQs.QdotsInvA) =...
-    min(bounds.Qdotdots.lower(model_info.ExtFunIO.symQs.QdotsInvA),bounds.Qdotdots.lower(model_info.ExtFunIO.symQs.QdotsInvB));
 
 
 

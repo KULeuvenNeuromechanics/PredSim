@@ -66,6 +66,7 @@ S.solver.run_as_batch_job = 0;
 % S.misc.poly_order.lower    = ;
 % S.misc.poly_order.upper    = ;
 % S.misc.msk_geom_bounds      = {{'knee_angle_r','knee_angle_l'},-120,10,'pelvis_tilt',-30,30};
+% S.misc.gaitmotion_type = ;
 
 % % S.post_process
 % S.post_process.make_plot = '';
@@ -109,6 +110,7 @@ S.subject.set_damping_coefficient_selected_dofs = {{'mtp_angle_l','mtp_angle_r'}
 % S.weights.pass_torq = ;
 % S.weights.a         = ;
 % S.weights.slack_ctrl = ;
+% S.weights.pass_torq_includes_damping = ;
 
 % %S.Cpp2Dll: required inputs to convert .osim to .dll
 % optional: if you want to install the opensimExe
@@ -116,7 +118,9 @@ S.Cpp2Dll.PathCpp2Dll_Exe = InstallOsim2Dll_Exe('C:\GBW_MyPrograms\Osim2Dll_exe'
 % S.Cpp2Dll.compiler = 'Visual Studio 15 2017 Win64';
 % S.Cpp2Dll.export3DSegmentOrigins = ;
 S.Cpp2Dll.verbose_mode = 0; % 0 for no outputs from cmake
-
+% S.Cpp2Dll.jointsOrder = ;
+% S.Cpp2Dll.coordinatesOrder = ;
+        
 %% Run predictive simulations
 if S.solver.run_as_batch_job
     add_pred_sim_to_batch(S,osim_path)
