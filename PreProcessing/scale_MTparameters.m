@@ -38,10 +38,10 @@ if ~isempty(S.subject.scale_MT_params)
         scale_MTparams.alphao = {};
         scale_MTparams.vMmax = {};
         MTproperties = fieldnames(scale_MTparams);
-        for i=1:mod(length(S.subject.scale_MT_params),3)
-            idx_property = find(strcmp(MTproperties{:},S.subject.scale_MT_params{i}));
+        for i=1:length(S.subject.scale_MT_params)/3
+            idx_property = find(strcmp(MTproperties(:),S.subject.scale_MT_params(i+1)));
             if ~isempty(idx_property)
-                scale_MTparams.(MTproperties{idx_property}){end+1} = S.subject.scale_MT_params{i+1};
+                scale_MTparams.(MTproperties{idx_property}){end+1} = S.subject.scale_MT_params{i};
                 scale_MTparams.(MTproperties{idx_property}){end+1} = S.subject.scale_MT_params{i+2};
             else
                 error([S.subject.scale_MT_params{i} 'is not an accepted muscle-tendon property. ',...
@@ -49,7 +49,7 @@ if ~isempty(S.subject.scale_MT_params)
             end
         end
     catch errmsg
-        error(['Unable to scale muscle-tendon parameters because: ', errmsg]);
+        error(['Unable to scale muscle-tendon parameters because: ', errmsg.message]);
     end
 end
 
@@ -62,7 +62,7 @@ scale_MTparams.tendon_stiff = S.subject.tendon_stiff_scale;
 
 %%
 MTproperties = fieldnames(scale_MTparams);
-for i=length(MTproperties)
+for i=1:length(MTproperties)
     if ~isempty(scale_MTparams.(MTproperties{i}))
         try
             % get scale factor array
@@ -73,7 +73,7 @@ for i=length(MTproperties)
                 muscle_info.parameters(j).(MTproperties{i}) = MTparam_ij;
             end
         catch errmsg
-            error(['Unable to scale muscle-tendon parameter "' MTproperties{i} '" because: ', errmsg]);
+            error(['Unable to scale muscle-tendon parameter "' MTproperties{i} '" because: ', errmsg.message]);
         end
     end
 end
