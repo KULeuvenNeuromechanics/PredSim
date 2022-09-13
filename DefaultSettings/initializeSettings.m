@@ -27,6 +27,7 @@ S.solver       = [];
 S.subject      = [];
 S.weights      = [];
 S.Cpp2Dll      = [];
+S.orthosis     = [];
 
 % bounds have an .upper and .lower field
 S.bounds.a          = [];
