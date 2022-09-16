@@ -33,6 +33,7 @@ function [fun_passiveOrthosis] = passiveOrthosisDescriptions(S_orthosis_settings
 % get handle of the function corresponding to given string
 fun_passiveOrthosis = str2func(S_orthosis_settings_i.name);
 
+end % end of passiveOrthosisDescriptions
 
 %% Add a function describing your orthosis below, or make a separate file in the same folder
 % To be compatible, your orthosis description needs to be consistent with
@@ -41,35 +42,48 @@ fun_passiveOrthosis = str2func(S_orthosis_settings_i.name);
 %   - settings_orthosis -
 %   * "S_orthosis__settings_i" will be passed
 %
-%   - q_ (coordinate name) -
+%   - q_(coordinate) -
 %   * position of coordinate with this name. (m or rad)
 %
-%   - qdot_ (coordinate name) -
-%   * velocity of coordinate with this name. ((m/s or rad/s)
+%   - qdot_(coordinate) -
+%   * velocity of coordinate with this name. (m/s or rad/s)
 %
 % OUTPUT:
-%   - T_ (coordinate name) -
+%   - input_names -
+%   * cell array containing strings q_(coordinate) and qdot_(coordinate) in the
+%   order they appear as inputs. Entries should match coordinate names from
+%   the selected OpenSim model exactly.
+%
+%   - output_names -
+%   * cell array containing strings (coordinate) in the order they appear as 
+%   outputs. Entries should match coordinate names from the selected OpenSim
+%   model exactly.
+%
+%   - T_(coordinate) -
 %   * torque (or force) applied to this coordinate by the orthosis
 %
 
-% AFO with linear stiffness for right foot
-function [T_ankle_angle_r,T_mtp_angle_r] = AFO_passive_r(settings_orthosis,q_ankle_angle_r,q_mtp_angle_r)
-    k_ankle = settings_orthosis.ankle_stiffness; % ankle stiffness in Nm/rad
-    k_mtp = settings_orthosis.mtp_stiffness; % mtp stiffness in Nm/rad
+% AFO with linear stiffness
+function [input_names,output_names,T_ankle_angle,T_mtp_angle] =...
+    AFO_passive(settings_orthosis,q_ankle_angle,q_mtp_angle)
 
-    T_ankle_angle_r = -k_ankle*q_ankle_angle_r;
-    T_mtp_angle_r = -k_mtp*q_mtp_angle_r;
-end
+% read settings
+    % ankle stiffness in Nm/rad
+    k_ankle = settings_orthosis.ankle_stiffness;
+    % mtp stiffness in Nm/rad
+    k_mtp = settings_orthosis.mtp_stiffness; 
+    % left or right
+    side = settings_orthosis.left_right;
 
-% AFO with linear stiffness for left foot
-function [T_ankle_angle_l,T_mtp_angle_l] = AFO_passive_l(settings_orthosis,q_ankle_angle_l,q_mtp_angle_l)
-    k_ankle = settings_orthosis.ankle_stiffness; % ankle stiffness in Nm/rad
-    k_mtp = settings_orthosis.mtp_stiffness; % mtp stiffness in Nm/rad
+% calculate outputs
+    T_ankle_angle = -k_ankle*q_ankle_angle;
+    T_mtp_angle = -k_mtp*q_mtp_angle;
 
-    T_ankle_angle_l = -k_ankle*q_ankle_angle_l;
-    T_mtp_angle_l = -k_mtp*q_mtp_angle_l;
-end
+% input and output names
+    input_names = {['q_ankle_angle_' side],['q_mtp_angle_' side]};
+    output_names = {['ankle_angle_' side],['mtp_angle_' side]};
+
+end % end of AFO_passive
 
 % ...
 
-end % end of passiveOrthosisDescriptions
