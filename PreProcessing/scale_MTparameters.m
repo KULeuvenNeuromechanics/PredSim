@@ -39,12 +39,15 @@ if ~isempty(S.subject.scale_MT_params)
         scale_MTparams.vMmax = {};
         MTproperties = fieldnames(scale_MTparams);
         for i=1:length(S.subject.scale_MT_params)/3
-            idx_property = find(strcmp(MTproperties(:),S.subject.scale_MT_params(i+1)));
+            i_mus = (i-1)*3+1;
+            i_prp = i_mus+1;
+            i_scf = i_mus+2;
+            idx_property = find(strcmp(MTproperties(:),S.subject.scale_MT_params(i_prp)));
             if ~isempty(idx_property)
-                scale_MTparams.(MTproperties{idx_property}){end+1} = S.subject.scale_MT_params{i};
-                scale_MTparams.(MTproperties{idx_property}){end+1} = S.subject.scale_MT_params{i+2};
+                scale_MTparams.(MTproperties{idx_property}){end+1} = S.subject.scale_MT_params{i_mus};
+                scale_MTparams.(MTproperties{idx_property}){end+1} = S.subject.scale_MT_params{i_scf};
             else
-                error([S.subject.scale_MT_params{i} 'is not an accepted muscle-tendon property. ',...
+                error([S.subject.scale_MT_params{i_prp} ' is not an accepted muscle-tendon property. ',...
                     'Possible entries are: FMo, lMo, lTs, alphao, vMmax.'])
             end
         end
