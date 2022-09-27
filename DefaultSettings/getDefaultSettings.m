@@ -484,7 +484,7 @@ if ~isfield(S.Cpp2Dll,'verbose_mode')
 end 
 
 %% orthosis
-S.orthosis
+% S.orthosis
 
 
 end

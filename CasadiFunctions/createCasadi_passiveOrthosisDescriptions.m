@@ -61,7 +61,7 @@ dummy_output = cell(1,n_arg_out);
 
 % restructure outputs
 names_in = dummy_output{1};
-names_out = dummy_output{3};
+names_out = dummy_output{2};
 torques = dummy_output(3:end);
 
 % check input names
@@ -82,7 +82,7 @@ q = SX.sym('q',n_coord);
 qdot = SX.sym('qdot',n_coord);
 
 % all outputs
-T = SX('T',n_coord,1);
+T = SX(n_coord,1);
 
 % selected inputs
 q_qdot_in = cell(1,n_arg_in);

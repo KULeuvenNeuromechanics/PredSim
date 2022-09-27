@@ -26,7 +26,7 @@ function [f_orthosis] = createCasadi_orthosis(S,model_info)
 import casadi.*
 
 n_coord = model_info.ExtFunIO.jointi.nq.all;
-N = S.solver.N_meshes;
+
 
 %% Define variables
 % all inputs
@@ -34,36 +34,28 @@ qk = SX.sym('q',n_coord,1);
 qdotk = SX.sym('qdot',n_coord,1);
 
 % all outputs
-Tk = SX('T',n_coord,1);
+Tk = SX(n_coord,1);
 
-
-for i=1:length(S.orthosis.settings)
-    otype = S.orthosis.settings{i}.type;
-    switch otype
-        case 'passive'
-            f_passiveOrthosis_i = createCasadi_passiveOrthosisDescriptions(S,model_info,S.orthosis.settings{i});
-            Tk_i = f_passiveOrthosis_i(qk,qdotk);
-            Tk = Tk + Tk_i;
+if ~isempty(S.orthosis)
+    for i=1:length(S.orthosis.settings)
+        otype = S.orthosis.settings{i}.type;
+        switch otype
+            case 'passive'
+                f_passiveOrthosis_i = createCasadi_passiveOrthosisDescriptions(S,model_info,S.orthosis.settings{i});
+                Tk_i = f_passiveOrthosis_i(qk,qdotk);
+                Tk = Tk + Tk_i;
+    
+            otherwise
+                error(['Unknown orthosis type "' otype '".'])
+        end
     end
 end
 
 
+%%
+
+f_orthosis = Function('f_orthosis',{qk,qdotk},{Tk},{'qk','qdotk'},{'Tk'});
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+end

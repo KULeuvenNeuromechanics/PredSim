@@ -343,6 +343,9 @@ for j=1:d
     % Call external function (run inverse dynamics)
     [Tj] = F([QsQdotskj_nsc(:,j+1);Aj_nsc(:,j)]);
 
+    % Evaluate orthosis torques
+    To_j = f_casadi.f_orthosis(Qskj_nsc(:,j+1),Qdotskj_nsc(:,j+1));
+
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Add path constraints
     for i=1:nq.all
@@ -375,6 +378,9 @@ for j=1:d
             Ti = Ti + Tau_passj(i);
         end
         
+        % orthosis
+        Ti = Ti + To_j(i);
+
         % total coordinate torque equals inverse dynamics torque
         eq_constr{end+1} = Tj(i,1) - Ti;
 

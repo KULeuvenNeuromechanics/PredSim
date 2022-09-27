@@ -94,7 +94,7 @@ S.subject.v_pelvis_x_trgt   = 1.33;
 % S.subject.muscle_pass_stiff_scale = ;
 % S.subject.tendon_stiff      = ;
 S.subject.mtp_type          = '2022paper';
-S.subject.scale_MT_params         = {{'soleus_l'},'FMo',0.9};
+% S.subject.scale_MT_params         = {{'soleus_l'},'FMo',0.9};
 % S.subject.spasticity        = ;
 % S.subject.muscle_coordination = ;
 S.subject.set_stiffness_coefficient_selected_dofs = {{'mtp_angle_l','mtp_angle_r'},25};
@@ -116,6 +116,18 @@ S.Cpp2Dll.PathCpp2Dll_Exe = InstallOsim2Dll_Exe('C:\GBW_MyPrograms\Osim2Dll_exe'
 % S.Cpp2Dll.compiler = 'Visual Studio 15 2017 Win64';
 % S.Cpp2Dll.export3DSegmentOrigins = ;
 S.Cpp2Dll.verbose_mode = 0; % 0 for no outputs from cmake
+
+% % S.orthosis
+% example: add AFO_passive as defind in
+% /Orthosis/passiveOrthosisDescriptions.m to right and left foot
+ortho1.type = 'passive'; % type is required
+ortho1.name = 'AFO_passive'; %
+ortho1.ankle_stiffness = 5;
+ortho1.mtp_stiffness = 1;
+ortho1.left_right = 'r';
+S.orthosis.settings{1} = ortho1;
+ortho1.left_right = 'l';
+S.orthosis.settings{2} = ortho1;
 
 %% Run predictive simulations
 if S.solver.run_as_batch_job

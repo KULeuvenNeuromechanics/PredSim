@@ -53,5 +53,7 @@ if ~isempty(model_info.ExtFunIO.origin.calcn_r) &&  ~isempty(model_info.ExtFunIO
     [f_casadi.f_getCalcnOriginInWorldFrame,f_casadi.f_getStepLength] = createCasadi_StepLength(S,model_info);
 end
 
+%% Create cacadi function for orthoses
+[f_casadi.f_orthosis] = createCasadi_orthosis(S,model_info);
 
 end

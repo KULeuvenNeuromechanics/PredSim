@@ -59,6 +59,7 @@ disp(['... PreProcessing done. Time elapsed ' num2str(toc(t0)) ' s'])
 
 %% Creating casadi functions
 addpath([S.misc.main_path '\CasadiFunctions'])
+addpath([S.misc.main_path '\Orthosis'])
 disp('Start creating CasADi functions...')
 t0 = tic;
 [f_casadi] = createCasadiFunctions(S,model_info);
