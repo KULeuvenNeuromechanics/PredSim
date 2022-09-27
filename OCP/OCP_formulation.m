@@ -136,13 +136,9 @@ Qs = opti.variable(nq.all,N+1);
 lboundsQsk = bounds.Qs.lower'*ones(1,N+1);
 lboundsQsk(model_info.ExtFunIO.jointi.base_forward,1) = ...
     bounds.Qs_0.lower(model_info.ExtFunIO.jointi.base_forward);
-lboundsQsk(model_info.ExtFunIO.jointi.base_lateral,1) = ...
-    bounds.Qs_0.lower(model_info.ExtFunIO.jointi.base_lateral);
 uboundsQsk = bounds.Qs.upper'*ones(1,N+1);
 uboundsQsk(model_info.ExtFunIO.jointi.base_forward,1) = ...
     bounds.Qs_0.upper(model_info.ExtFunIO.jointi.base_forward);
-uboundsQsk(model_info.ExtFunIO.jointi.base_lateral,1) = ...
-    bounds.Qs_0.upper(model_info.ExtFunIO.jointi.base_lateral);
 opti.subject_to(lboundsQsk < Qs < uboundsQsk);
 opti.set_initial(Qs, guess.Qs');
 % Qs at collocation points
@@ -523,7 +519,6 @@ if strcmp(S.misc.gaitmotion_type,'HalfGaitCycle')
     % Qs and Qdots
     opti.subject_to(Qs(model_info.ExtFunIO.symQs.QsInvA,end) - Qs(model_info.ExtFunIO.symQs.QsInvB,1) == 0);
     opti.subject_to(Qdots(model_info.ExtFunIO.symQs.QdotsInvA,end) - Qdots(model_info.ExtFunIO.symQs.QdotsInvB,1) == 0);
-    opti.subject_to(Qdots(model_info.ExtFunIO.jointi.base_lateral,end) + Qdots(model_info.ExtFunIO.jointi.base_lateral,1) == 0);
     opti.subject_to(Qs(model_info.ExtFunIO.symQs.QsOpp,end) + Qs(model_info.ExtFunIO.symQs.QsOpp,1) == 0);
     opti.subject_to(Qdots(model_info.ExtFunIO.symQs.QsOpp,end) + Qdots(model_info.ExtFunIO.symQs.QsOpp,1) == 0);
     % Muscle activations
@@ -987,9 +982,6 @@ if strcmp(S.misc.gaitmotion_type,'HalfGaitCycle')
     Qs_GC(N-IC1i_s+2:N-IC1i_s+1+N,model_info.ExtFunIO.jointi.base_forward) = ...
         q_opt_unsc.deg(1:end,model_info.ExtFunIO.jointi.base_forward) + ...
         q_opt_unsc_all.deg(end,model_info.ExtFunIO.jointi.base_forward);
-    Qs_GC(N-IC1i_s+2:N-IC1i_s+1+N,model_info.ExtFunIO.jointi.base_lateral) = ...
-        q_opt_unsc_all.deg(end,model_info.ExtFunIO.jointi.base_lateral) - ...
-        q_opt_unsc.deg(1:end,model_info.ExtFunIO.jointi.base_lateral);
     Qs_GC(N-IC1i_s+2+N:2*N,:) = q_opt_unsc.deg(1:IC1i_s-1,:);
     Qs_GC(N-IC1i_s+2+N:2*N,model_info.ExtFunIO.jointi.base_forward) = ...
         q_opt_unsc.deg(1:IC1i_s-1,model_info.ExtFunIO.jointi.base_forward) + ...
@@ -999,7 +991,6 @@ if strcmp(S.misc.gaitmotion_type,'HalfGaitCycle')
     if strcmp(HS1,'l')
         Qs_GC(:,model_info.ExtFunIO.symQs.QsInvA)  = Qs_GC(:,model_info.ExtFunIO.symQs.QsInvB);
         Qs_GC(:,model_info.ExtFunIO.symQs.QsOpp) = -Qs_GC(:,model_info.ExtFunIO.symQs.QsOpp);
-        Qs_GC(:,model_info.ExtFunIO.jointi.base_lateral) = -Qs_GC(:,model_info.ExtFunIO.jointi.base_lateral);
     end
     temp_Qs_GC_pelvis_tx = Qs_GC(1,model_info.ExtFunIO.jointi.base_forward);
     Qs_GC(:,model_info.ExtFunIO.jointi.base_forward) = Qs_GC(:,model_info.ExtFunIO.jointi.base_forward)-...
@@ -1012,15 +1003,12 @@ if strcmp(S.misc.gaitmotion_type,'HalfGaitCycle')
         qdot_opt_unsc.deg(1:end,model_info.ExtFunIO.symQs.QdotsInvB);
     Qdots_GC(N-IC1i_s+2:N-IC1i_s+1+N,model_info.ExtFunIO.symQs.QsOpp) = ...
         -qdot_opt_unsc.deg(1:end,model_info.ExtFunIO.symQs.QsOpp);
-    Qdots_GC(N-IC1i_s+2:N-IC1i_s+1+N,model_info.ExtFunIO.jointi.base_lateral) = ...
-        -qdot_opt_unsc.deg(1:end,model_info.ExtFunIO.jointi.base_lateral);
     Qdots_GC(N-IC1i_s+2+N:2*N,:) = qdot_opt_unsc.deg(1:IC1i_s-1,:);
     % If the first heel strike was on the left foot then we invert so that
     % we always start with the right foot, for analysis purpose
     if strcmp(HS1,'l')
         Qdots_GC(:,model_info.ExtFunIO.symQs.QdotsInvA) = Qdots_GC(:,model_info.ExtFunIO.symQs.QdotsInvB);
         Qdots_GC(:,model_info.ExtFunIO.symQs.QsOpp) = -Qdots_GC(:,model_info.ExtFunIO.symQs.QsOpp);
-        Qdots_GC(:,model_info.ExtFunIO.jointi.base_lateral) = -Qdots_GC(:,model_info.ExtFunIO.jointi.base_lateral);
     end
     
     % Qdotdots
@@ -1030,15 +1018,12 @@ if strcmp(S.misc.gaitmotion_type,'HalfGaitCycle')
         Xk_Qdotdots_opt(1:end,model_info.ExtFunIO.symQs.QdotsInvB);
     Qdotdots_GC(N-IC1i_c+2:N-IC1i_c+1+N,model_info.ExtFunIO.symQs.QsOpp) = ...
         -Xk_Qdotdots_opt(1:end,model_info.ExtFunIO.symQs.QsOpp);
-    Qdotdots_GC(N-IC1i_c+2:N-IC1i_c+1+N,model_info.ExtFunIO.jointi.base_lateral) = ...
-        -Xk_Qdotdots_opt(1:end,model_info.ExtFunIO.jointi.base_lateral);
     Qdotdots_GC(N-IC1i_c+2+N:2*N,:) = Xk_Qdotdots_opt(1:IC1i_c-1,:);
     % If the first heel strike was on the left foot then we invert so that
     % we always start with the right foot, for analysis purpose
     if strcmp(HS1,'l')
         Qdotdots_GC(:,model_info.ExtFunIO.symQs.QdotsInvA) = Qdotdots_GC(:,model_info.ExtFunIO.symQs.QdotsInvB);
         Qdotdots_GC(:,model_info.ExtFunIO.symQs.QsOpp) = -Qdotdots_GC(:,model_info.ExtFunIO.symQs.QsOpp);
-        Qdotdots_GC(:,model_info.ExtFunIO.jointi.base_lateral) = -Qdotdots_GC(:,model_info.ExtFunIO.jointi.base_lateral);
     end
     
     % Muscle activations
@@ -1137,7 +1122,6 @@ elseif strcmp(S.misc.gaitmotion_type,'FullGaitCycle')
     if strcmp(HS1,'l')
         Qs_GC(:,model_info.ExtFunIO.symQs.QdotsInvA)  = Qs_GC(:,model_info.ExtFunIO.symQs.QdotsInvB);
         Qs_GC(:,model_info.ExtFunIO.symQs.QsOpp)       = -Qs_GC(:,model_info.ExtFunIO.symQs.QsOpp);
-        Qs_GC(:,model_info.ExtFunIO.jointi.base_lateral) = -Qs_GC(:,model_info.ExtFunIO.jointi.base_lateral);
     end
     temp_Qs_GC_pelvis_tx = Qs_GC(1,model_info.ExtFunIO.jointi.base_forward);
     Qs_GC(:,model_info.ExtFunIO.jointi.base_forward) = Qs_GC(:,model_info.ExtFunIO.jointi.base_forward)-...
@@ -1152,7 +1136,6 @@ elseif strcmp(S.misc.gaitmotion_type,'FullGaitCycle')
     if strcmp(HS1,'l')
         Qdots_GC(:,model_info.ExtFunIO.symQs.QdotsInvA) = Qdots_GC(:,model_info.ExtFunIO.symQs.QdotsInvB);
         Qdots_GC(:,model_info.ExtFunIO.symQs.QsOpp) = -Qdots_GC(:,model_info.ExtFunIO.symQs.QsOpp);
-        Qdots_GC(:,model_info.ExtFunIO.jointi.base_lateral) = -Qdots_GC(:,model_info.ExtFunIO.jointi.base_lateral);
     end
     
     % Qdotdots
@@ -1164,7 +1147,6 @@ elseif strcmp(S.misc.gaitmotion_type,'FullGaitCycle')
     if strcmp(HS1,'l')
         Qdotdots_GC(:,model_info.ExtFunIO.symQs.QdotsInvA) = Qdotdots_GC(:,model_info.ExtFunIO.symQs.QdotsInvB);
         Qdotdots_GC(:,model_info.ExtFunIO.symQs.QsOpp) = -Qdotdots_GC(:,model_info.ExtFunIO.symQs.QsOpp);
-        Qdotdots_GC(:,model_info.ExtFunIO.jointi.base_lateral) = -Qdotdots_GC(:,model_info.ExtFunIO.jointi.base_lateral);
     end
 
     % Muscle activations
