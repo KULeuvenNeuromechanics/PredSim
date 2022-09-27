@@ -57,7 +57,9 @@ To run this code you need to have the following softwares on your machine:
 1. Clone this repository to your machine. Do not put it in a OneDrive folder, this causes issues. If you have a computer with restricted permissions, make sure you have permission to run executables from the selected folder (For computers with KU Leuven BioMed Group policies, this is C:\GBW_MyPrograms\ ).
 2. Get the OpenSim 4.3 API running on MATLAB. See [Setting up your Matlab Scripting Environment](https://simtk-confluence.stanford.edu:8443/display/OpenSim/Scripting+with+Matlab#ScriptingwithMatlab-MatlabSetupSettingupyourMatlabScriptingEnvironment)
 3. In main.m, change [S.solver.CasaADi_path](https://github.com/KULeuvenNeuromechanics/PredSim/blob/9fbbd43cf83617620e428d2c91f222c909a1349c/main.m#L84) to reflect the location where you installed CasADi. 
-4. In main.m, change [S.Cpp2Dll.PathCpp2Dll_Exe](https://github.com/KULeuvenNeuromechanics/PredSim/blob/9fbbd43cf83617620e428d2c91f222c909a1349c/main.m#L115) to specify where you want to have the executable installed that will convert the OpenSim models to the external function. If you have a computer with KU Leuven restrictions, be sure to have this path go into your 'C:\GBW_MyPrograms' folder.
+4. In main.m, change [S.Cpp2Dll.PathCpp2Dll_Exe](https://github.com/KULeuvenNeuromechanics/PredSim/blob/9fbbd43cf83617620e428d2c91f222c909a1349c/main.m#L115) to specify where you want to have the executable installed that will convert the OpenSim models to the external function. If you have a computer with KU Leuven GBW restrictions, be sure to have this path go into your 'C:\GBW_MyPrograms' folder.
+5. In main.m, change [S.Cpp2Dll.compiler](https://github.com/KULeuvenNeuromechanics/PredSim/blob/9fbbd43cf83617620e428d2c91f222c909a1349c/main.m#L116) to your version of Visual Studio. Not setting a version will assume the 2017 version.
+6. Make sure the opensimAD submodule is installed. If \opensimAD\ is empty, open git command prompt and run `git submodule update --init`.
 
 After perfoming these steps, run the main script. If you don't receive any errors, and your results are the same as [these results](ADD LINK) you have succesfully intalled and set up the code. You are ready to do your own simulations.
 
@@ -124,7 +126,7 @@ This code can automatically convert an OpenSim model to the external function us
 #### S.metabolicE - metabolic energy
 
 - **S.metabolicE.tanh_b**: 
-	- hyperbolic tangeant smoothing factor used in the metabolic cost calculation. Default is *100* [double]
+	- hyperbolic tangeant smoothing factor used in the metabolic cost calculation. Default is *10* [double]
 - **S.metabolicE.model**: 
 	- the name of the metabolic energy model used. Default is [*Bhargava2004*](https://doi.org/10.1016/S0021-9290(03)00239-2) [char]. Currently only Bhargava2004 model has been implemented. Other options that will be added in the future are:
 		- [*Umberger2003*](https://doi.org/10.1080/1025584031000091678)
@@ -232,7 +234,7 @@ This code can automatically convert an OpenSim model to the external function us
 - **S.weights.pass_torq**: 
 	- weight on passive torques. Default is *1000* [double]
 - **S.weights.pass_torq_includes_damping**: 
-	- specify if damping torque = damping coefficient * coordinate velocity is to be included in the cost function (0 or 1). Default is 1 [double].
+	- specify if damping torque = damping coefficient * coordinate velocity is to be included in the cost function (0 or 1). Default is 0 [double].
 - **S.weights.a**: 
 	- weight on muscle activations. Default is *2000* [double]
 - **S.weights.slack_ctrl**: 
