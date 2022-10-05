@@ -16,10 +16,12 @@ function slow_twitch_fiber_ratio = getSlowTwitchRatios(muscleNames)
 % Original author: Antoine Falisse
 % Original date: 12/19/2018
 %
-% Last edit by: 
-% Last edit date: 
+%   Edit: add values for muscle groups
+% Last edit by: Lars D'Hondt
+% Last edit date: 12/Aug/2022
 % --------------------------------------------------------------------------
 
+% Right muscles
 pctst_data.glut_med1_r = 0.55;
 pctst_data.glut_med2_r = 0.55;
 pctst_data.glut_med3_r = 0.55;
@@ -67,6 +69,7 @@ pctst_data.extobl_r = 0.58;
 pctst_data.add_long_r = 0.50;
 pctst_data.add_brev_r = 0.50;
 
+% Left muscles
 pctst_data.glut_med1_l = 0.55;
 pctst_data.glut_med2_l = 0.55;
 pctst_data.glut_med3_l = 0.55;
@@ -114,6 +117,21 @@ pctst_data.extobl_l = 0.58;
 pctst_data.add_long_l = 0.50;
 pctst_data.add_brev_l = 0.50;
 
+% Right muscle groups
+pctst_data.hamstrings_r = 0.5425;
+pctst_data.glut_max_r = 0.55;
+pctst_data.iliopsoas_r = 0.50;
+pctst_data.vasti_r = 0.543;
+pctst_data.gastroc_r = 0.566;
+
+%  Left muscle groups
+pctst_data.hamstrings_l = 0.5425;
+pctst_data.glut_max_l = 0.55;
+pctst_data.iliopsoas_l = 0.50;
+pctst_data.vasti_l = 0.543;
+pctst_data.gastroc_l = 0.566;
+
+% Get slow twitch fiber ratio for selected muscles
 slow_twitch_fiber_ratio = zeros(length(muscleNames),1);
 for i = 1:length(muscleNames)
     if isfield(pctst_data,muscleNames{i})

@@ -13,17 +13,18 @@ clc
 % Construct a cell array with full paths to files with saved results for
 % which you want to appear on the plotted figures.
 results_folder = fullfile(pathRepoFolder,'PredSimResults');
-result_paths{1} = fullfile([results_folder '\Fal_s1_mtp\Fal_s1_mtp_job148.mat']);
-result_paths{2} = fullfile([results_folder '\Fal_s1_mtp_v2\Fal_s1_mtp_v2_job149.mat']);
+result_paths{1} = fullfile([results_folder '\subject1_2D\subject1_2D_v10.mat']);
+result_paths{2} = fullfile([results_folder '\subject1_2D\subject1_2D_v15.mat']);
+% result_paths{3} = fullfile([results_folder '\subject1_2D\subject1_2D_v13.mat']);
 
 % Cell array with legend name for each result
-legend_names = {'test with old .dll', 'test with generated .dll'};
+legend_names = {'costfunction 1','cost 2D paper','cost 3D paper w/o Edot'};
 
 % Path to the folder where figures are saved
 figure_folder = results_folder;
 
 % Common part of the filename for all saved figures
-figure_savename = 'test_dll';
+figure_savename = 'test_2D';
 
 %% Settings for each figure to be made
 % "figure_settings" is a cell array where each cell contains a struct with
@@ -40,7 +41,7 @@ figure_savename = 'test_dll';
 %   coordinates or muscles.
 %
 %   - variables -
-%   * Cell array of strings. Containsone or more variable names. e.g. 'Qs'
+%   * Cell array of strings. Contains one or more variable names. e.g. 'Qs'
 %   to plot coordinate positions, 'a' to plot muscle activity. Variables
 %   that do not rely on coordinates or muscles (e.g. GRFs)
 %
@@ -63,8 +64,22 @@ figure_settings(fig_count).name = 'all_angles';
 figure_settings(fig_count).dofs = {'all_coords'};
 figure_settings(fig_count).variables = {'Qs'};
 figure_settings(fig_count).savepath = fullfile(figure_folder,[figure_savename '_' figure_settings(fig_count).name]);
-figure_settings(fig_count).filetype = {'jpeg'};
+figure_settings(fig_count).filetype = {};
 fig_count = fig_count+1;
+
+% figure_settings(fig_count).name = 'all_angles';
+% figure_settings(fig_count).dofs = {'all_coords'};
+% figure_settings(fig_count).variables = {'Qdots'};
+% figure_settings(fig_count).savepath = fullfile(figure_folder,[figure_savename '_' figure_settings(fig_count).name]);
+% figure_settings(fig_count).filetype = {};
+% fig_count = fig_count+1;
+
+% figure_settings(fig_count).name = 'all_angles';
+% figure_settings(fig_count).dofs = {'all_coords'};
+% figure_settings(fig_count).variables = {'Qddots'};
+% figure_settings(fig_count).savepath = fullfile(figure_folder,[figure_savename '_' figure_settings(fig_count).name]);
+% figure_settings(fig_count).filetype = {};
+% fig_count = fig_count+1;
 
 % figure_settings(fig_count).name = 'selected_angles';
 % figure_settings(fig_count).dofs = {'hip_flexion_r','hip_adduction_r','hip_rotation_r','knee_angle_r',...
@@ -74,15 +89,16 @@ fig_count = fig_count+1;
 % figure_settings(fig_count).filetype = {};
 % fig_count = fig_count+1;
 
-% figure_settings(fig_count).name = 'torques';
-% figure_settings(fig_count).dofs = {'all_coords'};
-% figure_settings(fig_count).variables = {'T_ID'};
-% figure_settings(fig_count).savepath = fullfile(figure_folder,[figure_savename '_' figure_settings(fig_count).name]);
-% figure_settings(fig_count).filetype = {};
-% fig_count = fig_count+1;
+figure_settings(fig_count).name = 'torques';
+figure_settings(fig_count).dofs = {'all_coords'};
+figure_settings(fig_count).variables = {'T_ID'};
+figure_settings(fig_count).savepath = fullfile(figure_folder,[figure_savename '_' figure_settings(fig_count).name]);
+figure_settings(fig_count).filetype = {};
+fig_count = fig_count+1;
 
-% figure_settings(fig_count).name = 'ankle_muscles';
-% figure_settings(fig_count).dofs = {'soleus_r','med_gas_r','lat_gas_r','tib_ant_r'};
+% figure_settings(fig_count).name = 'all_muscles';
+% figure_settings(fig_count).dofs = {'hamstrings_r','bifemsh_r','glut_max_r','iliopsoas_r',...
+%     'rect_fem_r','vasti_r','gastroc_r','soleus_r','tib_ant_r'};
 % figure_settings(fig_count).variables = {'a','FT','lMtilde','Wdot','Edot_gait'};
 % figure_settings(fig_count).savepath = fullfile(figure_folder,[figure_savename '_' figure_settings(fig_count).name]);
 % figure_settings(fig_count).filetype = {};

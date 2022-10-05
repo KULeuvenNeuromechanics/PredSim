@@ -157,6 +157,11 @@ if ~isfield(S.misc,'constant_pennation_angle')
     S.misc.constant_pennation_angle = 0;
 end
 
+% when evaluating the external function, overwrite selected coordinate
+% positions with 0
+if ~isfield(S.misc,'coordPosZeroForExternal')
+    S.misc.coordPosZeroForExternal = [];
+end
 
 %% post_process
 
@@ -175,12 +180,17 @@ if ~isfield(S.post_process,'rerun')
     S.post_process.rerun = 0;
 end
 
+% rerun post-processing without solving OCP, and start from raw solution vector
+if ~isfield(S.post_process,'rerun_from_w')
+    S.post_process.rerun_from_w = 0;
+end
+
 % filename of the result to post-process
 if ~isfield(S.post_process,'result_filename')
     S.post_process.result_filename = [];
 end
 
-if S.post_process.rerun && isempty(S.post_process.result_filename)
+if (S.post_process.rerun || S.post_process.rerun_from_w) && isempty(S.post_process.result_filename)
     error('Please provide the name of the result to post-process. (S.post_process.result_filename)')
 end
 

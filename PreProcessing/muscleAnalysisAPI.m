@@ -83,9 +83,10 @@ dM = zeros(n_data_points,n_muscle,n_coord);
 for j=1:n_data_points
     % Set each coordinate value
     for i=1:n_coord
-        state_vars.set(model_info.ExtFunIO.coordi_OpenSimAPIstate.(coord_names{i}),Qs(j,i));
+%         state_vars.set(model_info.ExtFunIO.coordi_OpenSimAPIstate.(coord_names{i}),Qs(j,i));
+        model.getCoordinateSet().get(coord_names{i}).setValue(s,Qs(j,i));
     end
-    model.setStateVariableValues(s,state_vars);
+%     model.setStateVariableValues(s,state_vars);
     model.realizePosition(s);
 
     % Loop over muscles

@@ -1,4 +1,4 @@
-function [] = add_contact_spheres(osim_path,contact_spheres)
+function [] = add_contact_spheres(osim_path,contact_spheres,varargin)
 % --------------------------------------------------------------------------
 % add_contact_spheres
 %   This functions adds contact spheres to the .osim model, and defines a
@@ -36,6 +36,14 @@ staticFriction      = 0.8;
 dynamicFriction     = 0.8;
 viscousFriction     = 0.5;
 transitionVelocity  = 0.2;
+
+%% extract optional inputs
+for i=1:2:length(varargin)
+    if strcmp(varargin{i},stiffness)
+        stiffness = varargin{i+1};
+    end
+end
+
 
 %% load model
 import org.opensim.modeling.*;

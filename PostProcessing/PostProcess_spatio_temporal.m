@@ -51,8 +51,12 @@ R.spatiotemp.double_support = length(R.ground_reaction.idx_double_support)/size(
 R.spatiotemp.stride_freq = 1/R.time.mesh_GC(end);
 
 % stepwidth
-R.spatiotemp.step_width_COP = abs(mean(R.ground_reaction.COP_r(R.ground_reaction.idx_stance_r,3)) ...
-    - mean(R.ground_reaction.COP_l(R.ground_reaction.idx_stance_l,3)));
+if isfield(R.ground_reaction,'COP_r') && isfield(R.ground_reaction,'COP_l')
+    R.spatiotemp.step_width_COP = abs(mean(R.ground_reaction.COP_r(R.ground_reaction.idx_stance_r,3)) ...
+        - mean(R.ground_reaction.COP_l(R.ground_reaction.idx_stance_l,3)));
+else
+    R.spatiotemp.step_width_COP = nan;
+end
 
 % distance traveled
 R.spatiotemp.dist_trav = R.kinematics.Qs(end,model_info.ExtFunIO.jointi.base_forward) ...
