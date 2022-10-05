@@ -20,10 +20,10 @@ clc
 [pathHere,~,~] = fileparts(mfilename('fullpath'));
 
 % .osim file to adapt
-path_osim_in = fullfile(pathHere,'Falisse_et_al_2022.osim');
+path_osim_in = fullfile(pathHere,'Vitruvian_Man.osim');
 
 % adapted .osim file
-path_osim_out = fullfile(pathHere,'Falisse_et_al_2022.osim');
+path_osim_out = fullfile(pathHere,'Vitruvian_Man.osim');
 
 add_actuators_bool = 1;
 add_contact_bool = 0;
@@ -96,21 +96,21 @@ torq_act(ita).max_torque = 150;
 torq_act(ita).time_constant = 0.035;
 ita = ita+1;
 
-% coordinate to which te actuator applies torque
-torq_act(ita).coord = ('arm_add_r');
-% maximum torque
-torq_act(ita).max_torque = 150;
-% time constant of the activation dynamics
-torq_act(ita).time_constant = 0.035;
-ita = ita+1;
-
-% coordinate to which te actuator applies torque
-torq_act(ita).coord = ('arm_rot_r');
-% maximum torque
-torq_act(ita).max_torque = 150;
-% time constant of the activation dynamics
-torq_act(ita).time_constant = 0.035;
-ita = ita+1;
+% % coordinate to which te actuator applies torque
+% torq_act(ita).coord = ('arm_add_r');
+% % maximum torque
+% torq_act(ita).max_torque = 150;
+% % time constant of the activation dynamics
+% torq_act(ita).time_constant = 0.035;
+% ita = ita+1;
+% 
+% % coordinate to which te actuator applies torque
+% torq_act(ita).coord = ('arm_rot_r');
+% % maximum torque
+% torq_act(ita).max_torque = 150;
+% % time constant of the activation dynamics
+% torq_act(ita).time_constant = 0.035;
+% ita = ita+1;
 
 % coordinate to which te actuator applies torque
 torq_act(ita).coord = ('elbow_flex_r');
@@ -128,6 +128,13 @@ for i=1:length(torq_act)
     ita = ita+1;
 end
 
+% coordinate to which the actuator applies torque
+torq_act(ita).coord = ('lumbar_extension');
+% maximum torque
+torq_act(ita).max_torque = 300;
+% time constant of the activation dynamics
+torq_act(ita).time_constant = 0.035;
+ita = ita+1;
 
 %%
 

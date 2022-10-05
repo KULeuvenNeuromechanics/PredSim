@@ -1,4 +1,4 @@
-function [] = updateDrawing(usr_height,usr_fingertip_elbow,usr_elbow_shoulder,...
+function [varargout] = updateDrawing(usr_height,usr_fingertip_elbow,usr_elbow_shoulder,...
     usr_shoulder_width,usr_hip_knee,usr_knee_ground,usr_foot_length,ax1,...
     ink_colour,paper_colour)
 
@@ -57,6 +57,20 @@ leg_length = dim_foot.height + dim_low_leg.length + dim_upp_leg.length;
 % torso
 dim_trs.height = 1-1/6-leg_length;
 dim_trs.shwidth = default_ratio_shoulder_width*sf_shoulder;
+
+sf_torso = (1/2) / (1-leg_length);
+
+%% Reurn scale factors if asked
+if nargout >= 1
+    sf.foot = sf_foot;
+    sf.upp_leg = sf_upp_leg;
+    sf.low_leg = sf_low_leg;
+    sf.torso = sf_torso;
+    sf.shoulder = sf_shoulder;
+    sf.low_arm = sf_low_arm;
+    sf.upp_arm = sf_upp_arm;
+    varargout{1} = sf;
+end
 
 %% reference points for drawing
 pos_hip = [dim_pel.width/2-dim_upp_leg.width/2; leg_length];
