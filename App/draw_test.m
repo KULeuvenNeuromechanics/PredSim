@@ -97,7 +97,7 @@ drawLimbSegment(ax1,pos_knee,pos_ankle,dim_low_leg.width,0,ink_colour);
 drawFoot(ax1,pos_ankle,dim_low_leg.width,dim_foot.width,dim_foot.length,dim_foot.height,0,ink_colour)
 
 % left upper leg
-knee1 = drawLimbSegment(ax1,pos_hip,pos_knee,dim_upp_leg.width,-pi/7,ink_colour,[0.02;0.5]);
+knee1 = drawLimbSegment(ax1,pos_hip,pos_knee,dim_upp_leg.width,-pi/7,ink_colour,pos_hip-[dim_upp_leg.width/3;0]);
 % left lower leg
 ankle1 = drawLimbSegment(ax1,knee1,pos_ankle-pos_knee+knee1,dim_low_leg.width,-pi/7,ink_colour);
 % left foot
@@ -190,7 +190,8 @@ function [] = drawTorso(ax,pt1,pt2,w1,w2,colr)
 axes(ax)
 
 p1_l = [abs(pt1(1))+w1/2;pt1(2)]; % pelvis left
-p2_l = [p1_l(1); p1_l(2)+(pt2(2)-pt1(2))*0.3];
+% p2_l = [p1_l(1); p1_l(2)+(pt2(2)-pt1(2))*0.3];
+p2_l = [p1_l(1); p1_l(2)+w1];
 p3_l = [abs(pt2(1));pt2(2)-w2/2]; % left shoulder
 p4_l = [abs(pt2(1));pt2(2)+w2/2];
 
