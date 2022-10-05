@@ -144,6 +144,9 @@ if add_actuators_bool
     add_actuators(path_osim_out,torq_act);
 end
 if add_contact_bool
-    add_contact_spheres(path_osim_out,contact_spheres)
+    add_contact_spheres(path_osim_out,contact_spheres);
+    
+%     Fix the location of contact spheres based on the size of model
+    fixContactSpherePositionAfterScaling('../Subjects/Falisse_et_al_2022/Falisse_et_al_2022.osim',path_osim_out);
 end
 
