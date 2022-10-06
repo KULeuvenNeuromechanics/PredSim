@@ -12,13 +12,15 @@ clc
 
 % Construct a cell array with full paths to files with saved results for
 % which you want to appear on the plotted figures.
-results_folder = fullfile(pathRepoFolder,'PredSimResults');
-result_paths{1} = fullfile([results_folder '\subject1_2D\subject1_2D_v10.mat']);
-result_paths{2} = fullfile([results_folder '\subject1_2D\subject1_2D_v15.mat']);
-% result_paths{3} = fullfile([results_folder '\subject1_2D\subject1_2D_v13.mat']);
+results_folder = 'C:\Users\u0150099\OneDrive - KU Leuven\Resultaten_KinderUniversiteit';
+result_paths{1} = fullfile([results_folder '\team_Lars\Leo_v7.mat']);
+result_paths{2} = fullfile([results_folder '\team_Lars\zware_Leo_v1.mat']);
+% result_paths{2} = 'C:\GBW_MyPrograms\PredSimResults\Leo\Leo_v4.mat';
+% result_paths{3} = 'C:\GBW_MyPrograms\PredSimResults\Leo\Leo_v5.mat';
+% result_paths{4} = 'C:\GBW_MyPrograms\PredSimResults\Leo\Leo_v6.mat';
 
 % Cell array with legend name for each result
-legend_names = {'costfunction 1','cost 2D paper','cost 3D paper w/o Edot'};
+legend_names = {'Leo','Leo'};
 
 % Path to the folder where figures are saved
 figure_folder = results_folder;
@@ -89,12 +91,12 @@ fig_count = fig_count+1;
 % figure_settings(fig_count).filetype = {};
 % fig_count = fig_count+1;
 
-figure_settings(fig_count).name = 'torques';
-figure_settings(fig_count).dofs = {'all_coords'};
-figure_settings(fig_count).variables = {'T_ID'};
-figure_settings(fig_count).savepath = fullfile(figure_folder,[figure_savename '_' figure_settings(fig_count).name]);
-figure_settings(fig_count).filetype = {};
-fig_count = fig_count+1;
+% figure_settings(fig_count).name = 'torques';
+% figure_settings(fig_count).dofs = {'all_coords'};
+% figure_settings(fig_count).variables = {'T_ID'};
+% figure_settings(fig_count).savepath = fullfile(figure_folder,[figure_savename '_' figure_settings(fig_count).name]);
+% figure_settings(fig_count).filetype = {};
+% fig_count = fig_count+1;
 
 % figure_settings(fig_count).name = 'all_muscles';
 % figure_settings(fig_count).dofs = {'hamstrings_r','bifemsh_r','glut_max_r','iliopsoas_r',...

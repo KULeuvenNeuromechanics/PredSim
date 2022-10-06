@@ -23,7 +23,7 @@ addpath([S.misc.main_path '\VariousFunctions'])
 
 %% Required inputs
 % name of the subject
-S.subject.name = 'Subject1_2D';
+S.subject.name = 'Leo';
 
 % path to folder where you want to store the results of the OCP
 S.subject.save_folder  = fullfile(pathRepoFolder,'PredSimResults',S.subject.name); 
@@ -74,8 +74,8 @@ S.solver.run_as_batch_job = 0;
 % S.post_process.savename  = 'datetime';
 % S.post_process.rerun   = 1;
 % S.post_process.rerun_from_w = 1;
-S.post_process.result_filename = 'Subject1_2D_jit_Ox_p6_openmp';
-% S.post_process.result_filename = 'Subject1_2D_no_jit_p6';
+% S.post_process.result_filename = '';
+% S.post_process.result_filename = '';
 
 % % S.solver
 % S.solver.linear_solver  = 'ma86';
@@ -86,32 +86,32 @@ S.solver.N_threads      = 6;
 % S.solver.N_meshes       = 50;
 % S.solver.par_cluster_name = ;
 S.solver.CasADi_path    = 'C:\GBW_MyPrograms\casadi_3_5_5';
-S.Solver.jit = 1;
 
 % % S.subject
 % S.subject.mass              = ;
 % S.subject.IG_pelvis_y       = ;
-S.subject.v_pelvis_x_trgt   = 1.33;
+S.subject.v_pelvis_x_trgt   = [1,1.3]; %1.33;
 % S.subject.IK_Bounds = ;
 % S.subject.muscle_strength   = ;
 % S.subject.muscle_pass_stiff_shift = {{'soleus_l','soleus_r'},0.9,{'tib_ant_l'},1.1};
 % S.subject.muscle_pass_stiff_scale = ;
-% S.subject.tendon_stiff_scale      = {{'soleus_l','soleus_r','gastroc_r','gastroc_l'},0.5};
+S.subject.tendon_stiff_scale      = {{'soleus_l','soleus_r','gastroc_l','gastroc_r'},0.5};
 % S.subject.mtp_type          = '2022paper';
 % S.subject.MT_params         = ;
 % S.subject.spasticity        = ;
 % S.subject.muscle_coordination = ;
-% S.subject.set_stiffness_coefficient_selected_dofs = {{'mtp_angle_l','mtp_angle_r'},25};
-% S.subject.set_damping_coefficient_selected_dofs = {{'mtp_angle_l','mtp_angle_r'},2};
+S.subject.set_stiffness_coefficient_selected_dofs = {{'mtp_angle_l','mtp_angle_r'},25};
+S.subject.set_damping_coefficient_selected_dofs = {{'mtp_angle_l','mtp_angle_r'},2,...
+    {'arm_flex_r','arm_flex_l','elbow_flex_r','elbow_flex_l'},0.5};
 % S.subject.set_limit_torque_coefficients_selected_dofs = {{'mtp_angle_l','mtp_angle_r'},[0,0,0,0],[0,0]};
 
 % % S.weights
-% S.weights.E         = 0;
-% S.weights.E_exp     = 1;
-% S.weights.q_dotdot  = 1;
+% S.weights.E         = 1;
+S.weights.E_exp     = 1;
+S.weights.q_dotdot  = 0;
 % S.weights.e_arm     = 1;
 % S.weights.pass_torq = 0;
-% S.weights.a         = 1;
+% S.weights.a         = 1e-3;
 % S.weights.slack_ctrl = ;
 % S.weights.pass_torq_includes_damping = ;
 

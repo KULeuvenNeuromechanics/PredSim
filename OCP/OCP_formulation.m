@@ -550,7 +550,12 @@ Qs_nsc = Qs.*(scaling.Qs'*ones(1,N+1));
 dist_trav_tot = Qs_nsc(model_info.ExtFunIO.jointi.base_forward,end) - ...
     Qs_nsc(model_info.ExtFunIO.jointi.base_forward,1);
 vel_aver_tot = dist_trav_tot/tf;
-opti.subject_to(vel_aver_tot - S.subject.v_pelvis_x_trgt == 0)
+if length(S.subject.v_pelvis_x_trgt) == 1
+    opti.subject_to(vel_aver_tot - S.subject.v_pelvis_x_trgt == 0)
+else
+    opti.subject_to(vel_aver_tot >= min(S.subject.v_pelvis_x_trgt))
+    opti.subject_to(vel_aver_tot <= max(S.subject.v_pelvis_x_trgt))
+end
 
 % optional constraints
 if strcmp(S.misc.gaitmotion_type,'HalfGaitCycle')
@@ -619,18 +624,6 @@ else
     options.ipopt.linear_solver         = S.solver.linear_solver;
     options.ipopt.tol                   = 1*10^(-S.solver.tol_ipopt);
     options.ipopt.constr_viol_tol       = 1*10^(-S.solver.tol_ipopt);
-    if S.Solver.jit
-        copyfile(fullfile(S.misc.subject_path,S.misc.external_function),S.misc.main_path);
-        [~,osim_file_name,~] = fileparts(model_info.osim_path);
-        pathLib = fullfile(S.misc.main_path,'opensimAD','install-ExternalFunction',...
-            ['F_' osim_file_name],'lib',['F_' osim_file_name '.lib']);
-        copyfile(pathLib,S.misc.main_path);
-        options.jit = true;
-        options.compiler = 'shell'; % use system compiler
-        options.jit_options.flags = {'/Ox','/openmp'}; % optimize code for fast evaluation
-        options.jit_options.linker_flags = {['F_' osim_file_name '.lib']};
-        options.jit_options.verbose = true;
-    end
     opti.solver('ipopt', options);
     % timer
     disp(['... OCP formulation done. Time elapsed ' num2str(toc(t0)) ' s'])
@@ -645,11 +638,6 @@ else
     
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     diary off
-    % clean jit files
-    if S.Solver.jit
-        delete(fullfile(S.misc.main_path,['F_' osim_file_name '.lib']));
-        delete(fullfile(S.misc.main_path,['F_' osim_file_name '.dll']));
-    end
     % Extract results
     % Create setup
     setup.tolerance.ipopt = S.solver.tol_ipopt;
@@ -836,7 +824,7 @@ dist_trav_opt = q_opt_unsc_all.rad(end,model_info.ExtFunIO.jointi.base_forward) 
 time_elaps_opt = tf_opt; % time elapsed
 vel_aver_opt = dist_trav_opt/time_elaps_opt;
 % assert_v_tg should be 0
-assert_v_tg = abs(vel_aver_opt-S.subject.v_pelvis_x_trgt);
+assert_v_tg = max(abs(vel_aver_opt-S.subject.v_pelvis_x_trgt));
 if assert_v_tg > 1*10^(-S.solver.tol_ipopt)
     disp('Issue when reconstructing average speed')
 end

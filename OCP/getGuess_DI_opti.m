@@ -147,9 +147,9 @@ end
 all_speeds = 0.73:0.1:5;
 % all_speeds = 0.73:0.1:2.73;
 all_tf = 0.70:-((0.70-0.35)/(length(all_speeds)-1)):0.35;
-idx_speed = find(all_speeds==S.subject.v_pelvis_x_trgt);
+idx_speed = find(all_speeds==mean(S.subject.v_pelvis_x_trgt));
 if isempty(idx_speed)
-    idx_speed = find(all_speeds > S.subject.v_pelvis_x_trgt,1,'first');
+    idx_speed = find(all_speeds > mean(S.subject.v_pelvis_x_trgt),1,'first');
 end
 guess.tf = all_tf(idx_speed);
 

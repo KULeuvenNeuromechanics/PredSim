@@ -6,7 +6,7 @@ function [] = PredSim_wrapper_for_app(U,sf)
 %% set paths
 [pathApp,~,~] = fileparts(mfilename('fullpath'));
 [pathRepo,~,~] = fileparts(pathApp);
-cd(pathRepo)
+cd(pathRepo);
 
 %% adapt ModelName
 % prevent errors with filenames and paths
@@ -45,13 +45,10 @@ if U.Height > 50
 end
 
 % Assume constand BMI
-U.Mass = 23.1481*U.Height^2;
+% U.Mass = 23.1481*U.Height^2;
 
 % Scale
-scaleOsim(pathRepo, U, sf)
-
-%% add contact spheres
-
+scaleOsim(pathRepo, U, sf);
 
 
 %% Initialize S
@@ -71,9 +68,9 @@ S.subject.name = U.ModelName;
 S.subject.save_folder  = fullfile('C:\Users\u0150099\OneDrive - KU Leuven\Resultaten_KinderUniversiteit',U.GroupName); 
 
 % either choose "quasi-random" or give the path to a .mot file you want to use as initial guess
-S.subject.IG_selection = 'quasi-random';
-% S.subject.IG_selection = fullfile(S.misc.main_path,'OCP','IK_Guess_Default.mot');
-% S.subject.IG_selection_gaitCyclePercent = 50;
+% S.subject.IG_selection = 'quasi-random';
+S.subject.IG_selection = fullfile(S.misc.main_path,'OCP','IK_Guess_Default.mot');
+S.subject.IG_selection_gaitCyclePercent = 50;
 
 % give the path to the osim model of your subject
 osim_path = fullfile(pathRepo,'Subjects',S.subject.name,[S.subject.name '.osim']);
@@ -86,12 +83,18 @@ S.solver.CasADi_path    = 'C:\GBW_MyPrograms\casadi_3_5_5';
 
 
 S.subject.v_pelvis_x_trgt   = 1.33;
-% S.subject.tendon_stiff      = ;
-S.subject.mtp_type          = '2022paper';
-S.subject.scale_MT_params         = {{'soleus_l'},'FMo',0.9,};
+% S.subject.mtp_type          = '2022paper';
+
+S.subject.MT_params  = {{'hamstrings_r','bifemsh_r','glut_max_r','iliopsoas_r',...
+    'rect_fem_r','vasti_r','gastroc_r','soleus_r','tib_ant_r','hamstrings_l','bifemsh_l',...
+    'glut_max_l','iliopsoas_l','rect_fem_l','vasti_l','gastroc_l','soleus_l','tib_ant_l'},...
+    'FMo',U.Force_sf};
+
+S.subject.tendon_stiff_scale      = {{'soleus_l','soleus_r','gastroc_r','gastroc_l'},0.5};
 
 S.subject.set_stiffness_coefficient_selected_dofs = {{'mtp_angle_l','mtp_angle_r'},25};
-S.subject.set_damping_coefficient_selected_dofs = {{'mtp_angle_l','mtp_angle_r'},2};
+S.subject.set_damping_coefficient_selected_dofs = {{'mtp_angle_l','mtp_angle_r'},2,...
+    {'arm_flex_r','arm_flex_l','elbow_flex_r','elbow_flex_l'},0.5};
 % S.subject.set_limit_torque_coefficients_selected_dofs = {{'mtp_angle_l','mtp_angle_r'},[0,0,0,0],[0,0]};
 
 % % S.weights

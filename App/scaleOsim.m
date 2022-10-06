@@ -17,12 +17,15 @@ function scaleOsim(MainPath, U, sf)
 
 
 
-
-
 %% inputs
 % folders
 osim_output_name = [U.ModelName '.osim'];
 output_dir = fullfile(MainPath, 'Subjects',U.ModelName);
+if exist(fullfile(output_dir,osim_output_name),'file')
+    disp('Scaled model already exists.')
+    return
+end
+
 if ~isfolder(output_dir)
     mkdir(output_dir);
 end
@@ -106,7 +109,7 @@ xmlwrite(output_name,scalefile);
 import org.opensim.modeling.*
 
 scale = ScaleTool(output_name);
-scale.run()
+scale.run();
 
 % remove unscaled model file
 delete(fullfile(output_dir,'Vitruvian_Man.osim'));

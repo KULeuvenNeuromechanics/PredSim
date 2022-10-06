@@ -108,30 +108,30 @@ for m_nr=1:length(muscle_sel)
     order_all(m_nr) = order;            
 end
 
-figure();
-hold on;
-plot(lMT_all_error)
-xlimits = get(gca, 'XLim');
-plot(xlimits, [1, 1]*S.misc.threshold_lMT_fit, 'r', 'linewidth', 2)
-title('RMS error on the approximated muscle-tendon length')
-ylabel('RMS error (m)')
-
-figure();
-hold on;
-plot(max(DM_all_error, [], 2))
-xlimits = get(gca, 'XLim');
-plot(xlimits, [1, 1]*S.misc.threshold_dM_fit, 'r', 'linewidth', 2)
-title('maximal RMS error on the approximated muscle moment arm')
-ylabel('RMS error (m)')
-
-figure();
-hold on;
-plot(order_all)
-ylim([0 max_order+1])
-xlimits = get(gca, 'XLim');
-plot(xlimits, [max_order, max_order], 'r', 'linewidth', 2)
-title('Order of the polynomial approximation')
-ylabel('Order')
+% figure();
+% hold on;
+% plot(lMT_all_error)
+% xlimits = get(gca, 'XLim');
+% plot(xlimits, [1, 1]*S.misc.threshold_lMT_fit, 'r', 'linewidth', 2)
+% title('RMS error on the approximated muscle-tendon length')
+% ylabel('RMS error (m)')
+% 
+% figure();
+% hold on;
+% plot(max(DM_all_error, [], 2))
+% xlimits = get(gca, 'XLim');
+% plot(xlimits, [1, 1]*S.misc.threshold_dM_fit, 'r', 'linewidth', 2)
+% title('maximal RMS error on the approximated muscle moment arm')
+% ylabel('RMS error (m)')
+% 
+% figure();
+% hold on;
+% plot(order_all)
+% ylim([0 max_order+1])
+% xlimits = get(gca, 'XLim');
+% plot(xlimits, [max_order, max_order], 'r', 'linewidth', 2)
+% title('Order of the polynomial approximation')
+% ylabel('Order')
 
 %%
 model_info.muscle_info.polyFit.MuscleInfo = MuscleInfo;

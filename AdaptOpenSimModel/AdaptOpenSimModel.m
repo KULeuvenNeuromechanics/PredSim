@@ -26,8 +26,8 @@ path_osim_in = fullfile(pathHere,'Vitruvian_Man.osim');
 path_osim_out = fullfile(pathHere,'Vitruvian_Man.osim');
 
 
-add_actuators_bool = 1;
-add_contact_bool = 0;
+add_actuators_bool = 0;
+add_contact_bool = 1;
 
 %% Define contact spheres
 
@@ -76,13 +76,19 @@ csp = 1;
 
 contact_spheres(csp).body = 'calcn_r';
 contact_spheres(csp).name = 's1_r';
-contact_spheres(csp).location = [0.031307527581931796, 0.010435842527310599, 0];
+contact_spheres(csp).location = [0.004, 0, 0];
 contact_spheres(csp).radius = 0.035;
 csp = csp+1;
 
-contact_spheres(csp).body = 'calcn_r';
+contact_spheres(csp).body = 'toes_r';
 contact_spheres(csp).name = 's2_r';
-contact_spheres(csp).location = [0.1774093229642802, -0.015653763790965898, 0.005217921263655299];
+contact_spheres(csp).location = [0, 0, 0];
+contact_spheres(csp).radius = 0.03;
+csp = csp+1;
+
+contact_spheres(csp).body = 'toes_r';
+contact_spheres(csp).name = 's3_r';
+contact_spheres(csp).location = [0.05, 0, 0];
 contact_spheres(csp).radius = 0.015;
 csp = csp+1;
 
@@ -96,20 +102,20 @@ for i=1:length(contact_spheres)
     csp = csp+1;
 end
 
-% contact_stiffness = 3067776;
+contact_stiffness = 3067776;
 
 %% Define ideal torque actuators
 
 ita = 1;
 
-% % coordinate to which the actuator applies torque
-% torq_act(ita).coord = ('arm_flex_r');
-% % maximum torque
-% torq_act(ita).max_torque = 150;
-% % time constant of the activation dynamics
-% torq_act(ita).time_constant = 0.035;
-% ita = ita+1;
-% 
+% coordinate to which the actuator applies torque
+torq_act(ita).coord = ('arm_flex_r');
+% maximum torque
+torq_act(ita).max_torque = 150;
+% time constant of the activation dynamics
+torq_act(ita).time_constant = 0.035;
+ita = ita+1;
+
 % % coordinate to which the actuator applies torque
 % torq_act(ita).coord = ('arm_add_r');
 % % maximum torque
@@ -125,15 +131,15 @@ ita = 1;
 % % time constant of the activation dynamics
 % torq_act(ita).time_constant = 0.035;
 % ita = ita+1;
-% 
-% % coordinate to which the actuator applies torque
-% torq_act(ita).coord = ('elbow_flex_r');
-% % maximum torque
-% torq_act(ita).max_torque = 150;
-% % time constant of the activation dynamics
-% torq_act(ita).time_constant = 0.035;
-% ita = ita+1;
-% 
+
+% coordinate to which the actuator applies torque
+torq_act(ita).coord = ('elbow_flex_r');
+% maximum torque
+torq_act(ita).max_torque = 150;
+% time constant of the activation dynamics
+torq_act(ita).time_constant = 0.035;
+ita = ita+1;
+
 % 
 % % mirror to get left side
 % for i=1:length(torq_act)
@@ -147,47 +153,6 @@ ita = 1;
 torq_act(ita).coord = ('lumbar_extension');
 % maximum torque
 torq_act(ita).max_torque = 150;
-% time constant of the activation dynamics
-torq_act(ita).time_constant = 0.035;
-ita = ita+1;
-
-
-% % coordinate to which te actuator applies torque
-% torq_act(ita).coord = ('arm_add_r');
-% % maximum torque
-% torq_act(ita).max_torque = 150;
-% % time constant of the activation dynamics
-% torq_act(ita).time_constant = 0.035;
-% ita = ita+1;
-% 
-% % coordinate to which te actuator applies torque
-% torq_act(ita).coord = ('arm_rot_r');
-% % maximum torque
-% torq_act(ita).max_torque = 150;
-% % time constant of the activation dynamics
-% torq_act(ita).time_constant = 0.035;
-% ita = ita+1;
-
-% coordinate to which te actuator applies torque
-torq_act(ita).coord = ('elbow_flex_r');
-% maximum torque
-torq_act(ita).max_torque = 150;
-% time constant of the activation dynamics
-torq_act(ita).time_constant = 0.035;
-ita = ita+1;
-
-% mirror to get left side
-for i=1:length(torq_act)
-    torq_act(ita).coord = [torq_act(i).coord(1:end-1) 'l'];
-    torq_act(ita).max_torque = torq_act(i).max_torque;
-    torq_act(ita).time_constant = torq_act(i).time_constant;
-    ita = ita+1;
-end
-
-% coordinate to which the actuator applies torque
-torq_act(ita).coord = ('lumbar_extension');
-% maximum torque
-torq_act(ita).max_torque = 300;
 % time constant of the activation dynamics
 torq_act(ita).time_constant = 0.035;
 ita = ita+1;

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <OpenSimDocument Version="40000">
-	<Model name="Vitruvian_Man_AdaptedForPredSim">
+	<Model name="Vitruvian_Man_AdaptedForPredSim_AdaptedForPredSim">
 		<!--The model's ground reference frame.-->
 		<Ground name="ground">
 			<!--The geometry used to display the axes of this Frame.-->
@@ -4421,6 +4421,114 @@
 					<!--Value of activation in the default state (default: 0.5).-->
 					<default_activation>0</default_activation>
 				</ActivationCoordinateActuator>
+				<SmoothSphereHalfSpaceForce name="SmoothSphereHalfSpaceForce_s1_r">
+					<!--Path to a Component that satisfies the Socket 'sphere' of type ContactSphere (description: The sphere participating in this contact.).-->
+					<socket_sphere>/contactgeometryset/s1_r</socket_sphere>
+					<!--Path to a Component that satisfies the Socket 'half_space' of type ContactHalfSpace (description: The half-space participating in this contact.).-->
+					<socket_half_space>/contactgeometryset/floor</socket_half_space>
+					<!--The stiffness constant (i.e., plain strain modulus), default is 1 (N/m^2)-->
+					<stiffness>1000000</stiffness>
+					<!--The dissipation coefficient, default is 0 (s/m).-->
+					<dissipation>2</dissipation>
+					<!--The coefficient of static friction, default is 0.-->
+					<static_friction>0.80000000000000004</static_friction>
+					<!--The coefficient of dynamic friction, default is 0.-->
+					<dynamic_friction>0.80000000000000004</dynamic_friction>
+					<!--The coefficient of viscous friction, default is 0.-->
+					<viscous_friction>0.5</viscous_friction>
+					<!--The transition velocity, default is 0.01 (m/s).-->
+					<transition_velocity>0.20000000000000001</transition_velocity>
+				</SmoothSphereHalfSpaceForce>
+				<SmoothSphereHalfSpaceForce name="SmoothSphereHalfSpaceForce_s2_r">
+					<!--Path to a Component that satisfies the Socket 'sphere' of type ContactSphere (description: The sphere participating in this contact.).-->
+					<socket_sphere>/contactgeometryset/s2_r</socket_sphere>
+					<!--Path to a Component that satisfies the Socket 'half_space' of type ContactHalfSpace (description: The half-space participating in this contact.).-->
+					<socket_half_space>/contactgeometryset/floor</socket_half_space>
+					<!--The stiffness constant (i.e., plain strain modulus), default is 1 (N/m^2)-->
+					<stiffness>1000000</stiffness>
+					<!--The dissipation coefficient, default is 0 (s/m).-->
+					<dissipation>2</dissipation>
+					<!--The coefficient of static friction, default is 0.-->
+					<static_friction>0.80000000000000004</static_friction>
+					<!--The coefficient of dynamic friction, default is 0.-->
+					<dynamic_friction>0.80000000000000004</dynamic_friction>
+					<!--The coefficient of viscous friction, default is 0.-->
+					<viscous_friction>0.5</viscous_friction>
+					<!--The transition velocity, default is 0.01 (m/s).-->
+					<transition_velocity>0.20000000000000001</transition_velocity>
+				</SmoothSphereHalfSpaceForce>
+				<SmoothSphereHalfSpaceForce name="SmoothSphereHalfSpaceForce_s3_r">
+					<!--Path to a Component that satisfies the Socket 'sphere' of type ContactSphere (description: The sphere participating in this contact.).-->
+					<socket_sphere>/contactgeometryset/s3_r</socket_sphere>
+					<!--Path to a Component that satisfies the Socket 'half_space' of type ContactHalfSpace (description: The half-space participating in this contact.).-->
+					<socket_half_space>/contactgeometryset/floor</socket_half_space>
+					<!--The stiffness constant (i.e., plain strain modulus), default is 1 (N/m^2)-->
+					<stiffness>1000000</stiffness>
+					<!--The dissipation coefficient, default is 0 (s/m).-->
+					<dissipation>2</dissipation>
+					<!--The coefficient of static friction, default is 0.-->
+					<static_friction>0.80000000000000004</static_friction>
+					<!--The coefficient of dynamic friction, default is 0.-->
+					<dynamic_friction>0.80000000000000004</dynamic_friction>
+					<!--The coefficient of viscous friction, default is 0.-->
+					<viscous_friction>0.5</viscous_friction>
+					<!--The transition velocity, default is 0.01 (m/s).-->
+					<transition_velocity>0.20000000000000001</transition_velocity>
+				</SmoothSphereHalfSpaceForce>
+				<SmoothSphereHalfSpaceForce name="SmoothSphereHalfSpaceForce_s1_l">
+					<!--Path to a Component that satisfies the Socket 'sphere' of type ContactSphere (description: The sphere participating in this contact.).-->
+					<socket_sphere>/contactgeometryset/s1_l</socket_sphere>
+					<!--Path to a Component that satisfies the Socket 'half_space' of type ContactHalfSpace (description: The half-space participating in this contact.).-->
+					<socket_half_space>/contactgeometryset/floor</socket_half_space>
+					<!--The stiffness constant (i.e., plain strain modulus), default is 1 (N/m^2)-->
+					<stiffness>1000000</stiffness>
+					<!--The dissipation coefficient, default is 0 (s/m).-->
+					<dissipation>2</dissipation>
+					<!--The coefficient of static friction, default is 0.-->
+					<static_friction>0.80000000000000004</static_friction>
+					<!--The coefficient of dynamic friction, default is 0.-->
+					<dynamic_friction>0.80000000000000004</dynamic_friction>
+					<!--The coefficient of viscous friction, default is 0.-->
+					<viscous_friction>0.5</viscous_friction>
+					<!--The transition velocity, default is 0.01 (m/s).-->
+					<transition_velocity>0.20000000000000001</transition_velocity>
+				</SmoothSphereHalfSpaceForce>
+				<SmoothSphereHalfSpaceForce name="SmoothSphereHalfSpaceForce_s2_l">
+					<!--Path to a Component that satisfies the Socket 'sphere' of type ContactSphere (description: The sphere participating in this contact.).-->
+					<socket_sphere>/contactgeometryset/s2_l</socket_sphere>
+					<!--Path to a Component that satisfies the Socket 'half_space' of type ContactHalfSpace (description: The half-space participating in this contact.).-->
+					<socket_half_space>/contactgeometryset/floor</socket_half_space>
+					<!--The stiffness constant (i.e., plain strain modulus), default is 1 (N/m^2)-->
+					<stiffness>1000000</stiffness>
+					<!--The dissipation coefficient, default is 0 (s/m).-->
+					<dissipation>2</dissipation>
+					<!--The coefficient of static friction, default is 0.-->
+					<static_friction>0.80000000000000004</static_friction>
+					<!--The coefficient of dynamic friction, default is 0.-->
+					<dynamic_friction>0.80000000000000004</dynamic_friction>
+					<!--The coefficient of viscous friction, default is 0.-->
+					<viscous_friction>0.5</viscous_friction>
+					<!--The transition velocity, default is 0.01 (m/s).-->
+					<transition_velocity>0.20000000000000001</transition_velocity>
+				</SmoothSphereHalfSpaceForce>
+				<SmoothSphereHalfSpaceForce name="SmoothSphereHalfSpaceForce_s3_l">
+					<!--Path to a Component that satisfies the Socket 'sphere' of type ContactSphere (description: The sphere participating in this contact.).-->
+					<socket_sphere>/contactgeometryset/s3_l</socket_sphere>
+					<!--Path to a Component that satisfies the Socket 'half_space' of type ContactHalfSpace (description: The half-space participating in this contact.).-->
+					<socket_half_space>/contactgeometryset/floor</socket_half_space>
+					<!--The stiffness constant (i.e., plain strain modulus), default is 1 (N/m^2)-->
+					<stiffness>1000000</stiffness>
+					<!--The dissipation coefficient, default is 0 (s/m).-->
+					<dissipation>2</dissipation>
+					<!--The coefficient of static friction, default is 0.-->
+					<static_friction>0.80000000000000004</static_friction>
+					<!--The coefficient of dynamic friction, default is 0.-->
+					<dynamic_friction>0.80000000000000004</dynamic_friction>
+					<!--The coefficient of viscous friction, default is 0.-->
+					<viscous_friction>0.5</viscous_friction>
+					<!--The transition velocity, default is 0.01 (m/s).-->
+					<transition_velocity>0.20000000000000001</transition_velocity>
+				</SmoothSphereHalfSpaceForce>
 			</objects>
 			<groups />
 		</ForceSet>
@@ -4463,40 +4571,19 @@
 		<!--Geometry to be used in contact forces.-->
 		<ContactGeometrySet name="contactgeometryset">
 			<objects>
-				<ContactHalfSpace name="plate">
+				<ContactHalfSpace name="floor">
 					<!--Path to a Component that satisfies the Socket 'frame' of type PhysicalFrame (description: The frame to which this geometry is attached.).-->
 					<socket_frame>/ground</socket_frame>
 					<!--Location of geometry center in the PhysicalFrame.-->
 					<location>0 0 0</location>
 					<!--Orientation of geometry in the PhysicalFrame (body-fixed XYZ Euler angles).-->
-					<orientation>0 0 -1.5707963300000001</orientation>
-					<!--Default appearance for this Geometry-->
-					<Appearance>
-						<!--Flag indicating whether the associated Geometry is visible or hidden.-->
-						<visible>false</visible>
-						<!--The color, (red, green, blue), [0, 1], used to display the geometry. -->
-						<color>0.50196081399917603 0.50196081399917603 0.50196081399917603</color>
-					</Appearance>
+					<orientation>0 0 -1.5707963267948966</orientation>
 				</ContactHalfSpace>
 				<ContactSphere name="s1_r">
 					<!--Path to a Component that satisfies the Socket 'frame' of type PhysicalFrame (description: The frame to which this geometry is attached.).-->
 					<socket_frame>/bodyset/calcn_r</socket_frame>
 					<!--Location of geometry center in the PhysicalFrame.-->
 					<location>0.0040000000000000001 0 0</location>
-					<!--Orientation of geometry in the PhysicalFrame (body-fixed XYZ Euler angles).-->
-					<orientation>0 0 0</orientation>
-					<!--Default appearance for this Geometry-->
-					<Appearance>
-						<!--Flag indicating whether the associated Geometry is visible or hidden.-->
-						<visible>true</visible>
-						<!--The color, (red, green, blue), [0, 1], used to display the geometry. -->
-						<color>0 1 1</color>
-						<!--Visuals applied to surfaces associated with this Appearance.-->
-						<SurfaceProperties>
-							<!--The representation (1:Points, 2:Wire, 3:Shaded) used to display the object.-->
-							<representation>2</representation>
-						</SurfaceProperties>
-					</Appearance>
 					<!--Radius of the sphere (default: 0).-->
 					<radius>0.035000000000000003</radius>
 				</ContactSphere>
@@ -4505,20 +4592,6 @@
 					<socket_frame>/bodyset/toes_r</socket_frame>
 					<!--Location of geometry center in the PhysicalFrame.-->
 					<location>0 0 0</location>
-					<!--Orientation of geometry in the PhysicalFrame (body-fixed XYZ Euler angles).-->
-					<orientation>0 0 0</orientation>
-					<!--Default appearance for this Geometry-->
-					<Appearance>
-						<!--Flag indicating whether the associated Geometry is visible or hidden.-->
-						<visible>true</visible>
-						<!--The color, (red, green, blue), [0, 1], used to display the geometry. -->
-						<color>0 1 1</color>
-						<!--Visuals applied to surfaces associated with this Appearance.-->
-						<SurfaceProperties>
-							<!--The representation (1:Points, 2:Wire, 3:Shaded) used to display the object.-->
-							<representation>2</representation>
-						</SurfaceProperties>
-					</Appearance>
 					<!--Radius of the sphere (default: 0).-->
 					<radius>0.029999999999999999</radius>
 				</ContactSphere>
@@ -4527,20 +4600,6 @@
 					<socket_frame>/bodyset/toes_r</socket_frame>
 					<!--Location of geometry center in the PhysicalFrame.-->
 					<location>0.050000000000000003 0 0</location>
-					<!--Orientation of geometry in the PhysicalFrame (body-fixed XYZ Euler angles).-->
-					<orientation>0 0 0</orientation>
-					<!--Default appearance for this Geometry-->
-					<Appearance>
-						<!--Flag indicating whether the associated Geometry is visible or hidden.-->
-						<visible>true</visible>
-						<!--The color, (red, green, blue), [0, 1], used to display the geometry. -->
-						<color>0 1 1</color>
-						<!--Visuals applied to surfaces associated with this Appearance.-->
-						<SurfaceProperties>
-							<!--The representation (1:Points, 2:Wire, 3:Shaded) used to display the object.-->
-							<representation>2</representation>
-						</SurfaceProperties>
-					</Appearance>
 					<!--Radius of the sphere (default: 0).-->
 					<radius>0.014999999999999999</radius>
 				</ContactSphere>
@@ -4548,21 +4607,7 @@
 					<!--Path to a Component that satisfies the Socket 'frame' of type PhysicalFrame (description: The frame to which this geometry is attached.).-->
 					<socket_frame>/bodyset/calcn_l</socket_frame>
 					<!--Location of geometry center in the PhysicalFrame.-->
-					<location>0.0040000000000000001 0 0</location>
-					<!--Orientation of geometry in the PhysicalFrame (body-fixed XYZ Euler angles).-->
-					<orientation>0 0 0</orientation>
-					<!--Default appearance for this Geometry-->
-					<Appearance>
-						<!--Flag indicating whether the associated Geometry is visible or hidden.-->
-						<visible>true</visible>
-						<!--The color, (red, green, blue), [0, 1], used to display the geometry. -->
-						<color>0 1 1</color>
-						<!--Visuals applied to surfaces associated with this Appearance.-->
-						<SurfaceProperties>
-							<!--The representation (1:Points, 2:Wire, 3:Shaded) used to display the object.-->
-							<representation>2</representation>
-						</SurfaceProperties>
-					</Appearance>
+					<location>0.0040000000000000001 0 -0</location>
 					<!--Radius of the sphere (default: 0).-->
 					<radius>0.035000000000000003</radius>
 				</ContactSphere>
@@ -4570,43 +4615,15 @@
 					<!--Path to a Component that satisfies the Socket 'frame' of type PhysicalFrame (description: The frame to which this geometry is attached.).-->
 					<socket_frame>/bodyset/toes_l</socket_frame>
 					<!--Location of geometry center in the PhysicalFrame.-->
-					<location>0 0 0</location>
-					<!--Orientation of geometry in the PhysicalFrame (body-fixed XYZ Euler angles).-->
-					<orientation>0 0 0</orientation>
-					<!--Default appearance for this Geometry-->
-					<Appearance>
-						<!--Flag indicating whether the associated Geometry is visible or hidden.-->
-						<visible>true</visible>
-						<!--The color, (red, green, blue), [0, 1], used to display the geometry. -->
-						<color>0 1 1</color>
-						<!--Visuals applied to surfaces associated with this Appearance.-->
-						<SurfaceProperties>
-							<!--The representation (1:Points, 2:Wire, 3:Shaded) used to display the object.-->
-							<representation>2</representation>
-						</SurfaceProperties>
-					</Appearance>
+					<location>0 0 -0</location>
 					<!--Radius of the sphere (default: 0).-->
 					<radius>0.029999999999999999</radius>
 				</ContactSphere>
-				<ContactSphere name="s3_r_0">
+				<ContactSphere name="s3_l">
 					<!--Path to a Component that satisfies the Socket 'frame' of type PhysicalFrame (description: The frame to which this geometry is attached.).-->
 					<socket_frame>/bodyset/toes_l</socket_frame>
 					<!--Location of geometry center in the PhysicalFrame.-->
-					<location>0.050000000000000003 0 0</location>
-					<!--Orientation of geometry in the PhysicalFrame (body-fixed XYZ Euler angles).-->
-					<orientation>0 0 0</orientation>
-					<!--Default appearance for this Geometry-->
-					<Appearance>
-						<!--Flag indicating whether the associated Geometry is visible or hidden.-->
-						<visible>true</visible>
-						<!--The color, (red, green, blue), [0, 1], used to display the geometry. -->
-						<color>0 1 1</color>
-						<!--Visuals applied to surfaces associated with this Appearance.-->
-						<SurfaceProperties>
-							<!--The representation (1:Points, 2:Wire, 3:Shaded) used to display the object.-->
-							<representation>2</representation>
-						</SurfaceProperties>
-					</Appearance>
+					<location>0.050000000000000003 0 -0</location>
 					<!--Radius of the sphere (default: 0).-->
 					<radius>0.014999999999999999</radius>
 				</ContactSphere>
