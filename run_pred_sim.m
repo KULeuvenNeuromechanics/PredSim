@@ -1,4 +1,4 @@
-function [] = run_pred_sim(S,osim_path)
+function [varargout] = run_pred_sim(S,osim_path)
 
 addpath([S.misc.main_path '\VariousFunctions'])
 
@@ -48,6 +48,10 @@ elseif isempty(S.post_process.result_filename)
         S.post_process.result_filename = [S.subject.name '_' datestr(datetime,30)];
         
     end   
+end
+
+if nargout >= 1
+    varargout{1} = S.post_process.result_filename;
 end
 
 %% PreProcessing

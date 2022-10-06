@@ -111,7 +111,7 @@ S.weights.E_exp     = 1;
 S.weights.q_dotdot  = 0;
 % S.weights.e_arm     = 1;
 % S.weights.pass_torq = 0;
-% S.weights.a         = 1e-3;
+S.weights.a         = 0;
 % S.weights.slack_ctrl = ;
 % S.weights.pass_torq_includes_damping = ;
 
