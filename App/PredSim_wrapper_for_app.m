@@ -1,4 +1,4 @@
-function [savename, savepath,total_distance] = PredSim_wrapper_for_app(U,sf)
+function [] = PredSim_wrapper_for_app(U,sf)
 % inputs
 %   * U.ModelName
 
@@ -7,36 +7,6 @@ function [savename, savepath,total_distance] = PredSim_wrapper_for_app(U,sf)
 [pathApp,~,~] = fileparts(mfilename('fullpath'));
 [pathRepo,~,~] = fileparts(pathApp);
 cd(pathRepo);
-
-%% adapt ModelName
-% prevent errors with filenames and paths
-ModelName = U.ModelName;
-ModelName(strfind(ModelName,' ')) = '_';
-ModelName(strfind(ModelName,'/')) = '_';
-ModelName(strfind(ModelName,'\')) = '_';
-
-while strcmp(ModelName(1),'_') && length(ModelName)>1
-    ModelName = ModelName(2:end);
-end
-
-while strcmp(ModelName(end),'_') && length(ModelName)>1
-    ModelName = ModelName(1:end-1);
-end
-U.ModelName = ModelName;
-
-GroupName = U.GroupName;
-GroupName(strfind(GroupName,' ')) = '_';
-GroupName(strfind(GroupName,'/')) = '_';
-GroupName(strfind(GroupName,'\')) = '_';
-
-while strcmp(GroupName(1),'_') && length(GroupName)>1
-    GroupName = GroupName(2:end);
-end
-
-while strcmp(GroupName(end),'_') && length(GroupName)>1
-    GroupName = GroupName(1:end-1);
-end
-U.GroupName = GroupName;
 
 %% scale model
 % Detect height in cm and conver to m
@@ -65,7 +35,7 @@ addpath([S.misc.main_path '\VariousFunctions'])
 S.subject.name = U.ModelName;
 
 % path to folder where you want to store the results of the OCP
-S.subject.save_folder  = fullfile('C:\Users\u0150099\OneDrive - KU Leuven\Resultaten_KinderUniversiteit',U.GroupName); 
+S.subject.save_folder  = fullfile(U.savefolder,U.GroupName); 
 
 % either choose "quasi-random" or give the path to a .mot file you want to use as initial guess
 % S.subject.IG_selection = 'quasi-random';
@@ -117,17 +87,7 @@ S.Cpp2Dll.verbose_mode = 0; % 0 for no outputs from cmake
 % S.Cpp2Dll.coordinatesOrder = ;
         
 %% Run predictive simulations
-
-savename = run_pred_sim(S,osim_path);
-
-savepath = fullfile(S.subject.save_folder,savename);
-
-%% get distance
-E_metab = 100;
-load([savepath '.mat'],'R');
-
-total_distance = round(E_metab/(R.COT*U.Mass));
-
+run_pred_sim(S,osim_path);
 
 
 end
