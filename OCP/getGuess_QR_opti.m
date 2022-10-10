@@ -41,23 +41,27 @@ coordi = model_info.ExtFunIO.coordi;
 % The final time is function of the imposed speed
 all_speeds = 0.73:0.1:5;
 all_tf = 0.70:-((0.70-0.35)/(length(all_speeds)-1)):0.35;
-idx_speed = find(all_speeds==S.subject.v_pelvis_x_trgt);
+idx_speed = find(all_speeds==mean(S.subject.v_pelvis_x_trgt));
 if isempty(idx_speed)
-    idx_speed = find(all_speeds > S.subject.v_pelvis_x_trgt,1,'first');
+    idx_speed = find(all_speeds > mean(S.subject.v_pelvis_x_trgt),1,'first');
 end
 guess.tf = all_tf(idx_speed);
+
+if mean(S.subject.v_pelvis_x_trgt) > max(all_speeds)
+    guess.tf = max(all_tf);
+end
 
 %% Qs
 % The model is moving forward but with a standing position (Qs=0)
 guess.Qs = zeros(N,nq.all);
-guess.Qs(:,model_info.ExtFunIO.jointi.base_forward) = linspace(0,guess.tf*S.subject.v_pelvis_x_trgt,N);
+guess.Qs(:,model_info.ExtFunIO.jointi.base_forward) = linspace(0,guess.tf*mean(S.subject.v_pelvis_x_trgt),N);
 % The model is standing on the ground
 guess.Qs(:,coordi.pelvis_ty) = model_info.IG_pelvis_y;
 
 %% Qdots
 guess.Qdots = zeros(N,nq.all);
 % The model is moving forward with a constant speed
-guess.Qdots(:,model_info.ExtFunIO.jointi.base_forward) = S.subject.v_pelvis_x_trgt;
+guess.Qdots(:,model_info.ExtFunIO.jointi.base_forward) = mean(S.subject.v_pelvis_x_trgt);
 
 %% Qdotdots
 guess.Qdotdots = zeros(N,nq.all);

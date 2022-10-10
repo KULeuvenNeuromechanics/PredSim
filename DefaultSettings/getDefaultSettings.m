@@ -424,6 +424,11 @@ if ~isfield(S.weights,'slack_ctrl')
     S.weights.slack_ctrl = 0.001; 
 end
 
+% weight on velocity (can be added to maximise velocity)
+if ~isfield(S.weights,'velocity')
+    S.weights.velocity = 0; 
+end
+
 %% .osim 2 dll
 
 % settings for functions to conver .osim model to expression graph (.dll)

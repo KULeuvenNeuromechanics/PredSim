@@ -601,6 +601,10 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Scale cost function
 Jall_sc = sum(Jall)/dist_trav_tot;
+% Add velocity cost
+if S.weights.velocity~=0
+    Jall_sc = Jall_sc + S.weights.velocity*vel_aver_tot;
+end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%
@@ -839,6 +843,7 @@ Pass_cost       = 0;
 vA_cost         = 0;
 dFTtilde_cost   = 0;
 QdotdotArm_cost = 0;
+velocity_cost   = 0;
 count           = 1;
 h_opt           = tf_opt/N;
 for k=1:N
@@ -895,7 +900,7 @@ for k=1:N
             QdotdotArm_cost = QdotdotArm_cost + W.slack_ctrl*B(j+1)*...
                 (f_casadi.J_arms_dof(qdotdot_col_opt(count,model_info.ExtFunIO.jointi.armsi)))*h_opt;
         end
-
+        
         E_cost = E_cost + W.E*B(j+1)*...
             (f_casadi.J_muscles_exp(e_tot_opt_all,W.E_exp))/model_info.mass*h_opt;
         A_cost = A_cost + W.a*B(j+1)*...
@@ -911,6 +916,12 @@ for k=1:N
         count = count + 1;
     end
 end
+if S.weights.velocity~=0
+    J_opt = J_opt + S.weights.velocity*vel_aver_opt;
+    
+    velocity_cost = S.weights.velocity*vel_aver_opt;
+end
+
 J_optf = full(J_opt);
 E_costf = full(E_cost);
 A_costf = full(A_cost);
@@ -921,21 +932,22 @@ vA_costf = full(vA_cost);
 dFTtilde_costf = full(dFTtilde_cost);
 QdotdotArm_costf = full(QdotdotArm_cost);
 
+
 contributionCost.absoluteValues = 1/(dist_trav_opt)*[E_costf,A_costf,...
     Actu_costf,Qdotdot_costf,Pass_costf,vA_costf,dFTtilde_costf,...
-    QdotdotArm_costf];
+    QdotdotArm_costf, velocity_cost];
 contributionCost.relativeValues = 1/(dist_trav_opt)*[E_costf,A_costf,...
     Actu_costf,Qdotdot_costf,Pass_costf,vA_costf,dFTtilde_costf,...
-    QdotdotArm_costf]./J_optf*100;
+    QdotdotArm_costf, velocity_cost]./J_optf*100;
 contributionCost.relativeValuesRound2 = ...
     round(contributionCost.relativeValues,2);
 contributionCost.labels = {'metabolic energy','muscle activation',...
     'actuator excitation','joint accelerations','limit torques','dadt','dFdt',...
-    'arm accelerations'};
+    'arm accelerations' ,'velocity'};
 
 % assertCost should be 0
 assertCost = abs(J_optf - 1/(dist_trav_opt)*(E_costf+A_costf + Actu_costf + ...
-    Qdotdot_costf + Pass_costf + vA_costf + dFTtilde_costf + QdotdotArm_costf));
+    Qdotdot_costf + Pass_costf + vA_costf + dFTtilde_costf + QdotdotArm_costf) - velocity_cost);
 
 assertCost2 = abs(stats.iterations.obj(end) - J_optf);
 
@@ -1294,6 +1306,7 @@ R.time.mesh_GC = t_mesh_GC;
 R.colheaders.coordinates = model_info.ExtFunIO.coord_names.all;
 R.colheaders.muscles = model_info.muscle_info.muscle_names;
 R.colheaders.objective = contributionCost.labels;
+R.kinematics.avg_velocity = vel_aver_opt;
 R.kinematics.Qs = Qs_GC;
 R.kinematics.Qdots = Qdots_GC;
 R.kinematics.Qddots = Qdotdots_GC;

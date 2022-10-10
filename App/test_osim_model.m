@@ -6,7 +6,7 @@ import org.opensim.modeling.*;
 
 [pathHere,~,~] = fileparts(mfilename('fullpath'));
 [pathRepo,~,~] = fileparts(pathHere);
-osimpath = fullfile(pathRepo,'Subjects','Vitruvian_Man','Vitruvian_Man.osim');
+osimpath = fullfile(pathRepo,'Subjects','Vitruvian_Man','Vitruvian_Man_wMarkers.osim');
 
 model = Model(osimpath);
 s = model.initSystem;
@@ -20,6 +20,8 @@ pos_hip = model.getBodySet().get('femur_r').findBaseFrame().getPositionInGround(
 pos_knee = model.getBodySet().get('tibia_r').findBaseFrame().getPositionInGround(s).getAsMat;
 pos_sole = model.getMarkerSet().get('sole_r').getLocationInGround(s).getAsMat;
 pos_toe = model.getMarkerSet().get('toe_r').getLocationInGround(s).getAsMat;
+
+pos_knee(2) = pos_knee(2)-0.03;
 
 %%
 

@@ -180,7 +180,10 @@ if max(S.subject.v_pelvis_x_trgt) > 1.33
     % Pelvis tx
     bounds.Qdots.upper(model_info.ExtFunIO.jointi.base_forward) = 8;
 end
-
+if max(S.subject.v_pelvis_x_trgt) > 4
+    % Pelvis tx
+    bounds.Qdots.upper(model_info.ExtFunIO.jointi.base_forward) = 16;
+end
 if strcmp(S.misc.gaitmotion_type,'HalfGaitCycle')
     bounds.Qs.upper(model_info.ExtFunIO.jointi.base_forward) = ...
         bounds.Qs.upper(model_info.ExtFunIO.jointi.base_forward)/2;
