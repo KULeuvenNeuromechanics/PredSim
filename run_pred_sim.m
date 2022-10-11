@@ -1,4 +1,27 @@
-function [] = run_pred_sim(S,osim_path)
+function [varargout] = run_pred_sim(S,osim_path)
+% --------------------------------------------------------------------------
+% run_pred_sim
+%   This functions calls the subfunction for each step in the simulation
+%   workflow.
+% 
+% INPUT:
+%   - S -
+%   * setting structure S
+%
+%   - osim_path -
+%   * path to the OpenSim model file (.osim)
+% 
+%
+% OUTPUT:
+%   - savename (optional) -
+%   * results of the simulation will be saved in a file with this name
+% 
+% Original author: Lars D'Hondt
+% Original date: March-October/2022
+%
+% Last edit by: 
+% Last edit date: 
+% --------------------------------------------------------------------------
 
 addpath([S.misc.main_path '\VariousFunctions'])
 
@@ -48,6 +71,10 @@ elseif isempty(S.post_process.result_filename)
         S.post_process.result_filename = [S.subject.name '_' datestr(datetime,30)];
         
     end   
+end
+
+if nargout == 1
+    varargout = S.post_process.result_filename;
 end
 
 %% PreProcessing
