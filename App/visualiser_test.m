@@ -13,3 +13,12 @@ pause(0.1);
 vis.show(model_state);
 
 
+%%
+
+Qvect = model_state.getQ();
+Qvect.setToZero();
+j=15;
+Qvect.set(j-1,pi/3);
+model_state.setQ(Qvect);
+vis.show(model_state);
+

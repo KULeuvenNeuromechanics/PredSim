@@ -68,7 +68,7 @@ osim_path = fullfile(pathRepo,'Subjects',S.subject.name,[S.subject.name '.osim']
 S.solver.run_as_batch_job = 0;
 
 % casadi folder
-S.solver.CasADi_path    = 'C:\GBW_MyPrograms\casadi_3_5_5';
+S.solver.CasADi_path    = U.PathCasadi;
 
 
 
@@ -93,13 +93,13 @@ S.subject.set_damping_coefficient_selected_dofs = {{'mtp_angle_l','mtp_angle_r'}
 S.subject.adapt_IG_pelvis_y = 1;
 
 % % S.weights
-% S.weights.E         = ;
+S.weights.E         = 0.05;
 % S.weights.E_exp     = ;
-% S.weights.q_dotdot  = ;
-% S.weights.e_arm     = ;
-% S.weights.pass_torq = ;
-% S.weights.a         = ;
-% S.weights.slack_ctrl = ;
+S.weights.q_dotdot  = 1;
+S.weights.e_arm     = 10;
+S.weights.pass_torq = 0;
+S.weights.a         = 1;
+S.weights.slack_ctrl = 0.001;
 % S.weights.pass_torq_includes_damping = ;
 
 if U.Speed > 0
@@ -113,7 +113,7 @@ if U.Speed > 0
         S.subject.IG_selection = 'quasi-random';
     end
 else
-    S.weights.velocity = -1e4;
+    S.weights.velocity = -5e4;
     S.subject.v_pelvis_x_trgt   = [2,10];
 
     S.subject.IG_selection = 'quasi-random';

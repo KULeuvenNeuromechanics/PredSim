@@ -9,7 +9,7 @@ default_ratio_elbow_shoulder = 1/8;
 default_ratio_shoulder_width = 1/4;
 default_ratio_hip_knee = 1/4;
 default_ratio_knee_ground = 1/4;
-default_ratio_foot_length = 1/7;
+default_ratio_foot_length = 1/6;
 
 %% get user input ratios
 usr_ratio_fingertip_elbow = usr_fingertip_elbow/usr_height;

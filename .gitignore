@@ -9,6 +9,8 @@
 *.eps
 
 opensimAD/*
+App/images
+App/old
 
 Subjects/*
 !Subjects/Hamner_modified/

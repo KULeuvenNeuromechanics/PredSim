@@ -18,7 +18,7 @@ result_paths{1} = fullfile([results_folder '\team_Lars\Leo_v7.mat']);
 % result_paths{end+1} = fullfile([results_folder '\test\Leo_2_v3.mat']);
 % result_paths{end+1} = fullfile([results_folder '\test\Leo_2_v7.mat']);
 result_paths{end+1} = fullfile([results_folder '\test\Leo_2_v8.mat']);
-result_paths{end+1} = fullfile([results_folder '\test\Leo_2_v9.mat']);
+result_paths{end+1} = fullfile([results_folder '\test\test_v4.mat']);
 
 % result_paths{2} = 'C:\GBW_MyPrograms\PredSimResults\Leo\Leo_v4.mat';
 % result_paths{3} = 'C:\GBW_MyPrograms\PredSimResults\Leo\Leo_v5.mat';

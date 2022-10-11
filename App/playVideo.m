@@ -21,9 +21,10 @@ dat = read_motionFile_v40(mot_file);
 
 dt = dat.data(2,1)-dat.data(1,1);
 N = length(dat.data(:,1));                
+
 CoordNamesAPI = {'pelvis_tilt','pelvis_tx','pelvis_ty','hip_flexion_r','hip_flexion_l',...
-    'lumbar_extension','knee_angle_r','knee_angle_l','ankle_angle_r','ankle_angle_l',...
-    'mtp_angle_r','mtp_angle_l','elbow_flex_r','elbow_flex_l','arm_flex_r','arm_flex_l'};
+    'lumbar_extension','knee_angle_r','knee_angle_l','arm_flex_r','arm_flex_l',...
+    'ankle_angle_r','ankle_angle_l','elbow_flex_r','elbow_flex_l','mtp_angle_r','mtp_angle_l'};
 
 % column index in datastrcture for every coordName
 IndexCoord = nan(length(CoordNamesAPI),1);
