@@ -61,7 +61,7 @@ To run this code you need to have the following softwares on your machine:
 5. In main.m, change [S.Cpp2Dll.compiler](https://github.com/KULeuvenNeuromechanics/PredSim/blob/9fbbd43cf83617620e428d2c91f222c909a1349c/main.m#L116) to your version of Visual Studio. Not setting a version will assume the 2017 version.
 6. Make sure the opensimAD submodule is installed. If \opensimAD\ is empty, open git command prompt and run `git submodule update --init`.
 
-After perfoming these steps, run the main script. If you don't receive any errors, and your results are the same as [these results](ADD LINK) you have succesfully intalled and set up the code. You are ready to do your own simulations.
+After perfoming these steps, run the main script. If you don't receive any errors, and your results should be the same as https://github.com/KULeuvenNeuromechanics/PredSim/tree/master/Tests/Falisse_et_al_2022_Results. If that is the case, you have succesfully intalled and set up the code. You are ready to do your own simulations.
 
 ## How to use the code
 
