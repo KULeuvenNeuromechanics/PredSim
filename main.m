@@ -30,10 +30,10 @@ S.subject.save_folder  = fullfile(pathRepoFolder,'PredSimResults',S.subject.name
 
 % either choose "quasi-random" or give the path to a .mot file you want to use as initial guess
 % S.subject.IG_selection = 'quasi-random';
-% S.subject.IG_selection = fullfile(S.misc.main_path,'OCP','IK_Guess_Default.mot');
-% S.subject.IG_selection_gaitCyclePercent = 50;
-S.subject.IG_selection = fullfile(S.subject.save_folder,'IG_v30ms_QR.mot');
-S.subject.IG_selection_gaitCyclePercent = 200;
+S.subject.IG_selection = fullfile(S.misc.main_path,'OCP','IK_Guess_Default.mot');
+S.subject.IG_selection_gaitCyclePercent = 50;
+% S.subject.IG_selection = fullfile(S.subject.save_folder,'IG_v45ms_40.mot');
+% S.subject.IG_selection_gaitCyclePercent = 200;
 
 
 % give the path to the osim model of your subject
@@ -56,7 +56,7 @@ S.solver.run_as_batch_job = 0;
 % S.bounds.dist_trav.lower    = ;
 % S.bounds.t_final.upper      = ;
 % S.bounds.t_final.lower      = ;
-% S.bounds.coordinates        = {'pelvis_tilt',-30,30,'pelvis_list',-30,30};
+% S.bounds.coordinates        = {'pelvis_tilt',-30,30};
 
 % % S.metabolicE - metabolic energy
 % S.metabolicE.tanh_b = ;
@@ -64,7 +64,7 @@ S.solver.run_as_batch_job = 0;
 
 % % S.misc - miscellanious
 % S.misc.v_max_s             = ;
-% S.misc.visualize_bounds    = 1;
+S.misc.visualize_bounds    = 1;
 % S.misc.gaitmotion_type     = 'FullGaitCycle';
 % S.misc.msk_geom_eq         = '';
 % S.misc.poly_order.lower    = ;
@@ -77,7 +77,7 @@ S.solver.run_as_batch_job = 0;
 % S.post_process.savename  = 'datetime';
 % S.post_process.rerun   = 1;
 % S.post_process.rerun_from_w = 1;
-S.post_process.result_filename = 'IG_v35ms_30';
+% S.post_process.result_filename = 'IG_v50ms_45_v2';
 
 % % S.solver
 % S.solver.linear_solver  = 'ma86';
@@ -92,7 +92,7 @@ S.solver.CasADi_path    = 'C:\GBW_MyPrograms\casadi_3_5_5';
 % % S.subject
 % S.subject.mass              = ;
 % S.subject.IG_pelvis_y       = ;
-S.subject.v_pelvis_x_trgt   = 3.5;
+S.subject.v_pelvis_x_trgt   = 1.2;
 % S.subject.IK_Bounds = ;
 % S.subject.muscle_strength   = ;
 % S.subject.muscle_pass_stiff_shift = {{'soleus_l','soleus_r'},0.9,{'tib_ant_l'},1.1};

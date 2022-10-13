@@ -39,17 +39,19 @@ coordi = model_info.ExtFunIO.coordi;
 
 %% Final time
 % The final time is function of the imposed speed
-all_speeds = 0.73:0.1:5;
-all_tf = 0.70:-((0.70-0.35)/(length(all_speeds)-1)):0.35;
-idx_speed = find(all_speeds==mean(S.subject.v_pelvis_x_trgt));
-if isempty(idx_speed)
-    idx_speed = find(all_speeds > mean(S.subject.v_pelvis_x_trgt),1,'first');
-end
-guess.tf = all_tf(idx_speed);
+% all_speeds = 0.73:0.1:5;
+% all_tf = 0.70:-((0.70-0.35)/(length(all_speeds)-1)):0.35;
+% idx_speed = find(all_speeds==mean(S.subject.v_pelvis_x_trgt));
+% if isempty(idx_speed)
+%     idx_speed = find(all_speeds > mean(S.subject.v_pelvis_x_trgt),1,'first');
+% end
+% guess.tf = all_tf(idx_speed);
+% 
+% if mean(S.subject.v_pelvis_x_trgt) > max(all_speeds)
+%     guess.tf = max(all_tf);
+% end
 
-if mean(S.subject.v_pelvis_x_trgt) > max(all_speeds)
-    guess.tf = max(all_tf);
-end
+guess.tf = -0.1750*mean(S.subject.v_pelvis_x_trgt) + 0.8277;
 
 %% Qs
 % The model is moving forward but with a standing position (Qs=0)

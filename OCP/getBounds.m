@@ -131,12 +131,18 @@ bounds.Qs.lower(idx_shoulder_add_rot) = bounds.Qs.lower(idx_shoulder_add_rot) - 
 % The bounds are extended by 3 times the absolute difference between upper
 % and lower bounds.
 Qdots_range = abs(bounds.Qdots.upper - bounds.Qdots.lower);
+if max(S.subject.v_pelvis_x_trgt) > 4
+    Qdots_range = Qdots_range*1.5;
+end
 bounds.Qdots.lower = bounds.Qdots.lower - 3*Qdots_range;
 bounds.Qdots.upper = bounds.Qdots.upper + 3*Qdots_range;
 
 % The bounds are extended by 3 times the absolute difference between upper
 % and lower bounds.
 Qdotdots_range = abs(bounds.Qdotdots.upper - bounds.Qdotdots.lower);
+if max(S.subject.v_pelvis_x_trgt) > 4
+    Qdotdots_range = Qdotdots_range*1.5;
+end
 bounds.Qdotdots.lower = bounds.Qdotdots.lower - 3*Qdotdots_range;
 bounds.Qdotdots.upper = bounds.Qdotdots.upper + 3*Qdotdots_range;
 
