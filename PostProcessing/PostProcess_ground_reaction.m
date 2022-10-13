@@ -59,10 +59,13 @@ for i=1:length(GRFs)
 end
 
 % Stance phase
-idx = find(R.ground_reaction.GRF_r(:,2) < 20,1,'first');
-idx_stance_r = (1:idx-1)';
-trh = min(R.ground_reaction.GRF_r(idx_stance_r,2));
-idx_stance_l = find(R.ground_reaction.GRF_l(:,2) > trh);
+% idx = find(R.ground_reaction.GRF_r(:,2) < 20,1,'first');
+% idx_stance_r = (1:idx-1)';
+% trh = min(R.ground_reaction.GRF_r(idx_stance_r,2));
+% idx_stance_l = find(R.ground_reaction.GRF_l(:,2) > trh);
+
+idx_stance_r = find(R.ground_reaction.GRF_r(:,2) >=20);
+idx_stance_l = find(R.ground_reaction.GRF_l(:,2) >=20);
 
 R.ground_reaction.idx_stance_r = idx_stance_r;
 R.ground_reaction.idx_stance_l = idx_stance_l;

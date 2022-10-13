@@ -12,20 +12,16 @@ clc
 
 % Construct a cell array with full paths to files with saved results for
 % which you want to appear on the plotted figures.
-results_folder = 'C:\Users\u0150099\OneDrive - KU Leuven\Resultaten_KinderUniversiteit';
-result_paths{1} = fullfile([results_folder '\team_Lars\Leo_v7.mat']);
-% result_paths{end+1} = fullfile([results_folder '\test\Leo_2_v1.mat']);
-% result_paths{end+1} = fullfile([results_folder '\test\Leo_2_v3.mat']);
-% result_paths{end+1} = fullfile([results_folder '\test\Leo_2_v7.mat']);
-result_paths{end+1} = fullfile([results_folder '\test\Leo_2_v8.mat']);
-result_paths{end+1} = fullfile([results_folder '\test\test_v4.mat']);
-
-% result_paths{2} = 'C:\GBW_MyPrograms\PredSimResults\Leo\Leo_v4.mat';
-% result_paths{3} = 'C:\GBW_MyPrograms\PredSimResults\Leo\Leo_v5.mat';
-% result_paths{4} = 'C:\GBW_MyPrograms\PredSimResults\Leo\Leo_v6.mat';
+% results_folder = 'C:\Users\u0150099\OneDrive - KU Leuven\Resultaten_KinderUniversiteit';
+results_folder = fullfile(pathRepoFolder,'PredSimResults');
+result_paths{1} = fullfile([results_folder '\Vitruvian_man\IG_v10ms.mat']);
+result_paths{end+1} = fullfile([results_folder '\Vitruvian_man\IG_v12ms.mat']);
+result_paths{end+1} = fullfile([results_folder '\Vitruvian_man\IG_v14ms.mat']);
+% result_paths{end+1} = fullfile([results_folder '\Vitruvian_man\IG_v16ms.mat']);
+result_paths{end+1} = fullfile([results_folder '\Vitruvian_man\IG_v16ms_QR.mat']);
 
 % Cell array with legend name for each result
-legend_names = {'ref','Leo FK y=0','Leo FK y=1','Leo FK y=0.955','no arm d','other J'};
+legend_names = {'v = 1.0 m/s','v = 1.2 m/s','v = 1.4 m/s','v = 1.6 m/s','v = 2.0 m/s'};
 
 % Path to the folder where figures are saved
 figure_folder = results_folder;
@@ -96,20 +92,20 @@ fig_count = fig_count+1;
 % figure_settings(fig_count).filetype = {};
 % fig_count = fig_count+1;
 
-figure_settings(fig_count).name = 'torques';
-figure_settings(fig_count).dofs = {'all_coords'};
-figure_settings(fig_count).variables = {'T_ID'};
-figure_settings(fig_count).savepath = fullfile(figure_folder,[figure_savename '_' figure_settings(fig_count).name]);
-figure_settings(fig_count).filetype = {};
-fig_count = fig_count+1;
+% figure_settings(fig_count).name = 'torques';
+% figure_settings(fig_count).dofs = {'all_coords'};
+% figure_settings(fig_count).variables = {'T_ID'};
+% figure_settings(fig_count).savepath = fullfile(figure_folder,[figure_savename '_' figure_settings(fig_count).name]);
+% figure_settings(fig_count).filetype = {};
+% fig_count = fig_count+1;
 
-figure_settings(fig_count).name = 'all_muscles';
-figure_settings(fig_count).dofs = {'hamstrings_r','bifemsh_r','glut_max_r','iliopsoas_r',...
-    'rect_fem_r','vasti_r','gastroc_r','soleus_r','tib_ant_r'};
-figure_settings(fig_count).variables = {'a','FT','lMtilde','Wdot','Edot_gait'};
-figure_settings(fig_count).savepath = fullfile(figure_folder,[figure_savename '_' figure_settings(fig_count).name]);
-figure_settings(fig_count).filetype = {};
-fig_count = fig_count+1;
+% figure_settings(fig_count).name = 'all_muscles';
+% figure_settings(fig_count).dofs = {'hamstrings_r','bifemsh_r','glut_max_r','iliopsoas_r',...
+%     'rect_fem_r','vasti_r','gastroc_r','soleus_r','tib_ant_r'};
+% figure_settings(fig_count).variables = {'a','FT','lMtilde','Wdot','Edot_gait'};
+% figure_settings(fig_count).savepath = fullfile(figure_folder,[figure_savename '_' figure_settings(fig_count).name]);
+% figure_settings(fig_count).filetype = {};
+% fig_count = fig_count+1;
 
 % figure_settings(fig_count).name = 'grfs';
 % figure_settings(fig_count).dofs = {'custom'};
