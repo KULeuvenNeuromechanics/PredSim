@@ -166,6 +166,22 @@ classdef Vitruvian_Man_NL_exported < matlab.apps.AppBase
                 app.NaamAfstandSnelheidListBox.ItemsData = app.tbldata(:,2);
             end
 
+            % command for running .py file
+            dist = num2str(distance_i*1e-3);
+            vel = num2str(avg_v_i);
+            llen        = num2str(app.LichaamslengteEditField.Value);
+            mass       = num2str(app.MassaEditField.Value);
+            shoulders  = num2str(app.AfstandtussenschoudersEditField.Value);
+            arm_upper  = num2str(app.AfstandschoudertotelleboogEditField.Value);
+            arm_lower  = num2str(app.AfstandelleboogtotvingertopEditField.Value);
+            leg_upper  = num2str(app.AfstandheuptotknieEditField.Value);
+            leg_lower  = num2str(app.AfstandknietotgrondEditField.Value);
+            foot       = num2str(app.LengtevanvoetEditField.Value);
+            strength   = num2str(app.SpierkrachtEditField.Value);
+            cmd = ['autoFill.py ' app.GroepEditField.Value ' ' app.NaamEditField.Value ...
+                ' ' dist ' ' vel ' ' llen ' ' mass ' ' shoulders ' ' arm_upper...
+                ' ' arm_lower ' ' leg_upper ' ' leg_lower ' ' foot ' ' strength];
+            pyrunfile(cmd);
 
         end
         
@@ -193,7 +209,7 @@ classdef Vitruvian_Man_NL_exported < matlab.apps.AppBase
         
         function setPaths(app)
             % fill these in based on your computer
-            init_path_savefolder = 'C:\Users\u0150099\OneDrive - KU Leuven\Resultaten_KinderUniversiteit';
+            init_path_savefolder = 'C:\Users\u0138016\OneDrive - KU Leuven\Outreach\Kinderuniversiteit\2022\Resultaten';
             init_path_geom = 'C:\GBW_MyPrograms\OpenSim 4.3\Geometry';
             init_path_casadi = 'C:\GBW_MyPrograms\casadi_3_5_5';
 
