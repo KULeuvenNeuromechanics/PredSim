@@ -54,6 +54,7 @@ addpath(pathDefaultSettings)
 S.misc.main_path = pathRepo;
 
 addpath([S.misc.main_path '\VariousFunctions'])
+addpath([S.misc.main_path '\AdaptOpenSimModel'])
 
 % name of the subject
 S.subject.name = U.ModelName;
