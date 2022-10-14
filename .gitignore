@@ -9,8 +9,10 @@
 *.eps
 
 opensimAD/*
+
 App/images
 App/old
+/App/balloon.png
 
 Subjects/*
 !Subjects/Hamner_modified/
