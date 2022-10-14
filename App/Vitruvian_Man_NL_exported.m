@@ -2,50 +2,50 @@ classdef Vitruvian_Man_NL_exported < matlab.apps.AppBase
 
     % Properties that correspond to app components
     properties (Access = public)
-        UIFigure                        matlab.ui.Figure
-        Image2                          matlab.ui.control.Image
-        Image                           matlab.ui.control.Image
-        kmuLabel                        matlab.ui.control.Label
-        SnelheidSlider                  matlab.ui.control.Slider
-        SnelheidSliderLabel             matlab.ui.control.Label
-        NaamAfstandSnelheidListBox      matlab.ui.control.ListBox
-        NaamAfstandLabel                matlab.ui.control.Label
-        SluitvideoButton                matlab.ui.control.Button
-        SpeelvideoButton                matlab.ui.control.Button
-        SpierkrachtEditField            matlab.ui.control.NumericEditField
-        SpierkrachtEditFieldLabel       matlab.ui.control.Label
-        Label                           matlab.ui.control.Label
-        MassaEditField                  matlab.ui.control.NumericEditField
-        MassaEditFieldLabel             matlab.ui.control.Label
-        kgLabel                         matlab.ui.control.Label
-        NaamEditField                   matlab.ui.control.EditField
-        StartsimulatieButton            matlab.ui.control.Button
-        DeManvanVitruviusLabel          matlab.ui.control.Label
-        MaaktekeningButton              matlab.ui.control.Button
-        LengtevanvoetEditField          matlab.ui.control.NumericEditField
-        LengtevanvoetEditFieldLabel     matlab.ui.control.Label
-        cmLabel_9                       matlab.ui.control.Label
-        cmLabel_6                       matlab.ui.control.Label
-        cmLabel_5                       matlab.ui.control.Label
-        cmLabel_4                       matlab.ui.control.Label
-        cmLabel_3                       matlab.ui.control.Label
-        cmLabel_2                       matlab.ui.control.Label
-        cmLabel                         matlab.ui.control.Label
+        UIFigure                      matlab.ui.Figure
+        Image2                        matlab.ui.control.Image
+        Image                         matlab.ui.control.Image
+        kmuLabel                      matlab.ui.control.Label
+        SnelheidSlider                matlab.ui.control.Slider
+        SnelheidSliderLabel           matlab.ui.control.Label
+        NaamAfstandSnelheidListBox    matlab.ui.control.ListBox
+        NaamAfstandLabel              matlab.ui.control.Label
+        SluitvideoButton              matlab.ui.control.Button
+        SpeelvideoButton              matlab.ui.control.Button
+        SpierkrachtEditField          matlab.ui.control.NumericEditField
+        SpierkrachtEditFieldLabel     matlab.ui.control.Label
+        Label                         matlab.ui.control.Label
+        MassaEditField                matlab.ui.control.NumericEditField
+        MassaEditFieldLabel           matlab.ui.control.Label
+        kgLabel                       matlab.ui.control.Label
+        NaamEditField                 matlab.ui.control.EditField
+        StartsimulatieButton          matlab.ui.control.Button
+        DeManvanVitruviusLabel        matlab.ui.control.Label
+        MaaktekeningButton            matlab.ui.control.Button
+        LengtevanvoetEditField        matlab.ui.control.NumericEditField
+        LengtevanvoetEditFieldLabel   matlab.ui.control.Label
+        cmLabel_9                     matlab.ui.control.Label
+        cmLabel_6                     matlab.ui.control.Label
+        cmLabel_5                     matlab.ui.control.Label
+        cmLabel_4                     matlab.ui.control.Label
+        cmLabel_3                     matlab.ui.control.Label
+        cmLabel_2                     matlab.ui.control.Label
+        cmLabel                       matlab.ui.control.Label
         AfstandtussenschoudersEditField  matlab.ui.control.NumericEditField
         AfstandtussenschoudersEditFieldLabel  matlab.ui.control.Label
-        AfstandvangrondtotknieEditField  matlab.ui.control.NumericEditField
-        AfstandvangrondtotknieEditFieldLabel  matlab.ui.control.Label
-        AfstandvanknietotheupEditField  matlab.ui.control.NumericEditField
-        AfstandvanknietotheupEditFieldLabel  matlab.ui.control.Label
-        AfstandvanelleboogtotschouderEditField  matlab.ui.control.NumericEditField
-        AfstandvanelleboogtotschouderEditFieldLabel  matlab.ui.control.Label
-        AfstandvanvingertoptotelleboogEditField  matlab.ui.control.NumericEditField
+        AfstandknietotgrondEditField  matlab.ui.control.NumericEditField
+        AfstandknietotgrondEditFieldLabel  matlab.ui.control.Label
+        AfstandheuptotknieEditField   matlab.ui.control.NumericEditField
+        AfstandheuptotknieEditFieldLabel  matlab.ui.control.Label
+        AfstandschoudertotelleboogEditField  matlab.ui.control.NumericEditField
+        AfstandschoudertotelleboogEditFieldLabel  matlab.ui.control.Label
+        AfstandelleboogtovingertopEditField  matlab.ui.control.NumericEditField
         AfstandvanvingertoptotelleboogLabel  matlab.ui.control.Label
-        HoogteEditField                 matlab.ui.control.NumericEditField
-        HoogteEditFieldLabel            matlab.ui.control.Label
-        GroepEditField                  matlab.ui.control.EditField
-        GroepEditFieldLabel             matlab.ui.control.Label
-        UIAxes                          matlab.ui.control.UIAxes
+        LichaamslengteEditField       matlab.ui.control.NumericEditField
+        LichaamslengteEditFieldLabel  matlab.ui.control.Label
+        GroepEditField                matlab.ui.control.EditField
+        GroepEditFieldLabel           matlab.ui.control.Label
+        UIAxes                        matlab.ui.control.UIAxes
     end
 
     
@@ -107,15 +107,15 @@ classdef Vitruvian_Man_NL_exported < matlab.apps.AppBase
 
         % read user inputs
         function [] = readUserInput(app)
-            app.usr_height = app.HoogteEditField.Value;
-            app.usr_fingertip_elbow = app.AfstandvanvingertoptotelleboogEditField.Value;
-            app.usr_elbow_shoulder = app.AfstandvanelleboogtotschouderEditField.Value;
+            app.usr_height = app.LichaamslengteEditField.Value;
+            app.usr_fingertip_elbow = app.AfstandelleboogtovingertopEditField.Value;
+            app.usr_elbow_shoulder = app.AfstandschoudertotelleboogEditField.Value;
             app.usr_shoulder_width = app.AfstandtussenschoudersEditField.Value;
-            app.usr_hip_knee = app.AfstandvanknietotheupEditField.Value;
-            app.usr_knee_ground = app.AfstandvangrondtotknieEditField.Value;
+            app.usr_hip_knee = app.AfstandheuptotknieEditField.Value;
+            app.usr_knee_ground = app.AfstandknietotgrondEditField.Value;
             app.usr_foot_length = app.LengtevanvoetEditField.Value;
         end
-
+        
         % set default user inputs
         function [] = writeDefaultUserInput(app)
             app.AfstandvanvingertoptotelleboogEditField.Value = app.usr_fingertip_elbow;
@@ -125,7 +125,6 @@ classdef Vitruvian_Man_NL_exported < matlab.apps.AppBase
             app.AfstandvangrondtotknieEditField.Value = app.usr_knee_ground;
             app.LengtevanvoetEditField.Value = app.usr_foot_length;
         end
-        
         
         % calls updateDrawing
         function updateDrawingWrapper(app)
@@ -215,7 +214,6 @@ classdef Vitruvian_Man_NL_exported < matlab.apps.AppBase
             app.path_casadi = init_path_casadi;
 
         end
-        
     end
     
 
@@ -413,12 +411,12 @@ classdef Vitruvian_Man_NL_exported < matlab.apps.AppBase
             
         end
 
-        % Value changed function: HoogteEditField
-        function HoogteEditFieldValueChanged(app, event)
-%             value = app.HoogteEditField.Value;
+        % Value changed function: LichaamslengteEditField
+        function LichaamslengteEditFieldValueChanged(app, event)
             readUserInput(app)
             updateUserInput(app)
             writeDefaultUserInput(app)
+            
         end
     end
 
@@ -442,132 +440,133 @@ classdef Vitruvian_Man_NL_exported < matlab.apps.AppBase
             app.UIAxes.YColor = 'none';
             app.UIAxes.Color = 'none';
             app.UIAxes.NextPlot = 'add';
-            app.UIAxes.Position = [589 157 846 627];
+            app.UIAxes.Position = [564 157 846 627];
 
             % Create GroepEditFieldLabel
             app.GroepEditFieldLabel = uilabel(app.UIFigure);
-            app.GroepEditFieldLabel.FontName = 'Edwardian Script ITC';
+            app.GroepEditFieldLabel.FontName = 'Blackadder ITC';
             app.GroepEditFieldLabel.FontSize = 30;
             app.GroepEditFieldLabel.FontColor = [0.5412 0.2706 0.0706];
-            app.GroepEditFieldLabel.Position = [88 800 83 40];
+            app.GroepEditFieldLabel.Position = [88 798 83 42];
             app.GroepEditFieldLabel.Text = 'Groep';
 
             % Create GroepEditField
             app.GroepEditField = uieditfield(app.UIFigure, 'text');
             app.GroepEditField.ValueChangedFcn = createCallbackFcn(app, @GroepEditFieldValueChanged, true);
-            app.GroepEditField.FontName = 'Edwardian Script ITC';
+            app.GroepEditField.FontName = 'Blackadder ITC';
             app.GroepEditField.FontSize = 30;
             app.GroepEditField.FontColor = [0.5412 0.2706 0.0706];
             app.GroepEditField.BackgroundColor = [1 0.9725 0.8627];
-            app.GroepEditField.Position = [172 799 344 41];
+            app.GroepEditField.Placeholder = '(Geef de naam van jouw groepje)';
+            app.GroepEditField.Position = [172 796 344 44];
 
-            % Create HoogteEditFieldLabel
-            app.HoogteEditFieldLabel = uilabel(app.UIFigure);
-            app.HoogteEditFieldLabel.FontName = 'Edwardian Script ITC';
-            app.HoogteEditFieldLabel.FontSize = 30;
-            app.HoogteEditFieldLabel.FontColor = [0.5412 0.2706 0.0706];
-            app.HoogteEditFieldLabel.Position = [88 685 124 40];
-            app.HoogteEditFieldLabel.Text = 'Hoogte';
+            % Create LichaamslengteEditFieldLabel
+            app.LichaamslengteEditFieldLabel = uilabel(app.UIFigure);
+            app.LichaamslengteEditFieldLabel.FontName = 'Blackadder ITC';
+            app.LichaamslengteEditFieldLabel.FontSize = 30;
+            app.LichaamslengteEditFieldLabel.FontColor = [0.5412 0.2706 0.0706];
+            app.LichaamslengteEditFieldLabel.Position = [88 683 159 42];
+            app.LichaamslengteEditFieldLabel.Text = 'Lichaamslengte';
 
-            % Create HoogteEditField
-            app.HoogteEditField = uieditfield(app.UIFigure, 'numeric');
-            app.HoogteEditField.Limits = [80 300];
-            app.HoogteEditField.ValueDisplayFormat = '%111g';
-            app.HoogteEditField.ValueChangedFcn = createCallbackFcn(app, @HoogteEditFieldValueChanged, true);
-            app.HoogteEditField.HorizontalAlignment = 'center';
-            app.HoogteEditField.FontName = 'Edwardian Script ITC';
-            app.HoogteEditField.FontSize = 30;
-            app.HoogteEditField.FontColor = [0.5412 0.2706 0.0706];
-            app.HoogteEditField.BackgroundColor = [1 0.9725 0.8627];
-            app.HoogteEditField.Position = [388 687 74 38];
-            app.HoogteEditField.Value = 180;
+            % Create LichaamslengteEditField
+            app.LichaamslengteEditField = uieditfield(app.UIFigure, 'numeric');
+            app.LichaamslengteEditField.Limits = [80 300];
+            app.LichaamslengteEditField.ValueDisplayFormat = '%111g';
+            app.LichaamslengteEditField.ValueChangedFcn = createCallbackFcn(app, @LichaamslengteEditFieldValueChanged, true);
+            app.LichaamslengteEditField.HorizontalAlignment = 'center';
+            app.LichaamslengteEditField.FontName = 'Blackadder ITC';
+            app.LichaamslengteEditField.FontSize = 30;
+            app.LichaamslengteEditField.FontColor = [0.5412 0.2706 0.0706];
+            app.LichaamslengteEditField.BackgroundColor = [1 0.9725 0.8627];
+            app.LichaamslengteEditField.Position = [388 684 74 41];
+            app.LichaamslengteEditField.Value = 180;
 
             % Create AfstandvanvingertoptotelleboogLabel
             app.AfstandvanvingertoptotelleboogLabel = uilabel(app.UIFigure);
-            app.AfstandvanvingertoptotelleboogLabel.FontName = 'Edwardian Script ITC';
+            app.AfstandvanvingertoptotelleboogLabel.FontName = 'Blackadder ITC';
             app.AfstandvanvingertoptotelleboogLabel.FontSize = 30;
             app.AfstandvanvingertoptotelleboogLabel.FontColor = [0.5412 0.2706 0.0706];
-            app.AfstandvanvingertoptotelleboogLabel.Position = [88 555 285 40];
-            app.AfstandvanvingertoptotelleboogLabel.Text = 'Afstand van vingertop tot elleboog';
+            app.AfstandvanvingertoptotelleboogLabel.Position = [88 423 295 42];
+            app.AfstandvanvingertoptotelleboogLabel.Text = 'Afstand elleboog to vingertop';
 
-            % Create AfstandvanvingertoptotelleboogEditField
-            app.AfstandvanvingertoptotelleboogEditField = uieditfield(app.UIFigure, 'numeric');
-            app.AfstandvanvingertoptotelleboogEditField.Limits = [10 100];
-            app.AfstandvanvingertoptotelleboogEditField.ValueDisplayFormat = '%111g';
-            app.AfstandvanvingertoptotelleboogEditField.HorizontalAlignment = 'center';
-            app.AfstandvanvingertoptotelleboogEditField.FontName = 'Edwardian Script ITC';
-            app.AfstandvanvingertoptotelleboogEditField.FontSize = 30;
-            app.AfstandvanvingertoptotelleboogEditField.FontColor = [0.5412 0.2706 0.0706];
-            app.AfstandvanvingertoptotelleboogEditField.BackgroundColor = [1 0.9725 0.8627];
-            app.AfstandvanvingertoptotelleboogEditField.Position = [388 557 74 38];
-            app.AfstandvanvingertoptotelleboogEditField.Value = 45;
+            % Create AfstandelleboogtovingertopEditField
+            app.AfstandelleboogtovingertopEditField = uieditfield(app.UIFigure, 'numeric');
+            app.AfstandelleboogtovingertopEditField.Limits = [10 100];
+            app.AfstandelleboogtovingertopEditField.ValueDisplayFormat = '%111g';
+            app.AfstandelleboogtovingertopEditField.HorizontalAlignment = 'center';
+            app.AfstandelleboogtovingertopEditField.FontName = 'Blackadder ITC';
+            app.AfstandelleboogtovingertopEditField.FontSize = 30;
+            app.AfstandelleboogtovingertopEditField.FontColor = [0.5412 0.2706 0.0706];
+            app.AfstandelleboogtovingertopEditField.BackgroundColor = [1 0.9725 0.8627];
+            app.AfstandelleboogtovingertopEditField.Position = [388 424 74 41];
+            app.AfstandelleboogtovingertopEditField.Value = 45;
 
-            % Create AfstandvanelleboogtotschouderEditFieldLabel
-            app.AfstandvanelleboogtotschouderEditFieldLabel = uilabel(app.UIFigure);
-            app.AfstandvanelleboogtotschouderEditFieldLabel.FontName = 'Edwardian Script ITC';
-            app.AfstandvanelleboogtotschouderEditFieldLabel.FontSize = 30;
-            app.AfstandvanelleboogtotschouderEditFieldLabel.FontColor = [0.5412 0.2706 0.0706];
-            app.AfstandvanelleboogtotschouderEditFieldLabel.Position = [88 490 279 40];
-            app.AfstandvanelleboogtotschouderEditFieldLabel.Text = 'Afstand van elleboog tot schouder';
+            % Create AfstandschoudertotelleboogEditFieldLabel
+            app.AfstandschoudertotelleboogEditFieldLabel = uilabel(app.UIFigure);
+            app.AfstandschoudertotelleboogEditFieldLabel.FontName = 'Blackadder ITC';
+            app.AfstandschoudertotelleboogEditFieldLabel.FontSize = 30;
+            app.AfstandschoudertotelleboogEditFieldLabel.FontColor = [0.5412 0.2706 0.0706];
+            app.AfstandschoudertotelleboogEditFieldLabel.Position = [88 488 297 42];
+            app.AfstandschoudertotelleboogEditFieldLabel.Text = 'Afstand schouder tot elleboog';
 
-            % Create AfstandvanelleboogtotschouderEditField
-            app.AfstandvanelleboogtotschouderEditField = uieditfield(app.UIFigure, 'numeric');
-            app.AfstandvanelleboogtotschouderEditField.Limits = [5 100];
-            app.AfstandvanelleboogtotschouderEditField.ValueDisplayFormat = '%111g';
-            app.AfstandvanelleboogtotschouderEditField.HorizontalAlignment = 'center';
-            app.AfstandvanelleboogtotschouderEditField.FontName = 'Edwardian Script ITC';
-            app.AfstandvanelleboogtotschouderEditField.FontSize = 30;
-            app.AfstandvanelleboogtotschouderEditField.FontColor = [0.5412 0.2706 0.0706];
-            app.AfstandvanelleboogtotschouderEditField.BackgroundColor = [1 0.9725 0.8627];
-            app.AfstandvanelleboogtotschouderEditField.Position = [388 492 74 38];
-            app.AfstandvanelleboogtotschouderEditField.Value = 22.5;
+            % Create AfstandschoudertotelleboogEditField
+            app.AfstandschoudertotelleboogEditField = uieditfield(app.UIFigure, 'numeric');
+            app.AfstandschoudertotelleboogEditField.Limits = [5 100];
+            app.AfstandschoudertotelleboogEditField.ValueDisplayFormat = '%111g';
+            app.AfstandschoudertotelleboogEditField.HorizontalAlignment = 'center';
+            app.AfstandschoudertotelleboogEditField.FontName = 'Blackadder ITC';
+            app.AfstandschoudertotelleboogEditField.FontSize = 30;
+            app.AfstandschoudertotelleboogEditField.FontColor = [0.5412 0.2706 0.0706];
+            app.AfstandschoudertotelleboogEditField.BackgroundColor = [1 0.9725 0.8627];
+            app.AfstandschoudertotelleboogEditField.Position = [388 489 74 41];
+            app.AfstandschoudertotelleboogEditField.Value = 22.5;
 
-            % Create AfstandvanknietotheupEditFieldLabel
-            app.AfstandvanknietotheupEditFieldLabel = uilabel(app.UIFigure);
-            app.AfstandvanknietotheupEditFieldLabel.FontName = 'Edwardian Script ITC';
-            app.AfstandvanknietotheupEditFieldLabel.FontSize = 30;
-            app.AfstandvanknietotheupEditFieldLabel.FontColor = [0.5412 0.2706 0.0706];
-            app.AfstandvanknietotheupEditFieldLabel.Position = [88 295 218 40];
-            app.AfstandvanknietotheupEditFieldLabel.Text = 'Afstand van knie tot heup';
+            % Create AfstandheuptotknieEditFieldLabel
+            app.AfstandheuptotknieEditFieldLabel = uilabel(app.UIFigure);
+            app.AfstandheuptotknieEditFieldLabel.FontName = 'Blackadder ITC';
+            app.AfstandheuptotknieEditFieldLabel.FontSize = 30;
+            app.AfstandheuptotknieEditFieldLabel.FontColor = [0.5412 0.2706 0.0706];
+            app.AfstandheuptotknieEditFieldLabel.Position = [88 358 224 42];
+            app.AfstandheuptotknieEditFieldLabel.Text = 'Afstand heup tot knie';
 
-            % Create AfstandvanknietotheupEditField
-            app.AfstandvanknietotheupEditField = uieditfield(app.UIFigure, 'numeric');
-            app.AfstandvanknietotheupEditField.Limits = [10 100];
-            app.AfstandvanknietotheupEditField.ValueDisplayFormat = '%111g';
-            app.AfstandvanknietotheupEditField.HorizontalAlignment = 'center';
-            app.AfstandvanknietotheupEditField.FontName = 'Edwardian Script ITC';
-            app.AfstandvanknietotheupEditField.FontSize = 30;
-            app.AfstandvanknietotheupEditField.FontColor = [0.5412 0.2706 0.0706];
-            app.AfstandvanknietotheupEditField.BackgroundColor = [1 0.9725 0.8627];
-            app.AfstandvanknietotheupEditField.Position = [388 297 74 38];
-            app.AfstandvanknietotheupEditField.Value = 45;
+            % Create AfstandheuptotknieEditField
+            app.AfstandheuptotknieEditField = uieditfield(app.UIFigure, 'numeric');
+            app.AfstandheuptotknieEditField.Limits = [10 100];
+            app.AfstandheuptotknieEditField.ValueDisplayFormat = '%111g';
+            app.AfstandheuptotknieEditField.HorizontalAlignment = 'center';
+            app.AfstandheuptotknieEditField.FontName = 'Blackadder ITC';
+            app.AfstandheuptotknieEditField.FontSize = 30;
+            app.AfstandheuptotknieEditField.FontColor = [0.5412 0.2706 0.0706];
+            app.AfstandheuptotknieEditField.BackgroundColor = [1 0.9725 0.8627];
+            app.AfstandheuptotknieEditField.Position = [388 359 74 41];
+            app.AfstandheuptotknieEditField.Value = 45;
 
-            % Create AfstandvangrondtotknieEditFieldLabel
-            app.AfstandvangrondtotknieEditFieldLabel = uilabel(app.UIFigure);
-            app.AfstandvangrondtotknieEditFieldLabel.FontName = 'Edwardian Script ITC';
-            app.AfstandvangrondtotknieEditFieldLabel.FontSize = 30;
-            app.AfstandvangrondtotknieEditFieldLabel.FontColor = [0.5412 0.2706 0.0706];
-            app.AfstandvangrondtotknieEditFieldLabel.Position = [88 360 234 40];
-            app.AfstandvangrondtotknieEditFieldLabel.Text = 'Afstand van grond tot knie';
+            % Create AfstandknietotgrondEditFieldLabel
+            app.AfstandknietotgrondEditFieldLabel = uilabel(app.UIFigure);
+            app.AfstandknietotgrondEditFieldLabel.FontName = 'Blackadder ITC';
+            app.AfstandknietotgrondEditFieldLabel.FontSize = 30;
+            app.AfstandknietotgrondEditFieldLabel.FontColor = [0.5412 0.2706 0.0706];
+            app.AfstandknietotgrondEditFieldLabel.Position = [88 294 231 42];
+            app.AfstandknietotgrondEditFieldLabel.Text = 'Afstand knie tot grond';
 
-            % Create AfstandvangrondtotknieEditField
-            app.AfstandvangrondtotknieEditField = uieditfield(app.UIFigure, 'numeric');
-            app.AfstandvangrondtotknieEditField.Limits = [10 100];
-            app.AfstandvangrondtotknieEditField.ValueDisplayFormat = '%111g';
-            app.AfstandvangrondtotknieEditField.HorizontalAlignment = 'center';
-            app.AfstandvangrondtotknieEditField.FontName = 'Edwardian Script ITC';
-            app.AfstandvangrondtotknieEditField.FontSize = 30;
-            app.AfstandvangrondtotknieEditField.FontColor = [0.5412 0.2706 0.0706];
-            app.AfstandvangrondtotknieEditField.BackgroundColor = [1 0.9725 0.8627];
-            app.AfstandvangrondtotknieEditField.Position = [388 362 74 38];
-            app.AfstandvangrondtotknieEditField.Value = 45;
+            % Create AfstandknietotgrondEditField
+            app.AfstandknietotgrondEditField = uieditfield(app.UIFigure, 'numeric');
+            app.AfstandknietotgrondEditField.Limits = [10 100];
+            app.AfstandknietotgrondEditField.ValueDisplayFormat = '%111g';
+            app.AfstandknietotgrondEditField.HorizontalAlignment = 'center';
+            app.AfstandknietotgrondEditField.FontName = 'Blackadder ITC';
+            app.AfstandknietotgrondEditField.FontSize = 30;
+            app.AfstandknietotgrondEditField.FontColor = [0.5412 0.2706 0.0706];
+            app.AfstandknietotgrondEditField.BackgroundColor = [1 0.9725 0.8627];
+            app.AfstandknietotgrondEditField.Position = [388 295 74 41];
+            app.AfstandknietotgrondEditField.Value = 45;
 
             % Create AfstandtussenschoudersEditFieldLabel
             app.AfstandtussenschoudersEditFieldLabel = uilabel(app.UIFigure);
-            app.AfstandtussenschoudersEditFieldLabel.FontName = 'Edwardian Script ITC';
+            app.AfstandtussenschoudersEditFieldLabel.FontName = 'Blackadder ITC';
             app.AfstandtussenschoudersEditFieldLabel.FontSize = 30;
             app.AfstandtussenschoudersEditFieldLabel.FontColor = [0.5412 0.2706 0.0706];
-            app.AfstandtussenschoudersEditFieldLabel.Position = [88 425 209 40];
+            app.AfstandtussenschoudersEditFieldLabel.Position = [88 554 262 42];
             app.AfstandtussenschoudersEditFieldLabel.Text = 'Afstand tussen schouders';
 
             % Create AfstandtussenschoudersEditField
@@ -575,75 +574,75 @@ classdef Vitruvian_Man_NL_exported < matlab.apps.AppBase
             app.AfstandtussenschoudersEditField.Limits = [10 100];
             app.AfstandtussenschoudersEditField.ValueDisplayFormat = '%111g';
             app.AfstandtussenschoudersEditField.HorizontalAlignment = 'center';
-            app.AfstandtussenschoudersEditField.FontName = 'Edwardian Script ITC';
+            app.AfstandtussenschoudersEditField.FontName = 'Blackadder ITC';
             app.AfstandtussenschoudersEditField.FontSize = 30;
             app.AfstandtussenschoudersEditField.FontColor = [0.5412 0.2706 0.0706];
             app.AfstandtussenschoudersEditField.BackgroundColor = [1 0.9725 0.8627];
-            app.AfstandtussenschoudersEditField.Position = [388 427 74 38];
+            app.AfstandtussenschoudersEditField.Position = [388 555 74 41];
             app.AfstandtussenschoudersEditField.Value = 45;
 
             % Create cmLabel
             app.cmLabel = uilabel(app.UIFigure);
-            app.cmLabel.FontName = 'Edwardian Script ITC';
+            app.cmLabel.FontName = 'Blackadder ITC';
             app.cmLabel.FontSize = 30;
             app.cmLabel.FontColor = [0.5412 0.2706 0.0706];
-            app.cmLabel.Position = [487 685 29 40];
+            app.cmLabel.Position = [487 683 31 42];
             app.cmLabel.Text = 'cm';
 
             % Create cmLabel_2
             app.cmLabel_2 = uilabel(app.UIFigure);
-            app.cmLabel_2.FontName = 'Edwardian Script ITC';
+            app.cmLabel_2.FontName = 'Blackadder ITC';
             app.cmLabel_2.FontSize = 30;
             app.cmLabel_2.FontColor = [0.5412 0.2706 0.0706];
-            app.cmLabel_2.Position = [487 556 29 40];
+            app.cmLabel_2.Position = [487 554 31 42];
             app.cmLabel_2.Text = 'cm';
 
             % Create cmLabel_3
             app.cmLabel_3 = uilabel(app.UIFigure);
-            app.cmLabel_3.FontName = 'Edwardian Script ITC';
+            app.cmLabel_3.FontName = 'Blackadder ITC';
             app.cmLabel_3.FontSize = 30;
             app.cmLabel_3.FontColor = [0.5412 0.2706 0.0706];
-            app.cmLabel_3.Position = [487 490 29 40];
+            app.cmLabel_3.Position = [487 488 31 42];
             app.cmLabel_3.Text = 'cm';
 
             % Create cmLabel_4
             app.cmLabel_4 = uilabel(app.UIFigure);
-            app.cmLabel_4.FontName = 'Edwardian Script ITC';
+            app.cmLabel_4.FontName = 'Blackadder ITC';
             app.cmLabel_4.FontSize = 30;
             app.cmLabel_4.FontColor = [0.5412 0.2706 0.0706];
-            app.cmLabel_4.Position = [487 425 29 40];
+            app.cmLabel_4.Position = [487 423 31 42];
             app.cmLabel_4.Text = 'cm';
 
             % Create cmLabel_5
             app.cmLabel_5 = uilabel(app.UIFigure);
-            app.cmLabel_5.FontName = 'Edwardian Script ITC';
+            app.cmLabel_5.FontName = 'Blackadder ITC';
             app.cmLabel_5.FontSize = 30;
             app.cmLabel_5.FontColor = [0.5412 0.2706 0.0706];
-            app.cmLabel_5.Position = [487 360 29 40];
+            app.cmLabel_5.Position = [487 358 31 42];
             app.cmLabel_5.Text = 'cm';
 
             % Create cmLabel_6
             app.cmLabel_6 = uilabel(app.UIFigure);
-            app.cmLabel_6.FontName = 'Edwardian Script ITC';
+            app.cmLabel_6.FontName = 'Blackadder ITC';
             app.cmLabel_6.FontSize = 30;
             app.cmLabel_6.FontColor = [0.5412 0.2706 0.0706];
-            app.cmLabel_6.Position = [487 296 29 40];
+            app.cmLabel_6.Position = [487 294 31 42];
             app.cmLabel_6.Text = 'cm';
 
             % Create cmLabel_9
             app.cmLabel_9 = uilabel(app.UIFigure);
-            app.cmLabel_9.FontName = 'Edwardian Script ITC';
+            app.cmLabel_9.FontName = 'Blackadder ITC';
             app.cmLabel_9.FontSize = 30;
             app.cmLabel_9.FontColor = [0.5412 0.2706 0.0706];
-            app.cmLabel_9.Position = [487 232 29 40];
+            app.cmLabel_9.Position = [487 230 31 42];
             app.cmLabel_9.Text = 'cm';
 
             % Create LengtevanvoetEditFieldLabel
             app.LengtevanvoetEditFieldLabel = uilabel(app.UIFigure);
-            app.LengtevanvoetEditFieldLabel.FontName = 'Edwardian Script ITC';
+            app.LengtevanvoetEditFieldLabel.FontName = 'Blackadder ITC';
             app.LengtevanvoetEditFieldLabel.FontSize = 30;
             app.LengtevanvoetEditFieldLabel.FontColor = [0.5412 0.2706 0.0706];
-            app.LengtevanvoetEditFieldLabel.Position = [88 231 140 40];
+            app.LengtevanvoetEditFieldLabel.Position = [88 229 159 42];
             app.LengtevanvoetEditFieldLabel.Text = 'Lengte van voet';
 
             % Create LengtevanvoetEditField
@@ -651,18 +650,18 @@ classdef Vitruvian_Man_NL_exported < matlab.apps.AppBase
             app.LengtevanvoetEditField.Limits = [10 100];
             app.LengtevanvoetEditField.ValueDisplayFormat = '%111g';
             app.LengtevanvoetEditField.HorizontalAlignment = 'center';
-            app.LengtevanvoetEditField.FontName = 'Edwardian Script ITC';
+            app.LengtevanvoetEditField.FontName = 'Blackadder ITC';
             app.LengtevanvoetEditField.FontSize = 30;
             app.LengtevanvoetEditField.FontColor = [0.5412 0.2706 0.0706];
             app.LengtevanvoetEditField.BackgroundColor = [1 0.9725 0.8627];
-            app.LengtevanvoetEditField.Position = [388 233 74 38];
+            app.LengtevanvoetEditField.Position = [388 230 74 41];
             app.LengtevanvoetEditField.Value = 30;
 
             % Create MaaktekeningButton
             app.MaaktekeningButton = uibutton(app.UIFigure, 'push');
             app.MaaktekeningButton.ButtonPushedFcn = createCallbackFcn(app, @MaaktekeningButtonPushed, true);
             app.MaaktekeningButton.BackgroundColor = [0.9216 0.8706 0.6706];
-            app.MaaktekeningButton.FontName = 'Edwardian Script ITC';
+            app.MaaktekeningButton.FontName = 'Blackadder ITC';
             app.MaaktekeningButton.FontSize = 30;
             app.MaaktekeningButton.FontColor = [0.5412 0.2706 0.0706];
             app.MaaktekeningButton.Position = [590 59 314 61];
@@ -671,47 +670,47 @@ classdef Vitruvian_Man_NL_exported < matlab.apps.AppBase
             % Create DeManvanVitruviusLabel
             app.DeManvanVitruviusLabel = uilabel(app.UIFigure);
             app.DeManvanVitruviusLabel.HorizontalAlignment = 'center';
-            app.DeManvanVitruviusLabel.FontName = 'Edwardian Script ITC';
+            app.DeManvanVitruviusLabel.FontName = 'Blackadder ITC';
             app.DeManvanVitruviusLabel.FontSize = 80;
             app.DeManvanVitruviusLabel.FontColor = [0.5412 0.2706 0.0706];
-            app.DeManvanVitruviusLabel.Position = [313 839 1295 104];
+            app.DeManvanVitruviusLabel.Position = [335 832 1295 111];
             app.DeManvanVitruviusLabel.Text = 'De Man van Vitruvius';
 
             % Create StartsimulatieButton
             app.StartsimulatieButton = uibutton(app.UIFigure, 'push');
             app.StartsimulatieButton.ButtonPushedFcn = createCallbackFcn(app, @StartsimulatieButtonPushed, true);
             app.StartsimulatieButton.BackgroundColor = [0.9216 0.8706 0.6706];
-            app.StartsimulatieButton.FontName = 'Edwardian Script ITC';
+            app.StartsimulatieButton.FontName = 'Blackadder ITC';
             app.StartsimulatieButton.FontSize = 30;
             app.StartsimulatieButton.FontColor = [0.5412 0.2706 0.0706];
-            app.StartsimulatieButton.Position = [1064 59 314 61];
+            app.StartsimulatieButton.Position = [1022 59 314 61];
             app.StartsimulatieButton.Text = 'Start simulatie';
 
             % Create NaamEditField
             app.NaamEditField = uieditfield(app.UIFigure, 'text');
             app.NaamEditField.ValueChangedFcn = createCallbackFcn(app, @NaamEditFieldValueChanged, true);
             app.NaamEditField.HorizontalAlignment = 'center';
-            app.NaamEditField.FontName = 'Edwardian Script ITC';
+            app.NaamEditField.FontName = 'Blackadder ITC';
             app.NaamEditField.FontSize = 30;
             app.NaamEditField.FontColor = [0.5412 0.2706 0.0706];
             app.NaamEditField.BackgroundColor = [1 0.9725 0.8627];
-            app.NaamEditField.Position = [839 799 244 41];
-            app.NaamEditField.Value = '(Kies een naam)';
+            app.NaamEditField.Placeholder = '(Jouw naam)';
+            app.NaamEditField.Position = [857 796 244 44];
 
             % Create kgLabel
             app.kgLabel = uilabel(app.UIFigure);
-            app.kgLabel.FontName = 'Edwardian Script ITC';
+            app.kgLabel.FontName = 'Blackadder ITC';
             app.kgLabel.FontSize = 30;
             app.kgLabel.FontColor = [0.5412 0.2706 0.0706];
-            app.kgLabel.Position = [487 620 25 40];
+            app.kgLabel.Position = [487 618 28 42];
             app.kgLabel.Text = 'kg';
 
             % Create MassaEditFieldLabel
             app.MassaEditFieldLabel = uilabel(app.UIFigure);
-            app.MassaEditFieldLabel.FontName = 'Edwardian Script ITC';
+            app.MassaEditFieldLabel.FontName = 'Blackadder ITC';
             app.MassaEditFieldLabel.FontSize = 30;
             app.MassaEditFieldLabel.FontColor = [0.5412 0.2706 0.0706];
-            app.MassaEditFieldLabel.Position = [88 620 124 40];
+            app.MassaEditFieldLabel.Position = [88 618 124 42];
             app.MassaEditFieldLabel.Text = 'Massa';
 
             % Create MassaEditField
@@ -719,27 +718,27 @@ classdef Vitruvian_Man_NL_exported < matlab.apps.AppBase
             app.MassaEditField.Limits = [20 300];
             app.MassaEditField.ValueDisplayFormat = '%111g';
             app.MassaEditField.HorizontalAlignment = 'center';
-            app.MassaEditField.FontName = 'Edwardian Script ITC';
+            app.MassaEditField.FontName = 'Blackadder ITC';
             app.MassaEditField.FontSize = 30;
             app.MassaEditField.FontColor = [0.5412 0.2706 0.0706];
             app.MassaEditField.BackgroundColor = [1 0.9725 0.8627];
-            app.MassaEditField.Position = [388 622 74 38];
+            app.MassaEditField.Position = [388 619 74 41];
             app.MassaEditField.Value = 75;
 
             % Create Label
             app.Label = uilabel(app.UIFigure);
-            app.Label.FontName = 'Edwardian Script ITC';
+            app.Label.FontName = 'Blackadder ITC';
             app.Label.FontSize = 30;
             app.Label.FontColor = [0.5412 0.2706 0.0706];
-            app.Label.Position = [487 165 25 40];
+            app.Label.Position = [487 163 25 42];
             app.Label.Text = '%';
 
             % Create SpierkrachtEditFieldLabel
             app.SpierkrachtEditFieldLabel = uilabel(app.UIFigure);
-            app.SpierkrachtEditFieldLabel.FontName = 'Edwardian Script ITC';
+            app.SpierkrachtEditFieldLabel.FontName = 'Blackadder ITC';
             app.SpierkrachtEditFieldLabel.FontSize = 30;
             app.SpierkrachtEditFieldLabel.FontColor = [0.5412 0.2706 0.0706];
-            app.SpierkrachtEditFieldLabel.Position = [88 165 124 40];
+            app.SpierkrachtEditFieldLabel.Position = [88 163 127 42];
             app.SpierkrachtEditFieldLabel.Text = 'Spierkracht';
 
             % Create SpierkrachtEditField
@@ -747,42 +746,42 @@ classdef Vitruvian_Man_NL_exported < matlab.apps.AppBase
             app.SpierkrachtEditField.Limits = [20 500];
             app.SpierkrachtEditField.ValueDisplayFormat = '%111g';
             app.SpierkrachtEditField.HorizontalAlignment = 'center';
-            app.SpierkrachtEditField.FontName = 'Edwardian Script ITC';
+            app.SpierkrachtEditField.FontName = 'Blackadder ITC';
             app.SpierkrachtEditField.FontSize = 30;
             app.SpierkrachtEditField.FontColor = [0.5412 0.2706 0.0706];
             app.SpierkrachtEditField.BackgroundColor = [1 0.9725 0.8627];
-            app.SpierkrachtEditField.Position = [388 167 74 38];
+            app.SpierkrachtEditField.Position = [388 164 74 41];
             app.SpierkrachtEditField.Value = 100;
 
             % Create SpeelvideoButton
             app.SpeelvideoButton = uibutton(app.UIFigure, 'push');
             app.SpeelvideoButton.ButtonPushedFcn = createCallbackFcn(app, @SpeelvideoButtonPushed, true);
             app.SpeelvideoButton.BackgroundColor = [0.9216 0.8706 0.6706];
-            app.SpeelvideoButton.FontName = 'Edwardian Script ITC';
+            app.SpeelvideoButton.FontName = 'Blackadder ITC';
             app.SpeelvideoButton.FontSize = 30;
             app.SpeelvideoButton.FontColor = [0.5412 0.2706 0.0706];
-            app.SpeelvideoButton.Position = [1538 59 314 61];
+            app.SpeelvideoButton.Position = [1481 59 314 61];
             app.SpeelvideoButton.Text = 'Speel video';
 
             % Create SluitvideoButton
             app.SluitvideoButton = uibutton(app.UIFigure, 'push');
             app.SluitvideoButton.ButtonPushedFcn = createCallbackFcn(app, @SluitvideoButtonPushed, true);
             app.SluitvideoButton.BackgroundColor = [0.9216 0.8706 0.6706];
-            app.SluitvideoButton.FontName = 'Edwardian Script ITC';
+            app.SluitvideoButton.FontName = 'Blackadder ITC';
             app.SluitvideoButton.FontSize = 30;
             app.SluitvideoButton.FontColor = [0.5412 0.2706 0.0706];
             app.SluitvideoButton.Enable = 'off';
             app.SluitvideoButton.Visible = 'off';
-            app.SluitvideoButton.Position = [1538 59 314 61];
+            app.SluitvideoButton.Position = [1481 59 314 61];
             app.SluitvideoButton.Text = 'Sluit video';
 
             % Create NaamAfstandLabel
             app.NaamAfstandLabel = uilabel(app.UIFigure);
             app.NaamAfstandLabel.BackgroundColor = [0.9216 0.8706 0.6706];
-            app.NaamAfstandLabel.FontName = 'Edwardian Script ITC';
+            app.NaamAfstandLabel.FontName = 'Blackadder ITC';
             app.NaamAfstandLabel.FontSize = 30;
             app.NaamAfstandLabel.FontColor = [0.5412 0.2706 0.0706];
-            app.NaamAfstandLabel.Position = [1467 800 384 40];
+            app.NaamAfstandLabel.Position = [1430 798 384 42];
             app.NaamAfstandLabel.Text = 'Naam              Afstand         Snelheid';
 
             % Create NaamAfstandSnelheidListBox
@@ -793,15 +792,15 @@ classdef Vitruvian_Man_NL_exported < matlab.apps.AppBase
             app.NaamAfstandSnelheidListBox.FontSize = 30;
             app.NaamAfstandSnelheidListBox.FontColor = [0.5412 0.2706 0.0706];
             app.NaamAfstandSnelheidListBox.BackgroundColor = [0.9216 0.8706 0.6706];
-            app.NaamAfstandSnelheidListBox.Position = [1467 157 384 644];
+            app.NaamAfstandSnelheidListBox.Position = [1430 157 384 644];
             app.NaamAfstandSnelheidListBox.Value = {};
 
             % Create SnelheidSliderLabel
             app.SnelheidSliderLabel = uilabel(app.UIFigure);
-            app.SnelheidSliderLabel.FontName = 'Edwardian Script ITC';
-            app.SnelheidSliderLabel.FontSize = 30;
+            app.SnelheidSliderLabel.FontName = 'Blackadder ITC';
+            app.SnelheidSliderLabel.FontSize = 25;
             app.SnelheidSliderLabel.FontColor = [0.5412 0.2706 0.0706];
-            app.SnelheidSliderLabel.Position = [88 90 123 40];
+            app.SnelheidSliderLabel.Position = [88 88 123 42];
             app.SnelheidSliderLabel.Text = 'Snelheid';
 
             % Create SnelheidSlider
@@ -811,18 +810,18 @@ classdef Vitruvian_Man_NL_exported < matlab.apps.AppBase
             app.SnelheidSlider.MajorTickLabels = {'1', '5', '10', '15', 'max'};
             app.SnelheidSlider.ValueChangedFcn = createCallbackFcn(app, @SnelheidSliderValueChanged, true);
             app.SnelheidSlider.MinorTicks = [1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20];
-            app.SnelheidSlider.FontName = 'Edwardian Script ITC';
-            app.SnelheidSlider.FontSize = 20;
+            app.SnelheidSlider.FontName = 'Blackadder ITC';
+            app.SnelheidSlider.FontSize = 25;
             app.SnelheidSlider.FontColor = [0.5412 0.2706 0.0706];
             app.SnelheidSlider.Position = [226 119 224 3];
             app.SnelheidSlider.Value = 4;
 
             % Create kmuLabel
             app.kmuLabel = uilabel(app.UIFigure);
-            app.kmuLabel.FontName = 'Edwardian Script ITC';
+            app.kmuLabel.FontName = 'Blackadder ITC';
             app.kmuLabel.FontSize = 30;
             app.kmuLabel.FontColor = [0.5412 0.2706 0.0706];
-            app.kmuLabel.Position = [474 88 56 40];
+            app.kmuLabel.Position = [474 86 58 42];
             app.kmuLabel.Text = 'km/u';
 
             % Create Image
