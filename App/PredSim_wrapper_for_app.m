@@ -1,4 +1,4 @@
-function [] = PredSim_wrapper_for_app(U,sf)
+function [varargout] = PredSim_wrapper_for_app(U,sf)
 % --------------------------------------------------------------------------
 % PredSim_wrapper_for_app
 %   This functions replaces main.m when using the Vitruvian_Man apps
@@ -138,11 +138,12 @@ S.Cpp2Dll.verbose_mode = 0; % 0 for no outputs from cmake
 % S.Cpp2Dll.coordinatesOrder = ;
         
 %% Run predictive simulations
-if S.solver.run_as_batch_job
-    add_pred_sim_to_batch(S,osim_path)
-else
-    run_pred_sim(S,osim_path);
-end
+savename = run_pred_sim(S,osim_path);
 
+savepath = fullfile(S.subject.save_folder,savename);
+
+if nargout>=1
+    varargout{1} = savepath;
+end
 
 end
