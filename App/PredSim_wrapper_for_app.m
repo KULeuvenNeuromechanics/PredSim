@@ -69,7 +69,7 @@ S.solver.run_as_batch_job = 0;
 
 % casadi folder
 S.solver.CasADi_path    = U.PathCasadi;
-
+S.solver.tol_ipopt      = 3;
 
 
 
@@ -102,21 +102,29 @@ S.weights.a         = 1;
 S.weights.slack_ctrl = 0.001;
 % S.weights.pass_torq_includes_damping = ;
 
+
 if U.Speed > 0
     S.subject.v_pelvis_x_trgt   = U.Speed;
-    if U.Speed < 1.8
-        % S.subject.IG_selection = fullfile(S.misc.main_path,'OCP','IK_Guess_Default.mot');
-        % S.subject.IG_selection_gaitCyclePercent = 50;
-        S.subject.IG_selection = fullfile(S.misc.main_path,'Subjects','Vitruvian_Man','Vitruvian_Man.mot');
-        S.subject.IG_selection_gaitCyclePercent = 200;
-    else
-        S.subject.IG_selection = 'quasi-random';
-    end
+    v_ig = [10:2:20,25:5:45];
+    [~,idxv] = min((v_ig-S.subject.v_pelvis_x_trgt).^2);
+    name_ig = ['IG_v' num2str(v_ig(idxv)) 'ms.mot'];
+    S.subject.IG_selection = fullfile(S.misc.main_path,'Subjects','Vitruvian_Man','IG',name_ig);
+    S.subject.IG_selection_gaitCyclePercent = 200;
+
+%     if U.Speed < 1.8
+%         % S.subject.IG_selection = fullfile(S.misc.main_path,'OCP','IK_Guess_Default.mot');
+%         % S.subject.IG_selection_gaitCyclePercent = 50;
+%         S.subject.IG_selection = fullfile(S.misc.main_path,'Subjects','Vitruvian_Man','Vitruvian_Man.mot');
+%         S.subject.IG_selection_gaitCyclePercent = 200;
+%     else
+%         S.subject.IG_selection = 'quasi-random';
+%     end
 else
     S.weights.velocity = -5e4;
     S.subject.v_pelvis_x_trgt   = [2,10];
 
-    S.subject.IG_selection = 'quasi-random';
+    S.subject.IG_selection = fullfile(S.misc.main_path,'Subjects','Vitruvian_Man','IG','IG_v45ms.mot');
+    S.subject.IG_selection_gaitCyclePercent = 200;
 end
 
 % %S.Cpp2Dll: required inputs to convert .osim to .dll
@@ -129,7 +137,11 @@ S.Cpp2Dll.verbose_mode = 0; % 0 for no outputs from cmake
 % S.Cpp2Dll.coordinatesOrder = ;
         
 %% Run predictive simulations
-run_pred_sim(S,osim_path);
+if S.solver.run_as_batch_job
+    add_pred_sim_to_batch(S,osim_path)
+else
+    run_pred_sim(S,osim_path);
+end
 
 
 end
