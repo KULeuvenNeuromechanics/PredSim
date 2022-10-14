@@ -47,6 +47,8 @@ if length(varargin)==1
     if size(argin3,1) == 1 && size(argin3,2) == 1
         % if it's 1 element, it's the number of data points
         n_data_points = argin3;
+        % get dummy motion
+        Qs = generate_dummy_motion(S,model_info,n_data_points);
     else
         % else, it's the entire dummy motion
         Qs = argin3;
