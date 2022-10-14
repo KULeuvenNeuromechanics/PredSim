@@ -96,7 +96,7 @@ classdef Vitruvian_Man_NL_exported < matlab.apps.AppBase
 
         % user inputs with default values
         function [] = updateUserInput(app)
-            app.usr_height = app.default_height;
+%             app.usr_height = app.default_height;
             app.usr_fingertip_elbow = app.default_ratio_fingertip_elbow*app.usr_height;
             app.usr_elbow_shoulder = app.default_ratio_elbow_shoulder*app.usr_height;
             app.usr_shoulder_width = app.default_ratio_shoulder_width*app.usr_height;
@@ -114,6 +114,16 @@ classdef Vitruvian_Man_NL_exported < matlab.apps.AppBase
             app.usr_hip_knee = app.AfstandvanknietotheupEditField.Value;
             app.usr_knee_ground = app.AfstandvangrondtotknieEditField.Value;
             app.usr_foot_length = app.LengtevanvoetEditField.Value;
+        end
+
+        % set default user inputs
+        function [] = writeDefaultUserInput(app)
+            app.AfstandvanvingertoptotelleboogEditField.Value = app.usr_fingertip_elbow;
+            app.AfstandvanelleboogtotschouderEditField.Value = app.usr_elbow_shoulder;
+            app.AfstandtussenschoudersEditField.Value = app.usr_shoulder_width;
+            app.AfstandvanknietotheupEditField.Value = app.usr_hip_knee;
+            app.AfstandvangrondtotknieEditField.Value = app.usr_knee_ground;
+            app.LengtevanvoetEditField.Value = app.usr_foot_length;
         end
         
         
@@ -205,6 +215,7 @@ classdef Vitruvian_Man_NL_exported < matlab.apps.AppBase
             app.path_casadi = init_path_casadi;
 
         end
+        
     end
     
 
@@ -401,6 +412,14 @@ classdef Vitruvian_Man_NL_exported < matlab.apps.AppBase
             end
             
         end
+
+        % Value changed function: HoogteEditField
+        function HoogteEditFieldValueChanged(app, event)
+%             value = app.HoogteEditField.Value;
+            readUserInput(app)
+            updateUserInput(app)
+            writeDefaultUserInput(app)
+        end
     end
 
     % Component initialization
@@ -454,6 +473,7 @@ classdef Vitruvian_Man_NL_exported < matlab.apps.AppBase
             app.HoogteEditField = uieditfield(app.UIFigure, 'numeric');
             app.HoogteEditField.Limits = [80 300];
             app.HoogteEditField.ValueDisplayFormat = '%111g';
+            app.HoogteEditField.ValueChangedFcn = createCallbackFcn(app, @HoogteEditFieldValueChanged, true);
             app.HoogteEditField.HorizontalAlignment = 'center';
             app.HoogteEditField.FontName = 'Edwardian Script ITC';
             app.HoogteEditField.FontSize = 30;
