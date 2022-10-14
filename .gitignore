@@ -12,7 +12,7 @@ opensimAD/*
 
 App/images
 App/old
-/App/balloon.png
+!App/balloon.png
 
 Subjects/*
 !Subjects/Hamner_modified/
