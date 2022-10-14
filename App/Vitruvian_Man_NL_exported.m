@@ -39,7 +39,7 @@ classdef Vitruvian_Man_NL_exported < matlab.apps.AppBase
         AfstandheuptotknieEditFieldLabel  matlab.ui.control.Label
         AfstandschoudertotelleboogEditField  matlab.ui.control.NumericEditField
         AfstandschoudertotelleboogEditFieldLabel  matlab.ui.control.Label
-        AfstandelleboogtovingertopEditField  matlab.ui.control.NumericEditField
+        AfstandelleboogtotvingertopEditField  matlab.ui.control.NumericEditField
         AfstandvanvingertoptotelleboogLabel  matlab.ui.control.Label
         LichaamslengteEditField       matlab.ui.control.NumericEditField
         LichaamslengteEditFieldLabel  matlab.ui.control.Label
@@ -108,7 +108,7 @@ classdef Vitruvian_Man_NL_exported < matlab.apps.AppBase
         % read user inputs
         function [] = readUserInput(app)
             app.usr_height = app.LichaamslengteEditField.Value;
-            app.usr_fingertip_elbow = app.AfstandelleboogtovingertopEditField.Value;
+            app.usr_fingertip_elbow = app.AfstandelleboogtotvingertopEditField.Value;
             app.usr_elbow_shoulder = app.AfstandschoudertotelleboogEditField.Value;
             app.usr_shoulder_width = app.AfstandtussenschoudersEditField.Value;
             app.usr_hip_knee = app.AfstandheuptotknieEditField.Value;
@@ -118,12 +118,12 @@ classdef Vitruvian_Man_NL_exported < matlab.apps.AppBase
         
         % set default user inputs
         function [] = writeDefaultUserInput(app)
-            app.AfstandvanvingertoptotelleboogEditField.Value = app.usr_fingertip_elbow;
-            app.AfstandvanelleboogtotschouderEditField.Value = app.usr_elbow_shoulder;
-            app.AfstandtussenschoudersEditField.Value = app.usr_shoulder_width;
-            app.AfstandvanknietotheupEditField.Value = app.usr_hip_knee;
-            app.AfstandvangrondtotknieEditField.Value = app.usr_knee_ground;
-            app.LengtevanvoetEditField.Value = app.usr_foot_length;
+            app.AfstandelleboogtotvingertopEditField.Value = round(app.usr_fingertip_elbow,1);
+            app.AfstandschoudertotelleboogEditField.Value = round(app.usr_elbow_shoulder,1);
+            app.AfstandtussenschoudersEditField.Value = round(app.usr_shoulder_width,1);
+            app.AfstandheuptotknieEditField.Value = round(app.usr_hip_knee,1);
+            app.AfstandknietotgrondEditField.Value = round(app.usr_knee_ground,1);
+            app.LengtevanvoetEditField.Value = round(app.usr_foot_length,1);
         end
         
         % calls updateDrawing
@@ -486,20 +486,20 @@ classdef Vitruvian_Man_NL_exported < matlab.apps.AppBase
             app.AfstandvanvingertoptotelleboogLabel.FontName = 'Blackadder ITC';
             app.AfstandvanvingertoptotelleboogLabel.FontSize = 30;
             app.AfstandvanvingertoptotelleboogLabel.FontColor = [0.5412 0.2706 0.0706];
-            app.AfstandvanvingertoptotelleboogLabel.Position = [88 423 295 42];
-            app.AfstandvanvingertoptotelleboogLabel.Text = 'Afstand elleboog to vingertop';
+            app.AfstandvanvingertoptotelleboogLabel.Position = [88 423 303 42];
+            app.AfstandvanvingertoptotelleboogLabel.Text = 'Afstand elleboog tot vingertop';
 
-            % Create AfstandelleboogtovingertopEditField
-            app.AfstandelleboogtovingertopEditField = uieditfield(app.UIFigure, 'numeric');
-            app.AfstandelleboogtovingertopEditField.Limits = [10 100];
-            app.AfstandelleboogtovingertopEditField.ValueDisplayFormat = '%111g';
-            app.AfstandelleboogtovingertopEditField.HorizontalAlignment = 'center';
-            app.AfstandelleboogtovingertopEditField.FontName = 'Blackadder ITC';
-            app.AfstandelleboogtovingertopEditField.FontSize = 30;
-            app.AfstandelleboogtovingertopEditField.FontColor = [0.5412 0.2706 0.0706];
-            app.AfstandelleboogtovingertopEditField.BackgroundColor = [1 0.9725 0.8627];
-            app.AfstandelleboogtovingertopEditField.Position = [388 424 74 41];
-            app.AfstandelleboogtovingertopEditField.Value = 45;
+            % Create AfstandelleboogtotvingertopEditField
+            app.AfstandelleboogtotvingertopEditField = uieditfield(app.UIFigure, 'numeric');
+            app.AfstandelleboogtotvingertopEditField.Limits = [10 100];
+            app.AfstandelleboogtotvingertopEditField.ValueDisplayFormat = '%111g';
+            app.AfstandelleboogtotvingertopEditField.HorizontalAlignment = 'center';
+            app.AfstandelleboogtotvingertopEditField.FontName = 'Blackadder ITC';
+            app.AfstandelleboogtotvingertopEditField.FontSize = 30;
+            app.AfstandelleboogtotvingertopEditField.FontColor = [0.5412 0.2706 0.0706];
+            app.AfstandelleboogtotvingertopEditField.BackgroundColor = [1 0.9725 0.8627];
+            app.AfstandelleboogtotvingertopEditField.Position = [388 424 74 41];
+            app.AfstandelleboogtotvingertopEditField.Value = 45;
 
             % Create AfstandschoudertotelleboogEditFieldLabel
             app.AfstandschoudertotelleboogEditFieldLabel = uilabel(app.UIFigure);
