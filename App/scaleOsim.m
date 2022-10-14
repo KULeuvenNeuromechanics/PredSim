@@ -111,6 +111,10 @@ import org.opensim.modeling.*
 scale = ScaleTool(output_name);
 scale.run();
 
+
+%% adapt contact sphere placement
+fixContactSpherePositionAfterScaling(fullfile(output_dir,'Vitruvian_Man.osim'),fullfile(output_dir,osim_output_name));
+
 % remove unscaled model file
 delete(fullfile(output_dir,'Vitruvian_Man.osim'));
 
