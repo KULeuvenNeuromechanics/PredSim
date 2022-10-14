@@ -79,7 +79,7 @@ nSegments = scalefile.getElementsByTagName('Scale').getLength;
 
 for i=1:nSegments
     % get name of segment
-    segment_name = scalefile.getElementsByTagName('Scale').item(0).getElementsByTagName('segment').item(0).getFirstChild.getNodeValue;
+    segment_name = scalefile.getElementsByTagName('Scale').item(i-1).getElementsByTagName('segment').item(0).getFirstChild.getNodeValue;
 
     % segment-specific scale factor
     if isfield(sf_seg,char(segment_name))
