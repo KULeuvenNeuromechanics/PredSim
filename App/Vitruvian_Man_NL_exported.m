@@ -260,6 +260,7 @@ classdef Vitruvian_Man_NL_exported < matlab.apps.AppBase
             app.path_repo = pathRepo;
 
             addpath([pathRepo '\VariousFunctions'])
+            addpath([pathRepo '\App'])
 
             app.sel_mot_file = fullfile(app.path_repo,'Subjects','Vitruvian_Man','Vitruvian_Man.mot');
 
