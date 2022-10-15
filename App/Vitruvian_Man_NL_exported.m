@@ -215,6 +215,10 @@ classdef Vitruvian_Man_NL_exported < matlab.apps.AppBase
                 init_path_savefolder = 'C:\Users\u0150099\OneDrive - KU Leuven\Resultaten_KinderUniversiteit';
                 init_path_geom = 'C:\GBW_MyPrograms\OpenSim 4.3\Geometry';
                 init_path_casadi = 'C:\GBW_MyPrograms\casadi_3_5_5';
+            elseif strcmp(name, 'GBW-L-W2075')
+                init_path_savefolder = 'C:\Users\u0138016\OneDrive - KU Leuven\Outreach\Kinderuniversiteit\2022\Resultaten';
+                init_path_geom = 'C:\GBW_MyPrograms\OpenSim 4.3\Geometry';
+                init_path_casadi = 'C:\GBW_MyPrograms\casadi_3_5_5';
             else
                 init_path_savefolder = 'C:\Users\u0138016\OneDrive - KU Leuven\Outreach\Kinderuniversiteit\2022\Resultaten';
                 init_path_geom = 'C:\GBW_MyPrograms\OpenSim 4.3\Geometry';
@@ -238,6 +242,7 @@ classdef Vitruvian_Man_NL_exported < matlab.apps.AppBase
             app.path_casadi = init_path_casadi;
 
         end
+        
     end
     
 
@@ -310,17 +315,17 @@ classdef Vitruvian_Man_NL_exported < matlab.apps.AppBase
 
             % command for running .py file
             [distance_i,avg_v_i] = calcDistance(app,resultpath);
-            dist = num2str(distance_i*1e-3);
-            vel = num2str(avg_v_i);
-            llen       = num2str(app.LichaamslengteEditField.Value);
-            mass       = num2str(app.MassaEditField.Value);
-            shoulders  = num2str(app.AfstandtussenschoudersEditField.Value);
-            arm_upper  = num2str(app.AfstandschoudertotelleboogEditField.Value);
-            arm_lower  = num2str(app.AfstandelleboogtotvingertopEditField.Value);
-            leg_upper  = num2str(app.AfstandheuptotknieEditField.Value);
-            leg_lower  = num2str(app.AfstandknietotgrondEditField.Value);
-            foot       = num2str(app.LengtevanvoetEditField.Value);
-            strength   = num2str(app.SpierkrachtEditField.Value);
+            dist       = replace(num2str(distance_i*1e-3),'.',',');
+            vel        = replace(num2str(avg_v_i),'.',',');
+            llen       = replace(num2str(app.LichaamslengteEditField.Value),'.',',');
+            mass       = replace(num2str(app.MassaEditField.Value),'.',',');
+            shoulders  = replace(num2str(app.AfstandtussenschoudersEditField.Value),'.',',');
+            arm_upper  = replace(num2str(app.AfstandschoudertotelleboogEditField.Value),'.',',');
+            arm_lower  = replace(num2str(app.AfstandelleboogtotvingertopEditField.Value),'.',',');
+            leg_upper  = replace(num2str(app.AfstandheuptotknieEditField.Value),'.',',');
+            leg_lower  = replace(num2str(app.AfstandknietotgrondEditField.Value),'.',',');
+            foot       = replace(num2str(app.LengtevanvoetEditField.Value),'.',',');
+            strength   = replace(num2str(app.SpierkrachtEditField.Value),'.',',');
             cmd = ['autoFill.py ' app.GroupName ' ' app.ModelName ...
                 ' ' dist ' ' vel ' ' llen ' ' mass ' ' shoulders ' ' arm_upper...
                 ' ' arm_lower ' ' leg_upper ' ' leg_lower ' ' foot ' ' strength];
