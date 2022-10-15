@@ -126,6 +126,27 @@ classdef Vitruvian_Man_NL_exported < matlab.apps.AppBase
             app.LengtevanvoetEditField.Value = round(app.usr_foot_length,1);
         end
         
+        % set limits on input
+        function updateInputLimits(app)
+            % BMI between 10 and 50
+            mlim = round([10,50]*((app.usr_height/100).^2));
+            m0 = app.MassaEditField.Value;
+            m0 = round(min([m0,mlim(2)]));
+            m0 = round(max([m0,mlim(1)]));
+            app.MassaEditField.Limits = [0,3000];
+            app.MassaEditField.Value = m0;
+            app.MassaEditField.Limits = mlim;
+            
+            
+            app.AfstandelleboogtotvingertopEditField.Limits(2) = app.usr_height/2;
+            app.AfstandschoudertotelleboogEditField.Limits(2) = app.usr_height/2;
+            app.AfstandtussenschoudersEditField.Limits(2) = app.usr_height/2;
+            app.AfstandheuptotknieEditField.Limits(2) = app.usr_height/2;
+            app.AfstandknietotgrondEditField.Limits(2) = app.usr_height/2;
+            app.LengtevanvoetEditField.Limits(2) = app.usr_height/2;
+
+        end
+
         % calls updateDrawing
         function updateDrawingWrapper(app)
             % read user inputs
@@ -243,6 +264,7 @@ classdef Vitruvian_Man_NL_exported < matlab.apps.AppBase
 
         end
         
+
     end
     
 
@@ -267,7 +289,9 @@ classdef Vitruvian_Man_NL_exported < matlab.apps.AppBase
             app.sel_osim_file = fullfile(app.path_repo,'Subjects','Vitruvian_Man','Vitruvian_Man.osim');
 
             setPaths(app)
-            
+
+            updateInputLimits(app)
+
         end
 
         % Button pushed function: MaaktekeningButton
@@ -465,6 +489,7 @@ classdef Vitruvian_Man_NL_exported < matlab.apps.AppBase
             readUserInput(app)
             updateUserInput(app)
             writeDefaultUserInput(app)
+            updateInputLimits(app)
             
         end
     end
@@ -863,7 +888,7 @@ classdef Vitruvian_Man_NL_exported < matlab.apps.AppBase
             app.SnelheidSlider.FontSize = 25;
             app.SnelheidSlider.FontColor = [0.5412 0.2706 0.0706];
             app.SnelheidSlider.Position = [226 119 224 3];
-            app.SnelheidSlider.Value = 4;
+            app.SnelheidSlider.Value = 5;
 
             % Create kmuLabel
             app.kmuLabel = uilabel(app.UIFigure);
