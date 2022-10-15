@@ -831,7 +831,7 @@ classdef Vitruvian_Man_NL_exported < matlab.apps.AppBase
             app.NaamAfstandSnelheidListBox = uilistbox(app.UIFigure);
             app.NaamAfstandSnelheidListBox.Items = {};
             app.NaamAfstandSnelheidListBox.ValueChangedFcn = createCallbackFcn(app, @NaamAfstandSnelheidListBoxValueChanged, true);
-            app.NaamAfstandSnelheidListBox.FontName = 'Edwardian Script ITC';
+            app.NaamAfstandSnelheidListBox.FontName = 'Blackadder ITC';
             app.NaamAfstandSnelheidListBox.FontSize = 30;
             app.NaamAfstandSnelheidListBox.FontColor = [0.5412 0.2706 0.0706];
             app.NaamAfstandSnelheidListBox.BackgroundColor = [0.9216 0.8706 0.6706];
