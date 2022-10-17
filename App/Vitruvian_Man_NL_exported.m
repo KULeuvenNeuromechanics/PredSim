@@ -72,7 +72,7 @@ classdef Vitruvian_Man_NL_exported < matlab.apps.AppBase
         usr_knee_ground = 1/4*1.8;
         usr_foot_length = 1/6*1.8;
 
-        usr_speed = 1.2;
+        usr_speed = 1.38;
 
         % scale factors
         scale_factors
