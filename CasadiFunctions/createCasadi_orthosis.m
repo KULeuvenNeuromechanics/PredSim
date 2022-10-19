@@ -32,6 +32,7 @@ n_coord = model_info.ExtFunIO.jointi.nq.all;
 % all inputs
 qk = SX.sym('q',n_coord,1);
 qdotk = SX.sym('qdot',n_coord,1);
+GRFk = SX.sym('GRF',6);
 
 % all outputs
 Tk = SX(n_coord,1);
@@ -42,7 +43,7 @@ if ~isempty(S.orthosis)
         switch otype
             case 'passive'
                 f_passiveOrthosis_i = createCasadi_passiveOrthosisDescriptions(S,model_info,S.orthosis.settings{i});
-                Tk_i = f_passiveOrthosis_i(qk,qdotk);
+                Tk_i = f_passiveOrthosis_i(qk,qdotk,GRFk);
                 Tk = Tk + Tk_i;
     
             otherwise
@@ -54,7 +55,7 @@ end
 
 %%
 
-f_orthosis = Function('f_orthosis',{qk,qdotk},{Tk},{'qk','qdotk'},{'Tk'});
+f_orthosis = Function('f_orthosis',{qk,qdotk,GRFk},{Tk},{'qk','qdotk','GRFk'},{'Tk'});
 
 
 

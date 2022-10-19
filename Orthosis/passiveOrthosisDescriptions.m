@@ -64,8 +64,7 @@ end % end of passiveOrthosisDescriptions
 %
 
 % AFO with linear stiffness
-function [input_names,output_names,T_ankle_angle,T_mtp_angle] =...
-    AFO_passive(settings_orthosis,q_ankle_angle,q_mtp_angle)
+function [input_names,output_names,T_ankle_angle,T_mtp_angle] = AFO_passive(settings_orthosis,q_ankle_angle,q_mtp_angle)
 
 % read settings
     % ankle stiffness in Nm/rad
@@ -85,5 +84,59 @@ function [input_names,output_names,T_ankle_angle,T_mtp_angle] =...
 
 end % end of AFO_passive
 
-% ...
+% AFO with linear stiffness, toggled via body weight clutch
+function [input_names,output_names,T_ankle_angle,T_mtp_angle] = AFO_passive_BWC(settings_orthosis,q_ankle_angle,q_mtp_angle,GRF_y)
 
+% read settings
+    % lower threshold to activate clutch
+    lower_threshold = settings_orthosis.lower_threshold;
+    % upper threshold to activate clutch
+    upper_threshold = settings_orthosis.upper_threshold;
+    % left or right
+    side = settings_orthosis.left_right;
+
+% calculate outputs
+    % toggle clutch
+    tglcl = smoothIf(GRF_y,lower_threshold,upper_threshold);
+    % spring force without clutch
+    [input_names,output_names,T_ankle_angle,T_mtp_angle] = AFO_passive(settings_orthosis,q_ankle_angle,q_mtp_angle);
+    % apply clutch
+    T_ankle_angle = T_ankle_angle*tglcl;
+
+% input and output names
+    input_names{end+1} = ['GRF_y_' side];
+
+end % end of AFO_passive_BWC
+
+
+% add functions here ...
+
+%% Helper functions
+function y = smoothIf(x,lower_threshold,upper_threshold)
+% Reformulate conditional statement to be compatible with algorithmic
+% differentiation.
+%
+% if x <= lower_threshold
+%   y = 0; % false
+% elseif x >= upper_threshold
+%   y = 1; % true
+% else
+%   y > 0 & y < 1; % transient
+% end
+%
+% take lower_threshold > upper_threshold to flip the true and false outputs
+%
+%--------------------------------------------------------------------------
+    % range that is affected by smoothing
+    range = upper_threshold - lower_threshold;
+
+    % midpoint of  range
+    mid = (lower_threshold + upper_threshold)/2;
+
+    % scale x to range
+    x_scaled = (x - mid)/range + 1/2;
+
+    % apply tanh-smoothing
+    y = (tanh((2*x_scaled-1)*pi)+1)/2;
+
+end

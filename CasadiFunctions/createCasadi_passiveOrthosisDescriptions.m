@@ -1,8 +1,8 @@
 function [f_passiveOrthosis] = createCasadi_passiveOrthosisDescriptions(S,model_info,S_orthosis_settings_i)
 % --------------------------------------------------------------------------
 % createCasadi_passiveOrthosisDescriptions
-%   This function wraps "passiveOrthosisDescriptions" in a CasADi function
-%   and returns the handle.
+%   This function wraps a selected function from "passiveOrthosisDescriptions" 
+%   in a CasADi function and returns the handle.
 % 
 % INPUT:
 %   - S -
@@ -28,8 +28,9 @@ function [f_passiveOrthosis] = createCasadi_passiveOrthosisDescriptions(S,model_
 % Original author: Lars D'Hondt
 % Original date: 9/September/2022
 %
-% Last edit by: 
-% Last edit date: 
+%   Edit: Added support for GRF input to orthosis
+% Last edit by: Lars D'Hondt
+% Last edit date: 19/October/2022
 % --------------------------------------------------------------------------
 
 import casadi.*
@@ -80,49 +81,73 @@ end
 % all inputs
 q = SX.sym('q',n_coord);
 qdot = SX.sym('qdot',n_coord);
+GRF = SX.sym('GRF',6);
 
 % all outputs
 T = SX(n_coord,1);
 
 % selected inputs
-q_qdot_in = cell(1,n_arg_in);
-q_qdot_in{1} = S_orthosis_settings_i;
+orth_in = cell(1,n_arg_in);
+orth_in{1} = S_orthosis_settings_i;
 T_out = cell(1,n_arg_out);
 
-%% Identify inputs and outputs
-% indices of used inputs and outputs
-idx_q = [];
-idx_qdot = [];
-idx_T = [];
-
-% identify inputs
+%% Identify inputs
+% loop over inputs
 for i=1:length(names_in)
     name_i = names_in{i};
     if strcmp(name_i(1:5),'qdot_')
+        % index of coordinate that corresponds to asked input
         idx = find(strcmp(coord_names,{name_i(6:end)}));
         if length(idx)==1
-            idx_qdot(end+1) = idx;
-            q_qdot_in{i+1} = qdot(idx);
+            % add velocity of coordinate to orthosis inputs
+            orth_in{i+1} = qdot(idx);
         else
             error(['Invalid description of orthosis "' oname,...
                 '". Coordinate "' name_i(6:end) '" not uniquely defined in OpenSim model.'])
         end
+
     elseif strcmp(name_i(1:2),'q_')
+        % index of coordinate that corresponds to asked input
         idx = find(strcmp(coord_names,{name_i(3:end)}));
         if length(idx)==1
-            idx_q(end+1) = idx;
-            q_qdot_in{i+1} = q(idx);
+            % add velocity of coordinate to orthosis inputs
+            orth_in{i+1} = q(idx);
         else
             error(['Invalid description of orthosis "' oname,...
                 '". Coordinate "' name_i(3:end) '" not uniquely defined in OpenSim model.'])
         end
+
+    elseif strcmp(name_i(1:3),'GRF')
+        % index of ground reaction force vector component that corresponds to asked input
+        idx_c = find(strcmp('xyz',name_i(5)));
+
+        if isempty(idx)
+            error(['Invalid description of orthosis "' oname,...
+                '". Please use "GRF_*_r" or "GRF_*_l" (where * is "x", "y", or "z") ',...
+                'to refer to a component of the total ground reaction force on a foot.'])
+        end
+        
+        % GRF from left or right foot
+        idx_lr = find(strcmp('lr',name_i(7)));
+        if isempty(idx_lr)
+            error(['Invalid description of orthosis "' oname,...
+                '". Please use e.g. "GRF_y_r" or "GRF_y_l" to refer to a the vertical component of ',...
+                'the total ground reaction force on the right or left foot respectively.'])
+        end
+
+        % GRF order is left, right
+        idx = idx_c + 3*(idx_lr-2);
+        % add GRF component to orthosisinputs
+        orth_in{i+1} = GRF(idx);
+
     else
         error(['Invalid description of orthosis "' oname,...
                 '". Input names should start with "q_" or "qdot_", followed by coordinate name.'])
     end
-end
+end % end loop over inputs
 
-% identify outputs
+%% Identify outputs
+idx_T = [];
 for i=1:length(names_out)
     name_i = names_out{i};
     idx = find(strcmp(coord_names,{name_i}));
@@ -136,7 +161,7 @@ end
 
 
 %% Evaluate function
-[T_out{:}] = fun_passiveOrthosis(q_qdot_in{:});
+[T_out{:}] = fun_passiveOrthosis(orth_in{:});
 
 % assign outputs
 for i=1:n_arg_out-2
@@ -146,7 +171,7 @@ end
 
 %% Create CasADi function
 
-f_passiveOrthosis = Function('f_passiveOrthosis',{q,qdot},{T},{'q','qdot'},{'T'});
+f_passiveOrthosis = Function('f_passiveOrthosis',{q,qdot,GRF},{T},{'q','qdot','GRF'},{'T'});
 
 
 

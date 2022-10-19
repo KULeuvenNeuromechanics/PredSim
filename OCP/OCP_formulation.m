@@ -339,8 +339,11 @@ for j=1:d
     % Call external function (run inverse dynamics)
     [Tj] = F([QsQdotskj_nsc(:,j+1);Aj_nsc(:,j)]);
 
+    % Extract ground reaction forces
+    GRFj = Tj([model_info.ExtFunIO.GRFs.left_foot, model_info.ExtFunIO.GRFs.right_foot]);
+    
     % Evaluate orthosis torques
-    To_j = f_casadi.f_orthosis(Qskj_nsc(:,j+1),Qdotskj_nsc(:,j+1));
+    To_j = f_casadi.f_orthosis(Qskj_nsc(:,j+1),Qdotskj_nsc(:,j+1),GRFj);
 
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Add path constraints
