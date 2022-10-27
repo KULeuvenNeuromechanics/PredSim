@@ -604,10 +604,18 @@ options.ipopt.tol                   = 1*10^(-S.solver.tol_ipopt);
 options.ipopt.constr_viol_tol       = 1*10^(-S.solver.tol_ipopt);
 opti.solver('ipopt', options);
 % timer
-disp(['... OCP formulation done. Time elapsed ' num2str(toc(t0)) ' s'])
+disp(' ')
+disp(['...OCP formulation done. Time elapsed ' num2str(toc(t0),'%.2f') ' s'])
+disp(' ')
+disp('-----------------------------------------')
+disp(' ')
 % Create and save diary
-Outname = fullfile(S.subject.save_folder,[S.post_process.result_filename '_log.txt']);
-diary(Outname);
+% Outname = fullfile(S.subject.save_folder,[S.post_process.result_filename '_log.txt']);
+% diary(Outname);
+disp(' ')
+disp('Starting NLP solver...')
+disp(' ')
+t0s = tic;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Solve problem
 % Opti does not use bounds on variables but constraints. This function
@@ -615,7 +623,12 @@ diary(Outname);
 [w_opt,stats] = solve_NLPSOL(opti,options);
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-diary off
+% diary off
+disp(' ')
+disp(['...Exit NLP solver. Time elapsed ' num2str(toc(t0s),'%.2f') ' s'])
+disp(' ')
+disp('-----------------------------------------')
+disp(' ')
 % Extract results
 % Create setup
 setup.tolerance.ipopt = S.solver.tol_ipopt;
@@ -641,6 +654,8 @@ save(Outname,'w_opt','stats','setup','model_info','S');
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %% Read from the vector with optimization results
+disp('Retrieving solution...')
+disp(' ')
 
 NParameters = 1;
 tf_opt = w_opt(1:NParameters);

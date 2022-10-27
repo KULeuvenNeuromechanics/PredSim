@@ -55,7 +55,7 @@ else
     disp('   installation osim2Dll program finished');
 end
 
-
+disp(' ')
 
 
 end
