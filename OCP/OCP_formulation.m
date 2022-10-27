@@ -979,7 +979,7 @@ GRFk_opt = Foutk_opt(:,[model_info.ExtFunIO.GRFs.right_foot model_info.ExtFunIO.
 
 if strcmp(S.misc.gaitmotion_type,'HalfGaitCycle')
     % detect heelstrike
-    [IC1i_c,IC1i_s,HS1] = getHeelstrikeSimulation(GRFk_opt,N);
+    [IC1i_c,IC1i_s,HS1,HS_threshold] = getHeelstrikeSimulation(GRFk_opt,N,model_info.mass/3);
         
     % Qs
     Qs_GC = zeros(N*2,size(q_opt_unsc.deg,2));
@@ -1259,6 +1259,7 @@ else
     R.torque_actuators.e = [];
     R.torque_actuators.T = [];
 end
+R.ground_reaction.threshold = HS_threshold;
 
 % save results
 Outname = fullfile(S.subject.save_folder,[S.post_process.result_filename '.mat']);
