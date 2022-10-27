@@ -58,9 +58,8 @@ disp('Predictive simulation of human locomotion')
 disp('=========================================')
 disp(' ')
 disp(['Subject name: ' S.subject.name])
-disp(['PenSim model: ' osim_path])
+disp(['OpenSim model: ' osim_path])
 disp(' ')
-disp('-----------------------------------------')
 disp(' ')
 
 %% PreProcessing
@@ -72,7 +71,6 @@ t0 = tic;
 disp(' ')
 disp(['...PreProcessing done. Time elapsed ' num2str(toc(t0),'%.2f') ' s'])
 disp(' ')
-disp('-----------------------------------------')
 disp(' ')
 
 %% Creating casadi functions
@@ -84,7 +82,6 @@ t0 = tic;
 disp(' ')
 disp(['...CasADi functions created. Time elapsed ' num2str(toc(t0),'%.2f') ' s'])
 disp(' ')
-disp('-----------------------------------------')
 disp(' ')
 
 %% Formulating OCP
@@ -92,7 +89,6 @@ addpath([S.misc.main_path '\OCP'])
 if ~S.post_process.rerun
     OCP_formulation(S,model_info,f_casadi);
     disp(' ')
-    disp('-----------------------------------------')
     disp(' ')
 end
 
@@ -105,12 +101,14 @@ PostProcessing(S,model_info,f_casadi);
 disp(' ')
 disp(['...PostProcessing done. Time elapsed ' num2str(toc(t0),'%.2f') ' s'])
 disp(' ')
-disp('-----------------------------------------')
 disp(' ')
 
 %% Conclude diary
 disp(['Total time elapsed ' num2str(toc(t00),'%.2f') ' s'])
+disp(' ')
 disp(['Diary saved as ' Outname])
+disp(' ')
+disp(' ')
 diary off
 
 

@@ -607,7 +607,6 @@ opti.solver('ipopt', options);
 disp(' ')
 disp(['...OCP formulation done. Time elapsed ' num2str(toc(t0),'%.2f') ' s'])
 disp(' ')
-disp('-----------------------------------------')
 disp(' ')
 % Create and save diary
 % Outname = fullfile(S.subject.save_folder,[S.post_process.result_filename '_log.txt']);
@@ -627,7 +626,6 @@ t0s = tic;
 disp(' ')
 disp(['...Exit NLP solver. Time elapsed ' num2str(toc(t0s),'%.2f') ' s'])
 disp(' ')
-disp('-----------------------------------------')
 disp(' ')
 % Extract results
 % Create setup
