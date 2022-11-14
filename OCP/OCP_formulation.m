@@ -593,59 +593,61 @@ end
 % Scale cost function
 Jall_sc = sum(Jall)/dist_trav_tot;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%
-% Create NLP solver
-opti.minimize(Jall_sc);
-options.ipopt.hessian_approximation = 'limited-memory';
-options.ipopt.mu_strategy           = 'adaptive';
-options.ipopt.max_iter              = S.solver.max_iter;
-options.ipopt.linear_solver         = S.solver.linear_solver;
-options.ipopt.tol                   = 1*10^(-S.solver.tol_ipopt);
-options.ipopt.constr_viol_tol       = 1*10^(-S.solver.tol_ipopt);
-opti.solver('ipopt', options);
-% timer
+
 disp(' ')
 disp(['...OCP formulation done. Time elapsed ' num2str(toc(t0),'%.2f') ' s'])
 disp(' ')
-disp(' ')
-% Create and save diary
-% Outname = fullfile(S.subject.save_folder,[S.post_process.result_filename '_log.txt']);
-% diary(Outname);
-disp(' ')
-disp('Starting NLP solver...')
-disp(' ')
-t0s = tic;
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Solve problem
-% Opti does not use bounds on variables but constraints. This function
-% adjusts for that.
-[w_opt,stats] = solve_NLPSOL(opti,options);
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% diary off
-disp(' ')
-disp(['...Exit NLP solver. Time elapsed ' num2str(toc(t0s),'%.2f') ' s'])
-disp(' ')
-disp(' ')
-% Extract results
-% Create setup
-setup.tolerance.ipopt = S.solver.tol_ipopt;
-setup.bounds = bounds;
-setup.scaling = scaling;
-setup.guess = guess;
+%%
 
-Outname = fullfile(S.subject.save_folder,[S.post_process.result_filename '.mat']);
-save(Outname,'w_opt','stats','setup','model_info','S');
+if ~S.post_process.load_prev_opti_vars
+    % Create NLP solver
+    opti.minimize(Jall_sc);
+    options.ipopt.hessian_approximation = 'limited-memory';
+    options.ipopt.mu_strategy           = 'adaptive';
+    options.ipopt.max_iter              = S.solver.max_iter;
+    options.ipopt.linear_solver         = S.solver.linear_solver;
+    options.ipopt.tol                   = 1*10^(-S.solver.tol_ipopt);
+    options.ipopt.constr_viol_tol       = 1*10^(-S.solver.tol_ipopt);
+    opti.solver('ipopt', options);
+    % timer
+    
+    disp('Starting NLP solver...')
+    disp(' ')
+    t0s = tic;
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    % Solve problem
+    % Opti does not use bounds on variables but constraints. This function
+    % adjusts for that.
+    [w_opt,stats] = solve_NLPSOL(opti,options);
+    
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    disp(' ')
+    disp(['...Exit NLP solver. Time elapsed ' num2str(toc(t0s),'%.2f') ' s'])
+    disp(' ')
+    disp(' ')
+    % Create setup
+    setup.tolerance.ipopt = S.solver.tol_ipopt;
+    setup.bounds = bounds;
+    setup.scaling = scaling;
+    setup.guess = guess;
+    
+    Outname = fullfile(S.subject.save_folder,[S.post_process.result_filename '.mat']);
+    save(Outname,'w_opt','stats','setup','model_info','S');
 
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% To salvage results after a botched post-processing attempt, use code
-% below and comment out rest of this section.
-% Outname = fullfile(S.subject.save_folder,[S.post_process.result_filename '.mat']);
-% load(Outname,'w_opt','stats','setup','model_info','R');
-% scaling = setup.scaling;
-% S = R.S;
-% clear 'R'
+else % S.post_process.load_prev_opti_vars = true
+    
+    % Advanced feature, for debugging only: load w_opt and reconstruct R before rerunning the post-processing.
+    Outname = fullfile(S.subject.save_folder,[S.post_process.result_filename '.mat']);
+    disp(['Loading vector with optimization variables from previous solution: ' outname])
+    clear 'S'
+    load(Outname,'w_opt','stats','setup','model_info','R','S');
+    scaling = setup.scaling;
+    if exist('R','var')
+        S = R.S;
+    end
+    clear 'R'
+end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Essential post processing

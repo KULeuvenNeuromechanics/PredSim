@@ -54,8 +54,6 @@ end
 t00 = tic;
 Outname = fullfile(S.subject.save_folder,[S.post_process.result_filename '_log.txt']);
 diary(Outname);
-disp('Predictive simulation of human locomotion')
-disp('=========================================')
 disp(' ')
 disp(['Subject name: ' S.subject.name])
 disp(['OpenSim model: ' osim_path])
