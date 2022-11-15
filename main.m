@@ -23,7 +23,7 @@ addpath([S.misc.main_path '\VariousFunctions'])
 
 %% Required inputs
 % name of the subject
-S.subject.name = 'Subject1_2D';
+S.subject.name = 'Subject1_2D_test_1';
 
 % path to folder where you want to store the results of the OCP
 S.subject.save_folder  = fullfile(pathRepoFolder,'PredSimResults',S.subject.name); 
@@ -74,8 +74,8 @@ S.solver.run_as_batch_job = 0;
 % S.post_process.savename  = 'datetime';
 % S.post_process.rerun   = 1;
 % S.post_process.rerun_from_w = 1;
-S.post_process.result_filename = 'Subject1_2D_jit_Ox_p6_openmp';
-% S.post_process.result_filename = 'Subject1_2D_no_jit_p6';
+% S.post_process.result_filename = '';
+% S.post_process.result_filename = '';
 
 % % S.solver
 % S.solver.linear_solver  = 'ma86';
@@ -86,7 +86,6 @@ S.solver.N_threads      = 6;
 % S.solver.N_meshes       = 50;
 % S.solver.par_cluster_name = ;
 S.solver.CasADi_path    = 'C:\GBW_MyPrograms\casadi_3_5_5';
-S.Solver.jit = 1;
 
 % % S.subject
 % S.subject.mass              = ;
@@ -119,7 +118,7 @@ S.subject.v_pelvis_x_trgt   = 1.33;
 S.Cpp2Dll.PathCpp2Dll_Exe = InstallOsim2Dll_Exe('C:\GBW_MyPrograms\Osim2Dll_exe'); %(optional: if you want to install the opensimExe)
 % S.Cpp2Dll.compiler = 'Visual Studio 15 2017 Win64';
 S.Cpp2Dll.export3DSegmentOrigins = [];
-S.Cpp2Dll.verbose_mode = 0; % 0 for no outputs from cmake
+S.Cpp2Dll.verbose_mode = 1; % 0 for no outputs from cmake
 
 %% Run predictive simulations
 if S.solver.run_as_batch_job
