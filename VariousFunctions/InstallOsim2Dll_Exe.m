@@ -22,6 +22,11 @@ function [ExePath] = InstallOsim2Dll_Exe(ExeDir)
 % Last edit date: 
 % --------------------------------------------------------------------------
 
+% link to binaries
+Link_ExeZip = 'https://www.dropbox.com/sh/05d7tbk9x7dhldq/AAAUtC7quxwvFtlXFA-R5dqfa/Cpp2Dll_Bin.zip?dl=1'; 
+% date of last update of binaries
+Date_ExeZip = datetime([2022 11 15]);
+
 
 % test if we have to create a new folder
 if ~isfolder(ExeDir)
@@ -37,7 +42,7 @@ else
     % download the executable from google drive
     disp('Start installation osim2Dll program');
     disp('   downloading executable from dropbox');
-    Link_ExeZip = 'https://www.dropbox.com/s/43iyndhj2vxr20v/Cpp2Dll_Bin.zip?dl=1';
+    
     websave(fullfile(ExeDir,'Cpp2Dll_Bin.zip'),Link_ExeZip);
     disp('   unzip bin');
     unzip(fullfile(ExeDir,'Cpp2Dll_Bin.zip'),ExeDir);
