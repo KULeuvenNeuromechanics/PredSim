@@ -121,9 +121,11 @@ S.Cpp2Dll.verbose_mode = 0; % 0 for no outputs from cmake
 % example: add AFO_passive as defind in
 % /Orthosis/passiveOrthosisDescriptions.m to right and left foot
 ortho1.type = 'passive'; % type is required
-ortho1.name = 'AFO_passive'; %
+ortho1.name = 'AFO_passive_BWC'; %
 ortho1.ankle_stiffness = 5;
 ortho1.mtp_stiffness = 1;
+ortho1.lower_threshold = 10;
+ortho1.upper_threshold = 20;
 ortho1.left_right = 'r';
 S.orthosis.settings{1} = ortho1;
 ortho1.left_right = 'l';

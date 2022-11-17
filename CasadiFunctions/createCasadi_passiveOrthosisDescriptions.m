@@ -119,7 +119,7 @@ for i=1:length(names_in)
 
     elseif strcmp(name_i(1:3),'GRF')
         % index of ground reaction force vector component that corresponds to asked input
-        idx_c = find(strcmp('xyz',name_i(5)));
+        idx_c = strfind('xyz',name_i(5));
 
         if isempty(idx)
             error(['Invalid description of orthosis "' oname,...
@@ -128,7 +128,7 @@ for i=1:length(names_in)
         end
         
         % GRF from left or right foot
-        idx_lr = find(strcmp('lr',name_i(7)));
+        idx_lr = strfind('lr',name_i(7));
         if isempty(idx_lr)
             error(['Invalid description of orthosis "' oname,...
                 '". Please use e.g. "GRF_y_r" or "GRF_y_l" to refer to a the vertical component of ',...
@@ -136,7 +136,7 @@ for i=1:length(names_in)
         end
 
         % GRF order is left, right
-        idx = idx_c + 3*(idx_lr-2);
+        idx = idx_c + 3*(idx_lr-1);
         % add GRF component to orthosisinputs
         orth_in{i+1} = GRF(idx);
 
