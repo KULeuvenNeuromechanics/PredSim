@@ -45,7 +45,6 @@ path_external_functions_filename_install = fullfile(pathMain, 'install-ExternalF
 cd(path_external_functions_filename_build);
 
 % run cmake
-% compiler = 'Visual Studio 15 2017';
 cmd1 = [ 'cmake "' pathBuildExternalFunction  '" -G "' compiler ,...
     '" -DTARGET_NAME:STRING="' filename '" -DINSTALL_DIR:PATH="',...
     path_external_functions_filename_install '"'];
@@ -69,13 +68,12 @@ delete(fullfile(pathBuildExternalFunction, 'foo_jac.c'));
 delete(fullfile(pathBuildExternalFunction, 'foo.py'));
 
 % remove specific folders from buildExpressionGraph, build-ExternalFunction
-% and install-ExternalFunction (Does not work, I need admin rights for
-% this)
-% rmdir(path_external_functions_filename_build);
-% rmdir(path_external_functions_filename_install);
-% pathBuildExpressionGraph = fullfile(pathMain, 'buildExpressionGraph');
-% pathBuild = fullfile(pathBuildExpressionGraph,filename);
-% rmdir(pathBuild);
+% and install-ExternalFunction
+rmdir(path_external_functions_filename_build,'s');
+rmdir(path_external_functions_filename_install,'s');
+pathBuildExpressionGraph = fullfile(pathMain, 'buildExpressionGraph');
+pathBuild = fullfile(pathBuildExpressionGraph,filename);
+rmdir(pathBuild ,'s');
 
 
 end
