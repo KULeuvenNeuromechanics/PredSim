@@ -598,19 +598,13 @@ end
 Jall_sc = sum(Jall)/dist_trav_tot;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-%%
-if S.post_process.rerun_from_w
-    % For debugging only: load w_opt and reconstruct R before rerunning the post-processing.
-    Outname = fullfile(S.subject.save_folder,[S.post_process.result_filename '.mat']);
-    clear 'S'
-    load(Outname,'w_opt','stats','setup','model_info','R','S');
-    scaling = setup.scaling;
-    if exist('R','var')
-        S = R.S;
-    end
-    clear 'R'
+disp(' ')
+disp(['...OCP formulation done. Time elapsed ' num2str(toc(t0),'%.2f') ' s'])
+disp(' ')
 
-else
+%%
+
+if ~S.post_process.load_prev_opti_vars
     % Create NLP solver
     opti.minimize(Jall_sc);
     options.ipopt.hessian_approximation = 'limited-memory';
@@ -621,10 +615,10 @@ else
     options.ipopt.constr_viol_tol       = 1*10^(-S.solver.tol_ipopt);
     opti.solver('ipopt', options);
     % timer
-    disp(['... OCP formulation done. Time elapsed ' num2str(toc(t0)) ' s'])
-    % Create and save diary
-    Outname = fullfile(S.subject.save_folder,[S.post_process.result_filename '_log.txt']);
-    diary(Outname);
+    disp('Starting NLP solver...')
+    disp(' ')
+    t0s = tic;
+
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Solve problem
     % Opti does not use bounds on variables but constraints. This function
@@ -632,8 +626,12 @@ else
     [w_opt,stats] = solve_NLPSOL(opti,options);
     
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    diary off
-    % Extract results
+
+    disp(' ')
+    disp(['...Exit NLP solver. Time elapsed ' num2str(toc(t0s),'%.2f') ' s'])
+    disp(' ')
+    disp(' ')
+
     % Create setup
     setup.tolerance.ipopt = S.solver.tol_ipopt;
     setup.bounds = bounds;
@@ -643,12 +641,26 @@ else
     Outname = fullfile(S.subject.save_folder,[S.post_process.result_filename '.mat']);
     save(Outname,'w_opt','stats','setup','model_info','S');
 
+else % S.post_process.load_prev_opti_vars = true
+    
+    % Advanced feature, for debugging only: load w_opt and reconstruct R before rerunning the post-processing.
+    Outname = fullfile(S.subject.save_folder,[S.post_process.result_filename '.mat']);
+    disp(['Loading vector with optimization variables from previous solution: ' outname])
+    clear 'S'
+    load(Outname,'w_opt','stats','setup','model_info','R','S');
+    scaling = setup.scaling;
+    if exist('R','var')
+        S = R.S;
+    end
+    clear 'R'
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Essential post processing
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Read from the vector with optimization results
+disp('Retrieving solution...')
+disp(' ')
 
 NParameters = 1;
 tf_opt = w_opt(1:NParameters);
@@ -975,7 +987,7 @@ GRFk_opt = Foutk_opt(:,[model_info.ExtFunIO.GRFs.right_foot model_info.ExtFunIO.
 
 if strcmp(S.misc.gaitmotion_type,'HalfGaitCycle')
     % detect heelstrike
-    [IC1i_c,IC1i_s,HS1] = getHeelstrikeSimulation(GRFk_opt,N);
+    [IC1i_c,IC1i_s,HS1,HS_threshold] = getHeelstrikeSimulation(GRFk_opt,N,model_info.mass/3);
         
     % Qs
     Qs_GC = zeros(N*2,size(q_opt_unsc.deg,2));
@@ -1306,6 +1318,7 @@ else
     R.torque_actuators.e = [];
     R.torque_actuators.T = [];
 end
+R.ground_reaction.threshold = HS_threshold;
 
 R.kinetics.T_ID_0 = Ts_opt;
 R.ground_reaction.GRF_r_0 = GRFs_opt(:,1:3);

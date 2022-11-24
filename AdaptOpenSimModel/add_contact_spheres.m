@@ -11,6 +11,8 @@ function [] = add_contact_spheres(osim_path,contact_spheres,varargin)
 %   - contact_spheres -
 %   * cell array of structs describing a contact sphere. 
 %     Example cell:
+%
+%       Minimal input fields - contact geometry parameters
 %       % name of parent body
 %       contact_spheres(1).body = 'calcn_r';
 %       % name of contact sphere
@@ -19,6 +21,21 @@ function [] = add_contact_spheres(osim_path,contact_spheres,varargin)
 %       contact_spheres(1).location = [0.0019 -0.01 -0.0038];
 %       % radius of sphere
 %       contact_spheres(1).radius = 0.032;
+%
+%       Optional input fields - mechanical properties
+%       % stiffness normal to plane
+%       contact_spheres(1).stiffness = 1000000;
+%       % dissipation normal to plane
+%       contact_spheres(1).dissipation = 2.0;
+%       % static friction coefficient in plane
+%       contact_spheres(1).staticFriction = 0.8;
+%       % dynamic friction coefficient in plane
+%       contact_spheres(1).dynamicFriction = 0.8;
+%       % viscous friction coefficient in plane
+%       contact_spheres(1).viscousFriction = 0.5;
+%       % transition velocity of static to dynamic friction
+%       contact_spheres(1).transitionVelocity = 0.2;
+%       
 % 
 %
 % Original author: Lars D'Hondt
@@ -30,12 +47,12 @@ function [] = add_contact_spheres(osim_path,contact_spheres,varargin)
 
 
 %% dynamic properties
-stiffness           = 1000000;
-dissipation         = 2.0;
-staticFriction      = 0.8;
-dynamicFriction     = 0.8;
-viscousFriction     = 0.5;
-transitionVelocity  = 0.2;
+default_stiffness           = 1000000;
+default_dissipation         = 2.0;
+default_staticFriction      = 0.8;
+default_dynamicFriction     = 0.8;
+default_viscousFriction     = 0.5;
+default_transitionVelocity  = 0.2;
 
 %% extract optional inputs
 for i=1:2:length(varargin)
@@ -58,6 +75,37 @@ model.addContactGeometry(groundContactSpace);
 
 %% loop over contact spheres
 for i=1:length(contact_spheres)
+    % Look for optional inputs of dynamic properties
+    if isfield(contact_spheres(i),'stiffness')
+        stiffness = contact_spheres(i).stiffness;
+    else
+        stiffness = default_stiffness;
+    end
+    if isfield(contact_spheres(i),'dissipation')
+        dissipation = contact_spheres(i).dissipation;
+    else
+        dissipation = default_dissipation;
+    end
+    if isfield(contact_spheres(i),'staticFriction')
+        staticFriction = contact_spheres(i).staticFriction;
+    else
+        staticFriction = default_staticFriction;
+    end
+    if isfield(contact_spheres(i),'dynamicFriction')
+        dynamicFriction = contact_spheres(i).dynamicFriction;
+    else
+        dynamicFriction = default_dynamicFriction;
+    end
+    if isfield(contact_spheres(i),'viscousFriction')
+        viscousFriction = contact_spheres(i).viscousFriction;
+    else
+        viscousFriction = default_viscousFriction;
+    end
+    if isfield(contact_spheres(i),'transitionVelocity')
+        transitionVelocity = contact_spheres(i).transitionVelocity;
+    else
+        transitionVelocity = default_transitionVelocity;
+    end
 
 % add contact geometry
     % get parent body
