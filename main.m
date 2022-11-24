@@ -67,7 +67,7 @@ S.solver.run_as_batch_job = 0;
 % S.misc.poly_order.lower    = ;
 % S.misc.poly_order.upper    = ;
 % S.misc.msk_geom_bounds      = {{'knee_angle_r','knee_angle_l'},-120,10,'pelvis_tilt',-30,30};
-% S.misc.coordPosZeroForExternal = {'pelvis_tx'};
+% S.misc.gaitmotion_type = ;
 
 % % S.post_process
 % S.post_process.make_plot = '';
@@ -96,8 +96,8 @@ S.subject.v_pelvis_x_trgt   = 1.33;
 % S.subject.muscle_pass_stiff_shift = {{'soleus_l','soleus_r'},0.9,{'tib_ant_l'},1.1};
 % S.subject.muscle_pass_stiff_scale = ;
 % S.subject.tendon_stiff_scale      = {{'soleus_l','soleus_r','gastroc_r','gastroc_l'},0.5};
-% S.subject.mtp_type          = '2022paper';
-% S.subject.MT_params         = ;
+S.subject.mtp_type          = '2022paper';
+% S.subject.scale_MT_params         = {{'soleus_l'},'FMo',0.9,{'soleus_l'},'alphao',1.1};
 % S.subject.spasticity        = ;
 % S.subject.muscle_coordination = ;
 % S.subject.set_stiffness_coefficient_selected_dofs = {{'mtp_angle_l','mtp_angle_r'},25};
@@ -112,14 +112,16 @@ S.subject.v_pelvis_x_trgt   = 1.33;
 % S.weights.pass_torq = 0;
 % S.weights.a         = 1;
 % S.weights.slack_ctrl = ;
+% S.weights.pass_torq_includes_damping = ;
 
 % %S.Cpp2Dll: required inputs to convert .osim to .dll
-% optional: if you want to install the opensimExe
-S.Cpp2Dll.PathCpp2Dll_Exe = InstallOsim2Dll_Exe('C:\GBW_MyPrograms\Osim2Dll_exe'); %(optional: if you want to install the opensimExe)
+S.Cpp2Dll.PathCpp2Dll_Exe = InstallOsim2Dll_Exe('C:\GBW_MyPrograms\Osim2Dll_exe');
 % S.Cpp2Dll.compiler = 'Visual Studio 15 2017 Win64';
 S.Cpp2Dll.export3DSegmentOrigins = [];
-S.Cpp2Dll.verbose_mode = 1; % 0 for no outputs from cmake
-
+S.Cpp2Dll.verbose_mode = 0; % 0 for no outputs from cmake
+% S.Cpp2Dll.jointsOrder = ;
+% S.Cpp2Dll.coordinatesOrder = ;
+        
 %% Run predictive simulations
 if S.solver.run_as_batch_job
     add_pred_sim_to_batch(S,osim_path)

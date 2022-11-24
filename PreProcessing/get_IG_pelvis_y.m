@@ -32,14 +32,16 @@ if isempty(S.subject.IG_pelvis_y)
     state = model.initSystem;
     
     calcn_or = model.getBodySet().get('calcn_r').findBaseFrame().getPositionInGround(state).getAsMat;
+    pelvis_or = model.getBodySet().get('pelvis').findBaseFrame().getPositionInGround(state).getAsMat;
     
-    model_info.IG_pelvis_y = -calcn_or(2)+25e-2;
+    model_info.IG_pelvis_y = pelvis_or(2)-calcn_or(2)+25e-3;
 
 else
     model_info.IG_pelvis_y = S.subject.IG_pelvis_y;
 
 end
 
+end
 
 
 

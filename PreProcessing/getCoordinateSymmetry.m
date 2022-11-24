@@ -109,12 +109,6 @@ for i=1:length(coord_names)
         % nonzero along x, this coordinate defines forward motion.
         Qs_forward(end+1) = coords_wo_limbs(i);
 
-    elseif max([abs(loc_l_pos-loc_o_pos); abs(loc_r_pos-loc_o_pos); abs(loc_l_neg-loc_o_neg);...
-            abs(loc_r_neg-loc_o_neg)])<eps && loc_l_pos(3) >=0.1
-        % If the resulting displacement of all 3 stations is identical, and
-        % nonzero along x, this coordinate defines forward motion.
-        Qs_lateral(end+1) = coords_wo_limbs(i);
-
     elseif max(abs([loc_l_pos(3);loc_l_neg(3);loc_r_pos(3);loc_r_neg(3)]))<eps
         % If there is no displacement normal to the sagittal plane, the
         % current coordinate value should be inverted.

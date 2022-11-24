@@ -80,8 +80,6 @@ interval = Qs_time(time_expi.Qs(1)):step:Qs_time(time_expi.Qs(2));
 guess.Qs = interp1(round(Qs_time,4),guess.Qs_all,round(interval,4));
 guess.Qs(:,model_info.ExtFunIO.jointi.base_forward) = guess.Qs(:,model_info.ExtFunIO.jointi.base_forward) - ....
     guess.Qs(1,model_info.ExtFunIO.jointi.base_forward);
-guess.Qs(:,model_info.ExtFunIO.jointi.base_lateral) = guess.Qs(:,model_info.ExtFunIO.jointi.base_lateral) - ....
-    guess.Qs(1,model_info.ExtFunIO.jointi.base_lateral);
 
 if S.subject.adapt_IG_pelvis_y
     % Adjust pelvis height
@@ -121,19 +119,13 @@ if strcmp(S.misc.gaitmotion_type,'HalfGaitCycle')
     inv_X_Qdots(1,model_info.ExtFunIO.symQs.QdotsInvA) = guess.Qdots(1,model_info.ExtFunIO.symQs.QdotsInvB);
     % For other joints, we take the opposite right and left
     inv_X_Qs(model_info.ExtFunIO.symQs.QsOpp) = -guess.Qs(1,model_info.ExtFunIO.symQs.QsOpp);           
-    inv_X_Qdots(model_info.ExtFunIO.symQs.QsOpp) = -guess.Qdots(1,model_info.ExtFunIO.symQs.QsOpp);           
-    inv_X_Qdots(1,model_info.ExtFunIO.symQs.base_lateral) = -guess.Qdots(1,model_info.ExtFunIO.symQs.base_lateral);
-
+    inv_X_Qdots(model_info.ExtFunIO.symQs.QsOpp) = -guess.Qdots(1,model_info.ExtFunIO.symQs.QsOpp);
+    
     dx = guess.Qs(end,model_info.ExtFunIO.jointi.base_forward) - ...
         guess.Qs(end-1,model_info.ExtFunIO.jointi.base_forward);
     inv_X_Qs(model_info.ExtFunIO.jointi.base_forward) = ...
         guess.Qs(end,model_info.ExtFunIO.jointi.base_forward) + dx;
     
-    dz = guess.Qs(end,model_info.ExtFunIO.jointi.base_lateral) - ...
-        guess.Qs(end-1,model_info.ExtFunIO.jointi.base_lateral);
-    inv_X_Qs(model_info.ExtFunIO.jointi.base_lateral) = ...
-        guess.Qs(end,model_info.ExtFunIO.jointi.base_lateral) + dz;
-
     guess.Qs = [guess.Qs; inv_X_Qs];
     guess.Qdots = [guess.Qdots; inv_X_Qdots];
     guess.a = [guess.a; guess.a(1,model_info.ExtFunIO.symQs.MusInvB)];

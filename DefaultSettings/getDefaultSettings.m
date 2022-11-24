@@ -34,7 +34,7 @@ end
 
 % minimal distance between femur and hand orginins, in meters
 if ~isfield(S.bounds.femur_hand_dist,'lower')
-    S.bounds.femur_hand_dist.lower = sqrt(0.00324);
+    S.bounds.femur_hand_dist.lower = sqrt(0.0324);
 end
 
 % minimal distance between origins toes, in meters
@@ -81,7 +81,7 @@ end
 
 % hyperbolic tangent smoothing factor (used in metabolic cost)
 if ~isfield(S.metabolicE,'tanh_b')
-    S.metabolicE.tanh_b = 100;
+    S.metabolicE.tanh_b = 10;
 end
 
 % name of the metabolic energy model used
@@ -408,9 +408,10 @@ if ~isfield(S.weights,'pass_torq')
     S.weights.pass_torq = 1000; 
 end
 
-% damping can be included in the passive torques
+% damping can be included in the passive torques that go in the cost
+% function
 if ~isfield(S.weights,'pass_torq_includes_damping')
-    S.weights.pass_torq_includes_damping = 1; 
+    S.weights.pass_torq_includes_damping = 0; 
 end
 
 % weight on muscle activations

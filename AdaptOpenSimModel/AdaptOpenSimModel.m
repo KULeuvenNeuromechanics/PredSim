@@ -170,5 +170,9 @@ if add_contact_bool
     else
         add_contact_spheres(path_osim_out,contact_spheres)
     end
+
+%     Fix the location of contact spheres based on the size of model
+    fixContactSpherePositionAfterScaling('../Subjects/Falisse_et_al_2022/Falisse_et_al_2022.osim',path_osim_out);
+
 end
 
