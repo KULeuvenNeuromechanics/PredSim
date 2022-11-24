@@ -29,7 +29,9 @@ function [R] = PostProcess_get_ID(model_info,f_casadi,R)
 N = size(R.kinematics.Qs,1);
 
 import casadi.*
-[F] = load_external_function(R.S);
+% load external function
+pathExt = fullfile(S.misc.subject_path,S.misc.external_function);
+F  = external('F',pathExt);
 
 QsQdots = zeros(N,2*model_info.ExtFunIO.jointi.nq.all);
 QsQdots(:,1:2:end) = R.kinematics.Qs_rad;

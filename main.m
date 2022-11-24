@@ -73,8 +73,7 @@ S.solver.run_as_batch_job = 0;
 % S.post_process.make_plot = '';
 % S.post_process.savename  = 'datetime';
 % S.post_process.rerun   = 1;
-% S.post_process.rerun_from_w = 1;
-% S.post_process.result_filename = '';
+% S.post_process.load_prev_opti_vars = 0;
 % S.post_process.result_filename = '';
 
 % % S.solver
