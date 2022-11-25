@@ -148,6 +148,7 @@ for i=1:length(contact_spheres)
 end
 
 %% save model
+model.finalizeConnections();
 model.initSystem();
 model.print(osim_path);
 
