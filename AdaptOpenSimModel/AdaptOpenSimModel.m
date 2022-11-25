@@ -23,6 +23,11 @@
 %   setting to scale contact sphere locations with respect to a reference
 %   model.
 % 
+%   - replace_splines_by_poly_bool -
+%   * Replace SimmSplines in joint definitions by polynomials to make model
+%   compatible with opensimAD.
+%
+%
 % Original author: Lars D'Hondt
 % Original date: 27/May/2022
 %
@@ -36,19 +41,22 @@ clc
 [pathHere,~,~] = fileparts(mfilename('fullpath'));
 
 % .osim file to adapt
-path_osim_in = fullfile(pathHere,'Falisse_et_al_2022.osim');
+path_osim_in = fullfile('C:\GBW_MyPrograms\OpenSim 4.3\',...
+    'Resources\Models\Gait10dof18musc','gait10dof18musc.osim');
 
 % adapted .osim file
-path_osim_out = fullfile(pathHere,'Falisse_et_al_2022.osim');
+path_osim_out = '../Subjects/gait1018/gait1018.osim';
 
 % reference model for contact
-path_reference_model = fullfile(pathHere,'Falisse_et_al_2022.osim');
+path_reference_model = '../Subjects/Subject2_2D/Subject2_2D.osim';
 
 % select what to do
 add_actuators_bool = 1;
-add_contact_bool = 0;
+add_contact_bool = 1;
 use_reference_contacts_bool = 1;
 scale_contact_location_bool = 1;
+replace_splines_by_poly_bool = 1;
+
 
 %% Define contact spheres
 
@@ -111,44 +119,52 @@ end
 ita = 1;
 
 % coordinate to which te actuator applies torque
-torq_act(ita).coord = ('arm_flex_r');
+torq_act(ita).coord = ('lumbar_extension');
 % maximum torque
-torq_act(ita).max_torque = 150;
+torq_act(ita).max_torque = 300;
 % time constant of the activation dynamics
 torq_act(ita).time_constant = 0.035;
 ita = ita+1;
 
-% coordinate to which te actuator applies torque
-torq_act(ita).coord = ('arm_add_r');
-% maximum torque
-torq_act(ita).max_torque = 150;
-% time constant of the activation dynamics
-torq_act(ita).time_constant = 0.035;
-ita = ita+1;
-
-% coordinate to which te actuator applies torque
-torq_act(ita).coord = ('arm_rot_r');
-% maximum torque
-torq_act(ita).max_torque = 150;
-% time constant of the activation dynamics
-torq_act(ita).time_constant = 0.035;
-ita = ita+1;
-
-% coordinate to which te actuator applies torque
-torq_act(ita).coord = ('elbow_flex_r');
-% maximum torque
-torq_act(ita).max_torque = 150;
-% time constant of the activation dynamics
-torq_act(ita).time_constant = 0.035;
-ita = ita+1;
-
-% mirror to get left side
-for i=1:length(torq_act)
-    torq_act(ita).coord = [torq_act(i).coord(1:end-1) 'l'];
-    torq_act(ita).max_torque = torq_act(i).max_torque;
-    torq_act(ita).time_constant = torq_act(i).time_constant;
-    ita = ita+1;
-end
+% % coordinate to which te actuator applies torque
+% torq_act(ita).coord = ('arm_flex_r');
+% % maximum torque
+% torq_act(ita).max_torque = 150;
+% % time constant of the activation dynamics
+% torq_act(ita).time_constant = 0.035;
+% ita = ita+1;
+% 
+% % coordinate to which te actuator applies torque
+% torq_act(ita).coord = ('arm_add_r');
+% % maximum torque
+% torq_act(ita).max_torque = 150;
+% % time constant of the activation dynamics
+% torq_act(ita).time_constant = 0.035;
+% ita = ita+1;
+% 
+% % coordinate to which te actuator applies torque
+% torq_act(ita).coord = ('arm_rot_r');
+% % maximum torque
+% torq_act(ita).max_torque = 150;
+% % time constant of the activation dynamics
+% torq_act(ita).time_constant = 0.035;
+% ita = ita+1;
+% 
+% % coordinate to which te actuator applies torque
+% torq_act(ita).coord = ('elbow_flex_r');
+% % maximum torque
+% torq_act(ita).max_torque = 150;
+% % time constant of the activation dynamics
+% torq_act(ita).time_constant = 0.035;
+% ita = ita+1;
+% 
+% % mirror to get left side
+% for i=1:length(torq_act)
+%     torq_act(ita).coord = [torq_act(i).coord(1:end-1) 'l'];
+%     torq_act(ita).max_torque = torq_act(i).max_torque;
+%     torq_act(ita).time_constant = torq_act(i).time_constant;
+%     ita = ita+1;
+% end
 
 
 %%
@@ -158,6 +174,10 @@ model = Model(path_osim_in);
 model_name = char(model.getName);
 model_name = [model_name '_AdaptedForPredSim'];
 model.setName(model_name);
+[dir_osim_out,~,~] = fileparts(path_osim_out);
+if ~isfolder(dir_osim_out)
+    mkdir(dir_osim_out);
+end
 model.print(path_osim_out);
 
 
@@ -174,4 +194,6 @@ end
 if scale_contact_location_bool
     fixContactSpherePositionAfterScaling(path_reference_model,path_osim_out);
 end
-
+if replace_splines_by_poly_bool
+    SimmSpline_joint_to_polynomial(path_osim_out);
+end

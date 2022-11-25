@@ -30,7 +30,7 @@ N = size(R.kinematics.Qs,1);
 
 import casadi.*
 % load external function
-pathExt = fullfile(S.misc.subject_path,S.misc.external_function);
+pathExt = fullfile(R.S.misc.subject_path,R.S.misc.external_function);
 F  = external('F',pathExt);
 
 

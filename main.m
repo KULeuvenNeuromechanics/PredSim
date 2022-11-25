@@ -23,15 +23,14 @@ addpath([S.misc.main_path '\VariousFunctions'])
 
 %% Required inputs
 % name of the subject
-S.subject.name = 'Subject1_2D_test_1';
+S.subject.name = 'gait1018';
 
 % path to folder where you want to store the results of the OCP
-S.subject.save_folder  = fullfile(pathRepoFolder,'PredSimResults',S.subject.name); 
+S.subject.save_folder  = fullfile(pathRepo,'Subjects/gait1018'); 
 
 % either choose "quasi-random" or give the path to a .mot file you want to use as initial guess
 S.subject.IG_selection = fullfile(S.misc.main_path,'OCP','IK_Guess_Default.mot');
 S.subject.IG_selection_gaitCyclePercent = 50;
-
 
 % give the path to the osim model of your subject
 osim_path = fullfile(pathRepo,'Subjects',S.subject.name,[S.subject.name '.osim']);
@@ -72,16 +71,16 @@ S.solver.run_as_batch_job = 0;
 % % S.post_process
 % S.post_process.make_plot = '';
 % S.post_process.savename  = 'datetime';
-% S.post_process.rerun   = 1;
+S.post_process.rerun   = 1;
 % S.post_process.load_prev_opti_vars = 0;
-% S.post_process.result_filename = '';
+S.post_process.result_filename = 'gait1018_v1';
 
 % % S.solver
 % S.solver.linear_solver  = 'ma86';
 % S.solver.tol_ipopt      = ;
 % S.solver.max_iter       = 5;
 % S.solver.parallel_mode  = '';
-S.solver.N_threads      = 6;
+% S.solver.N_threads      = 6;
 % S.solver.N_meshes       = 50;
 % S.solver.par_cluster_name = ;
 S.solver.CasADi_path    = 'C:\GBW_MyPrograms\casadi_3_5_5';
@@ -95,7 +94,7 @@ S.subject.v_pelvis_x_trgt   = 1.33;
 % S.subject.muscle_pass_stiff_shift = {{'soleus_l','soleus_r'},0.9,{'tib_ant_l'},1.1};
 % S.subject.muscle_pass_stiff_scale = ;
 % S.subject.tendon_stiff_scale      = {{'soleus_l','soleus_r','gastroc_r','gastroc_l'},0.5};
-S.subject.mtp_type          = '2022paper';
+% S.subject.mtp_type          = '2022paper';
 % S.subject.scale_MT_params         = {{'soleus_l'},'FMo',0.9,{'soleus_l'},'alphao',1.1};
 % S.subject.spasticity        = ;
 % S.subject.muscle_coordination = ;
@@ -115,7 +114,7 @@ S.subject.mtp_type          = '2022paper';
 
 % %S.Cpp2Dll: required inputs to convert .osim to .dll
 S.Cpp2Dll.PathCpp2Dll_Exe = InstallOsim2Dll_Exe('C:\GBW_MyPrograms\Osim2Dll_exe');
-% S.Cpp2Dll.compiler = 'Visual Studio 15 2017 Win64';
+S.Cpp2Dll.compiler = 'Visual Studio 17 2022';
 S.Cpp2Dll.export3DSegmentOrigins = [];
 S.Cpp2Dll.verbose_mode = 0; % 0 for no outputs from cmake
 % S.Cpp2Dll.jointsOrder = ;

@@ -980,8 +980,7 @@ Xk_Qdotdots_opt             = qdotdot_col_opt_unsc.rad(d:d:end,:);
 Foutk_opt                   = zeros(N,F.nnz_out);
 for i = 1:N
     % ID moments
-%     [res] = F([Xk_Qs_Qdots_opt(i,:)';Xk_Qdotdots_opt(i,:)']);
-    [res] = evaluate_external_function(S,model_info,Xk_Qs_Qdots_opt(i,:),[],Xk_Qdotdots_opt(i,:));
+    [res] = F([Xk_Qs_Qdots_opt(i,:)';Xk_Qdotdots_opt(i,:)']);
     Foutk_opt(i,:) = full(res);
 end
 GRFk_opt = Foutk_opt(:,[model_info.ExtFunIO.GRFs.right_foot model_info.ExtFunIO.GRFs.left_foot]);

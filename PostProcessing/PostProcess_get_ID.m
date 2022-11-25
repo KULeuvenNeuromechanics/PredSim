@@ -30,7 +30,7 @@ N = size(R.kinematics.Qs,1);
 
 import casadi.*
 % load external function
-pathExt = fullfile(S.misc.subject_path,S.misc.external_function);
+pathExt = fullfile(R.S.misc.subject_path,R.S.misc.external_function);
 F  = external('F',pathExt);
 
 QsQdots = zeros(N,2*model_info.ExtFunIO.jointi.nq.all);
@@ -41,8 +41,7 @@ Foutk_opt = zeros(N,F.nnz_out);
 
 for i = 1:N
     % ID moments
-%     [res] = F([QsQdots(i,:)';R.kinematics.Qddots_rad(i,:)']);
-    [res] = evaluate_external_function(R.S,model_info,QsQdots(i,:),[],R.kinematics.Qddots_rad(i,:));
+    [res] = F([QsQdots(i,:)';R.kinematics.Qddots_rad(i,:)']);
     Foutk_opt(i,:) = full(res);
 end
 
