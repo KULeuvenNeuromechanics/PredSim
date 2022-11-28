@@ -37,7 +37,7 @@ osim_path = fullfile(pathRepo,'Subjects',S.subject.name,[S.subject.name '.osim']
 
 % path to folder with program to create dll files from opensim model (will
 % be downloaded automatically if it is not there)
-S.Cpp2Dll.PathCpp2Dll_Exe = InstallOsim2Dll_Exe('C:\GBW_MyPrograms\Osim2Dll_exe');
+S.Cpp2Dll.PathCpp2Dll_Exe = 'C:\GBW_MyPrograms\Osim2Dll_exe';
 
 % Do you want to run the simulation as a batch job (parallel computing toolbox)
 S.solver.run_as_batch_job = 0;
@@ -124,6 +124,10 @@ S.Cpp2Dll.verbose_mode = 0; % 0 for no outputs from cmake
 % S.Cpp2Dll.coordinatesOrder = ;
         
 %% Run predictive simulations
+% Check for updates in osim2dll
+S.Cpp2Dll.PathCpp2Dll_Exe = InstallOsim2Dll_Exe(S.Cpp2Dll.PathCpp2Dll_Exe);
+
+% Start simulation
 if S.solver.run_as_batch_job
     add_pred_sim_to_batch(S,osim_path)
 else

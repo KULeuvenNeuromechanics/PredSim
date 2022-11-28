@@ -85,18 +85,20 @@ This code can automatically convert an OpenSim model to the external function us
 
 ### Required Settings
 
-- **S.subject.save_folder**: 
-	- path to the folder where you want to store the results of the OCP. If the folder does not exist yet on your machine, it will be created automatically.
 - **S.subject.name**: 
 	- the name or code of the subject you are simulating.
+- **S.subject.save_folder**: 
+	- path to the folder where you want to store the results of the OCP. If the folder does not exist yet on your machine, it will be created automatically.
 - **S.subject.IG_selection**: 
 	- either choose 'quasi-random' or give the path to a .mot file you want to use as initial guess.
-- **S.subject.IG_selection_gaitCyclePercent**: 
-	- if S.subject.IG_selection is a .mot file, S.subject.IG_selection_gaitCyclePercent is required. Here, specify what percent of gait cycle does the .mot file contain. For example, if the .mot file has 2 gait cycles, S.subject.IG_selection_gaitCyclePercent is 200.
-- **S.solver.run_as_batch_job**: 
-	- specify if the OCP is to be solved as a batch job (0: no, 1: yes). Batch processing requires the [Parallel Computing Toolbox](https://nl.mathworks.com/products/parallel-computing.html).
 - **osim_path**: 
 	- path to the scaled opensim model of the subject.
+- **S.subject.IG_selection_gaitCyclePercent**: 
+	- if S.subject.IG_selection is a .mot file, S.subject.IG_selection_gaitCyclePercent is required. Here, specify what percent of gait cycle does the .mot file contain. For example, if the .mot file has 2 gait cycles, S.subject.IG_selection_gaitCyclePercent is 200.
+- **S.Cpp2Dll.PathCpp2Dll_Exe**:
+	- path to folder with compiled [opensimAD](https://github.com/Lars-DHondt-KUL/opensimAD) files to create dll files from opensim model. It will be downloaded or updated automatically when required.
+- **S.solver.run_as_batch_job**: 
+	- specify if the OCP is to be solved as a batch job (0: no, 1: yes). Batch processing requires the [Parallel Computing Toolbox](https://nl.mathworks.com/products/parallel-computing.html).
 
 ### OptionalSettings
 
