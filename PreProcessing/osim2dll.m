@@ -123,7 +123,7 @@ if ~isfile(fullfile(S.misc.subject_path,S.misc.external_function))
     delete(MatFileExoInfo);
 
     % display message
-    disp('   convert .osim to .dll file finished ...'); 
+    disp('... convert .osim to .dll file finished'); 
 else
     disp(['Using existing .dll file: ', fullfile(S.misc.subject_path,S.misc.external_function)]);
 end

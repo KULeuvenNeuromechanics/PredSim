@@ -81,7 +81,7 @@ if download_bin
     disp('   installation Osim2Dll program finished');
 end
 
-
+disp(' ')
 
 
 end
