@@ -74,7 +74,7 @@ elseif isempty(S.post_process.result_filename)
 end
 
 if nargout == 1
-    varargout = S.post_process.result_filename;
+    varargout{1} = S.post_process.result_filename;
 end
 
 %% Start diary
