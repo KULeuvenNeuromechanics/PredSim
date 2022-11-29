@@ -37,6 +37,10 @@ S.subject.IG_selection_gaitCyclePercent = 100;
 % give the path to the osim model of your subject
 osim_path = fullfile(pathRepo,'Subjects',S.subject.name,[S.subject.name '.osim']);
 
+% path to folder with program to create dll files from opensim model (will
+% be downloaded automatically if it is not there)
+S.Cpp2Dll.PathCpp2Dll_Exe = 'C:\GBW_MyPrograms\Osim2Dll_exe';
+
 % Do you want to run the simulation as a batch job (parallel computing toolbox)
 S.solver.run_as_batch_job = 0;
 
@@ -115,15 +119,17 @@ S.subject.set_damping_coefficient_selected_dofs = {{'mtp_angle_l','mtp_angle_r'}
 % S.weights.pass_torq_includes_damping = ;
 
 % %S.Cpp2Dll: required inputs to convert .osim to .dll
-% optional: if you want to install the opensimExe
-S.Cpp2Dll.PathCpp2Dll_Exe = InstallOsim2Dll_Exe('C:\GBW_MyPrograms\Osim2Dll_exe'); %(optional: if you want to install the opensimExe)
-% S.Cpp2Dll.compiler = 'Visual Studio 15 2017 Win64';
+% S.Cpp2Dll.compiler = 'Visual Studio 17 2022';
 % S.Cpp2Dll.export3DSegmentOrigins = ;
 S.Cpp2Dll.verbose_mode = 0; % 0 for no outputs from cmake
 % S.Cpp2Dll.jointsOrder = ;
 % S.Cpp2Dll.coordinatesOrder = ;
         
 %% Run predictive simulations
+% Check for updates in osim2dll
+S.Cpp2Dll.PathCpp2Dll_Exe = InstallOsim2Dll_Exe(S.Cpp2Dll.PathCpp2Dll_Exe);
+
+% Start simulation
 if S.solver.run_as_batch_job
     add_pred_sim_to_batch(S,osim_path)
 else

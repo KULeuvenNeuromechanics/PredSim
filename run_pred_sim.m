@@ -77,32 +77,63 @@ if nargout == 1
     varargout = S.post_process.result_filename;
 end
 
+%% Start diary
+t00 = tic;
+Outname = fullfile(S.subject.save_folder,[S.post_process.result_filename '_log.txt']);
+diary(Outname);
+disp(' ')
+disp(['Subject name: ' S.subject.name])
+disp(['OpenSim model: ' osim_path])
+disp(' ')
+disp(' ')
+
 %% PreProcessing
 addpath([S.misc.main_path '\PreProcessing'])
 disp('Start PreProcessing...')
+disp(' ')
 t0 = tic;
-[S,model_info] = PreProcessing(S,osim_path); %PreProcessing(S,osim_path);
-disp(['... PreProcessing done. Time elapsed ' num2str(toc(t0)) ' s'])
+[S,model_info] = PreProcessing(S,osim_path);
+disp(' ')
+disp(['...PreProcessing done. Time elapsed ' num2str(toc(t0),'%.2f') ' s'])
+disp(' ')
+disp(' ')
 
 %% Creating casadi functions
 addpath([S.misc.main_path '\CasadiFunctions'])
 disp('Start creating CasADi functions...')
+disp(' ')
 t0 = tic;
 [f_casadi] = createCasadiFunctions(S,model_info);
-disp(['... CasADi functions created. Time elapsed ' num2str(toc(t0)) ' s'])
+disp(' ')
+disp(['...CasADi functions created. Time elapsed ' num2str(toc(t0),'%.2f') ' s'])
+disp(' ')
+disp(' ')
 
 %% Formulating OCP
 addpath([S.misc.main_path '\OCP'])
 if ~S.post_process.rerun
     OCP_formulation(S,model_info,f_casadi);
+    disp(' ')
+    disp(' ')
 end
 
 %% PostProcessing
 addpath([S.misc.main_path '\PostProcessing'])
 disp('Start PostProcessing...')
+disp(' ')
 t0 = tic;
 PostProcessing(S,model_info,f_casadi);
-disp(['... PostProcessing done. Time elapsed ' num2str(toc(t0)) ' s'])
+disp(' ')
+disp(['...PostProcessing done. Time elapsed ' num2str(toc(t0),'%.2f') ' s'])
+disp(' ')
+disp(' ')
 
+%% Conclude diary
+disp(['Total time elapsed ' num2str(toc(t00),'%.2f') ' s'])
+disp(' ')
+disp(['Diary saved as ' Outname])
+disp(' ')
+disp(' ')
+diary off
 
 

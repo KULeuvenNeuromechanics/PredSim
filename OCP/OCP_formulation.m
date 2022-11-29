@@ -593,54 +593,69 @@ end
 % Scale cost function
 Jall_sc = sum(Jall)/dist_trav_tot;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+disp(' ')
+disp(['...OCP formulation done. Time elapsed ' num2str(toc(t0),'%.2f') ' s'])
+disp(' ')
+
 %%
-% Create NLP solver
-opti.minimize(Jall_sc);
-options.ipopt.hessian_approximation = 'limited-memory';
-options.ipopt.mu_strategy           = 'adaptive';
-options.ipopt.max_iter              = S.solver.max_iter;
-options.ipopt.linear_solver         = S.solver.linear_solver;
-options.ipopt.tol                   = 1*10^(-S.solver.tol_ipopt);
-options.ipopt.constr_viol_tol       = 1*10^(-S.solver.tol_ipopt);
-opti.solver('ipopt', options);
-% timer
-disp(['... OCP formulation done. Time elapsed ' num2str(toc(t0)) ' s'])
-% Create and save diary
-Outname = fullfile(S.subject.save_folder,[S.post_process.result_filename '_log.txt']);
-diary(Outname);
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Solve problem
-% Opti does not use bounds on variables but constraints. This function
-% adjusts for that.
-[w_opt,stats] = solve_NLPSOL(opti,options);
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-diary off
-% Extract results
-% Create setup
-setup.tolerance.ipopt = S.solver.tol_ipopt;
-setup.bounds = bounds;
-setup.scaling = scaling;
-setup.guess = guess;
+if ~S.post_process.load_prev_opti_vars
+    % Create NLP solver
+    opti.minimize(Jall_sc);
+    options.ipopt.hessian_approximation = 'limited-memory';
+    options.ipopt.mu_strategy           = 'adaptive';
+    options.ipopt.max_iter              = S.solver.max_iter;
+    options.ipopt.linear_solver         = S.solver.linear_solver;
+    options.ipopt.tol                   = 1*10^(-S.solver.tol_ipopt);
+    options.ipopt.constr_viol_tol       = 1*10^(-S.solver.tol_ipopt);
+    opti.solver('ipopt', options);
+    % timer
+    
+    disp('Starting NLP solver...')
+    disp(' ')
+    t0s = tic;
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    % Solve problem
+    % Opti does not use bounds on variables but constraints. This function
+    % adjusts for that.
+    [w_opt,stats] = solve_NLPSOL(opti,options);
+    
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    disp(' ')
+    disp(['...Exit NLP solver. Time elapsed ' num2str(toc(t0s),'%.2f') ' s'])
+    disp(' ')
+    disp(' ')
+    % Create setup
+    setup.tolerance.ipopt = S.solver.tol_ipopt;
+    setup.bounds = bounds;
+    setup.scaling = scaling;
+    setup.guess = guess;
+    
+    Outname = fullfile(S.subject.save_folder,[S.post_process.result_filename '.mat']);
+    save(Outname,'w_opt','stats','setup','model_info','S');
 
-Outname = fullfile(S.subject.save_folder,[S.post_process.result_filename '.mat']);
-save(Outname,'w_opt','stats','setup','model_info','S');
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% To salvage results after a botched post-processing attempt, use code
-% below and comment out rest of this section.
-% Outname = fullfile(S.subject.save_folder,[S.post_process.result_filename '.mat']);
-% load(Outname,'w_opt','stats','setup','model_info','R');
-% scaling = setup.scaling;
-% S = R.S;
-% clear 'R'
+else % S.post_process.load_prev_opti_vars = true
+    
+    % Advanced feature, for debugging only: load w_opt and reconstruct R before rerunning the post-processing.
+    Outname = fullfile(S.subject.save_folder,[S.post_process.result_filename '.mat']);
+    disp(['Loading vector with optimization variables from previous solution: ' outname])
+    clear 'S'
+    load(Outname,'w_opt','stats','setup','model_info','R','S');
+    scaling = setup.scaling;
+    if exist('R','var')
+        S = R.S;
+    end
+    clear 'R'
+end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Essential post processing
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %% Read from the vector with optimization results
+disp('Retrieving solution...')
+disp(' ')
 
 NParameters = 1;
 tf_opt = w_opt(1:NParameters);
@@ -966,7 +981,7 @@ GRFk_opt = Foutk_opt(:,[model_info.ExtFunIO.GRFs.right_foot model_info.ExtFunIO.
 
 if strcmp(S.misc.gaitmotion_type,'HalfGaitCycle')
     % detect heelstrike
-    [IC1i_c,IC1i_s,HS1] = getHeelstrikeSimulation(GRFk_opt,N);
+    [IC1i_c,IC1i_s,HS1,HS_threshold] = getHeelstrikeSimulation(GRFk_opt,N,model_info.mass/3);
         
     % Qs
     Qs_GC = zeros(N*2,size(q_opt_unsc.deg,2));
@@ -1246,6 +1261,7 @@ else
     R.torque_actuators.e = [];
     R.torque_actuators.T = [];
 end
+R.ground_reaction.threshold = HS_threshold;
 
 % save results
 Outname = fullfile(S.subject.save_folder,[S.post_process.result_filename '.mat']);

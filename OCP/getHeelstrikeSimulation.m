@@ -1,4 +1,4 @@
-function [IC1i_c,IC1i_s,HS1] = getHeelstrikeSimulation(GRFk_opt,N)
+function [IC1i_c,IC1i_s,HS1,threshold] = getHeelstrikeSimulation(GRFk_opt,N,threshold_init)
 % --------------------------------------------------------------------------
 % getHeelstrikeSimulation
 %  To reconstruct the full gait cycle from the simulated half gait cycle
@@ -11,6 +11,9 @@ function [IC1i_c,IC1i_s,HS1] = getHeelstrikeSimulation(GRFk_opt,N)
 %   - N -
 %   * Number of mesh intervals
 %
+%   - threshold_init -
+%   * initial value of the threshold for vertical GRF (in N)
+%
 % OUTPUT:
 %   - IC1i_c -
 %   * index of initial contact for controls
@@ -21,6 +24,9 @@ function [IC1i_c,IC1i_s,HS1] = getHeelstrikeSimulation(GRFk_opt,N)
 %   - HS1 -
 %   * which foot makes inital contact 'r' or 'l'
 % 
+%   - threshold -
+%   * value of the threshold for vertical GRF (in N)
+%
 % Original author: Maarten Afschrift
 % Original date: 29/Nov/2021
 %
@@ -29,7 +35,7 @@ function [IC1i_c,IC1i_s,HS1] = getHeelstrikeSimulation(GRFk_opt,N)
 % --------------------------------------------------------------------------
 
 % Identify heel strike
-threshold = 20; % there is foot-ground contact above the threshold
+threshold = threshold_init; % there is foot-ground contact above the threshold
 if exist('HS1','var')
     clear HS1
 end
@@ -49,7 +55,7 @@ else
     else
         % heelstrike is on the left leg
         phase_tran_tgridi =[];
-        threshold = 20;
+        threshold = threshold_init;
     end
 end
 if ~isempty(phase_tran_tgridi)

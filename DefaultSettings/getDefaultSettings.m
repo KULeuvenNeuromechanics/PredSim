@@ -34,7 +34,7 @@ end
 
 % minimal distance between femur and hand orginins, in meters
 if ~isfield(S.bounds.femur_hand_dist,'lower')
-    S.bounds.femur_hand_dist.lower = sqrt(0.00324);
+    S.bounds.femur_hand_dist.lower = sqrt(0.0324);
 end
 
 % minimal distance between origins toes, in meters
@@ -170,18 +170,26 @@ if ~isfield(S.post_process,'savename')
     S.post_process.savename = 'structured';
 end
 
-% rerun post-processing without solving OCP
-if ~isfield(S.post_process,'rerun')
-    S.post_process.rerun = 0;
-end
-
 % filename of the result to post-process
 if ~isfield(S.post_process,'result_filename')
     S.post_process.result_filename = [];
 end
 
+% rerun post-processing without solving OCP
+if ~isfield(S.post_process,'rerun')
+    S.post_process.rerun = 0;
+end
 if S.post_process.rerun && isempty(S.post_process.result_filename)
     error('Please provide the name of the result to post-process. (S.post_process.result_filename)')
+end
+
+% load w_opt and reconstruct R before rerunning the post-processing
+% Advanced feature, for debugging only, you should not need this.
+if ~isfield(S.post_process,'load_prev_opti_vars')
+    S.post_process.load_prev_opti_vars = 0;
+end
+if S.post_process.load_prev_opti_vars && isempty(S.post_process.result_filename)
+    error('Please provide the name of the result from which to load the optimization variables. (S.post_process.result_filename)')
 end
 
 %% solver
@@ -423,10 +431,12 @@ if ~isfield(S,'Cpp2Dll')
 end
 
 % select compiler for cpp projects 
-%   Visual studio 2015: 'Visual Studio 14 2015 Win64'
-%   Visual studio 2017: 'Visual Studio 15 2017 Win64'
+%   Visual studio 2015: 'Visual Studio 14 2015'
+%   Visual studio 2017: 'Visual Studio 15 2017'
+%   Visual studio 2017: 'Visual Studio 16 2019'
+%   Visual studio 2017: 'Visual Studio 17 2022'
 if ~isfield(S.Cpp2Dll,'compiler')
-    S.Cpp2Dll.compiler = 'Visual Studio 15 2017 Win64';
+    S.Cpp2Dll.compiler = findVisualStudioInstallation;
 end
 
 % Path with exectuables to create .cpp file. You can use the function 

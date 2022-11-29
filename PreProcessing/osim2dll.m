@@ -73,6 +73,10 @@ if ~isfile(fullfile(S.misc.subject_path,S.misc.external_function))
 
     % create a mat file with all input information
     MatFileExoInfo = fullfile(pwd,'MatFileExoInfo.mat');
+    % delete old file
+    if isfile(MatFileExoInfo)
+        delete(MatFileExoInfo);
+    end
     pathOut = CppDir;
     save(MatFileExoInfo,'pathOpenSimModel','outputFilename','export3DSegmentOrigins',...
         'jointsOrder','coordinatesOrder','exportGRFs','exportSeparateGRFs',...
@@ -119,7 +123,7 @@ if ~isfile(fullfile(S.misc.subject_path,S.misc.external_function))
     delete(MatFileExoInfo);
 
     % display message
-    disp('   convert .osim to .dll file finished ...'); 
+    disp('... convert .osim to .dll file finished'); 
 else
     disp(['Using existing .dll file: ', fullfile(S.misc.subject_path,S.misc.external_function)]);
 end
