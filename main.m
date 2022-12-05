@@ -29,8 +29,9 @@ S.subject.name = 'Falisse_et_al_2022';
 S.subject.save_folder  = fullfile(pathRepoFolder,'PredSimResults',S.subject.name); 
 
 % either choose "quasi-random" or give the path to a .mot file you want to use as initial guess
-S.subject.IG_selection = fullfile(S.misc.main_path,'OCP','IK_Guess_Default.mot');
-S.subject.IG_selection_gaitCyclePercent = 50;
+S.subject.IG_selection = fullfile(S.misc.main_path,'OCP','IK_Guess_Full_GC.mot');
+S.subject.IG_selection_gaitCyclePercent = 100;
+
 
 % give the path to the osim model of your subject
 osim_path = fullfile(pathRepo,'Subjects',S.subject.name,[S.subject.name '.osim']);
