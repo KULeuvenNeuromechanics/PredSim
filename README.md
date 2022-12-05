@@ -43,7 +43,7 @@ Lastly, seperate pieces of code were put together to streamline performing predi
 
 To run this code you need to have the following softwares on your machine:
 
-- MATLAB. [Statistics and Machine Learning Toolbox](https://nl.mathworks.com/products/statistics.html) is required. [Parallel Computing Toolbox](https://nl.mathworks.com/products/parallel-computing.html) is optional. The code has been tested on MATLAB 2021b. MATLAB 2022b is known to not work.
+- MATLAB. [Statistics and Machine Learning Toolbox](https://nl.mathworks.com/products/statistics.html) is required. [Parallel Computing Toolbox](https://nl.mathworks.com/products/parallel-computing.html) is optional. The code has mainly been developed and tested on MATLAB 2021b, but is expected to run on any recent version.
 - [OpenSim](https://simtk.org/projects/opensim) 4.3 or later. Older versions do not work.
 - [CasADi](https://web.casadi.org/get/). The code has been tested on CasADi 3.5.5.
 - [Microsoft Visual Studio](https://visualstudio.microsoft.com/). In Visual Studio Installer, [select to include Desktop development with C++](/FiguresForDocumentation/fig_MSVS.png). The code has been tested on MSVS Community 2015, 2017, 2019, and 2022.
