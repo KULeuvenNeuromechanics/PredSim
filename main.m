@@ -13,13 +13,13 @@ clc
 [pathRepoFolder,~,~] = fileparts(pathRepo);
 
 %% Initialize S
-pathDefaultSettings = [pathRepo '\DefaultSettings'];
+pathDefaultSettings = fullfile(pathRepo,'DefaultSettings');
 addpath(pathDefaultSettings)
 
 [S] = initializeSettings();
 S.misc.main_path = pathRepo;
 
-addpath([S.misc.main_path '\VariousFunctions'])
+addpath(fullfile(S.misc.main_path,'VariousFunctions'))
 
 %% Required inputs
 % name of the subject
@@ -29,8 +29,10 @@ S.subject.name = 'gait1018';
 S.subject.save_folder  = fullfile(pathRepo,'Subjects/gait1018'); 
 
 % either choose "quasi-random" or give the path to a .mot file you want to use as initial guess
-S.subject.IG_selection = fullfile(S.misc.main_path,'OCP','IK_Guess_Default.mot');
-S.subject.IG_selection_gaitCyclePercent = 50;
+% S.subject.IG_selection = fullfile(S.misc.main_path,'OCP','IK_Guess_Default.mot');
+% S.subject.IG_selection_gaitCyclePercent = 50;
+S.subject.IG_selection = fullfile(S.misc.main_path,'OCP','IK_Guess_Full_GC.mot');
+S.subject.IG_selection_gaitCyclePercent = 100;
 
 % give the path to the osim model of your subject
 osim_path = fullfile(pathRepo,'Subjects',S.subject.name,[S.subject.name '.osim']);
@@ -73,7 +75,7 @@ S.solver.run_as_batch_job = 0;
 % S.misc.gaitmotion_type = ;
 
 % % S.post_process
-% S.post_process.make_plot = '';
+S.post_process.make_plot = 1;
 % S.post_process.savename  = 'datetime';
 S.post_process.rerun   = 1;
 % S.post_process.load_prev_opti_vars = 0;
@@ -131,7 +133,16 @@ S.Cpp2Dll.PathCpp2Dll_Exe = InstallOsim2Dll_Exe(S.Cpp2Dll.PathCpp2Dll_Exe);
 if S.solver.run_as_batch_job
     add_pred_sim_to_batch(S,osim_path)
 else
-    run_pred_sim(S,osim_path);
+    [savename] = run_pred_sim(S,osim_path);
 end
 
+%% Plot results
+if S.post_process.make_plot && ~S.solver.run_as_batch_job
+    % set path to saved result
+    result_paths{2} = fullfile(S.subject.save_folder,[savename '.mat']);
+    % add path to subfolder with plotting functions
+    addpath(fullfile(S.misc.main_path,'PlotFigures'))
+    % call plotting script
+    run_this_file_to_plot_figures
+end
 

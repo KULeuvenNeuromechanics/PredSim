@@ -1,8 +1,14 @@
 
-clear
+%% Clear workspace
+if exist('result_paths','var')
+    clearvars -Except result_paths
+else
+    clear
+end
 close all
 clc
 
+%% Get paths for later use
 [pathHere,~,~] = fileparts(mfilename('fullpath'));
 [pathRepo,~,~] = fileparts(pathHere);
 [pathRepoFolder,~,~] = fileparts(pathRepo);
@@ -13,18 +19,19 @@ clc
 % Construct a cell array with full paths to files with saved results for
 % which you want to appear on the plotted figures.
 results_folder = fullfile(pathRepoFolder,'PredSimResults');
-result_paths{1} = fullfile([results_folder '\subject1_2D\subject1_2D_v10.mat']);
-result_paths{2} = fullfile([results_folder '\subject1_2D\subject1_2D_v15.mat']);
-% result_paths{3} = fullfile([results_folder '\subject1_2D\subject1_2D_v13.mat']);
+result_paths{1} = fullfile(pathRepo,'Tests','Falisse_et_al_2022_Results','Falisse_et_al_2022_v1.mat');
+% result_paths{2} = fullfile(results_folder,'Falisse_et_al_2022','Falisse_et_al_2022_v1.mat');
 
 % Cell array with legend name for each result
-legend_names = {'costfunction 1','cost 2D paper','cost 3D paper w/o Edot'};
+legend_names = {'Reference result', 'Your first simulation'};
+
 
 % Path to the folder where figures are saved
 figure_folder = results_folder;
 
 % Common part of the filename for all saved figures
-figure_savename = 'test_2D';
+figure_savename = 'MyFirstPredictiveSimulationFigure';
+
 
 %% Settings for each figure to be made
 % "figure_settings" is a cell array where each cell contains a struct with
@@ -67,6 +74,13 @@ figure_settings(fig_count).savepath = fullfile(figure_folder,[figure_savename '_
 figure_settings(fig_count).filetype = {};
 fig_count = fig_count+1;
 
+figure_settings(fig_count).name = 'all_activations';
+figure_settings(fig_count).dofs = {'muscles_r'};
+figure_settings(fig_count).variables = {'a'};
+figure_settings(fig_count).savepath = fullfile(figure_folder,[figure_savename '_' figure_settings(fig_count).name]);
+figure_settings(fig_count).filetype = {};
+fig_count = fig_count+1;
+
 % figure_settings(fig_count).name = 'all_angles';
 % figure_settings(fig_count).dofs = {'all_coords'};
 % figure_settings(fig_count).variables = {'Qdots'};
@@ -86,7 +100,7 @@ fig_count = fig_count+1;
 %     'ankle_angle_r','subtalar_angle_r','mtp_angle_r'};
 % figure_settings(fig_count).variables = {'Qs'};
 % figure_settings(fig_count).savepath = fullfile(figure_folder,[figure_savename '_' figure_settings(fig_count).name]);
-% figure_settings(fig_count).filetype = {};
+% figure_settings(fig_count).filetype = {'jpeg'};
 % fig_count = fig_count+1;
 
 figure_settings(fig_count).name = 'torques';
