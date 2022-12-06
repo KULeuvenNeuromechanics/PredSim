@@ -36,6 +36,9 @@ PathOsimAD = fullfile(pathMain,'opensimAD');
 % external function name
 S.misc.external_function = ['F_' osim_file_name '.dll'];
 
+% remove invalid segment names to prevent errors later on
+[S] = adaptExport3DSegmentOrigins(S,osim_path);
+
 if ~isfile(fullfile(S.misc.subject_path,S.misc.external_function))
 
     % disp
@@ -125,7 +128,7 @@ if ~isfile(fullfile(S.misc.subject_path,S.misc.external_function))
     % display message
     disp('... convert .osim to .dll file finished'); 
 else
-    disp(['Using existing .dll file: ', fullfile(S.misc.subject_path,S.misc.external_function)]);
+    disp(['   Using existing .dll file: ', fullfile(S.misc.subject_path,S.misc.external_function)]);
 end
 
 

@@ -458,13 +458,13 @@ opti.subject_to(coll_eq_constr == 0);
 % inequality constraints (logical indexing not possible in MX arrays)
 opti.subject_to(coll_ineq_constr1(:) >= 0);
 opti.subject_to(coll_ineq_constr2(:) <= 1/tact);
-if isfield(model_info.ExtFunIO,'origin')
+if ~isempty(S.Cpp2Dll.export3DSegmentOrigins) && isfield(model_info.ExtFunIO,'origin')
     if ~isempty(coll_ineq_constr3)
         opti.subject_to(S.bounds.calcn_dist.lower.^2 < coll_ineq_constr3(:) < 4);
     else
         disp('   Minimal distance between calcanei not constrained. To do so, please use "calcn_r" and "calcn_l" as body names in the OpenSim model.')
     end
-    if ~isempty(coll_ineq_constr4)
+    if numel(coll_ineq_constr4)
         opti.subject_to(S.bounds.femur_hand_dist.lower.^2 < coll_ineq_constr4(:) < 4);
     end
     if isempty(model_info.ExtFunIO.origin.femur_r) || isempty(model_info.ExtFunIO.origin.hand_r)
@@ -473,12 +473,12 @@ if isfield(model_info.ExtFunIO,'origin')
     if isempty(model_info.ExtFunIO.origin.femur_l) || isempty(model_info.ExtFunIO.origin.hand_l)
         disp('   Minimal distance between left arm and body not constrained. To do so, please use "femur_l" and "hand_l" as body names in the OpenSim model.')
     end
-    if ~isempty(coll_ineq_constr5)
+    if numel(coll_ineq_constr5)
         opti.subject_to(S.bounds.tibia_dist.lower.^2 < coll_ineq_constr5(:) < 4);
     else
         disp('   Minimal distance between tibias not constrained. To do so, please use "tibia_r" and "tibia_l" as body names in the OpenSim model.')
     end
-    if ~isempty(coll_ineq_constr6)
+    if numel(coll_ineq_constr6)
         opti.subject_to(S.bounds.toes_dist.lower.^2 < coll_ineq_constr6(:) < 4);
     else
         disp('   Minimal distance between toes not constrained. To do so, please use "toes_r" and "toes_l" as body names in the OpenSim model.')

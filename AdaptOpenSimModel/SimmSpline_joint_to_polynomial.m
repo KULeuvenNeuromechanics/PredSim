@@ -33,16 +33,24 @@ for j_j=1:model.getJointSet().getSize()
         continue
     end
 
-    % loop over 6 components of statial transform 
+    % loop over 6 components of spatial transform 
     sptr = joint_j.getSpatialTransform();
     for j_ta=1:6
     
         tr1 = sptr.getTransformAxis(j_ta-1);
-        f1 = tr1.get_function();
+        f1 = tr1.getFunction();
 
         % skip if it is not a SimmSpline
         if ~strcmp(f1.getConcreteClassName(),"SimmSpline")
             continue
+        end
+
+        % if it is a multiplierfunction, check the function that is inside
+        if strcmp(f1.getConcreteClassName(),"MultiplierFunction")
+            mf = MultiplierFunction.safeDownCast(f1);
+            if ~strcmp(mf.getFunction().getConcreteClassName(),"SimmSpline")
+                continue
+            end
         end
 
         s1 = SimmSpline.safeDownCast(f1);
@@ -50,7 +58,7 @@ for j_j=1:model.getJointSet().getSize()
         % get points that define spline
         x1 = s1.getX();
         y1 = s1.getY();
-        
+        % ... as a matrix
         x = nan(1,x1.size());
         y = x;
         for i=1:x1.size()
@@ -66,21 +74,23 @@ for j_j=1:model.getJointSet().getSize()
         xrange(1) = max([xrange(1)-0.1*diff(xrange),coord.get_range(0)]);
         xrange(2) = min([xrange(2)+0.1*diff(xrange),coord.get_range(1)]);
         
-        % add extra points within range
+        % generate sample points within range
         N = length(find(x>=xrange(1) & x<=xrange(2)))*3;
         xf = linspace(xrange(1),xrange(2),N);
+
+        % evaluate function
         yf = nan(1,N);
         for i=1:N
             x_i = Vector.createFromMat(xf(i));
             yf(i) = double(f1.calcValue(x_i));
         end
 
-        % include spline points outside range
-        xf = [x(x<xrange(1)),xf,x(x>xrange(2))];
-        yf = [y(x<xrange(1)),yf,y(x>xrange(2))];
+%         % include spline points outside range
+%         xf = [x(x<xrange(1)),xf,x(x>xrange(2))];
+%         yf = [y(x<xrange(1)),yf,y(x>xrange(2))];
 
         % fit polynomial
-        coeffs = polyfit(xf,yf,6);
+        coeffs = polyfit(xf,yf,4);
         
         % plot figure to show quality of fit
         if exist('h1','var') && isa(h1,'matlab.ui.Figure')
@@ -90,12 +100,14 @@ for j_j=1:model.getJointSet().getSize()
             tiledlayout('flow');
         end
         nexttile
+        p1=xline(coord.get_range(0),'--k','DisplayName','Range');
+        hold on
+        xline(coord.get_range(1),'--k','DisplayName','Range')
         xs = linspace(min(x),max(x),500);
         ys = polyval(coeffs,xs);
-        plot(xs,ys)
-        hold on
-        plot(xf,yf,'.')
-        plot(x,y,'*')
+        p2=plot(xs,ys,'DisplayName','Polynomial fit');
+        p3=plot(xf,yf,'.','DisplayName','Interpolation points');
+        p4=plot(x,y,'*','DisplayName','SimmSpline points');
         title([char(joint_j.getName()) ' / ' char(tr1.getName())],Interpreter="none")
         xlabel(char(coord_name),Interpreter="none")
         ylabel(char(tr1.getName()),Interpreter="none")
@@ -104,13 +116,14 @@ for j_j=1:model.getJointSet().getSize()
         coeffs = Vector.createFromMat(coeffs);
         f2 = PolynomialFunction(coeffs);
         tr1.set_function(f2);
+
     end % end of loop over spatial transform
 end % end of loop over joints
 
 % add legend to figure
 if exist('h1','var') && isa(h1,'matlab.ui.Figure')
     figure(h1);
-    legend({'Polynomial fit','Interpolation points','SimmSpline points'},'Location','best')
+    legend([p1,p2,p3,p4],'Location','best')
 end
 
 %% save model

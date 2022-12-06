@@ -60,58 +60,58 @@ replace_splines_by_poly_bool = 1;
 
 %% Define contact spheres
 
-% contact spheres right side
-csp = 1;
-
-% name of parent body
-contact_spheres(csp).body = 'calcn_r';
-% name of contact sphere
-contact_spheres(csp).name = 's1_r';
-% location in parent frame
-contact_spheres(csp).location = [0.0019 -0.01 -0.0038];
-% radius of sphere
-contact_spheres(csp).radius = 0.032;
-csp = csp+1;
-
-contact_spheres(csp).body = 'calcn_r';
-contact_spheres(csp).name = 's2_r';
-contact_spheres(csp).location = [0.1483 -0.01 -0.0287];
-contact_spheres(csp).radius = 0.032;
-csp = csp+1;
-
-contact_spheres(csp).body = 'calcn_r';
-contact_spheres(csp).name = 's3_r';
-contact_spheres(csp).location = [0.1330 -0.01 0.0516];
-contact_spheres(csp).radius = 0.032;
-csp = csp+1;
-
-contact_spheres(csp).body = 'calcn_r';
-contact_spheres(csp).name = 's4_r';
-contact_spheres(csp).location = [0.06623 -0.01 0.02636];
-contact_spheres(csp).radius = 0.032;
-csp = csp+1;
-
-contact_spheres(csp).body = 'toes_r';
-contact_spheres(csp).name = 's5_r';
-contact_spheres(csp).location = [0.06 -0.01 -0.01876];
-contact_spheres(csp).radius = 0.032;
-csp = csp+1;
-
-contact_spheres(csp).body = 'toes_r';
-contact_spheres(csp).name = 's6_r';
-contact_spheres(csp).location = [0.045 -0.01 0.06186];
-contact_spheres(csp).radius = 0.032;
-csp = csp+1;
-
-% mirror to get left side
-for i=1:length(contact_spheres)
-    contact_spheres(csp).body = [contact_spheres(i).body(1:end-1) 'l'];
-    contact_spheres(csp).name = [contact_spheres(i).name(1:end-1) 'l'];
-    contact_spheres(csp).location = contact_spheres(i).location;
-    contact_spheres(csp).location(3) = -contact_spheres(csp).location(3);
-    contact_spheres(csp).radius = contact_spheres(i).radius;
-    csp = csp+1;
-end
+% % contact spheres right side
+% csp = 1;
+% 
+% % name of parent body
+% contact_spheres(csp).body = 'calcn_r';
+% % name of contact sphere
+% contact_spheres(csp).name = 's1_r';
+% % location in parent frame
+% contact_spheres(csp).location = [0.0019 -0.01 -0.0038];
+% % radius of sphere
+% contact_spheres(csp).radius = 0.032;
+% csp = csp+1;
+% 
+% contact_spheres(csp).body = 'calcn_r';
+% contact_spheres(csp).name = 's2_r';
+% contact_spheres(csp).location = [0.1483 -0.01 -0.0287];
+% contact_spheres(csp).radius = 0.032;
+% csp = csp+1;
+% 
+% contact_spheres(csp).body = 'calcn_r';
+% contact_spheres(csp).name = 's3_r';
+% contact_spheres(csp).location = [0.1330 -0.01 0.0516];
+% contact_spheres(csp).radius = 0.032;
+% csp = csp+1;
+% 
+% contact_spheres(csp).body = 'calcn_r';
+% contact_spheres(csp).name = 's4_r';
+% contact_spheres(csp).location = [0.06623 -0.01 0.02636];
+% contact_spheres(csp).radius = 0.032;
+% csp = csp+1;
+% 
+% contact_spheres(csp).body = 'toes_r';
+% contact_spheres(csp).name = 's5_r';
+% contact_spheres(csp).location = [0.06 -0.01 -0.01876];
+% contact_spheres(csp).radius = 0.032;
+% csp = csp+1;
+% 
+% contact_spheres(csp).body = 'toes_r';
+% contact_spheres(csp).name = 's6_r';
+% contact_spheres(csp).location = [0.045 -0.01 0.06186];
+% contact_spheres(csp).radius = 0.032;
+% csp = csp+1;
+% 
+% % mirror to get left side
+% for i=1:length(contact_spheres)
+%     contact_spheres(csp).body = [contact_spheres(i).body(1:end-1) 'l'];
+%     contact_spheres(csp).name = [contact_spheres(i).name(1:end-1) 'l'];
+%     contact_spheres(csp).location = contact_spheres(i).location;
+%     contact_spheres(csp).location(3) = -contact_spheres(csp).location(3);
+%     contact_spheres(csp).radius = contact_spheres(i).radius;
+%     csp = csp+1;
+% end
 
 
 %% Define ideal torque actuators

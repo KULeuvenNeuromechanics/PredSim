@@ -33,7 +33,7 @@ qsqdots = MX.zeros(model_info.ExtFunIO.jointi.nq.all*2);
 qsqdots(1:2:end) = qs(:);
 qddots = MX.zeros(model_info.ExtFunIO.jointi.nq.all);
 
-[F] = load_external_function(S);
+F = external('F',fullfile(S.misc.subject_path,S.misc.external_function));
 
 F_out = F([qsqdots;qddots]);
 

@@ -39,6 +39,10 @@ end
 % loop over results
 for i=1:length(result_paths)
     % load selected result
+    if isempty(result_paths{i}) || ~isfile(result_paths{i})
+        disp(['Cannot find this file: ' result_paths{i}])
+        continue
+    end
     load(result_paths{i},'R','model_info');
 
     % loop over figures
@@ -63,18 +67,17 @@ for i=1:length(result_paths)
         else % use generic figure function
             % replace "all_coords" by all coordinate names
             if strcmp(figure_settings(j).dofs,'all_coords')
-                figure_settings(j).dofs = R.colheaders.coordinates;
+                if ~exist('all_coords','var')
+                    all_coords = get_all_coords(result_paths);
+                end
+                figure_settings(j).dofs = all_coords;
             end
             % replace "muscles_r" by all muscle names of right side
             if strcmp(figure_settings(j).dofs,'muscles_r')
-                muscle_names = R.colheaders.muscles;
-                idx_r = zeros(length(muscle_names),1);
-                for im = 1:length(muscle_names)
-                    idx_r(im) = im*strcmp(muscle_names{im}(end-1:end),'_r');
+                if ~exist('muscles_r','var')
+                    muscles_r = get_muscles_r(result_paths);
                 end
-                idx_r = idx_r(idx_r~=0);
-                muscle_names_r = muscle_names(idx_r);
-                figure_settings(j).dofs = muscle_names_r;
+                figure_settings(j).dofs = muscles_r;
             end
             % call function to plot generic figures
             fig_hands{j} = plot_figure_generic(R,model_info,figure_settings(j).dofs,...
@@ -122,3 +125,31 @@ end
 
 
 
+end
+%% helper functions
+function [all_coords] = get_all_coords(result_paths)
+all_coords = [];
+    for i=1:length(result_paths)
+        % load selected result
+        load(result_paths{i},'R');
+    
+        all_coords = union(all_coords,R.colheaders.coordinates,'stable');
+    end
+end
+function [muscles_r] = get_muscles_r(result_paths)
+muscles_r = [];
+    for i=1:length(result_paths)
+        % load selected result
+        load(result_paths{i},'R');
+    
+        muscle_names = R.colheaders.muscles;
+        idx_r = zeros(length(muscle_names),1);
+        for im = 1:length(muscle_names)
+            idx_r(im) = im*strcmp(muscle_names{im}(end-1:end),'_r');
+        end
+        idx_r = idx_r(idx_r~=0);
+        muscle_names_r = muscle_names(idx_r);
+
+        muscles_r = union(muscles_r,muscle_names_r,'stable');
+    end
+end

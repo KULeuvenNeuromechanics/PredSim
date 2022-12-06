@@ -116,12 +116,12 @@ elseif ~isempty(intersect(R.colheaders.muscles,coord_muscle_names_sel))
 end
 
 % Remove vartype elements that are not recognised as a variable
-idx_found = find(~cellfun('isempty',ydata));
-vartype = vartype(idx_found);
-ydata = ydata(idx_found);
+% idx_found = find(~cellfun('isempty',ydata));
+% vartype = vartype(idx_found);
+% ydata = ydata(idx_found);
 
 % Remove coordinate or muscle names that were not recognised
-coord_muscle_names_sel = intersect(colheaders,coord_muscle_names_sel);
+% coord_muscle_names_sel = intersect(colheaders,coord_muscle_names_sel,'stable');
 
 %% Determine figure layout
 % number of horizontal subplots: column for each coordinate/muscle
@@ -154,6 +154,9 @@ fig_pos = [fposh,fposv];
 % If there was no figure handle provided, create a figure for this handle
 if ~exist('fig_hand','var')
     fig_hand = figure;
+    bool_1st = 1;
+else
+    bool_1st = 0;
 end
 % set position and size of figure
 fig_hand.Position = [fig_pos,fig_size];
@@ -178,11 +181,15 @@ for i=1:nsp
         hold on
         plot(x_i,y_i,'color',colr,'DisplayName',legName)
 
+        if cnt_y == 1
+            title(coord_muscle_names_sel(cnt_var),'Interpreter','none')
+        end
+
     end
 
-    if cnt_y == 1
-        title(coord_muscle_names_sel(cnt_var),'Interpreter','none')
-    end
+%     if cnt_y == 1
+%         title(coord_muscle_names_sel(cnt_var),'Interpreter','none')
+%     end
 
     if mod(i,nh) == 1
         ylabel(vartype(cnt_y),'Interpreter','none')
