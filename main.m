@@ -23,18 +23,17 @@ addpath(fullfile(S.misc.main_path,'VariousFunctions'))
 
 %% Required inputs
 % name of the subject
-S.subject.name = 'gait1018';
+S.subject.name = 'Falisse_et_al_2022';
 
 % path to folder where you want to store the results of the OCP
-S.subject.save_folder  = fullfile(S.misc.main_path,'Subjects/gait1018'); 
+S.subject.save_folder  = fullfile(pathRepoFolder,'PredSimResults',S.subject.name); 
 
 % either choose "quasi-random" or give the path to a .mot file you want to use as initial guess
-S.subject.IG_selection = 'quasi-random';
-% S.subject.IG_selection = fullfile(S.misc.main_path,'OCP','IK_Guess_Full_GC.mot');
-% S.subject.IG_selection_gaitCyclePercent = 100;
+S.subject.IG_selection = fullfile(S.misc.main_path,'OCP','IK_Guess_Full_GC.mot');
+S.subject.IG_selection_gaitCyclePercent = 100;
 
 % give the path to the osim model of your subject
-osim_path = fullfile(pathRepo,'Subjects','gait1018','gait1018.osim');
+osim_path = fullfile(pathRepo,'Subjects',S.subject.name,[S.subject.name '.osim']);
 
 % path to folder with program to create dll files from opensim model (will
 % be downloaded automatically if it is not there)
@@ -93,7 +92,7 @@ S.solver.CasADi_path    = 'C:\GBW_MyPrograms\casadi_3_5_5';
 % % S.subject
 % S.subject.mass              = ;
 % S.subject.IG_pelvis_y       = ;
-S.subject.v_pelvis_x_trgt   = 1.2;
+S.subject.v_pelvis_x_trgt   = 1.33;
 % S.subject.IK_Bounds = ;
 % S.subject.muscle_strength   = ;
 % S.subject.muscle_pass_stiff_shift = {{'soleus_l','soleus_r'},0.9,{'tib_ant_l'},1.1};
@@ -119,7 +118,7 @@ S.subject.v_pelvis_x_trgt   = 1.2;
 
 % %S.Cpp2Dll inputs to convert .osim to .dll
 % S.Cpp2Dll.compiler = 'Visual Studio 17 2022';
-S.Cpp2Dll.export3DSegmentOrigins = [];
+% S.Cpp2Dll.export3DSegmentOrigins = [];
 S.Cpp2Dll.verbose_mode = 0; % 0 for no outputs from cmake
 % S.Cpp2Dll.jointsOrder = ;
 % S.Cpp2Dll.coordinatesOrder = ;
