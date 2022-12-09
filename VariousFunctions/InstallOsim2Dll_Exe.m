@@ -28,7 +28,7 @@ function [ExePath] = InstallOsim2Dll_Exe(ExeDir)
 % link to binaries
 Link_ExeZip = 'https://www.dropbox.com/sh/05d7tbk9x7dhldq/AAAUtC7quxwvFtlXFA-R5dqfa/Cpp2Dll_Bin.zip?dl=1'; 
 % date of last update of binaries (REQUIRES MANUAL UPDATING)
-Date_ExeZip = datetime([2022 11 15],"Format",'uuuu-MM-dd');
+Date_ExeZip = datetime([2022 12 05],"Format",'uuuu-MM-dd');
 
 % note: I'm aware this is a crude solution. Feel free to suggest a way to
 % get matlab to know when a file on dropbox was last updated.
