@@ -51,7 +51,18 @@ For this repository the Git Bash commands are:
    
     > When you want to pull changes from `upstream` you can just fetch the remote and rebase on top of your work.
     ```bash
-      git fetch upstream
-      git rebase upstream/master
-      ```
-      And solve the conflicts if any
+    git fetch upstream
+    git rebase upstream/master
+    ```
+    And solve the conflicts if any.
+
+ 7. If you use GitHub Desktop, you have to add PredSim_private to the list of repositories:
+   - Current repository
+   - Add
+   - Add existing repository...
+   - Local path: `C:/GBW_MyPrograms/PredSim_private` (Use the same folder you selected in step 5.)
+   - Add repository
+   
+ 8. Your fork might have a different default branch. Set `master` or your own branch as default.
+
+ 
