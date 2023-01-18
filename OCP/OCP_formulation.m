@@ -639,7 +639,7 @@ else % S.post_process.load_prev_opti_vars = true
     
     % Advanced feature, for debugging only: load w_opt and reconstruct R before rerunning the post-processing.
     Outname = fullfile(S.subject.save_folder,[S.post_process.result_filename '.mat']);
-    disp(['Loading vector with optimization variables from previous solution: ' outname])
+    disp(['Loading vector with optimization variables from previous solution: ' Outname])
     clear 'S'
     load(Outname,'w_opt','stats','setup','model_info','R','S');
     scaling = setup.scaling;
