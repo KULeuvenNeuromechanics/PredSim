@@ -431,8 +431,8 @@ if ~isfield(S,'Cpp2Dll')
 end
 
 % select compiler for cpp projects 
-%   Visual studio 2015: 'Visual Studio 14 2015'
-%   Visual studio 2017: 'Visual Studio 15 2017'
+%   Visual studio 2015: 'Visual Studio 14 2015 Win64'
+%   Visual studio 2017: 'Visual Studio 15 2017 Win64'
 %   Visual studio 2017: 'Visual Studio 16 2019'
 %   Visual studio 2017: 'Visual Studio 17 2022'
 if ~isfield(S.Cpp2Dll,'compiler')
