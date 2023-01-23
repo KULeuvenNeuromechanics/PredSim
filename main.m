@@ -70,7 +70,7 @@ S.solver.run_as_batch_job = 0;
 % S.misc.poly_order.lower    = ;
 % S.misc.poly_order.upper    = ;
 % S.misc.msk_geom_bounds      = {{'knee_angle_r','knee_angle_l'},-120,10,'pelvis_tilt',-30,30};
-% S.misc.gaitmotion_type = ;
+% S.misc.gaitmotion_type = 'FullGaitCycle';
 
 % % S.post_process
 S.post_process.make_plot = 1;

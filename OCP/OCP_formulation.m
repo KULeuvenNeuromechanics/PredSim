@@ -639,7 +639,7 @@ else % S.post_process.load_prev_opti_vars = true
     
     % Advanced feature, for debugging only: load w_opt and reconstruct R before rerunning the post-processing.
     Outname = fullfile(S.subject.save_folder,[S.post_process.result_filename '.mat']);
-    disp(['Loading vector with optimization variables from previous solution: ' outname])
+    disp(['Loading vector with optimization variables from previous solution: ' Outname])
     clear 'S'
     load(Outname,'w_opt','stats','setup','model_info','R','S');
     scaling = setup.scaling;
@@ -1117,7 +1117,7 @@ if strcmp(S.misc.gaitmotion_type,'HalfGaitCycle')
 
 elseif strcmp(S.misc.gaitmotion_type,'FullGaitCycle')
     % detect heelstrike
-    [IC1i_c,IC1i_s,HS1] = getHeelstrikeSimulation(GRFk_opt,N);
+    [IC1i_c,IC1i_s,HS1,HS_threshold] = getHeelstrikeSimulation(GRFk_opt,N,model_info.mass/3);
         
     % Qs
     Qs_GC = zeros(N,size(q_opt_unsc.deg,2));
