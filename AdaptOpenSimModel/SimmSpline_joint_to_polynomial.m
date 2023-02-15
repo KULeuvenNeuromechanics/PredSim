@@ -12,8 +12,8 @@ function [] = SimmSpline_joint_to_polynomial(osim_path)
 % Original author: Lars D'Hondt
 % Original date: 25/Nov/2022
 %
-% Last edit by: 
-% Last edit date: 
+% Last edit by: Dhruv Gupta
+% Last edit date: 15/02/2023
 % --------------------------------------------------------------------------
 
 %% load model
@@ -41,20 +41,27 @@ for j_j=1:model.getJointSet().getSize()
         f1 = tr1.getFunction();
 
         % skip if it is not a SimmSpline
-        if ~strcmp(f1.getConcreteClassName(),"SimmSpline")
+        if strcmp(f1.getConcreteClassName(),"SimmSpline")
+            s1 = SimmSpline.safeDownCast(f1);
+            sf = 1;
+            % if it is a multiplierfunction, check the function that is inside
+        elseif strcmp(f1.getConcreteClassName(),"MultiplierFunction")
+            mf = MultiplierFunction.safeDownCast(f1);
+            if strcmp(mf.getFunction().getConcreteClassName(),"SimmSpline")
+                s1 = SimmSpline.safeDownCast(mf.getFunction());
+                if mf.getNumProperties>1
+                    sf = str2num(string(mf.getPropertyByName('scale')));
+                else
+                    sf=1;
+                end
+            else
+                continue
+            end
+        else
             continue
         end
 
-        % if it is a multiplierfunction, check the function that is inside
-        if strcmp(f1.getConcreteClassName(),"MultiplierFunction")
-            mf = MultiplierFunction.safeDownCast(f1);
-            if ~strcmp(mf.getFunction().getConcreteClassName(),"SimmSpline")
-                continue
-            end
-        end
 
-        s1 = SimmSpline.safeDownCast(f1);
-        
         % get points that define spline
         x1 = s1.getX();
         y1 = s1.getY();
@@ -65,6 +72,8 @@ for j_j=1:model.getJointSet().getSize()
             x(i) = x1.get(i-1);
             y(i) = y1.get(i-1);
         end
+        
+        y = sf*y;
         
         % get coordinate range
         xrange = [min(x),max(x)];
