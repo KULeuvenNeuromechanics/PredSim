@@ -15,7 +15,7 @@ function [S] = initializeSettings()
 % Original date: 01/12/2021
 %
 % Last edit by: Bram Van Den Bosch
-% Last edit date: 01/12/2021
+% Last edit date: 28/02/2023
 % --------------------------------------------------------------------------
 
 S = struct;
@@ -41,5 +41,8 @@ S.bounds.t_final    = [];
 
 % polynomial order has .lower and .upper field
 S.misc.poly_order = [];
+
+% save the git hash
+S.misc.git_hash = get_git_hash;
 
 end
