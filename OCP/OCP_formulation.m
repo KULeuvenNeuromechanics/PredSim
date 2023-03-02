@@ -1117,7 +1117,7 @@ if strcmp(S.misc.gaitmotion_type,'HalfGaitCycle')
 
 elseif strcmp(S.misc.gaitmotion_type,'FullGaitCycle')
     % detect heelstrike
-    [IC1i_c,IC1i_s,HS1] = getHeelstrikeSimulation(GRFk_opt,N);
+    [IC1i_c,IC1i_s,HS1] = getHeelstrikeSimulation(GRFk_opt,N,model_info.mass/3);
         
     % Qs
     Qs_GC = zeros(N,size(q_opt_unsc.deg,2));
