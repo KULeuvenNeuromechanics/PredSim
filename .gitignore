@@ -28,3 +28,7 @@ Subjects/Falisse_et_al_2022/*
 Subjects/gait1018/*
 !Subjects/gait1018/*.osim
 !Subjects/gait1018/*.md
+
+!Subjects/Subject1_2D
+
+!Subjects/PredSim_2D
