@@ -640,12 +640,16 @@ else % S.post_process.load_prev_opti_vars = true
     % Advanced feature, for debugging only: load w_opt and reconstruct R before rerunning the post-processing.
     Outname = fullfile(S.subject.save_folder,[S.post_process.result_filename '.mat']);
     disp(['Loading vector with optimization variables from previous solution: ' Outname])
+%     sf=S.subject.save_folder;
+%     mp=S.misc.main_path;
     clear 'S'
     load(Outname,'w_opt','stats','setup','model_info','R','S');
     scaling = setup.scaling;
     if exist('R','var')
         S = R.S;
     end
+%     S.subject.save_folder=sf;
+%     S.misc.main_path=mp;
     clear 'R'
 end
 
@@ -979,250 +983,79 @@ for i = 1:N
 end
 GRFk_opt = Foutk_opt(:,[model_info.ExtFunIO.GRFs.right_foot model_info.ExtFunIO.GRFs.left_foot]);
 
+qddot_opt_unsc.deg = qdotdot_col_opt_unsc.deg(d:d:end,:);
+qddot_opt_unsc.deg = [qddot_opt_unsc.deg(end,:); qddot_opt_unsc.deg(1:end-1,:)];
+
 if strcmp(S.misc.gaitmotion_type,'HalfGaitCycle')
-    % detect heelstrike
-    [IC1i_c,IC1i_s,HS1,HS_threshold] = getHeelstrikeSimulation(GRFk_opt,N,model_info.mass/3);
-        
+    % Use symmetry to reconstruct 2nd half of the gait cycle
+
+    % indices 2nd half of gait cycle for controls (i.e. 
+    idx_2nd_half_controls = N+1:2*N;
+    idx_2nd_half_states = idx_2nd_half_controls + 1;
+
     % Qs
-    Qs_GC = zeros(N*2,size(q_opt_unsc.deg,2));
-    Qs_GC(1:N-IC1i_s+1,:) = q_opt_unsc.deg(IC1i_s:end,:);
-    Qs_GC(N-IC1i_s+2:N-IC1i_s+1+N,model_info.ExtFunIO.symQs.QsInvA) = q_opt_unsc.deg(1:end,model_info.ExtFunIO.symQs.QsInvB);
-    Qs_GC(N-IC1i_s+2:N-IC1i_s+1+N,model_info.ExtFunIO.symQs.QsOpp) = -q_opt_unsc.deg(1:end,model_info.ExtFunIO.symQs.QsOpp);
-    Qs_GC(N-IC1i_s+2:N-IC1i_s+1+N,model_info.ExtFunIO.jointi.base_forward) = ...
-        q_opt_unsc.deg(1:end,model_info.ExtFunIO.jointi.base_forward) + ...
-        q_opt_unsc_all.deg(end,model_info.ExtFunIO.jointi.base_forward);
-    Qs_GC(N-IC1i_s+2+N:2*N,:) = q_opt_unsc.deg(1:IC1i_s-1,:);
-    Qs_GC(N-IC1i_s+2+N:2*N,model_info.ExtFunIO.jointi.base_forward) = ...
-        q_opt_unsc.deg(1:IC1i_s-1,model_info.ExtFunIO.jointi.base_forward) + ...
-        2*q_opt_unsc_all.deg(end,model_info.ExtFunIO.jointi.base_forward);
-    % If the first heel strike was on the left foot then we invert so that
-    % we always start with the right foot, for analysis purpose
-    if strcmp(HS1,'l')
-        Qs_GC(:,model_info.ExtFunIO.symQs.QsInvA)  = Qs_GC(:,model_info.ExtFunIO.symQs.QsInvB);
-        Qs_GC(:,model_info.ExtFunIO.symQs.QsOpp) = -Qs_GC(:,model_info.ExtFunIO.symQs.QsOpp);
-    end
-    temp_Qs_GC_pelvis_tx = Qs_GC(1,model_info.ExtFunIO.jointi.base_forward);
-    Qs_GC(:,model_info.ExtFunIO.jointi.base_forward) = Qs_GC(:,model_info.ExtFunIO.jointi.base_forward)-...
-        temp_Qs_GC_pelvis_tx;
-    
+    q_opt_unsc.deg = [q_opt_unsc.deg(1:end,:); q_opt_unsc.deg(2:end,:)];
+    q_opt_unsc.deg(idx_2nd_half_states,model_info.ExtFunIO.symQs.QsInvA) = q_opt_unsc.deg(idx_2nd_half_states,model_info.ExtFunIO.symQs.QsInvB);
+    q_opt_unsc.deg(idx_2nd_half_states,model_info.ExtFunIO.symQs.QsOpp) = -q_opt_unsc.deg(idx_2nd_half_states,model_info.ExtFunIO.symQs.QsOpp);
+    q_opt_unsc.deg(idx_2nd_half_states,model_info.ExtFunIO.jointi.base_forward) = q_opt_unsc.deg(idx_2nd_half_states,model_info.ExtFunIO.jointi.base_forward) + q_opt_unsc.deg(N,model_info.ExtFunIO.jointi.base_forward);
+
     % Qdots
-    Qdots_GC = zeros(N*2,size(Qs_GC,2));
-    Qdots_GC(1:N-IC1i_s+1,:) = qdot_opt_unsc.deg(IC1i_s:end,:);
-    Qdots_GC(N-IC1i_s+2:N-IC1i_s+1+N,model_info.ExtFunIO.symQs.QdotsInvA) = ...
-        qdot_opt_unsc.deg(1:end,model_info.ExtFunIO.symQs.QdotsInvB);
-    Qdots_GC(N-IC1i_s+2:N-IC1i_s+1+N,model_info.ExtFunIO.symQs.QsOpp) = ...
-        -qdot_opt_unsc.deg(1:end,model_info.ExtFunIO.symQs.QsOpp);
-    Qdots_GC(N-IC1i_s+2+N:2*N,:) = qdot_opt_unsc.deg(1:IC1i_s-1,:);
-    % If the first heel strike was on the left foot then we invert so that
-    % we always start with the right foot, for analysis purpose
-    if strcmp(HS1,'l')
-        Qdots_GC(:,model_info.ExtFunIO.symQs.QdotsInvA) = Qdots_GC(:,model_info.ExtFunIO.symQs.QdotsInvB);
-        Qdots_GC(:,model_info.ExtFunIO.symQs.QsOpp) = -Qdots_GC(:,model_info.ExtFunIO.symQs.QsOpp);
-    end
-    
+    qdot_opt_unsc.deg = [qdot_opt_unsc.deg(1:end,:); qdot_opt_unsc.deg(2:end,:)];
+    qdot_opt_unsc.deg(idx_2nd_half_states,model_info.ExtFunIO.symQs.QdotsInvA) = qdot_opt_unsc.deg(idx_2nd_half_states,model_info.ExtFunIO.symQs.QdotsInvB);
+    qdot_opt_unsc.deg(idx_2nd_half_states,model_info.ExtFunIO.symQs.QsOpp) = -qdot_opt_unsc.deg(idx_2nd_half_states,model_info.ExtFunIO.symQs.QsOpp);
+
     % Qdotdots
-    Qdotdots_GC = zeros(N*2,size(Qs_opt,2));
-    Qdotdots_GC(1:N-IC1i_c+1,:) = Xk_Qdotdots_opt(IC1i_c:end,:);
-    Qdotdots_GC(N-IC1i_c+2:N-IC1i_c+1+N,model_info.ExtFunIO.symQs.QdotsInvA) = ...
-        Xk_Qdotdots_opt(1:end,model_info.ExtFunIO.symQs.QdotsInvB);
-    Qdotdots_GC(N-IC1i_c+2:N-IC1i_c+1+N,model_info.ExtFunIO.symQs.QsOpp) = ...
-        -Xk_Qdotdots_opt(1:end,model_info.ExtFunIO.symQs.QsOpp);
-    Qdotdots_GC(N-IC1i_c+2+N:2*N,:) = Xk_Qdotdots_opt(1:IC1i_c-1,:);
-    % If the first heel strike was on the left foot then we invert so that
-    % we always start with the right foot, for analysis purpose
-    if strcmp(HS1,'l')
-        Qdotdots_GC(:,model_info.ExtFunIO.symQs.QdotsInvA) = Qdotdots_GC(:,model_info.ExtFunIO.symQs.QdotsInvB);
-        Qdotdots_GC(:,model_info.ExtFunIO.symQs.QsOpp) = -Qdotdots_GC(:,model_info.ExtFunIO.symQs.QsOpp);
-    end
-    
-    % Muscle activations
-    Acts_GC = zeros(N*2,NMuscle);
-    Acts_GC(1:N-IC1i_s+1,:) = a_opt_unsc(IC1i_s:end,:);
-    Acts_GC(N-IC1i_s+2:N-IC1i_s+1+N,model_info.ExtFunIO.symQs.MusInvA) =...
-        a_opt_unsc(1:end,model_info.ExtFunIO.symQs.MusInvB);
-    Acts_GC(N-IC1i_s+2+N:2*N,:) = a_opt_unsc(1:IC1i_s-1,:);
-    % If the first heel strike was on the left foot then we invert so that
-    % we always start with the right foot, for analysis purpose
-    if strcmp(HS1,'l')
-        Acts_GC(:,model_info.ExtFunIO.symQs.MusInvA) = Acts_GC(:,model_info.ExtFunIO.symQs.MusInvB);
-    end
-
-    % Time derivatives of muscle activations
-    dActs_GC = zeros(N*2,NMuscle);
-    dActs_GC(1:N-IC1i_s+1,:) = vA_opt_unsc(IC1i_s:end,:);
-    dActs_GC(N-IC1i_s+2:N-IC1i_s+1+N,model_info.ExtFunIO.symQs.MusInvA) =...
-        vA_opt_unsc(1:end,model_info.ExtFunIO.symQs.MusInvB);
-    dActs_GC(N-IC1i_s+2+N:2*N,:) = vA_opt_unsc(1:IC1i_s-1,:);
-    % If the first heel strike was on the left foot then we invert so that
-    % we always start with the right foot, for analysis purpose
-    if strcmp(HS1,'l')
-        dActs_GC(:,model_info.ExtFunIO.symQs.MusInvA) = dActs_GC(:,model_info.ExtFunIO.symQs.MusInvB);
-    end
-    
-    % Muscle-Tendon Forces
-    FTtilde_GC = zeros(N*2,NMuscle);
-    FTtilde_GC(1:N-IC1i_s+1,:) = FTtilde_opt_unsc(IC1i_s:end,:);
-    FTtilde_GC(N-IC1i_s+2:N-IC1i_s+1+N,model_info.ExtFunIO.symQs.MusInvA) = ...
-        FTtilde_opt_unsc(1:end,model_info.ExtFunIO.symQs.MusInvB);
-    FTtilde_GC(N-IC1i_s+2+N:2*N,:) = FTtilde_opt_unsc(1:IC1i_s-1,:);
-    % If the first heel strike was on the left foot then we invert so that
-    % we always start with the right foot, for analysis purpose
-    if strcmp(HS1,'l')
-        FTtilde_GC(:,model_info.ExtFunIO.symQs.MusInvA) = FTtilde_GC(:,model_info.ExtFunIO.symQs.MusInvB);
-    end
-
-    % Time derivative of muscle-tendon force
-    dFTtilde_GC = zeros(N*2,NMuscle);
-    dFTtilde_GC(1:N-IC1i_c+1,:) = dFTtilde_opt_unsc(IC1i_c:end,:);
-    dFTtilde_GC(N-IC1i_c+2:N-IC1i_c+1+N,model_info.ExtFunIO.symQs.MusInvA) = ...
-        dFTtilde_opt_unsc(1:end,model_info.ExtFunIO.symQs.MusInvB);
-    dFTtilde_GC(N-IC1i_c+2+N:2*N,:) = dFTtilde_opt_unsc(1:IC1i_c-1,:);
-    % If the first heel strike was on the left foot then we invert so that
-    % we always start with the right foot, for analysis purpose
-    if strcmp(HS1,'l')
-        dFTtilde_GC(:,model_info.ExtFunIO.symQs.MusInvA) = dFTtilde_GC(:,model_info.ExtFunIO.symQs.MusInvB);
-    end
- 
-    if nq.torqAct > 0
-        % Torque actuator activations
-        a_a_GC = zeros(N*2,nq.torqAct);
-        a_a_GC(1:N-IC1i_s+1,:) = a_a_opt_unsc(IC1i_s:end,:);
-        a_a_GC(N-IC1i_s+2:N-IC1i_s+1+N,model_info.ExtFunIO.symQs.ActInvA) =...
-            a_a_opt_unsc(1:end,model_info.ExtFunIO.symQs.ActInvB);
-        a_a_GC(N-IC1i_s+2:N-IC1i_s+1+N,model_info.ExtFunIO.symQs.ActOpp) =...
-            -a_a_opt_unsc(1:end,model_info.ExtFunIO.symQs.ActOpp);
-        a_a_GC(N-IC1i_s+2+N:2*N,:) = a_a_opt_unsc(1:IC1i_s-1,:);
-        % If the first heel strike was on the left foot then we invert so that
-        % we always start with the right foot, for analysis purpose
-        if strcmp(HS1,'l')
-            a_a_GC(:,model_info.ExtFunIO.symQs.ActInvA) = a_a_GC(:,model_info.ExtFunIO.symQs.ActInvB);
-            a_a_GC(:,model_info.ExtFunIO.symQs.ActOpp) = -a_a_GC(:,model_info.ExtFunIO.symQs.ActOpp);
-        end
-    
-        % Torque actuator excitations
-        e_a_GC = zeros(N*2,nq.torqAct);
-        e_a_GC(1:N-IC1i_s+1,:) = e_a_opt_unsc(IC1i_s:end,:);
-        e_a_GC(N-IC1i_s+2:N-IC1i_s+1+N,model_info.ExtFunIO.symQs.ActInvA) =...
-            e_a_opt_unsc(1:end,model_info.ExtFunIO.symQs.ActInvB);
-        e_a_GC(N-IC1i_s+2:N-IC1i_s+1+N,model_info.ExtFunIO.symQs.ActOpp) =...
-            -e_a_opt_unsc(1:end,model_info.ExtFunIO.symQs.ActOpp);
-        e_a_GC(N-IC1i_s+2+N:2*N,:) = e_a_opt_unsc(1:IC1i_s-1,:);
-        % If the first heel strike was on the left foot then we invert so that
-        % we always start with the right foot, for analysis purpose
-        if strcmp(HS1,'l')
-            e_a_GC(:,model_info.ExtFunIO.symQs.ActInvA) = e_a_GC(:,model_info.ExtFunIO.symQs.ActInvB);
-            e_a_GC(:,model_info.ExtFunIO.symQs.ActOpp) = -e_a_GC(:,model_info.ExtFunIO.symQs.ActOpp);
-        end
-    end
-
-elseif strcmp(S.misc.gaitmotion_type,'FullGaitCycle')
-    % detect heelstrike
-    [IC1i_c,IC1i_s,HS1,HS_threshold] = getHeelstrikeSimulation(GRFk_opt,N,model_info.mass/3);
-        
-    % Qs
-    Qs_GC = zeros(N,size(q_opt_unsc.deg,2));
-    Qs_GC(1:N-IC1i_s+1,:) = q_opt_unsc.deg(IC1i_s:end,:);
-    Qs_GC(N-IC1i_s+2:N,:) = q_opt_unsc.deg(1:IC1i_s-1,:);
-    Qs_GC(N-IC1i_s+2:N,model_info.ExtFunIO.jointi.base_forward) = ...
-        q_opt_unsc.deg(1:IC1i_s-1,model_info.ExtFunIO.jointi.base_forward) + ...
-        q_opt_unsc_all.deg(end,model_info.ExtFunIO.jointi.base_forward);
-    % If the first heel strike was on the left foot then we invert so that
-    % we always start with the right foot, for analysis purpose
-    if strcmp(HS1,'l')
-        Qs_GC(:,model_info.ExtFunIO.symQs.QdotsInvA)  = Qs_GC(:,model_info.ExtFunIO.symQs.QdotsInvB);
-        Qs_GC(:,model_info.ExtFunIO.symQs.QsOpp)       = -Qs_GC(:,model_info.ExtFunIO.symQs.QsOpp);
-    end
-    temp_Qs_GC_pelvis_tx = Qs_GC(1,model_info.ExtFunIO.jointi.base_forward);
-    Qs_GC(:,model_info.ExtFunIO.jointi.base_forward) = Qs_GC(:,model_info.ExtFunIO.jointi.base_forward)-...
-        temp_Qs_GC_pelvis_tx;
-    
-    % Qdots
-    Qdots_GC = zeros(N,size(Qs_GC,2));
-    Qdots_GC(1:N-IC1i_s+1,:) = qdot_opt_unsc.deg(IC1i_s:end,:);
-    Qdots_GC(N-IC1i_s+2:N,:) = qdot_opt_unsc.deg(1:IC1i_s-1,:);
-    % If the first heel strike was on the left foot then we invert so that
-    % we always start with the right foot, for analysis purpose
-    if strcmp(HS1,'l')
-        Qdots_GC(:,model_info.ExtFunIO.symQs.QdotsInvA) = Qdots_GC(:,model_info.ExtFunIO.symQs.QdotsInvB);
-        Qdots_GC(:,model_info.ExtFunIO.symQs.QsOpp) = -Qdots_GC(:,model_info.ExtFunIO.symQs.QsOpp);
-    end
-    
-    % Qdotdots
-    Qdotdots_GC = zeros(N,size(Qs_opt,2));
-    Qdotdots_GC(1:N-IC1i_c+1,:) = Xk_Qdotdots_opt(IC1i_c:end,:);
-    Qdotdots_GC(N-IC1i_c+2:N,:) = Xk_Qdotdots_opt(1:IC1i_c-1,:);
-    % If the first heel strike was on the left foot then we invert so that
-    % we always start with the right foot, for analysis purpose
-    if strcmp(HS1,'l')
-        Qdotdots_GC(:,model_info.ExtFunIO.symQs.QdotsInvA) = Qdotdots_GC(:,model_info.ExtFunIO.symQs.QdotsInvB);
-        Qdotdots_GC(:,model_info.ExtFunIO.symQs.QsOpp) = -Qdotdots_GC(:,model_info.ExtFunIO.symQs.QsOpp);
-    end
+    qddot_opt_unsc.deg = [qddot_opt_unsc.deg; qddot_opt_unsc.deg];
+    qddot_opt_unsc.deg(idx_2nd_half_controls,model_info.ExtFunIO.symQs.QdotsInvA) = qddot_opt_unsc.deg(idx_2nd_half_controls,model_info.ExtFunIO.symQs.QdotsInvB);
+    qddot_opt_unsc.deg(idx_2nd_half_controls,model_info.ExtFunIO.symQs.QsOpp) = -qddot_opt_unsc.deg(idx_2nd_half_controls,model_info.ExtFunIO.symQs.QsOpp);
 
     % Muscle activations
-    Acts_GC = zeros(N,NMuscle);
-    Acts_GC(1:N-IC1i_s+1,:) = a_opt_unsc(IC1i_s:end,:);
-    Acts_GC(N-IC1i_s+2:N,:) = a_opt_unsc(1:IC1i_s-1,:);
-    % If the first heel strike was on the left foot then we invert so that
-    % we always start with the right foot, for analysis purpose
-    if strcmp(HS1,'l')
-        Acts_GC(:,model_info.ExtFunIO.symQs.MusInvA) = Acts_GC(:,model_info.ExtFunIO.symQs.MusInvB);
-    end
+    a_opt_unsc = [a_opt_unsc(1:end,:); a_opt_unsc(2:end,:)];
+    a_opt_unsc(idx_2nd_half_states,model_info.ExtFunIO.symQs.MusInvA) = a_opt_unsc(idx_2nd_half_states,model_info.ExtFunIO.symQs.MusInvB);
 
     % Time derivatives of muscle activations
-    dActs_GC = zeros(N,NMuscle);
-    dActs_GC(1:N-IC1i_s+1,:) = vA_opt_unsc(IC1i_s:end,:);
-    dActs_GC(N-IC1i_s+2:N,:) = vA_opt_unsc(1:IC1i_s-1,:);
-    % If the first heel strike was on the left foot then we invert so that
-    % we always start with the right foot, for analysis purpose
-    if strcmp(HS1,'l')
-        dActs_GC(:,model_info.ExtFunIO.symQs.MusInvA) = dActs_GC(:,model_info.ExtFunIO.symQs.MusInvB);
-    end
+    vA_opt_unsc = [vA_opt_unsc(1:end,:); vA_opt_unsc(1:end,:)];
+    vA_opt_unsc(idx_2nd_half_controls,model_info.ExtFunIO.symQs.MusInvA) = vA_opt_unsc(idx_2nd_half_controls,model_info.ExtFunIO.symQs.MusInvB);
 
-    % Muscle-Tendon Forces
-    FTtilde_GC = zeros(N,NMuscle);
-    FTtilde_GC(1:N-IC1i_s+1,:) = FTtilde_opt_unsc(IC1i_s:end,:);
-    FTtilde_GC(N-IC1i_s+2:N,:) = FTtilde_opt_unsc(1:IC1i_s-1,:);
-    % If the first heel strike was on the left foot then we invert so that
-    % we always start with the right foot, for analysis purpose
-    if strcmp(HS1,'l')
-        FTtilde_GC(:,model_info.ExtFunIO.symQs.MusInvA) = FTtilde_GC(:,model_info.ExtFunIO.symQs.MusInvB);
-    end
+    % Muscle-tendon forces
+    FTtilde_opt_unsc = [FTtilde_opt_unsc(2:end,:); FTtilde_opt_unsc(2:end,:)];
+    FTtilde_opt_unsc(idx_2nd_half_states,model_info.ExtFunIO.symQs.MusInvA) = FTtilde_opt_unsc(idx_2nd_half_states,model_info.ExtFunIO.symQs.MusInvB);
 
     % Time derivative of muscle-tendon force
-    dFTtilde_GC = zeros(N,NMuscle);
-    dFTtilde_GC(1:N-IC1i_c+1,:) = dFTtilde_opt_unsc(IC1i_c:end,:);
-    dFTtilde_GC(N-IC1i_c+2:N,:) = dFTtilde_opt_unsc(1:IC1i_c-1,:);
-    % If the first heel strike was on the left foot then we invert so that
-    % we always start with the right foot, for analysis purpose
-    if strcmp(HS1,'l')
-        dFTtilde_GC(:,model_info.ExtFunIO.symQs.MusInvA) = dFTtilde_GC(:,model_info.ExtFunIO.symQs.MusInvB);
-    end
+    dFTtilde_opt_unsc = [dFTtilde_opt_unsc; dFTtilde_opt_unsc];
+    dFTtilde_opt_unsc(idx_2nd_half_controls,model_info.ExtFunIO.symQs.MusInvA) = dFTtilde_opt_unsc(idx_2nd_half_controls,model_info.ExtFunIO.symQs.MusInvB);
 
     if nq.torqAct > 0
         % Torque actuator activations
-        a_a_GC = zeros(N,nq.torqAct);
-        a_a_GC(1:N-IC1i_s+1,:) = a_a_opt_unsc(IC1i_s:end,:);
-        a_a_GC(N-IC1i_s+2:N,:) = a_a_opt_unsc(1:IC1i_s-1,:);
-        % If the first heel strike was on the left foot then we invert so that
-        % we always start with the right foot, for analysis purpose
-        if strcmp(HS1,'l')
-            a_a_GC(:,model_info.ExtFunIO.symQs.ActInvA) = a_a_GC(:,model_info.ExtFunIO.symQs.ActInvB);
-            a_a_GC(:,model_info.ExtFunIO.symQs.ActOpp) = -a_a_GC(:,model_info.ExtFunIO.symQs.ActOpp);
-        end
-        
+        a_a_opt_unsc = [a_a_opt_unsc(1:end,:); a_a_opt_unsc(2:end,:)];
+        a_a_opt_unsc(idx_2nd_half_states,model_info.ExtFunIO.symQs.ActInvA) = a_a_opt_unsc(idx_2nd_half_states,model_info.ExtFunIO.symQs.ActInvB);
+        a_a_opt_unsc(idx_2nd_half_states,model_info.ExtFunIO.symQs.ActOpp) = -a_a_opt_unsc(idx_2nd_half_states,model_info.ExtFunIO.symQs.ActOpp);
+
         % Torque actuator excitations
-        e_a_GC = zeros(N,nq.torqAct);
-        e_a_GC(1:N-IC1i_s+1,:) = e_a_opt_unsc(IC1i_s:end,:);
-        e_a_GC(N-IC1i_s+2:N,:) = e_a_opt_unsc(1:IC1i_s-1,:);
-        % If the first heel strike was on the left foot then we invert so that
-        % we always start with the right foot, for analysis purpose
-        if strcmp(HS1,'l')
-            e_a_GC(:,model_info.ExtFunIO.symQs.ActInvA) = e_a_GC(:,model_info.ExtFunIO.symQs.ActInvB);
-            e_a_GC(:,model_info.ExtFunIO.symQs.ActOpp) = -e_a_GC(:,model_info.ExtFunIO.symQs.ActOpp);
-        end
+        e_a_opt_unsc = [e_a_opt_unsc(1:end,:); e_a_opt_unsc(1:end,:)];
+        e_a_opt_unsc(idx_2nd_half_controls,model_info.ExtFunIO.symQs.ActInvA) = e_a_opt_unsc(idx_2nd_half_controls,model_info.ExtFunIO.symQs.ActInvB);
+        e_a_opt_unsc(idx_2nd_half_controls,model_info.ExtFunIO.symQs.ActOpp) = -e_a_opt_unsc(idx_2nd_half_controls,model_info.ExtFunIO.symQs.ActOpp);
+
     end
 
 end
+
+%% Gait cycle starts at right side initial contact
+
+[idx_GC,HS1,HS_threshold] = getStancePhaseSimulation(GRFk_opt,N,model_info.mass/3);
+
+Qs_GC = q_opt_unsc.deg(idx_GC,:);
+Qdots_GC = qdot_opt_unsc.deg(idx_GC,:);
+Qdotdots_GC = qddot_opt_unsc.deg(idx_GC,:);
+Acts_GC = a_opt_unsc(idx_GC,:);
+dActs_GC = vA_opt_unsc(idx_GC,:);
+FTtilde_GC = FTtilde_opt_unsc(idx_GC,:);
+dFTtilde_GC = dFTtilde_opt_unsc(idx_GC,:);
+if nq.torqAct > 0
+    a_a_GC = a_a_opt_unsc(idx_GC,:);
+    e_a_GC = e_a_opt_unsc(idx_GC,:);
+end
+Qs_GC(:,model_info.ExtFunIO.jointi.base_forward) = Qs_GC(:,model_info.ExtFunIO.jointi.base_forward) - Qs_GC(1,model_info.ExtFunIO.jointi.base_forward);
 
 %% Unscale actuator torques
 if nq.torqAct > 0
@@ -1233,7 +1066,7 @@ if nq.torqAct > 0
 end
 
 %% Convert joint accelerations to °/s^2
-Qdotdots_GC(:,model_info.ExtFunIO.jointi.rotations) = Qdotdots_GC(:,model_info.ExtFunIO.jointi.rotations)*180/pi;
+% Qdotdots_GC(:,model_info.ExtFunIO.jointi.rotations) = Qdotdots_GC(:,model_info.ExtFunIO.jointi.rotations)*180/pi;
 
 %% Save the results
 % Structure Results_all
@@ -1262,6 +1095,8 @@ else
     R.torque_actuators.T = [];
 end
 R.ground_reaction.threshold = HS_threshold;
+R.ground_reaction.initial_contact_side = HS1;
+
 
 % save results
 Outname = fullfile(S.subject.save_folder,[S.post_process.result_filename '.mat']);

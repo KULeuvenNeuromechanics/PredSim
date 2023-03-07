@@ -23,10 +23,11 @@ addpath(fullfile(S.misc.main_path,'VariousFunctions'))
 
 %% Required inputs
 % name of the subject
-S.subject.name = 'Falisse_et_al_2022';
+S.subject.name = 'CP15_T0_GENscaled_v2_PredSim';
 
 % path to folder where you want to store the results of the OCP
-S.subject.save_folder  = fullfile(pathRepoFolder,'PredSimResults',S.subject.name); 
+% S.subject.save_folder  = fullfile(pathRepoFolder,'PredSimResults',S.subject.name); 
+S.subject.save_folder  = fullfile(pathRepo,'Subjects',S.subject.name);
 
 % either choose "quasi-random" or give the path to a .mot file you want to use as initial guess
 S.subject.IG_selection = fullfile(S.misc.main_path,'OCP','IK_Guess_Full_GC.mot');
@@ -70,13 +71,14 @@ S.solver.run_as_batch_job = 0;
 % S.misc.poly_order.lower    = ;
 % S.misc.poly_order.upper    = ;
 % S.misc.msk_geom_bounds      = {{'knee_angle_r','knee_angle_l'},-120,10,'pelvis_tilt',-30,30};
-% S.misc.gaitmotion_type = 'FullGaitCycle';
+S.misc.gaitmotion_type = 'FullGaitCycle';
 
 % % S.post_process
 S.post_process.make_plot = 1;
 % S.post_process.savename  = 'datetime';
-% S.post_process.rerun   = 1;
-% S.post_process.result_filename = '';
+S.post_process.load_prev_opti_vars = 1;
+S.post_process.rerun   = 1;
+S.post_process.result_filename = 'CP15_job267';
 
 % % S.solver
 % S.solver.linear_solver  = '';
@@ -84,7 +86,7 @@ S.post_process.make_plot = 1;
 % S.solver.max_iter       = 5;
 % S.solver.parallel_mode  = '';
 % S.solver.N_threads      = 6;
-% S.solver.N_meshes       = ;
+% S.solver.N_meshes       = 100;
 % S.solver.par_cluster_name = ;
 S.solver.CasADi_path    = 'C:\GBW_MyPrograms\casadi_3_5_5';
 
@@ -92,7 +94,7 @@ S.solver.CasADi_path    = 'C:\GBW_MyPrograms\casadi_3_5_5';
 % % S.subject
 % S.subject.mass              = ;
 % S.subject.IG_pelvis_y       = ;
-S.subject.v_pelvis_x_trgt   = 1.33;
+S.subject.v_pelvis_x_trgt   = 0.62;
 % S.subject.IK_Bounds = ;
 % S.subject.muscle_strength   = ;
 % S.subject.muscle_pass_stiff_shift = {{'soleus_l','soleus_r'},0.9,{'tib_ant_l'},1.1};
