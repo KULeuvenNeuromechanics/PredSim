@@ -982,6 +982,8 @@ for i = 1:N
     Foutk_opt(i,:) = full(res);
 end
 GRFk_opt = Foutk_opt(:,[model_info.ExtFunIO.GRFs.right_foot model_info.ExtFunIO.GRFs.left_foot]);
+% start at first mesh point
+GRFk_opt = [GRFk_opt(end,:); GRFk_opt(1:end-1,:)];
 
 qddot_opt_unsc.deg = qdotdot_col_opt_unsc.deg(d:d:end,:);
 qddot_opt_unsc.deg = [qddot_opt_unsc.deg(end,:); qddot_opt_unsc.deg(1:end-1,:)];
