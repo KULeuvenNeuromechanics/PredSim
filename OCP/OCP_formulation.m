@@ -1042,7 +1042,7 @@ end
 
 %% Gait cycle starts at right side initial contact
 
-[idx_GC,HS1,HS_threshold] = getStancePhaseSimulation(GRFk_opt,N,model_info.mass/3);
+[idx_GC,idx_init_contact,HS1,HS_threshold] = getStancePhaseSimulation(GRFk_opt,N,model_info.mass/3);
 
 Qs_GC = q_opt_unsc.deg(idx_GC,:);
 Qdots_GC = qdot_opt_unsc.deg(idx_GC,:);
@@ -1055,6 +1055,8 @@ if nq.torqAct > 0
     a_a_GC = a_a_opt_unsc(idx_GC,:);
     e_a_GC = e_a_opt_unsc(idx_GC,:);
 end
+Qs_GC(:,model_info.ExtFunIO.jointi.base_forward) = [q_opt_unsc.deg(idx_init_contact(1):N,model_info.ExtFunIO.jointi.base_forward);q_opt_unsc.deg(1:(idx_init_contact(1)-1),model_info.ExtFunIO.jointi.base_forward)+q_opt_unsc_all.deg(N+1,model_info.ExtFunIO.jointi.base_forward)];
+
 Qs_GC(:,model_info.ExtFunIO.jointi.base_forward) = Qs_GC(:,model_info.ExtFunIO.jointi.base_forward) - Qs_GC(1,model_info.ExtFunIO.jointi.base_forward);
 
 %% Unscale actuator torques

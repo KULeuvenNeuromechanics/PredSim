@@ -1,4 +1,4 @@
-function [idx_GC,HS1,threshold] = getStancePhaseSimulation(GRFk_opt,N,threshold_init)
+function [idx_GC,idx_init_contact,HS1,threshold] = getStancePhaseSimulation(GRFk_opt,N,threshold_init)
 % --------------------------------------------------------------------------
 % getStancePhaseSimulation
 %   To reconstruct the full gait cycle, starting at right heel strike, from 
