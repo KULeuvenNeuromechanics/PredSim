@@ -38,7 +38,7 @@ function [idx_GC,idx_GC_base_forward_offset,HS1,threshold] = getStancePhaseSimul
 GRFy = GRFk_opt(:,[2,5]);
 N = size(GRFk_opt,1);
 
-%% increase threshold untill you have at least one frame above the threshold
+%% Increase threshold until you have at least one frame above the threshold
 threshold = threshold_init; 
 nFramesBelow= sum(GRFy < threshold,"all");
 while nFramesBelow == 0
@@ -56,6 +56,7 @@ is_stance = GRFy(:,1) >= threshold;
 if sum(is_stance) == 0
     is_stance = GRFy(:,2) >= threshold;
     HS1 = 'l';
+    warning('No ground contact detected on right foot, using left foot initial contact as start of gait cycle.')
 else
     HS1 = 'r';
 end
