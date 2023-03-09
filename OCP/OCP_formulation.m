@@ -1036,6 +1036,9 @@ end
 
 % express slack controls on mesh points 1:N to be consistent
 qddot_opt_unsc.deg = [qddot_opt_unsc.deg(end,:); qddot_opt_unsc.deg(1:end-1,:)];
+qddot_opt_unsc.rad = qddot_opt_unsc.deg;
+qddot_opt_unsc.rad(:,model_info.ExtFunIO.jointi.rotations) = qddot_opt_unsc.rad(:,model_info.ExtFunIO.jointi.rotations).*pi/180;
+
 dFTtilde_opt_unsc = [dFTtilde_opt_unsc(end,:); dFTtilde_opt_unsc(1:end-1,:)];
 
 %% Gait cycle starts at right side initial contact
