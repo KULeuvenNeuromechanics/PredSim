@@ -967,9 +967,9 @@ end
 
 %% Reconstruct full gait cycle
 
-% joint accelerations controls on mesh points (2:N-1)
+% joint accelerations controls on mesh points (2:N)
 qddot_opt_unsc.deg = qdotdot_col_opt_unsc.deg(d:d:end,:);
-
+qddot_opt_unsc.rad = qdotdot_col_opt_unsc.rad(d:d:end,:);
 
 if strcmp(S.misc.gaitmotion_type,'HalfGaitCycle')
     % Use symmetry to reconstruct 2nd half of the gait cycle
@@ -1036,9 +1036,7 @@ end
 
 % express slack controls on mesh points 1:N to be consistent
 qddot_opt_unsc.deg = [qddot_opt_unsc.deg(end,:); qddot_opt_unsc.deg(1:end-1,:)];
-qddot_opt_unsc.rad = qddot_opt_unsc.deg;
-qddot_opt_unsc.rad(:,model_info.ExtFunIO.jointi.rotations) = qddot_opt_unsc.rad(:,model_info.ExtFunIO.jointi.rotations).*pi/180;
-
+qddot_opt_unsc.rad = [qddot_opt_unsc.rad(end,:); qddot_opt_unsc.rad(1:end-1,:)];
 dFTtilde_opt_unsc = [dFTtilde_opt_unsc(end,:); dFTtilde_opt_unsc(1:end-1,:)];
 
 %% Gait cycle starts at right side initial contact
