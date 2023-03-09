@@ -16,7 +16,7 @@ idx_1 = round(rand(1)*N);
 GRFk_opt = GRFk_opt0([idx_1:N,1:idx_1-1],:);
 
 
-[idx_GC,HS1,threshold] = getStancePhaseSimulation(GRFk_opt,N,model_info.mass/3);
+[idx_GC,idx_GC_base_forward_offset,HS1,threshold] = getStancePhaseSimulation(GRFk_opt,model_info.mass/3);
 
 
 GRFk_opt_GC = GRFk_opt(idx_GC,:);

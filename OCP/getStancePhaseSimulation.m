@@ -77,5 +77,27 @@ else
     idx_GC_base_forward_offset = N+1-[1:idx_init_contact(1)-1]';
 end
 
+%% make a figure to illustrate method
+% figure
+% subplot(3,1,1)
+% plot(GRFy(:,1))
+% hold on
+% yline(threshold)
+% ylabel('GRFy')
+% xlim([0,N])
+% subplot(3,1,2)
+% plot(is_stance,'.')
+% ylabel('is stance')
+% ylim([-0.2,1.2])
+% xlim([0,N])
+% subplot(3,1,3)
+% plot(is_init_contact,'.')
+% ylabel('in init contact')
+% ylim([-1.2,1.2])
+% xlim([0,N])
+% xlabel('Mesh points')
+% sgtitle('Detecting initial contact')
+
+
 
 end
