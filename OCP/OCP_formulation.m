@@ -640,16 +640,12 @@ else % S.post_process.load_prev_opti_vars = true
     % Advanced feature, for debugging only: load w_opt and reconstruct R before rerunning the post-processing.
     Outname = fullfile(S.subject.save_folder,[S.post_process.result_filename '.mat']);
     disp(['Loading vector with optimization variables from previous solution: ' Outname])
-%     sf=S.subject.save_folder;
-%     mp=S.misc.main_path;
     clear 'S'
     load(Outname,'w_opt','stats','setup','model_info','R','S');
     scaling = setup.scaling;
     if exist('R','var')
         S = R.S;
     end
-%     S.subject.save_folder=sf;
-%     S.misc.main_path=mp;
     clear 'R'
 end
 
@@ -970,81 +966,95 @@ end
 % end
 
 %% Reconstruct full gait cycle
-% Ground reaction forces at mesh points (N), except #1
-Xk_Qs_Qdots_opt             = zeros(N,2*nq.all);
-Xk_Qs_Qdots_opt(:,1:2:end)  = q_opt_unsc_all.rad(2:end,:);
-Xk_Qs_Qdots_opt(:,2:2:end)  = qdot_opt_unsc_all.rad(2:end,:);
-Xk_Qdotdots_opt             = qdotdot_col_opt_unsc.rad(d:d:end,:);
-Foutk_opt                   = zeros(N,F.nnz_out);
-for i = 1:N
-    % ID moments
-    [res] = F([Xk_Qs_Qdots_opt(i,:)';Xk_Qdotdots_opt(i,:)']);
-    Foutk_opt(i,:) = full(res);
-end
-GRFk_opt = Foutk_opt(:,[model_info.ExtFunIO.GRFs.right_foot model_info.ExtFunIO.GRFs.left_foot]);
-% start at first mesh point
-GRFk_opt = [GRFk_opt(end,:); GRFk_opt(1:end-1,:)];
 
+% joint accelerations controls on mesh points (2:N-1)
 qddot_opt_unsc.deg = qdotdot_col_opt_unsc.deg(d:d:end,:);
-qddot_opt_unsc.deg = [qddot_opt_unsc.deg(end,:); qddot_opt_unsc.deg(1:end-1,:)];
+
 
 if strcmp(S.misc.gaitmotion_type,'HalfGaitCycle')
     % Use symmetry to reconstruct 2nd half of the gait cycle
 
-    % indices 2nd half of gait cycle for controls (i.e. 
-    idx_2nd_half_controls = N+1:2*N;
-    idx_2nd_half_states = idx_2nd_half_controls + 1;
+    idx_2nd_half_GC = N+1:2*N;
 
     % Qs
-    q_opt_unsc.deg = [q_opt_unsc.deg(1:end,:); q_opt_unsc.deg(2:end,:)];
-    q_opt_unsc.deg(idx_2nd_half_states,model_info.ExtFunIO.symQs.QsInvA) = q_opt_unsc.deg(idx_2nd_half_states,model_info.ExtFunIO.symQs.QsInvB);
-    q_opt_unsc.deg(idx_2nd_half_states,model_info.ExtFunIO.symQs.QsOpp) = -q_opt_unsc.deg(idx_2nd_half_states,model_info.ExtFunIO.symQs.QsOpp);
-    q_opt_unsc.deg(idx_2nd_half_states,model_info.ExtFunIO.jointi.base_forward) = q_opt_unsc.deg(idx_2nd_half_states,model_info.ExtFunIO.jointi.base_forward) + q_opt_unsc.deg(N,model_info.ExtFunIO.jointi.base_forward);
+    q_opt_unsc.deg = [q_opt_unsc.deg(1:end,:); q_opt_unsc.deg(1:end,:)];
+    q_opt_unsc.deg(idx_2nd_half_GC,model_info.ExtFunIO.symQs.QsInvA) = q_opt_unsc.deg(idx_2nd_half_GC,model_info.ExtFunIO.symQs.QsInvB);
+    q_opt_unsc.deg(idx_2nd_half_GC,model_info.ExtFunIO.symQs.QsOpp) = -q_opt_unsc.deg(idx_2nd_half_GC,model_info.ExtFunIO.symQs.QsOpp);
+    q_opt_unsc.deg(idx_2nd_half_GC,model_info.ExtFunIO.jointi.base_forward) = q_opt_unsc.deg(idx_2nd_half_GC,model_info.ExtFunIO.jointi.base_forward) + dist_trav_opt;
+
+    q_opt_unsc.rad = q_opt_unsc.deg;
+    q_opt_unsc.rad(:,model_info.ExtFunIO.jointi.rotations) = q_opt_unsc.rad(:,model_info.ExtFunIO.jointi.rotations).*pi/180;
+
+    dist_trav_opt = dist_trav_opt*2;
 
     % Qdots
-    qdot_opt_unsc.deg = [qdot_opt_unsc.deg(1:end,:); qdot_opt_unsc.deg(2:end,:)];
-    qdot_opt_unsc.deg(idx_2nd_half_states,model_info.ExtFunIO.symQs.QdotsInvA) = qdot_opt_unsc.deg(idx_2nd_half_states,model_info.ExtFunIO.symQs.QdotsInvB);
-    qdot_opt_unsc.deg(idx_2nd_half_states,model_info.ExtFunIO.symQs.QsOpp) = -qdot_opt_unsc.deg(idx_2nd_half_states,model_info.ExtFunIO.symQs.QsOpp);
+    qdot_opt_unsc.deg = [qdot_opt_unsc.deg(1:end,:); qdot_opt_unsc.deg(1:end,:)];
+    qdot_opt_unsc.deg(idx_2nd_half_GC,model_info.ExtFunIO.symQs.QdotsInvA) = qdot_opt_unsc.deg(idx_2nd_half_GC,model_info.ExtFunIO.symQs.QdotsInvB);
+    qdot_opt_unsc.deg(idx_2nd_half_GC,model_info.ExtFunIO.symQs.QsOpp) = -qdot_opt_unsc.deg(idx_2nd_half_GC,model_info.ExtFunIO.symQs.QsOpp);
+
+    qdot_opt_unsc.rad = qdot_opt_unsc.deg;
+    qdot_opt_unsc.rad(:,model_info.ExtFunIO.jointi.rotations) = qdot_opt_unsc.rad(:,model_info.ExtFunIO.jointi.rotations).*pi/180;
 
     % Qdotdots
-    qddot_opt_unsc.deg = [qddot_opt_unsc.deg; qddot_opt_unsc.deg];
-    qddot_opt_unsc.deg(idx_2nd_half_controls,model_info.ExtFunIO.symQs.QdotsInvA) = qddot_opt_unsc.deg(idx_2nd_half_controls,model_info.ExtFunIO.symQs.QdotsInvB);
-    qddot_opt_unsc.deg(idx_2nd_half_controls,model_info.ExtFunIO.symQs.QsOpp) = -qddot_opt_unsc.deg(idx_2nd_half_controls,model_info.ExtFunIO.symQs.QsOpp);
+    qddot_opt_unsc.deg = [qddot_opt_unsc.deg; qddot_opt_unsc.deg(1:end,:)];
+    qddot_opt_unsc.deg(idx_2nd_half_GC,model_info.ExtFunIO.symQs.QdotsInvA) = qddot_opt_unsc.deg(idx_2nd_half_GC,model_info.ExtFunIO.symQs.QdotsInvB);
+    qddot_opt_unsc.deg(idx_2nd_half_GC,model_info.ExtFunIO.symQs.QsOpp) = -qddot_opt_unsc.deg(idx_2nd_half_GC,model_info.ExtFunIO.symQs.QsOpp);
+
+    qddot_opt_unsc.rad = qddot_opt_unsc.deg;
+    qddot_opt_unsc.rad(:,model_info.ExtFunIO.jointi.rotations) = qddot_opt_unsc.rad(:,model_info.ExtFunIO.jointi.rotations).*pi/180;
 
     % Muscle activations
-    a_opt_unsc = [a_opt_unsc(1:end,:); a_opt_unsc(2:end,:)];
-    a_opt_unsc(idx_2nd_half_states,model_info.ExtFunIO.symQs.MusInvA) = a_opt_unsc(idx_2nd_half_states,model_info.ExtFunIO.symQs.MusInvB);
+    a_opt_unsc = [a_opt_unsc(1:end,:); a_opt_unsc(1:end,:)];
+    a_opt_unsc(idx_2nd_half_GC,model_info.ExtFunIO.symQs.MusInvA) = a_opt_unsc(idx_2nd_half_GC,model_info.ExtFunIO.symQs.MusInvB);
 
     % Time derivatives of muscle activations
     vA_opt_unsc = [vA_opt_unsc(1:end,:); vA_opt_unsc(1:end,:)];
-    vA_opt_unsc(idx_2nd_half_controls,model_info.ExtFunIO.symQs.MusInvA) = vA_opt_unsc(idx_2nd_half_controls,model_info.ExtFunIO.symQs.MusInvB);
+    vA_opt_unsc(idx_2nd_half_GC,model_info.ExtFunIO.symQs.MusInvA) = vA_opt_unsc(idx_2nd_half_GC,model_info.ExtFunIO.symQs.MusInvB);
 
     % Muscle-tendon forces
-    FTtilde_opt_unsc = [FTtilde_opt_unsc(2:end,:); FTtilde_opt_unsc(2:end,:)];
-    FTtilde_opt_unsc(idx_2nd_half_states,model_info.ExtFunIO.symQs.MusInvA) = FTtilde_opt_unsc(idx_2nd_half_states,model_info.ExtFunIO.symQs.MusInvB);
+    FTtilde_opt_unsc = [FTtilde_opt_unsc(1:end,:); FTtilde_opt_unsc(1:end,:)];
+    FTtilde_opt_unsc(idx_2nd_half_GC,model_info.ExtFunIO.symQs.MusInvA) = FTtilde_opt_unsc(idx_2nd_half_GC,model_info.ExtFunIO.symQs.MusInvB);
 
     % Time derivative of muscle-tendon force
-    dFTtilde_opt_unsc = [dFTtilde_opt_unsc; dFTtilde_opt_unsc];
-    dFTtilde_opt_unsc(idx_2nd_half_controls,model_info.ExtFunIO.symQs.MusInvA) = dFTtilde_opt_unsc(idx_2nd_half_controls,model_info.ExtFunIO.symQs.MusInvB);
+    dFTtilde_opt_unsc = [dFTtilde_opt_unsc; dFTtilde_opt_unsc(1:end,:)];
+    dFTtilde_opt_unsc(idx_2nd_half_GC,model_info.ExtFunIO.symQs.MusInvA) = dFTtilde_opt_unsc(idx_2nd_half_GC,model_info.ExtFunIO.symQs.MusInvB);
 
     if nq.torqAct > 0
         % Torque actuator activations
-        a_a_opt_unsc = [a_a_opt_unsc(1:end,:); a_a_opt_unsc(2:end,:)];
-        a_a_opt_unsc(idx_2nd_half_states,model_info.ExtFunIO.symQs.ActInvA) = a_a_opt_unsc(idx_2nd_half_states,model_info.ExtFunIO.symQs.ActInvB);
-        a_a_opt_unsc(idx_2nd_half_states,model_info.ExtFunIO.symQs.ActOpp) = -a_a_opt_unsc(idx_2nd_half_states,model_info.ExtFunIO.symQs.ActOpp);
+        a_a_opt_unsc = [a_a_opt_unsc(1:end,:); a_a_opt_unsc(1:end,:)];
+        a_a_opt_unsc(idx_2nd_half_GC,model_info.ExtFunIO.symQs.ActInvA) = a_a_opt_unsc(idx_2nd_half_GC,model_info.ExtFunIO.symQs.ActInvB);
+        a_a_opt_unsc(idx_2nd_half_GC,model_info.ExtFunIO.symQs.ActOpp) = -a_a_opt_unsc(idx_2nd_half_GC,model_info.ExtFunIO.symQs.ActOpp);
 
         % Torque actuator excitations
         e_a_opt_unsc = [e_a_opt_unsc(1:end,:); e_a_opt_unsc(1:end,:)];
-        e_a_opt_unsc(idx_2nd_half_controls,model_info.ExtFunIO.symQs.ActInvA) = e_a_opt_unsc(idx_2nd_half_controls,model_info.ExtFunIO.symQs.ActInvB);
-        e_a_opt_unsc(idx_2nd_half_controls,model_info.ExtFunIO.symQs.ActOpp) = -e_a_opt_unsc(idx_2nd_half_controls,model_info.ExtFunIO.symQs.ActOpp);
+        e_a_opt_unsc(idx_2nd_half_GC,model_info.ExtFunIO.symQs.ActInvA) = e_a_opt_unsc(idx_2nd_half_GC,model_info.ExtFunIO.symQs.ActInvB);
+        e_a_opt_unsc(idx_2nd_half_GC,model_info.ExtFunIO.symQs.ActOpp) = -e_a_opt_unsc(idx_2nd_half_GC,model_info.ExtFunIO.symQs.ActOpp);
 
     end
 
 end
 
+% express slack controls on mesh points 1:N to be consistent
+qddot_opt_unsc.deg = [qddot_opt_unsc.deg(end,:); qddot_opt_unsc.deg(1:end-1,:)];
+dFTtilde_opt_unsc = [dFTtilde_opt_unsc(end,:); dFTtilde_opt_unsc(1:end-1,:)];
+
 %% Gait cycle starts at right side initial contact
 
-[idx_GC,idx_init_contact,HS1,HS_threshold] = getStancePhaseSimulation(GRFk_opt,N,model_info.mass/3);
+% Ground reaction forces at mesh points (1:N-1)
+Xk_Qs_Qdots_opt             = zeros(size(q_opt_unsc.rad,1),2*nq.all);
+Xk_Qs_Qdots_opt(:,1:2:end)  = q_opt_unsc.rad(1:end,:);
+Xk_Qs_Qdots_opt(:,2:2:end)  = qdot_opt_unsc.rad(1:end,:);
+Xk_Qdotdots_opt             = qddot_opt_unsc.rad(1:end,:);
+Foutk_opt                   = zeros(size(q_opt_unsc.rad,1),F.nnz_out);
+for i = 1:size(q_opt_unsc.rad,1)
+    % ID moments
+    [res] = F([Xk_Qs_Qdots_opt(i,:)';Xk_Qdotdots_opt(i,:)']);
+    Foutk_opt(i,:) = full(res);
+end
+GRFk_opt = Foutk_opt(:,[model_info.ExtFunIO.GRFs.right_foot model_info.ExtFunIO.GRFs.left_foot]);
+
+
+[idx_GC,idx_GC_base_forward_offset,HS1,HS_threshold] = getStancePhaseSimulation(GRFk_opt,model_info.mass/3);
 
 Qs_GC = q_opt_unsc.deg(idx_GC,:);
 Qdots_GC = qdot_opt_unsc.deg(idx_GC,:);
@@ -1057,8 +1067,9 @@ if nq.torqAct > 0
     a_a_GC = a_a_opt_unsc(idx_GC,:);
     e_a_GC = e_a_opt_unsc(idx_GC,:);
 end
-Qs_GC(:,model_info.ExtFunIO.jointi.base_forward) = [q_opt_unsc.deg(idx_init_contact(1):N,model_info.ExtFunIO.jointi.base_forward);q_opt_unsc.deg(1:(idx_init_contact(1)-1),model_info.ExtFunIO.jointi.base_forward)+q_opt_unsc_all.deg(N+1,model_info.ExtFunIO.jointi.base_forward)];
 
+% adjust forward position to be continuous and start at 0
+Qs_GC(idx_GC_base_forward_offset,model_info.ExtFunIO.jointi.base_forward) = Qs_GC(idx_GC_base_forward_offset,model_info.ExtFunIO.jointi.base_forward) + dist_trav_opt;
 Qs_GC(:,model_info.ExtFunIO.jointi.base_forward) = Qs_GC(:,model_info.ExtFunIO.jointi.base_forward) - Qs_GC(1,model_info.ExtFunIO.jointi.base_forward);
 
 %% Unscale actuator torques
@@ -1068,9 +1079,6 @@ if nq.torqAct > 0
         T_a_GC(:,i) = a_a_GC(:,i).*scaling.ActuatorTorque(i);
     end
 end
-
-%% Convert joint accelerations to °/s^2
-% Qdotdots_GC(:,model_info.ExtFunIO.jointi.rotations) = Qdotdots_GC(:,model_info.ExtFunIO.jointi.rotations)*180/pi;
 
 %% Save the results
 % Structure Results_all

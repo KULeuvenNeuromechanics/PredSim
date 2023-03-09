@@ -1,4 +1,4 @@
-function [idx_GC,idx_init_contact,HS1,threshold] = getStancePhaseSimulation(GRFk_opt,N,threshold_init)
+function [idx_GC,idx_GC_base_forward_offset,HS1,threshold] = getStancePhaseSimulation(GRFk_opt,threshold_init)
 % --------------------------------------------------------------------------
 % getStancePhaseSimulation
 %   To reconstruct the full gait cycle, starting at right heel strike, from 
@@ -9,9 +9,6 @@ function [idx_GC,idx_init_contact,HS1,threshold] = getStancePhaseSimulation(GRFk
 %   * Ground reaction forces. Columns are x,y,z for right foot, then x,y,z
 %   for left foot. (in N)
 %
-%   - N -
-%   * Number of mesh intervals
-%
 %   - threshold_init -
 %   * initial value of the threshold for vertical GRF (in N)
 %
@@ -19,6 +16,10 @@ function [idx_GC,idx_init_contact,HS1,threshold] = getStancePhaseSimulation(GRFk
 %   - idx_GC -
 %   * indices of mesh points such that 1st point is initial contact
 %   GRFk_opt_GC = GRFk_opt(idx_GC,:);
+%
+%   - idx_GC_base_forward_offset -
+%   * indices of mesh points that are moved to the back, thus the forward
+%   positon of the floating base needs to be adjusted
 %
 %   - HS1 -
 %   * which foot makes inital contact 'r' or 'l'
@@ -35,6 +36,7 @@ function [idx_GC,idx_init_contact,HS1,threshold] = getStancePhaseSimulation(GRFk
 
 % only use vertical
 GRFy = GRFk_opt(:,[2,5]);
+N = size(GRFk_opt,1);
 
 %% increase threshold untill you have at least one frame above the threshold
 threshold = threshold_init; 
@@ -66,23 +68,14 @@ idx_init_contact = find(is_init_contact == 1);
 idx_last_contact = find(is_init_contact == -1);
 
 
+if idx_init_contact(1) == 1 % no need to shift
+    idx_GC = [idx_init_contact(1):N]';
+    idx_GC_base_forward_offset = [];
 
-idx_GC = [idx_init_contact(1):N, 1:idx_init_contact(1)-1]';
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+else
+    idx_GC = [idx_init_contact(1):N, 1:idx_init_contact(1)-1]';
+    idx_GC_base_forward_offset = N+1-[1:idx_init_contact(1)-1]';
+end
 
 
 end
