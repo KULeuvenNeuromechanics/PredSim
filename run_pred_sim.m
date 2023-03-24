@@ -39,29 +39,25 @@ if ~isfolder(OutFolder)
     mkdir(OutFolder);
 end
 
-if S.post_process.rerun
+if S.post_process.load_prev_opti_vars
+    % load settings and model_info when only running post-processing
+    Outname = fullfile(S.subject.save_folder,[S.post_process.result_filename '.mat']);
+    load(Outname,'R','model_info');
+    S = R.S;
+    S.post_process.load_prev_opti_vars = 1;
+    S = getDefaultSettings(S); % to fill in any missing settings
+    osim_path = model_info.osim_path;
+    R.S = S;
 
-%     sf=S.subject.save_folder;
-%     mp=S.misc.main_path;
-%     igs=S.subject.IG_selection;
-%     pe=S.Cpp2Dll.PathCpp2Dll_Exe;
-%     sn=S.subject.name;
+elseif S.post_process.rerun
     % load settings and model_info when only running post-processing
     Outname = fullfile(S.subject.save_folder,[S.post_process.result_filename '.mat']);
     load(Outname,'R','model_info');
     S = R.S;
     S.post_process.rerun = 1;
-%     S.subject.save_folder=sf;
-%     S.misc.main_path=mp;
-%     S.subject.IG_selection=igs;
-%     S.subject = rmfield(S.subject,'IK_Bounds');
-%     S.Cpp2Dll.PathCpp2Dll_Exe = pe;
-%     S.subject.name=sn;
     S = getDefaultSettings(S); % to fill in any missing settings
-%     osim_path = model_info.osim_path;
+    osim_path = model_info.osim_path;
     R.S = S;
-%     load(Outname,'w_opt','stats','setup','model_info');
-%     save(Outname,'w_opt','stats','setup','R','model_info');
 
 elseif isempty(S.post_process.result_filename)
     if strcmp(S.post_process.savename,'structured')
