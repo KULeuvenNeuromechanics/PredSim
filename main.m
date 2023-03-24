@@ -29,8 +29,6 @@ S.subject.name = 'Falisse_et_al_2022';
 S.subject.save_folder  = fullfile(pathRepoFolder,'PredSimResults',S.subject.name); 
 
 % either choose "quasi-random" or give the path to a .mot file you want to use as initial guess
-% S.subject.IG_selection = fullfile(S.misc.main_path,'OCP','IK_Guess_Default.mot');
-% S.subject.IG_selection_gaitCyclePercent = 50;
 S.subject.IG_selection = fullfile(S.misc.main_path,'OCP','IK_Guess_Full_GC.mot');
 S.subject.IG_selection_gaitCyclePercent = 100;
 
@@ -72,7 +70,7 @@ S.solver.run_as_batch_job = 0;
 % S.misc.poly_order.lower    = ;
 % S.misc.poly_order.upper    = ;
 % S.misc.msk_geom_bounds      = {{'knee_angle_r','knee_angle_l'},-120,10,'pelvis_tilt',-30,30};
-% S.misc.gaitmotion_type = ;
+% S.misc.gaitmotion_type = 'FullGaitCycle';
 
 % % S.post_process
 S.post_process.make_plot = 1;
