@@ -52,7 +52,8 @@ For this repository the Git Bash commands are:
     > When you want to pull changes from `upstream` you can just fetch the remote and rebase on top of your work.
     ```bash
     git fetch upstream
-    git rebase upstream/master
+	git checkout local_branch_to_update
+    git rebase upstream/upstream_branch_to_update_from
     ```
     And solve the conflicts if any.
 
