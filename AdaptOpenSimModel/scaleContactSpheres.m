@@ -56,8 +56,6 @@ for i=1:length(contact_spheres)
 
     if contains(contact_spheres(i).body,'_r')
         contact_spheres(i).radius = contact_spheres(i).radius*factorR(1,1);
-        cs_body = ContactSphere.safeDownCast(geometrySet.get(i+1));
-        cs_body.setRadius(20);
     else
         contact_spheres(i).radius = contact_spheres(i).radius*factorL(1,1);
     end
