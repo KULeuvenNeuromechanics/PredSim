@@ -7,6 +7,9 @@ function [S] = getDefaultSettings(S,osim_path)
 % INPUT:
 %   - S -
 %   * setting structure S
+%   
+%   - osim_path -
+%   * path to the osim model
 %
 % 
 % OUTPUT:
@@ -17,7 +20,7 @@ function [S] = getDefaultSettings(S,osim_path)
 % Original date: 30/11/2021
 %
 % Last edit by: Bram Van Den Bosch
-% Last edit date: 17/01/2022
+% Last edit date: 03/March/2023
 % --------------------------------------------------------------------------
 
 %% bounds
