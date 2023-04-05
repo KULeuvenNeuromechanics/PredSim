@@ -82,7 +82,9 @@ MuscleMass = struct_array_to_double_array(model_info.muscle_info.parameters,'mus
 
 %% Get bounds and initial guess
 
-[bounds,scaling] = getBounds(S,model_info);
+bounds_nsc = getBounds(S,model_info);
+scaling = getScaleFactor(S,model_info,bounds_nsc);
+bounds = scaleBounds(S,model_info,bounds_nsc,scaling);
 
 if strcmp(S.subject.IG_selection,'quasi-random')
     guess = getGuess_QR_opti(S,model_info,scaling,d);
@@ -131,7 +133,7 @@ opti.subject_to(bounds.FTtilde.lower'*ones(1,d*N) < FTtilde_col < ...
 opti.set_initial(FTtilde_col, guess.FTtilde_col');
 % Qs at mesh points
 Qs = opti.variable(nq.all,N+1);
-% We want to constraint the pelvis_tx and pelvis_tz position at the first mesh point,
+% We want to constrain the pelvis_tx and pelvis_tz position at the first mesh point,
 % and avoid redundant bounds
 lboundsQsk = bounds.Qs.lower'*ones(1,N+1);
 lboundsQsk(model_info.ExtFunIO.jointi.base_forward,1) = ...
