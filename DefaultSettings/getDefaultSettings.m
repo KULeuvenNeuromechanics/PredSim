@@ -132,6 +132,11 @@ if ~isfield(S.misc,'msk_geom_bounds')
     S.misc.msk_geom_bounds = [];
 end
 
+% number of data points to sample musculoskeletal geometry
+if ~isfield(S.misc,'msk_geom_n_samples')
+    S.misc.msk_geom_n_samples = 5000;
+end
+
 % rmse threshold for muscle-tendon length approximation
 if ~isfield(S.misc,'threshold_lMT_fit')
     S.misc.threshold_lMT_fit = 0.003;
@@ -377,6 +382,16 @@ end
 % limit torque coefficient for specific degrees of freedon
 if ~isfield(S.subject,'set_limit_torque_coefficients_selected_dofs')
     S.subject.set_limit_torque_coefficients_selected_dofs = []; 
+end
+
+% ligament stiffness for all ligaments
+if ~isfield(S.subject,'stiffness_all_ligaments')
+    S.subject.stiffness_all_ligaments = 'ligamentGefen2002'; 
+end
+
+% ligament stiffness for selected ligaments
+if ~isfield(S.subject,'set_stiffness_selected_ligaments')
+    S.subject.set_stiffness_selected_ligaments = {'PlantarFascia','plantarFasciaNatali2010'};
 end
 
 %% weights

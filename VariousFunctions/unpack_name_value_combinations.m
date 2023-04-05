@@ -44,23 +44,38 @@ for k=1:Nvalues
     values_array{k} = nan(value_sizes(k),Ncoords);
 end
 
+% loop over inputs
 for ii=1:Nfields/(Nvalues+1)
     names_i = name_values_cell{(Nvalues+1)*(ii-1)+1};
     if ~iscell(names_i)
         names_i = {names_i};
     end
     for jj=1:length(names_i)
+        % test that the 1st input is a name
         idx_ij = find(contains(valid_names(:),names_i(jj)));
         if isempty(idx_ij)
             error(['"' names_i{jj} '" is not a valid name.'])
         end
-        for k=1:Nvalues
-            if isnan(values_array{k}(1,idx_ij))
-                if ~isempty(name_values_cell{(Nvalues+1)*(ii-1)+1+k})
-                    values_array{k}(:,idx_ij) = vertcat(name_values_cell{(Nvalues+1)*(ii-1)+1+k});
+        for i=1:length(idx_ij)
+            idx_iji = idx_ij(i);
+            % assigns the input values to output arrays for this name
+            for k=1:Nvalues
+                % test that we have not yet set this array value
+                if isFirstEntry(values_array{k}(1,idx_iji))
+                    value_k = name_values_cell{(Nvalues+1)*(ii-1)+1+k};
+                    if ~isempty(value_k)
+                        % if the value is text, convert values_array{k}
+                        if isa(value_k,'char')
+                            value_k = string(value_k);
+                        end
+                        if isa(value_k,'string') && ~isa(values_array{k},'string')
+                            values_array{k} = string(values_array{k});
+                        end
+                        values_array{k}(:,idx_iji) = vertcat(value_k(:));
+                    end
+                else
+                    error(['Multiple values assigned to "' valid_names{idx_iji} '".'])
                 end
-            else
-                error(['Multiple values assigned to "' valid_names{idx_ij} '".'])
             end
         end
     end
@@ -71,3 +86,13 @@ for k=1:Nvalues
 end 
 
 
+end
+% helper function
+function [has_no_entry] = isFirstEntry(test_field)
+    has_no_entry = 0;
+    if isa(test_field,'double') && isnan(test_field)
+        has_no_entry = 1;
+    elseif isa(test_field,'string') && ismissing(test_field)
+        has_no_entry = 1;
+    end
+end

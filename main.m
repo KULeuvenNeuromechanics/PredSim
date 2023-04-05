@@ -23,7 +23,7 @@ addpath(fullfile(S.misc.main_path,'VariousFunctions'))
 
 %% Required inputs
 % name of the subject
-S.subject.name = 'Falisse_et_al_2022';
+S.subject.name = 'DHondt_2023_3seg';
 
 % path to folder where you want to store the results of the OCP
 S.subject.save_folder  = fullfile(pathRepoFolder,'PredSimResults',S.subject.name); 
@@ -70,19 +70,20 @@ S.solver.run_as_batch_job = 0;
 % S.misc.poly_order.lower    = ;
 % S.misc.poly_order.upper    = ;
 % S.misc.msk_geom_bounds      = {{'knee_angle_r','knee_angle_l'},-120,10,'pelvis_tilt',-30,30};
+S.misc.msk_geom_n_samples = 500;
 % S.misc.gaitmotion_type = 'FullGaitCycle';
 
 % % S.post_process
-S.post_process.make_plot = 1;
+S.post_process.make_plot = 0;
 % S.post_process.savename  = 'datetime';
-S.post_process.load_prev_opti_vars = 1;
+% S.post_process.load_prev_opti_vars = 1;
 % S.post_process.rerun   = 1;
-S.post_process.result_filename = 'Falisse_et_al_2022_v9';
+% S.post_process.result_filename = '';
 
 % % S.solver
 % S.solver.linear_solver  = '';
 % S.solver.tol_ipopt      = ;
-% S.solver.max_iter       = 5;
+S.solver.max_iter       = 5;
 % S.solver.parallel_mode  = '';
 % S.solver.N_threads      = 6;
 % S.solver.N_meshes       = 100;
@@ -98,13 +99,13 @@ S.subject.v_pelvis_x_trgt   = 1.33;
 % S.subject.muscle_strength   = ;
 % S.subject.muscle_pass_stiff_shift = {{'soleus_l','soleus_r'},0.9,{'tib_ant_l'},1.1};
 % S.subject.muscle_pass_stiff_scale = ;
-% S.subject.tendon_stiff_scale      = ;
+S.subject.tendon_stiff_scale      = {{'soleus','gas'},0.5};
 S.subject.mtp_type          = '2022paper';
 % S.subject.scale_MT_params         = {{'soleus_l'},'FMo',0.9,{'soleus_l'},'alphao',1.1};
 % S.subject.spasticity        = ;
 % S.subject.muscle_coordination = ;
-S.subject.set_stiffness_coefficient_selected_dofs = {{'mtp_angle_l','mtp_angle_r'},25};
-S.subject.set_damping_coefficient_selected_dofs = {{'mtp_angle_l','mtp_angle_r'},2};
+S.subject.set_stiffness_coefficient_selected_dofs = {'mtp_angle',25};
+S.subject.set_damping_coefficient_selected_dofs = {'mtp_angle',2};
 % S.subject.set_limit_torque_coefficients_selected_dofs = {{'mtp_angle_l','mtp_angle_r'},[0,0,0,0],[0,0]};
 
 % % S.weights
