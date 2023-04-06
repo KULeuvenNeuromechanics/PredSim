@@ -631,6 +631,7 @@ if ~S.post_process.load_prev_opti_vars
     % Create setup
     setup.tolerance.ipopt = S.solver.tol_ipopt;
     setup.bounds = bounds;
+    setup.bounds_nsc = bounds_nsc;
     setup.scaling = scaling;
     setup.guess = guess;
     
