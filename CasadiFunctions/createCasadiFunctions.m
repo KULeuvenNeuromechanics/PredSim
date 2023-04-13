@@ -37,11 +37,13 @@ f_casadi.FiberVelocity_TendonForce_tendon = FiberVelocity_TendonForce_tendon;
 f_casadi.lT_vT = lT_vT;
 
 %% Create Casadi functions for angle-moment relation from ligaments
-f_casadi.ligamentMoment = createCasadi_Ligaments(S,model_info);
+[f_casadi.ligamentMoment,f_casadi.ligamentMoment_single,f_casadi.ligamentMoment_multi] =...
+    createCasadi_Ligaments(S,model_info);
 
 %% Create Casadi functions for passive torques
 [f_casadi.PassiveStiffnessMoments,f_casadi.PassiveDampingMoments,f_casadi.LimitTorques,...
-    f_casadi.AllPassiveTorques,f_casadi.AllPassiveTorques_cost] = createCasadi_PassiveMoments(S,model_info);
+    f_casadi.AllPassiveTorques,f_casadi.AllPassiveTorques_cost] = ...
+    createCasadi_PassiveMoments(S,model_info);
 
 %% Create Casadi functions for actuator dynamics
 if model_info.ExtFunIO.jointi.nq.torqAct > 0
@@ -53,7 +55,8 @@ end
 
 %% Create Casadi function to get step length
 if ~isempty(model_info.ExtFunIO.origin.calcn_r) &&  ~isempty(model_info.ExtFunIO.origin.calcn_l)
-    [f_casadi.f_getCalcnOriginInWorldFrame,f_casadi.f_getStepLength] = createCasadi_StepLength(S,model_info);
+    [f_casadi.f_getCalcnOriginInWorldFrame,f_casadi.f_getStepLength] = ...
+        createCasadi_StepLength(S,model_info);
 end
 
 

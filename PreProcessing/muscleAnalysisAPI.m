@@ -57,8 +57,11 @@ else
 end
 
 % dummy motion
-varargin2 = varargin(~contains(varargin{1},'ligaments'));
-
+if ~isempty(varargin)
+    varargin2 = varargin(~contains(varargin{1},'ligaments'));
+else
+    varargin2 = varargin;
+end
 if length(varargin2)>=1
     if contains(varargin{1},'ligaments')
         argin3 = varargin{2};

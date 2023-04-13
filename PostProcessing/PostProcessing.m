@@ -83,7 +83,7 @@ R.misc.body_weight = model_info.mass*9.81;
 
 %%
 Outname = fullfile(S.subject.save_folder,[S.post_process.result_filename '.mat']);
-load(Outname,'w_opt','stats','setup','model_info');
-save(Outname,'w_opt','stats','setup','R','model_info');
+% load(Outname,'w_opt','stats','setup','model_info');
+save(Outname,'R','-append');
 
 

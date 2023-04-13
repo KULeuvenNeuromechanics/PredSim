@@ -67,7 +67,7 @@ After perfoming these steps, run the main script. (Expected run time is 40 minut
 
 ## How to use the code
 
-The code is written such that as a user you only have to interact with [*main.m*](https://github.com/KULeuvenNeuromechanics/PredSim/blob/master/main.m).  
+The code is written such that as a user you only have to interact with [*main.m*](./main.m).  
 
 All user-defined settings are stored in structure *S*. In main.m you have to specify the required settings and are free to change/add the optional settings. 
 
@@ -79,10 +79,9 @@ This code can automatically convert an OpenSim model to the external function us
 - Constraints on coordinates will be ignored (eg, coupling constraints).
 - Using SimmSplines to describe coordinates (e.g. Yamaguchi knee model) is not supported as the implementation in OpenSim is not really compatible with algorithmic differentiation. Change them to Polynomials instead. GeometryPaths can contain SimmSplines.
 - The kinematic chains starting at *acromial_l* and *acromial_r* will be interpreted as arms, legs start at *hip_l* and *hip_r*. A model is not required to have arms.
-- Your model needs to have contact elements that interact with the ground. Only *SmoothSphereHalfSpaceForce* contact forces are supported. You can use [_AdaptOpenSimModel.m_](https://github.com/KULeuvenNeuromechanics/PredSim/blob/master/AdaptOpenSimModel/AdaptOpenSimModel.m) to add contact geometries and forces to your model.
+- Your model needs to have contact elements that interact with the ground. Only *SmoothSphereHalfSpaceForce* contact forces are supported. You can use [_AdaptOpenSimModel.m_](./AdaptOpenSimModel/AdaptOpenSimModel.m) to add contact geometries and forces to your model.
 - Your model can have any Hill-type muscle model, but it will be implemented as a [DeGroote-Fregly muscle](https://doi.org/10.1007/s10439-016-1591-9).
-- Torque/force actuators of the class *ActivationCoordinateActuator* are supported. You can add actuators by running [_AdaptOpenSimModel.m_](https://github.com/KULeuvenNeuromechanics/PredSim/blob/master/AdaptOpenSimModel/AdaptOpenSimModel.m). Actuators are not required.
-- Ligament forces are not yet supported, but we plan to add them in the future.
+- Torque/force actuators of the class *ActivationCoordinateActuator* are supported. You can add actuators by running [_AdaptOpenSimModel.m_](./AdaptOpenSimModel/AdaptOpenSimModel.m). Actuators are not required.
 
 
 ### Required Settings
@@ -153,7 +152,9 @@ This code can automatically convert an OpenSim model to the external function us
 - **S.misc.poly_order.upper**: 
 	- maximal order of polynomial function. Default is *9* [double]
 - **S.misc.msk_geom_bounds**: 
-	- Cell array where 1st entry is dof name(s) , 2nd entry is its lower bounds, and 3rd entry is its upper bounds. Insert nan to lower bounds to only overwrite upper bounds. For another bound, add 3 more entries. For example, {{'knee_angle_r','knee_angle_l'},-120,10,'pelvis_tilt',nan,30} implements limit of -120 and 10 on knee angles, and default lower bund with 30 upper bound for pelvis_tilt. Defaults values are defined in the function [get_default_bounds_dummy_motion.m file](https://github.com/KULeuvenNeuromechanics/PredSim/blob/master/PreProcessing/get_default_bounds_dummy_motion.m).
+	- Cell array where 1st entry is dof name(s) , 2nd entry is its lower bounds, and 3rd entry is its upper bounds. Insert nan to lower bounds to only overwrite upper bounds. For another bound, add 3 more entries. For example, {{'knee_angle_r','knee_angle_l'},-120,10,'pelvis_tilt',nan,30} implements limit of -120 and 10 on knee angles, and default lower bund with 30 upper bound for pelvis_tilt. Defaults values are defined in the function [get_default_bounds_dummy_motion.m file](./PreProcessing/get_default_bounds_dummy_motion.m).
+- **S.misc.msk_geom_n_samples**:
+	- Number of samples for the dummy motion that is used to fit the approximated musculoskeletal geometry. Default is *5000* [double]
 - **S.misc.visualize_bounds**: 
 	- specify if bounds and initial guess are visualized (0 or 1). Default is *0* [double]
 - **S.misc.dampingCoefficient**: 
@@ -170,7 +171,7 @@ This code can automatically convert an OpenSim model to the external function us
 - **S.post_process.result_filename**: 
 	- File name for results. Used for the name of .mat file that saves the results, diary of the OCP, and name of the .mot file of the output motion. When rerunning post-processing of an existing result, giving this file name is required. Default value is 
 - **S.post_process.savename**: 
-	- Type of savename to use if S.post_process.result_filename is empty. Defaults is *structured* [char]. This uses the name of the .mat file of results is used as <S.subject.name>_v\<n>. Where <S.subject.name> is defined in S.subject.name. n = 1 if <S.subject.name>_v1.mat does not exist. n is increased until n is found such that <S.subject.name>_v\<n>.mat does not exist. To change this structuring process, change its implementation in [run_pred_sim.m file](https://github.com/KULeuvenNeuromechanics/PredSim/blob/master/run_pred_sim.m). An alternative option is *datetime* [char], this uses <S.subject.name>\_\<yyyymmddTHHMMSS>. Where \<yyyymmddTHHMMSS> is the system date and time when creating the savename.
+	- Type of savename to use if S.post_process.result_filename is empty. Defaults is *structured* [char]. This uses the name of the .mat file of results is used as <S.subject.name>_v\<n>. Where <S.subject.name> is defined in S.subject.name. n = 1 if <S.subject.name>_v1.mat does not exist. n is increased until n is found such that <S.subject.name>_v\<n>.mat does not exist. To change this structuring process, change its implementation in [run_pred_sim.m file](./run_pred_sim.m). An alternative option is *datetime* [char], this uses <S.subject.name>\_\<yyyymmddTHHMMSS>. Where \<yyyymmddTHHMMSS> is the system date and time when creating the savename.
 
 #### S.solver
 
@@ -211,7 +212,7 @@ This code can automatically convert an OpenSim model to the external function us
 - **S.subject.tendon_stiff_scale**: 
 	- structure with [scaling factors for tendon stiffnesses](/FiguresForDocumentation/fig_muscle_tendon_properties_scaling.png). Default is *[]*, that is, no scaling. Input as a cell array where 1st input is the muscle(s) name, 2nd is the scale factor. If more than one scaling is to be performed, add 2 more inputs. For example, S.subject.tendon_stiff_scale = {{'soleus_l','soleus_r'},0.9,{'tib_ant_l'},1.1} will scale both soleus by a factor of 0.9 and tibialis anterior left by a scale of 1.1.
 - **S.subject.mtp_type**: 
-	- type of mtp joint. Default is *''* [char], which treats the mtp like any other joint. Select *'2022paper'* to use passive mtp joints whose kinematics do affect the crossing muscle-tendon units ([Falisse et al., 2022](#citations).
+	- type of mtp joint. Default is *''* [char], which treats the mtp like any other joint. Select *'2022paper'* to use passive mtp joints whose kinematics do affect the crossing muscle-tendon units ([Falisse et al., 2022](#citations)).
 - **S.subject.scale_MT_params**: 
 	- scale muscle tendon properties that are read from opensim model. Default is *[]*, that is, no scaling. Input as a cell array where 1st input is the muscle(s) name, 2nd is what property you want to scale (FMo, lMo, lTs, alphao or vMmax), 3rd is the scale factor itself. If more than one scaling is to be performed, add 3 more inputs. For example, S.subject.scale_MT_params = {{'soleus_l','soleus_r'},'FMo',0.9,{'tib_ant_l'},'lTs',1.1} will scale max isometric force of both soleus by a factor of 0.9 and tendon slack length of tibialis anterior left by a scale of 1.1.
 - **S.subject.damping_coefficient_all_dofs**: 
@@ -223,8 +224,12 @@ This code can automatically convert an OpenSim model to the external function us
 - **S.subject.set_stiffness_coefficient_selected_dofs**: 
 	- stiffness coefficient can be specified here for each coordinate individually. For example, S.subject.set_stiffness_coefficient_selected_dofs = {{'hip_flexion_l','hip_flexion_r'},0.012,{'knee_angle_l'},0.011} will put stiffness coefficient of both hip flexions to 0.012 Nm/rad and that of knee angle left to 0.011 Nm/rad. If not defined here for a particular coordinate, S.subject.damping_coefficient_all_dofs will be used for that coordinate. Default is empty.
 - **S.subject.set_limit_torque_coefficients_selected_dofs**: 
-	- Default values of coordinate limit torques are defined in the function [get_default_coord_limit_torque_coefficients.m](https://github.com/KULeuvenNeuromechanics/PredSim/blob/master/PreProcessing/get_default_coord_limit_torque_coefficients.m). If values other than these are to be used, they can be specified here.
-	
+	- Default values of coordinate limit torques are defined in the function [get_default_coord_limit_torque_coefficients.m](./PreProcessing/get_default_coord_limit_torque_coefficients.m). If values other than these are to be used, they can be specified here.
+- **S.subject.stiffness_all_ligaments**:
+	- Default stiffness model (i.e. force-length) used for ligaments. Default is [*ligamentGefen2002*](./ModelComponents/ligamentGefen2002.m) [char]
+- **S.subject.set_stiffness_selected_ligaments**:
+	- Use name-value pairs to use different stiffness models for specific ligaments. Default is *{'PlantarFascia',['plantarFasciaNatali2010'](./ModelComponents/plantarFasciaNatali2010.m)}* 
+
 #### S.weights
 
 - **S.weights.E**: 

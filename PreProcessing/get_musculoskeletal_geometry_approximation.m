@@ -81,12 +81,15 @@ if model_info.ligament_info.NLigament > 0
         ligament_data = muscleAnalysisAPI(S,osim_path,model_info,'ligaments');
         disp(['   analysing ligament geometry: ' num2str(toc(t0),'%.2f') ' s'])
     
-        % fit polynomial to approximate the results
-        t1 = tic;
-        model_info.ligament_info.polyFit.LigamentInfo = PolynomialFit(S,ligament_data,model_info.ligament_info.ligament_spanning_multi_coord);
         model_info.ligament_info.polyFit.DummySamples = ligament_data;
-        disp(['   approximating ligament geometry: ' num2str(toc(t1),'%.2f') ' s'])
-    
+
+        % fit polynomial to approximate the results
+        if sum(model_info.ligament_info.ligament_spanning_multi_coord,'all') > 0
+            t1 = tic;
+            model_info.ligament_info.polyFit.LigamentInfo = PolynomialFit(S,ligament_data,model_info.ligament_info.ligament_spanning_multi_coord);
+            
+            disp(['   approximating ligament geometry: ' num2str(toc(t1),'%.2f') ' s'])
+        end
     
     else
         % Other fitting methods are not (yet) implemented
