@@ -127,6 +127,12 @@ This code can automatically convert an OpenSim model to the external function us
 - **S.bounds.Qs**: 
 	- Cell array where 1st entry is dof name(s) , 2nd entry is its lower bound, and 3rd entry is its upper bound. In ° or m.
 	Insert 'nan' or [] to lower bounds to only overwrite upper bounds, or vice versa. For another bound, add 3 more entries. For example, {{'knee_angle_r','knee_angle_l'},-120,10,'pelvis_tilt',[],30} implements limit of -120° and 10° on knee angles, and default lower bound with 30° upper bound for pelvis_tilt. This setting changes the bounds of the optimization variables. When formulating the OCP, the variables are scaled w.r.t. their bounds to improve conditioning. Changing these bounds can have a strong influence on convergence.
+- **S.bounds.Qdots**: 
+	- Same as S.bounds.Qs, but for velocities.
+- **S.bounds.Qdotdots**: 
+	- Same as S.bounds.Qs, but for accelerations.
+- **S.bounds.default_coordinate_bounds**:
+	- Table with default values of bounds on Qs, Qdots, and Qdotdots. Default is *Default_Coordinate_Bounds.csv*. [string]
 
 #### S.metabolicE - metabolic energy
 
@@ -201,8 +207,6 @@ This code can automatically convert an OpenSim model to the external function us
 	- boolean to adjust the trajectory of height of pelvis from the ground for data-informed initial guess. Default is *0*. 0 means the trajectory will not be changed. If 1, the trajectory will be changed such that the average value of the trajectory is equal to s.subject.IG_pelvis_y.
 - **S.subject.v_pelvis_x_trgt**: 
 	- average velocity you want the model to have, in meters per second. Default is *1.25* m/s [double]
-- **S.subject.IK_Bounds**: 
-	- A .mot file that is used to define bounds on the kinematics. Default is *IK_Bounds_Default.mot* [char]. This file can be found in the OCP folder. This setting changes the bounds of the optimization variables. When formulating the OCP, the variables are sclaed w.r.t. their bounds to improve conditioning. Changing these bounds can have a strong influence on convergence.
 - **S.subject.muscle_strength**: 
 	- structure with [scaling factors for muscle strength](/FiguresForDocumentation/fig_muscle_tendon_properties_scaling.png). This scales the max muscle force of the active muscle force. Default is *[]*, that is, no scaling. Input as a cell array where 1st input is the muscle(s) name, 2nd is the scale factor. If more than one scaling is to be performed, add 2 more inputs. For example, S.subject.muscle_strength = {{'soleus_l','soleus_r'},0.9,{'tib_ant_l'},1.1} will scale both soleus by a factor of 0.9 and tibialis anterior left by a scale of 1.1.
 - **S.subject.muscle_pass_stiff_scale**: 
