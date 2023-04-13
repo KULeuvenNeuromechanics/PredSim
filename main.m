@@ -94,7 +94,6 @@ S.solver.CasADi_path    = 'C:\GBW_MyPrograms\casadi_3_5_5';
 % S.subject.mass              = ;
 % S.subject.IG_pelvis_y       = ;
 S.subject.v_pelvis_x_trgt   = 1.33;
-% S.subject.IK_Bounds = ;
 % S.subject.muscle_strength   = ;
 % S.subject.muscle_pass_stiff_shift = {{'soleus_l','soleus_r'},0.9,{'tib_ant_l'},1.1};
 % S.subject.muscle_pass_stiff_scale = ;
