@@ -108,6 +108,8 @@ This code can automatically convert an OpenSim model to the external function us
 
 - **S.bounds.a.lower**: 
 	- minimal muscle activation. Provide a number between 0 and 1. Default is *0.05* [double]
+- **S.bounds.activation_selected_muscles**:
+	- Cell array where 1st entry is muscle name(s) , 2nd entry is its lower bound, and 3rd entry is its upper bound. Insert 'nan' or [] to lower bounds to only overwrite upper bounds, or vice versa. For another bound, add 3 more entries.
 - **S.bounds.calcn_dist.lower**: 
 	- minimal distance between calcanei (origin) in the transversal plane. Default is *0.09* m [double]
 - **S.bounds.toes_dist.lower**: 
@@ -133,6 +135,12 @@ This code can automatically convert an OpenSim model to the external function us
 	- Same as S.bounds.Qs, but for accelerations.
 - **S.bounds.default_coordinate_bounds**:
 	- Table with default values of bounds on Qs, Qdots, and Qdotdots. Default is *Default_Coordinate_Bounds.csv*. [string]
+
+
+	Order of priority for coordinate bounds:
+	1. Individual bounds from settings (S.bounds.Qs, S.bounds.Qdots, S.bounds.Qdotdots)
+	2. Default bounds from table (S.bounds.default_coordinate_bounds)
+	3. Read from model file. Qs: min and max coordinate values, Qdots: +/-10x coordinate range, Qdotdots: +/-155x coordinate range.
 
 #### S.metabolicE - metabolic energy
 
