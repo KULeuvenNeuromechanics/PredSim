@@ -40,7 +40,7 @@ osim_path = fullfile(pathRepo,'Subjects',S.subject.name,[S.subject.name '.osim']
 S.Cpp2Dll.PathCpp2Dll_Exe = 'C:\GBW_MyPrograms\Osim2Dll_exe';
 
 % Do you want to run the simulation as a batch job (parallel computing toolbox)
-S.solver.run_as_batch_job = 0;
+S.solver.run_as_batch_job = 1;
 
 %% Optional inputs
 % see README.md in the main folder for information about these optional
@@ -56,7 +56,7 @@ S.solver.run_as_batch_job = 0;
 % S.bounds.dist_trav.lower    = ;
 % S.bounds.t_final.upper      = ;
 % S.bounds.t_final.lower      = ;
-% S.bounds.coordinates        = {'pelvis_tilt',-30,30,'pelvis_list',-30,30};
+% S.bounds.Qs                 = {'pelvis_tilt',-30,30,'pelvis_list',-30,30};
 
 % % S.metabolicE - metabolic energy
 % S.metabolicE.tanh_b = ;
@@ -82,7 +82,7 @@ S.post_process.make_plot = 0;
 % % S.solver
 % S.solver.linear_solver  = '';
 % S.solver.tol_ipopt      = ;
-S.solver.max_iter       = 5;
+% S.solver.max_iter       = 5;
 % S.solver.parallel_mode  = '';
 % S.solver.N_threads      = 6;
 % S.solver.N_meshes       = 100;

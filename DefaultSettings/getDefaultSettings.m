@@ -76,16 +76,6 @@ if ~isfield(S.subject,'tendon_stiff_scale')
     S.subject.tendon_stiff_scale = [];
 end
 
-
-
-% % initial guess bounds
-% if ~isfield(S.subject,'IK_Bounds')
-%     S.subject.IK_Bounds = fullfile(S.misc.main_path,'OCP','IK_Bounds_Default.mot');
-% elseif ~isfile(S.subject.IK_Bounds)
-%     error('The motion file you specified in S.subject.IK_Bounds does not exist.')
-% end
-% disp([char(S.subject.IK_Bounds), ' will be used to determine bounds.'])
-
 % type of mtp joint used in the model
 if ~isfield(S.subject,'mtp_type')
     S.subject.mtp_type = ''; 
