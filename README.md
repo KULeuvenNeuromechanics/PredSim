@@ -48,6 +48,7 @@ To run this code you need to have the following softwares on your machine:
 - [CasADi](https://web.casadi.org/get/). The code has been tested on CasADi 3.5.5.
 - [Microsoft Visual Studio](https://visualstudio.microsoft.com/). In Visual Studio Installer, [select to include Desktop development with C++](/FiguresForDocumentation/fig_MSVS.png). The code has been tested on MSVS Community 2015, 2017, 2019, and 2022.
 - [CMake](https://cmake.org/download/). The code has been tested on CMake 3.22.0.
+- [Git](https://git-scm.com/download/win). The code has been tested on Git 2.40.0.windows.1. Add Git to your system Path.
 
 
 ## How to setup the code
