@@ -23,3 +23,14 @@ Subjects/Falisse_et_al_2022/*
 !Subjects/Falisse_et_al_2022/*.txt
 !Subjects/Falisse_et_al_2022/*.md
 
+!Subjects/DHondt_2023_3seg/
+Subjects/DHondt_2023_3seg/*
+!Subjects/DHondt_2023_3seg/*.osim
+!Subjects/DHondt_2023_3seg/*.md
+
+!Subjects/DHondt_2023_2seg/
+Subjects/DHondt_2023_2seg/*
+!Subjects/DHondt_2023_2seg/*.osim
+!Subjects/DHondt_2023_2seg/*.md
+
+

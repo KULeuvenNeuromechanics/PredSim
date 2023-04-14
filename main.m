@@ -31,7 +31,7 @@ S.subject.save_folder  = fullfile(pathRepoFolder,'PredSimResults',S.subject.name
 % either choose "quasi-random" or give the path to a .mot file you want to use as initial guess
 S.subject.IG_selection = fullfile(S.misc.main_path,'OCP','IK_Guess_Full_GC.mot');
 S.subject.IG_selection_gaitCyclePercent = 100;
-% S.subject.IG_selection = 'quasi-random';
+S.subject.IG_selection = 'quasi-random';
 
 % give the path to the osim model of your subject
 osim_path = fullfile(pathRepo,'Subjects',S.subject.name,[S.subject.name '.osim']);
@@ -87,7 +87,7 @@ S.post_process.make_plot = 0;
 % S.solver.max_iter       = 5;
 % S.solver.parallel_mode  = '';
 % S.solver.N_threads      = 6;
-% S.solver.N_meshes       = 100;
+S.solver.N_meshes       = 100;
 % S.solver.par_cluster_name = ;
 S.solver.CasADi_path    = 'C:\GBW_MyPrograms\casadi_3_5_5';
 
