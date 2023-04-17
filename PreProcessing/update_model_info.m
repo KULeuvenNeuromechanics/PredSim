@@ -47,9 +47,6 @@ Ncoords = length(model_info.ExtFunIO.coord_names.all);
 
 model_info.ExtFunIO.jointi.armsi = sort([model_info.ExtFunIO.jointi.arm_l model_info.ExtFunIO.jointi.arm_r]);
 model_info.ExtFunIO.jointi.noarmsi = setdiff(1:Ncoords,model_info.ExtFunIO.jointi.armsi);
-model_info.ExtFunIO.jointi.base_forward = model_info.ExtFunIO.symQs.base_forward;
-model_info.ExtFunIO.jointi.base_lateral = model_info.ExtFunIO.symQs.base_lateral;
-% model_info.ExtFunIO.jointi.base_forward = setdiff(model_info.ExtFunIO.symQs.QdotsInvA,model_info.ExtFunIO.symQs.QsInvA);
 
 model_info = addCoordNames(model_info,'muscleActuated');
 
