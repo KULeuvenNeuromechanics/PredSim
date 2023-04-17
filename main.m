@@ -73,7 +73,7 @@ S.solver.run_as_batch_job = 0;
 % S.misc.gaitmotion_type = 'FullGaitCycle';
 
 % % S.post_process
-S.post_process.make_plot = 0;
+S.post_process.make_plot = 1;
 % S.post_process.savename  = 'datetime';
 % S.post_process.load_prev_opti_vars = 1;
 % S.post_process.rerun   = 1;
@@ -82,7 +82,7 @@ S.post_process.make_plot = 0;
 % % S.solver
 % S.solver.linear_solver  = '';
 % S.solver.tol_ipopt      = ;
-S.solver.max_iter       = 5;
+% S.solver.max_iter       = 5;
 % S.solver.parallel_mode  = '';
 % S.solver.N_threads      = 6;
 % S.solver.N_meshes       = 100;
