@@ -11,6 +11,7 @@
 opensimAD/*
 App
 Subjects/*
+!Subjects/README.md
 !Subjects/Hamner_modified/
 Subjects/Hamner_modified/*
 !Subjects/Hamner_modified/*.osim
