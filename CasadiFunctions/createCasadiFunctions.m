@@ -37,8 +37,8 @@ f_casadi.FiberVelocity_TendonForce_tendon = FiberVelocity_TendonForce_tendon;
 f_casadi.lT_vT = lT_vT;
 
 %% Create Casadi functions for angle-moment relation from ligaments
-[f_casadi.ligamentMoment,f_casadi.ligamentMoment_single,f_casadi.ligamentMoment_multi] =...
-    createCasadi_Ligaments(S,model_info);
+[f_casadi.ligamentMoment,f_casadi.ligamentMoment_single,f_casadi.ligamentMoment_multi,...
+    f_casadi.ligamentLengthForce] = createCasadi_Ligaments(S,model_info);
 
 %% Create Casadi functions for passive torques
 [f_casadi.PassiveStiffnessMoments,f_casadi.PassiveDampingMoments,f_casadi.LimitTorques,...

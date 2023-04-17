@@ -1120,7 +1120,7 @@ R.ground_reaction.initial_contact_side = HS1;
 % save results
 Outname = fullfile(S.subject.save_folder,[S.post_process.result_filename '.mat']);
 disp(['Saving results as: ' Outname])
-save(Outname,'w_opt','stats','setup','R','model_info','f_casadi');
+save(Outname,'w_opt','stats','setup','R','model_info');
 
 
 end
