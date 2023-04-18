@@ -26,11 +26,53 @@ function [Qs] = generate_dummy_motion(S,model_info,n_data_points)
 % Last edit date:
 % --------------------------------------------------------------------------
 
+%% Set bounds for joint range of motion
+% Initialise
+Q_bounds = nan(2,model_info.ExtFunIO.jointi.nq.all);
+Q_bounds(:,model_info.ExtFunIO.jointi.floating_base) = 0;
 
 % Default upper and lower bounds of dummy motion
-Q_bounds = get_default_bounds_dummy_motion(model_info.ExtFunIO.coord_names.all);
+if exist(S.misc.default_msk_geom_bounds,'file')
+    default_bounds = readtable(S.misc.default_msk_geom_bounds);
 
-% adapt bounds based on user input
+    for j=1:model_info.ExtFunIO.jointi.nq.all
+
+        default_bounds_j = default_bounds(strcmp(default_bounds.name,...
+            model_info.ExtFunIO.coord_names.all{j}),:);
+        if ~isempty(default_bounds_j)
+            Q_bounds(1,j) = default_bounds_j.lower;
+            Q_bounds(2,j) = default_bounds_j.upper;
+        end
+
+    end
+end
+
+bounds_def = Q_bounds';
+
+% Adapt bounds based on osim model
+import org.opensim.modeling.*;
+model = Model(model_info.osim_path);
+
+for j=1:model_info.ExtFunIO.jointi.nq.all
+    coord_j = model.getCoordinateSet().get(model_info.ExtFunIO.coord_names.all{j});
+    lb_j = coord_j.getRangeMin();
+    ub_j = coord_j.getRangeMax();
+
+    if any(model_info.ExtFunIO.jointi.rotations(:)==j)
+        lb_j = lb_j*180/pi;
+        ub_j = ub_j*180/pi;
+    end
+    if isnan(Q_bounds(1,j))
+        Q_bounds(1,j) = lb_j;
+    end
+    if isnan(Q_bounds(2,j))
+        Q_bounds(2,j) = ub_j;
+    end
+end
+
+bounds_osim = Q_bounds';
+
+% Adapt bounds based on user input
 if ~isempty(S.misc.msk_geom_bounds)
     [new_lb,new_ub] = unpack_name_value_combinations(S.misc.msk_geom_bounds,...
         model_info.ExtFunIO.coord_names.all,[1,1]);
@@ -45,6 +87,7 @@ if ~isempty(S.misc.msk_geom_bounds)
     end
 end
 
+%% Create random poses
 % Construct scale from bounds
 Q_scale = diff(Q_bounds);
 
@@ -71,3 +114,4 @@ Qs = [Qs1; Qs2];
 
 
 
+end % end of function

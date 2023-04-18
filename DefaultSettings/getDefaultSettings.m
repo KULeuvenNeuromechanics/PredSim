@@ -127,6 +127,11 @@ if strcmp(S.misc.msk_geom_eq,'polynomials')
         num2str(S.misc.poly_order.lower) '_' num2str(S.misc.poly_order.upper)];
 end
 
+% default coordinate bounds used to approximate musculoskeletal geometry
+if ~isfield(S.misc,'default_msk_geom_bounds')
+    S.misc.default_msk_geom_bounds = 'default_msk_geom_bounds.csv';
+end
+
 % manually overwrite coordinate bounds used to approximate musculoskeletal geometry
 if ~isfield(S.misc,'msk_geom_bounds')
     S.misc.msk_geom_bounds = [];
