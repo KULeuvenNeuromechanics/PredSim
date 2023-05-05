@@ -134,8 +134,15 @@ This code can automatically convert an OpenSim model to the external function us
 - **S.bounds.Qdotdots**: 
 	- Same as S.bounds.Qs, but for accelerations.
 - **S.bounds.default_coordinate_bounds**:
-	- Table with default values of bounds on Qs, Qdots, and Qdotdots. Default is *Default_Coordinate_Bounds.csv*. [string]
-
+	- Table with default values of bounds on Qs, Qdots, and Qdotdots. Default is *Default_Coordinate_Bounds.csv*. [string] Values in the file are assumed in rad or m.
+- **S.bounds.Qdots_factor_RoM**:
+	- Velocity bounds that are not given by another setting, will be taken symmetric and proportional to the range of motion. Default is *10* [double]
+- **S.bounds.Qdotdots_factor_RoM**:
+	- Acceleration bounds that are not given by another setting, will be taken symmetric and proportional to the range of motion. Default is *155* [double]
+- **S.bounds.factor_IG_pelvis_ty.lower**:
+	- Set lower bound op vertical position of floating base proportional to IG_pelvis_y. Default is *0.5* [double] Set to empty [] to not use this.
+- **S.bounds.factor_IG_pelvis_ty.upper**:
+	- Set upper bound op vertical position of floating base proportional to IG_pelvis_y. Default is *1.2* [double] Set to empty [] to not use this.
 
 	Order of priority for coordinate bounds:
 	1. Individual bounds from settings (S.bounds.Qs, S.bounds.Qdots, S.bounds.Qdotdots)
@@ -175,6 +182,16 @@ This code can automatically convert an OpenSim model to the external function us
 	- damping coefficient of muscles. Default is *0.01* [double]. Used as damping value that is multiplied by the normalized muscle velocity, in the muscle velocity dependent term in calculation of normalized contractile element force of the muscle.
 - **S.misc.constant_pennation_angle**: 
 	- specify if pennation angle of the muscles is supposed to stay constant (0 or 1). Default is *0* [double]
+- **S.misc.default_scaling_NLP**:
+	- Filename with table that contains scale factors for Qs, Qdots, Qdotdots, and Moments in its columns. The first column should contain the coordinate names for its corresponding row. Default is *''*, i.e. scale factors are derived from bounds. [char]
+- **S.misc.scaling_Qs**:
+	- cell array of name-value pairs of coordinate names and the scale factor for the optimisation variables corresponding to their position.
+- **S.misc.scaling_Qdots**:
+	- cell array of name-value pairs of coordinate names and the scale factor for the optimisation variables corresponding to their velocity.
+- **S.misc.scaling_Qdotdots**:
+	- cell array of name-value pairs of coordinate names and the scale factor for the optimisation variables corresponding to their acceleration.
+- **S.misc.scaling_moments**:
+	- cell array of name-value pairs of coordinate names and the scale factor for the constraint violation on their moment equilibrium.
 
 #### S.post_process
 

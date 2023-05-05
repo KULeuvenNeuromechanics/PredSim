@@ -374,7 +374,7 @@ for j=1:d
         end
         
         % total coordinate torque equals inverse dynamics torque
-        eq_constr{end+1} = Tj(i,1) - Ti;
+        eq_constr{end+1} = (Tj(i,1) - Ti)./scaling.Moments(i);
 
     end
 

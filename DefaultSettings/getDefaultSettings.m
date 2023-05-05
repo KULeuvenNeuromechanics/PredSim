@@ -196,6 +196,24 @@ if ~isfield(S.misc,'constant_pennation_angle')
     S.misc.constant_pennation_angle = 0;
 end
 
+% default scale factors for variables and constraints
+if ~isfield(S.misc,'default_scaling_NLP')
+    S.misc.default_scaling_NLP = [];
+end
+
+% manually set scale factors
+if ~isfield(S.misc,'scaling_Qs')
+    S.misc.scaling_Qs = [];
+end
+if ~isfield(S.misc,'scaling_Qdots')
+    S.misc.scaling_Qdots = [];
+end
+if ~isfield(S.misc,'scaling_Qdotdots')
+    S.misc.scaling_Qdotdots = [];
+end
+if ~isfield(S.misc,'scaling_Moments')
+    S.misc.scaling_Moments = [];
+end
 
 %% weights
 if ~isfield(S,'weights')
@@ -362,6 +380,26 @@ end
 % activation of selected muscles
 if ~isfield(S.bounds,'activation_selected_muscles')
     S.bounds.activation_selected_muscles = [];
+end
+
+% when determining bounds based on range set in opensim model, qdot and
+% qdotdot bounds are proportional to range of motion
+if ~isfield(S.bounds,'Qdots_factor_RoM')
+    S.bounds.Qdots_factor_RoM = 10;
+end
+if ~isfield(S.bounds,'Qdotdots_factor_RoM')
+    S.bounds.Qdotdots_factor_RoM = 155;
+end
+
+% set pelvis ty bounds based on IG_pelvis_ty
+if ~isfield(S.bounds,'factor_IG_pelvis_ty')
+    S.bounds.factor_IG_pelvis_ty = [];
+end
+if ~isfield(S.bounds.factor_IG_pelvis_ty,'lower')
+    S.bounds.factor_IG_pelvis_ty.lower = 0.5;
+end
+if ~isfield(S.bounds.factor_IG_pelvis_ty,'upper')
+    S.bounds.factor_IG_pelvis_ty.upper = 1.2;
 end
 
 

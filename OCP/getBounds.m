@@ -57,51 +57,34 @@ for j=1:NCoord
     coord_j = model.getCoordinateSet().get(coordinate_names{j});
     lb_j = coord_j.getRangeMin();
     ub_j = coord_j.getRangeMax();
-    range_j = ub_j - lb_j;
-
+    
+    % Qs
     if isnan(bounds_nsc.Qs.lower(j))
         bounds_nsc.Qs.lower(j) = lb_j;
     end
     if isnan(bounds_nsc.Qs.upper(j))
         bounds_nsc.Qs.upper(j) = ub_j;
     end
+    % Range of motion
+    range_j = bounds_nsc.Qs.upper(j) - bounds_nsc.Qs.lower(j);
+    % Qdots
     if isnan(bounds_nsc.Qdots.lower(j))
-        bounds_nsc.Qdots.lower(j) = -range_j*10;
+        bounds_nsc.Qdots.lower(j) = -range_j*S.bounds.Qdots_factor_RoM;
     end
     if isnan(bounds_nsc.Qdots.upper(j))
-        bounds_nsc.Qdots.upper(j) = range_j*10;
+        bounds_nsc.Qdots.upper(j) = range_j*S.bounds.Qdots_factor_RoM;
     end
+    % Qdotdots
     if isnan(bounds_nsc.Qdotdots.lower(j))
-        bounds_nsc.Qdotdots.lower(j) = -range_j*155;
+        bounds_nsc.Qdotdots.lower(j) = -range_j*S.bounds.Qdotdots_factor_RoM;
     end
     if isnan(bounds_nsc.Qdotdots.upper(j))
-        bounds_nsc.Qdotdots.upper(j) = range_j*155;
+        bounds_nsc.Qdotdots.upper(j) = range_j*S.bounds.Qdotdots_factor_RoM;
     end
 
 
 end
 
-
-%% Manual adjustments
-% Pelvis_ty
-bounds_nsc.Qs.upper(model_info.ExtFunIO.jointi.floating_base(5)) = model_info.IG_pelvis_y*1.2;
-bounds_nsc.Qs.lower(model_info.ExtFunIO.jointi.floating_base(5)) = model_info.IG_pelvis_y*0.5;
-
-
-% We adjust some bounds when we increase the speed to allow for the
-% generation of running motions.
-if S.subject.v_pelvis_x_trgt > 1.33
-    % Shoulder flexion
-    bounds_nsc.Qs.lower(idx_shoulder_flex) = -50*pi/180;
-    % Pelvis tx
-    bounds_nsc.Qdots.upper(model_info.ExtFunIO.jointi.base_forward) = ...
-        bounds_nsc.Qdots.upper(model_info.ExtFunIO.jointi.base_forward)*2;
-end
-
-if strcmp(S.misc.gaitmotion_type,'HalfGaitCycle')
-    bounds_nsc.Qs.upper(model_info.ExtFunIO.jointi.base_forward) = ...
-        bounds_nsc.Qs.upper(model_info.ExtFunIO.jointi.base_forward)/2;
-end
 
 %% Adjust bounds based on settings
 for i=coords
@@ -128,6 +111,22 @@ for i=coords
 end
 
 
+%% Vertical position of floating base
+if ~isempty(S.bounds.factor_IG_pelvis_ty.lower)
+    bounds_nsc.Qs.lower(model_info.ExtFunIO.jointi.floating_base(5)) = model_info.IG_pelvis_y...
+        *S.bounds.factor_IG_pelvis_ty.lower;
+end
+if ~isempty(S.bounds.factor_IG_pelvis_ty.upper)
+    bounds_nsc.Qs.upper(model_info.ExtFunIO.jointi.floating_base(5)) = model_info.IG_pelvis_y...
+        *S.bounds.factor_IG_pelvis_ty.upper;
+end
+
+
+%% Adjust for half gait cycle
+if strcmp(S.misc.gaitmotion_type,'HalfGaitCycle')
+    bounds_nsc.Qs.upper(model_info.ExtFunIO.jointi.base_forward) = ...
+        bounds_nsc.Qs.upper(model_info.ExtFunIO.jointi.base_forward)/2;
+end
 
 %% Hard bounds
 % We impose the initial position of pelvis_tx to be 0
@@ -135,9 +134,6 @@ bounds_nsc.Qs_0.lower = bounds_nsc.Qs.lower;
 bounds_nsc.Qs_0.upper = bounds_nsc.Qs.upper;
 bounds_nsc.Qs_0.lower(model_info.ExtFunIO.jointi.base_forward) = 0;
 bounds_nsc.Qs_0.upper(model_info.ExtFunIO.jointi.base_forward) = 0;
-bounds_nsc.Qs_0.lower(model_info.ExtFunIO.jointi.base_lateral) = 0;
-bounds_nsc.Qs_0.upper(model_info.ExtFunIO.jointi.base_lateral) = 0;
-
 
 
 %% Muscle activations
