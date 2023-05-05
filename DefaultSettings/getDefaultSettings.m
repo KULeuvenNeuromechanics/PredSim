@@ -20,7 +20,7 @@ function [S] = getDefaultSettings(S,osim_path)
 % Original date: 30/11/2021
 %
 % Last edit by: Bram Van Den Bosch
-% Last edit date: 03/March/2023
+% Last edit date: 05/05/2023
 % --------------------------------------------------------------------------
 
 %% bounds
@@ -269,11 +269,6 @@ end
 % height of the pelvis for the initial guess, in meters
 if ~isfield(S.subject,'IG_pelvis_y')
    S.subject.IG_pelvis_y = [];
-end
-
-% adapt pelvis height of the data-informed initial guess based on IG_pelvis_y
-if ~isfield(S.subject,'adapt_IG_pelvis_y')
-   S.subject.adapt_IG_pelvis_y = 0;
 end
 
 % average velocity you want the model to have, in meters per second
