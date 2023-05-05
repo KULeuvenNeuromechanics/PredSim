@@ -18,7 +18,7 @@ function [S] = getDefaultSettings(S)
 %
 %   update: Changed order of settings
 % Last edit by: Lars D'Hondt
-% Last edit date: 6/April/2023
+% Last edit date: 5/May/2023
 % --------------------------------------------------------------------------
 
 %% subject
@@ -46,11 +46,6 @@ end
 % height of the pelvis for the initial guess, in meters
 if ~isfield(S.subject,'IG_pelvis_y')
    S.subject.IG_pelvis_y = [];
-end
-
-% adapt pelvis height of the data-informed initial guess based on IG_pelvis_y
-if ~isfield(S.subject,'adapt_IG_pelvis_y')
-   S.subject.adapt_IG_pelvis_y = 0;
 end
 
 % average velocity you want the model to have, in meters per second
