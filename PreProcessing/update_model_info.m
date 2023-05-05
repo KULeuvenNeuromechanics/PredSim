@@ -61,9 +61,8 @@ model_info.ExtFunIO.jointi.nq.trnsl        = length(model_info.ExtFunIO.jointi.t
 
 %% Model symmetry 
 % for half gait cycle simulations
-ActOpp = find(ismember(model_info.ExtFunIO.symQs.QsOpp(:),model_info.ExtFunIO.jointi.torqueActuated));
+ActOpp = find(ismember(model_info.ExtFunIO.jointi.torqueActuated, model_info.ExtFunIO.symQs.QsOpp(:)) );
 ActInvA = setdiff(1:model_info.ExtFunIO.jointi.nq.torqAct,ActOpp);
-
 ActInvB = zeros(size(ActInvA));
 
 for i=1:length(ActInvB)

@@ -164,6 +164,7 @@ jointi.arm_r = arm_r';
 jointi.arm_l = arm_l';
 
 %% Find floating base
+jointi.floating_base = [];
 jointi.base_forward = [];
 jointi.base_vertical = [];
 jointi.base_lateral = [];
@@ -193,6 +194,7 @@ for j=1:6
     crd_j = char(tr1.get_coordinates(0));
     istr = strcmp(model.getCoordinateSet.get(crd_j).getMotionType(),'Translational');
 
+    jointi.floating_base(end+1) = model_info.ExtFunIO.coordi.(crd_j);
     if istr
         if ax_j(1) == 1
             jointi.base_forward = model_info.ExtFunIO.coordi.(crd_j);
@@ -223,8 +225,9 @@ for i=1:length(joints_not_limbs)
 
     % Define 2 stations, symmetric w.r.t. global reference frame
     body_orig_in_gnd = body_frame.getPositionInGround(state).getAsMat;
-    station_l_in_gnd = Vec3.createFromMat(body_orig_in_gnd + [0; 0.5; -0.2]);
-    station_r_in_gnd = Vec3.createFromMat(body_orig_in_gnd + [0; 0.5; 0.2]);
+    
+    station_l_in_gnd = Vec3.createFromMat(body_orig_in_gnd + [0.2; 0.2; -0.2]);
+    station_r_in_gnd = Vec3.createFromMat(body_orig_in_gnd + [0.2; 0.2; 0.2]);
     station_l = model.getGround.findStationLocationInAnotherFrame(state,station_l_in_gnd,body_frame);
     station_r = model.getGround.findStationLocationInAnotherFrame(state,station_r_in_gnd,body_frame);
 
@@ -259,16 +262,20 @@ for i=1:length(joints_not_limbs)
         loc_m_p = loc_l_p;
         loc_m_p(3) = -loc_m_p(3);
 
-        t1 = [loc_r_p - loc_m_n; loc_r_n - loc_m_p];
-        t2 = [loc_r_p - loc_m_p; loc_r_n - loc_m_n];
+        t_inv = [loc_r_n(3), loc_r_p(3), loc_l_n(3), loc_l_p(3)]; % inverse: no effect on z
+%         t_inv = [loc_l_n-loc_r_n; loc_l_p-loc_r_p]; % inverse: left and right loc are the same for a motion
+        t_opp = [loc_r_p-loc_m_n; loc_r_n-loc_m_p]; % opposite: 
 
-        if max(abs(t1)) < eps
-            coords_opposite{end+1,1} = coords_i{j};
-        end
-        if max(abs(t2)) < eps
+
+        if max(abs(t_inv)) < 1e-6
             coords_inverse{end+1,1} = coords_i{j};
-        end
 
+        elseif max(abs(t_opp)) < 1e-6
+            coords_opposite{end+1,1} = coords_i{j};
+        else
+            warning(['Could not identify symmetry for coordinate "' coords_i{j} '".'])
+
+        end
     end
 
 end
