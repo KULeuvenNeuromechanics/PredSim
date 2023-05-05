@@ -153,6 +153,15 @@ if isempty(idx_speed)
 end
 guess.tf = all_tf(idx_speed);
 
+% extrapolate outside of 0.73:5 range
+if isempty(idx_speed)
+    guess.tf = -0.1750*S.subject.v_pelvis_x_trgt + 0.8277;
+end
+% avoid going too low
+if guess.tf < 0.15
+    guess.tf = 0.15;
+end
+
 %% Scaling
 guess.Qs = guess.Qs./repmat(scaling.Qs,N+1,1);
 guess.Qdots = guess.Qdots./repmat(scaling.Qdots,N+1,1);
