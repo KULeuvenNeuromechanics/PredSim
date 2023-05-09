@@ -37,8 +37,8 @@ qddots = MX.zeros(model_info.ExtFunIO.jointi.nq.all);
 
 F_out = F([qsqdots;qddots]);
 
-calcn_or_r = F_out(model_info.ExtFunIO.origin.calcn_r);
-calcn_or_l = F_out(model_info.ExtFunIO.origin.calcn_l);
+calcn_or_r = F_out(model_info.ExtFunIO.position.calcn_r);
+calcn_or_l = F_out(model_info.ExtFunIO.position.calcn_l);
 
 f_getCalcnOriginInWorldFrame = Function('f_getCalcnOriginInWorldFrame',{qs},...
     {calcn_or_r,calcn_or_l},{'q'},{'calcn_or_r','calcn_or_l'});

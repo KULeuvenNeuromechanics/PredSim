@@ -27,6 +27,7 @@ function [S] = updateExport3DPositionsVelocities(S,osim_path)
 import org.opensim.modeling.*;
 
 %% Fill in blank inputs in points definitions
+pointNames = [];
 
 for i=1:length(S.bounds.points)
     % body needs to be specified
@@ -74,7 +75,7 @@ for i=1:length(S.bounds.distanceConstraints)
     if ~any(strcmp(pointNames,S.bounds.distanceConstraints(i).point2))
         S.bounds.points(end+1).body = S.bounds.distanceConstraints(i).point2;
         S.bounds.points(end).point_in_body = [0,0,0];
-        S.bounds.points(end+1).name = S.bounds.distanceConstraints(i).point2;
+        S.bounds.points(end).name = S.bounds.distanceConstraints(i).point2;
     end
 
     % by default, take 3D distance
@@ -117,12 +118,12 @@ for j=fields
         continue
     end
 
-    validNames = zeros(length(segments,1));
+    validNames = [];
     
     for i=1:length(segments)
         try
             body = bodyset.get(segments(i).body);
-            validNames(i) = 1;
+            validNames(end+1) = i;
         catch
             warning(['   Cannot find body name "' segments(i).body '" in osim model. ',...
                 'Removing from S.OpenSimADOptions.' char(j) '.'])
@@ -138,7 +139,7 @@ end
 
 validConstraints = zeros(length(S.bounds.distanceConstraints),1);
 for i=1:length(S.OpenSimADOptions.export3DPositions)
-    pointNames(i) = S.OpenSimADOptions.export3DPositions(i).name;
+    pointNames{i} = S.OpenSimADOptions.export3DPositions(i).name;
 end
 for i=1:length(S.bounds.distanceConstraints)
 
@@ -190,20 +191,11 @@ for i=1:length(S.bounds.distanceConstraints)
         end
     end
 
-    S.bounds.distanceConstraints(i).directionVectorIdx = idx_dir;
+    S.bounds.distanceConstraints(i).directionVectorIdx = find(idx_dir==1);
 
 end
 
 
 
 
-
-
-
-
-
-
-
-
-
-end
+end % end of function

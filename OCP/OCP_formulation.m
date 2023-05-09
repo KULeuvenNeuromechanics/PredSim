@@ -235,6 +235,7 @@ ineq_constr2   = {}; % Initialize inequality constraint vector
 % ineq_constr4   = {}; % Initialize inequality constraint vector
 % ineq_constr5   = {}; % Initialize inequality constraint vector
 % ineq_constr6   = {}; % Initialize inequality constraint vector
+ineq_constr_distance = cell(length(S.bounds.distanceConstraints),1);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Time step
 h = tfk/N;
@@ -388,32 +389,35 @@ for j=1:d
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Constraints to prevent parts of the skeleton to penetrate each other.
     for i_dc=1:length(S.bounds.distanceConstraints)
-        pos1j = Tj(model_info.ExtFunIO.position.(S.bounds.distanceConstraints(i_dc).points1),1);
-        pos2j = Tj(model_info.ExtFunIO.position.(S.bounds.distanceConstraints(i_dc).points2),1);
+        pos1j = Tj(model_info.ExtFunIO.position.(S.bounds.distanceConstraints(i_dc).point1),1);
+        pos2j = Tj(model_info.ExtFunIO.position.(S.bounds.distanceConstraints(i_dc).point2),1);
 
-        if sum(S.bounds.distanceConstraints(i_dc).directionVector)==3 % 3D
-            Qconstr = f_casadi.J_nn_3(pos1j(S.bounds.distanceConstraints(i_dc).directionVector) ...
-                - pos2j(S.bounds.distanceConstraints(i_dc).directionVector));
-
-            % Euclidean distance, so use square distance and square bounds to avoid calculating sqrt of distance.
-            S.bounds.distanceConstraints(i_dc).lower_bound = S.bounds.distanceConstraints(i_dc).lower_bound^2;
-            S.bounds.distanceConstraints(i_dc).upper_bound = S.bounds.distanceConstraints(i_dc).upper_bound^2;
-
-        elseif sum(S.bounds.distanceConstraints(i_dc).directionVector)==2 % 2D
-            Qconstr = f_casadi.J_nn_2(pos1j(S.bounds.distanceConstraints(i_dc).directionVector) ...
-                - pos2j(S.bounds.distanceConstraints(i_dc).directionVector));
+        if length(S.bounds.distanceConstraints(i_dc).directionVectorIdx)==3 % 3D
+            Qconstr = f_casadi.J_nn_3(pos1j(S.bounds.distanceConstraints(i_dc).directionVectorIdx) ...
+                - pos2j(S.bounds.distanceConstraints(i_dc).directionVectorIdx));
 
             % Euclidean distance, so use square distance and square bounds to avoid calculating sqrt of distance.
             S.bounds.distanceConstraints(i_dc).lower_bound = S.bounds.distanceConstraints(i_dc).lower_bound^2;
             S.bounds.distanceConstraints(i_dc).upper_bound = S.bounds.distanceConstraints(i_dc).upper_bound^2;
 
-        elseif sum(S.bounds.distanceConstraints(i_dc).directionVector)==1 % 1D
-            Qconstr = pos1j(S.bounds.distanceConstraints(i_dc).directionVector) ...
-                - pos2j(S.bounds.distanceConstraints(i_dc).directionVector);
+            ineq_constr_distance{i_dc}{end+1} = Qconstr;
 
+        elseif length(S.bounds.distanceConstraints(i_dc).directionVectorIdx)==2 % 2D
+            Qconstr = f_casadi.J_nn_2(pos1j(S.bounds.distanceConstraints(i_dc).directionVectorIdx) ...
+                - pos2j(S.bounds.distanceConstraints(i_dc).directionVectorIdx));
+
+            % Euclidean distance, so use square distance and square bounds to avoid calculating sqrt of distance.
+            S.bounds.distanceConstraints(i_dc).lower_bound = S.bounds.distanceConstraints(i_dc).lower_bound^2;
+            S.bounds.distanceConstraints(i_dc).upper_bound = S.bounds.distanceConstraints(i_dc).upper_bound^2;
+
+            ineq_constr_distance{i_dc}{end+1} = Qconstr;
+
+        elseif length(S.bounds.distanceConstraints(i_dc).directionVectorIdx)==1 % 1D
+            Qconstr = pos1j(S.bounds.distanceConstraints(i_dc).directionVectorIdx) ...
+                - pos2j(S.bounds.distanceConstraints(i_dc).directionVectorIdx);
+
+            ineq_constr_distance{i_dc}{end+1} = Qconstr;
         end
-
-        ineq_constr_distance{i_dc}{end+1} = Qconstr;
 
     end
 %     % Origins calcaneus (transv plane) at minimum 9 cm from each other.
@@ -453,7 +457,6 @@ end % End loop over collocation points
 eq_constr = vertcat(eq_constr{:});
 ineq_constr1 = vertcat(ineq_constr1{:});
 ineq_constr2 = vertcat(ineq_constr2{:});
-
 for i_dc=1:length(ineq_constr_distance)
     ineq_constr_distance{i_dc} = vertcat(ineq_constr_distance{i_dc}{:});
 end
@@ -507,30 +510,30 @@ for i_dc=1:length(ineq_constr_distance)
     end
 
 end
-if ~isempty(coll_ineq_constr3)
-    opti.subject_to(S.bounds.calcn_dist.lower.^2 < coll_ineq_constr3(:) < 4);
-else
-    disp('   Minimal distance between calcanei not constrained. To do so, please use "calcn_r" and "calcn_l" as body names in the OpenSim model.')
-end
-if ~isempty(coll_ineq_constr4)
-    opti.subject_to(S.bounds.femur_hand_dist.lower.^2 < coll_ineq_constr4(:) < 4);
-end
-if isempty(model_info.ExtFunIO.origin.femur_r) || isempty(model_info.ExtFunIO.origin.hand_r)
-    disp('   Minimal distance between right arm and body not constrained. To do so, please use "femur_r" and "hand_r" as body names in the OpenSim model.')
-end
-if isempty(model_info.ExtFunIO.origin.femur_l) || isempty(model_info.ExtFunIO.origin.hand_l)
-    disp('   Minimal distance between left arm and body not constrained. To do so, please use "femur_l" and "hand_l" as body names in the OpenSim model.')
-end
-if ~isempty(coll_ineq_constr5)
-    opti.subject_to(S.bounds.tibia_dist.lower.^2 < coll_ineq_constr5(:) < 4);
-else
-    disp('   Minimal distance between tibias not constrained. To do so, please use "tibia_r" and "tibia_l" as body names in the OpenSim model.')
-end
-if ~isempty(coll_ineq_constr6)
-    opti.subject_to(S.bounds.toes_dist.lower.^2 < coll_ineq_constr6(:) < 4);
-else
-    disp('   Minimal distance between toes not constrained. To do so, please use "toes_r" and "toes_l" as body names in the OpenSim model.')
-end
+% if ~isempty(coll_ineq_constr3)
+%     opti.subject_to(S.bounds.calcn_dist.lower.^2 < coll_ineq_constr3(:) < 4);
+% else
+%     disp('   Minimal distance between calcanei not constrained. To do so, please use "calcn_r" and "calcn_l" as body names in the OpenSim model.')
+% end
+% if ~isempty(coll_ineq_constr4)
+%     opti.subject_to(S.bounds.femur_hand_dist.lower.^2 < coll_ineq_constr4(:) < 4);
+% end
+% if isempty(model_info.ExtFunIO.origin.femur_r) || isempty(model_info.ExtFunIO.origin.hand_r)
+%     disp('   Minimal distance between right arm and body not constrained. To do so, please use "femur_r" and "hand_r" as body names in the OpenSim model.')
+% end
+% if isempty(model_info.ExtFunIO.origin.femur_l) || isempty(model_info.ExtFunIO.origin.hand_l)
+%     disp('   Minimal distance between left arm and body not constrained. To do so, please use "femur_l" and "hand_l" as body names in the OpenSim model.')
+% end
+% if ~isempty(coll_ineq_constr5)
+%     opti.subject_to(S.bounds.tibia_dist.lower.^2 < coll_ineq_constr5(:) < 4);
+% else
+%     disp('   Minimal distance between tibias not constrained. To do so, please use "tibia_r" and "tibia_l" as body names in the OpenSim model.')
+% end
+% if ~isempty(coll_ineq_constr6)
+%     opti.subject_to(S.bounds.toes_dist.lower.^2 < coll_ineq_constr6(:) < 4);
+% else
+%     disp('   Minimal distance between toes not constrained. To do so, please use "toes_r" and "toes_l" as body names in the OpenSim model.')
+% end
 
 
 % Loop over mesh points
@@ -606,7 +609,7 @@ if strcmp(S.misc.gaitmotion_type,'HalfGaitCycle')
     end
     % upper bound on step length for right foot (left foot is already symmetric
     if ~isempty(S.bounds.SLL.upper) || ~isempty(S.bounds.SLR.upper)
-        if ~isempty(model_info.ExtFunIO.origin.calcn_r) &&  ~isempty(model_info.ExtFunIO.origin.calcn_l)
+        if ~isempty(model_info.ExtFunIO.position.calcn_r) &&  ~isempty(model_info.ExtFunIO.position.calcn_l)
             [step_length_r,~] = f_casadi.f_getStepLength(Qs_nsc(:,1),Qs_nsc(:,end));
             if ~isempty(S.bounds.SLL.upper)
                 opti.subject_to(step_length_r <= S.bounds.SLL.upper)
@@ -625,7 +628,7 @@ elseif strcmp(S.misc.gaitmotion_type,'FullGaitCycle')
     end
     % upper bound on step length for left and/or right foot
     if ~isempty(S.bounds.SLL.upper) || ~isempty(S.bounds.SLR.upper)
-        if ~isempty(model_info.ExtFunIO.origin.calcn_r) &&  ~isempty(model_info.ExtFunIO.origin.calcn_l)
+        if ~isempty(model_info.ExtFunIO.position.calcn_r) &&  ~isempty(model_info.ExtFunIO.position.calcn_l)
             [step_length_r,step_length_l] = f_casadi.f_getStepLength(Qs_nsc(:,1),Qs_nsc(:,end));
             if ~isempty(S.bounds.SLL.upper)
                 opti.subject_to(step_length_l <= S.bounds.SLL.upper)

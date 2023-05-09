@@ -76,11 +76,11 @@ S.bounds.distanceConstraints(4).direction = 'xz';
 S.bounds.distanceConstraints(4).lower_bound = 0.11;
 S.bounds.distanceConstraints(4).upper_bound = 2;
 
-S.bounds.distanceConstraints(4).point1 = 'toes_r';
-S.bounds.distanceConstraints(4).point2 = 'toes_l';
-S.bounds.distanceConstraints(4).direction = 'xz';
-S.bounds.distanceConstraints(4).lower_bound = 0.1;
-S.bounds.distanceConstraints(4).upper_bound = 2;
+S.bounds.distanceConstraints(5).point1 = 'toes_r';
+S.bounds.distanceConstraints(5).point2 = 'toes_l';
+S.bounds.distanceConstraints(5).direction = 'xz';
+S.bounds.distanceConstraints(5).lower_bound = 0.1;
+S.bounds.distanceConstraints(5).upper_bound = 2;
 
 % % S.metabolicE - metabolic energy
 % S.metabolicE.tanh_b = ;
@@ -106,7 +106,7 @@ S.post_process.make_plot = 1;
 % % S.solver
 % S.solver.linear_solver  = '';
 % S.solver.tol_ipopt      = ;
-% S.solver.max_iter       = 5;
+S.solver.max_iter       = 5;
 % S.solver.parallel_mode  = '';
 % S.solver.N_threads      = 6;
 % S.solver.N_meshes       = 100;

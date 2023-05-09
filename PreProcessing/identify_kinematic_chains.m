@@ -207,6 +207,8 @@ for j=1:6
 
 end
 
+jointi.torso = setdiff(1:numel(fields(model_info.ExtFunIO.coordi)),...
+    [jointi.floating_base,jointi.leg_r,jointi.leg_l,jointi.arm_r,jointi.arm_l]);
 
 %% Find symmetry
 joints_not_limbs = setdiff(joint_table.joint,limbs.all.joints);
