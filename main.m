@@ -35,10 +35,6 @@ S.subject.IG_selection_gaitCyclePercent = 100;
 % give the path to the osim model of your subject
 osim_path = fullfile(pathRepo,'Subjects',S.subject.name,[S.subject.name '.osim']);
 
-% path to folder with program to create dll files from opensim model (will
-% be downloaded automatically if it is not there)
-S.Cpp2Dll.PathCpp2Dll_Exe = 'C:\GBW_MyPrograms\Osim2Dll_exe';
-
 % Do you want to run the simulation as a batch job (parallel computing toolbox)
 S.solver.run_as_batch_job = 0;
 
@@ -48,15 +44,43 @@ S.solver.run_as_batch_job = 0;
 
 % % S.bounds
 % S.bounds.a.lower            = ;
-% S.bounds.calcn_dist.lower   = ;
-% S.bounds.toes_dist.lower    = ;
-% S.bounds.tibia_dist.lower   = ;
 % S.bounds.SLL.upper          = ;
 % S.bounds.SLR.upper          = ;
 % S.bounds.dist_trav.lower    = ;
 % S.bounds.t_final.upper      = ;
 % S.bounds.t_final.lower      = ;
 % S.bounds.coordinates        = {'pelvis_tilt',-30,30,'pelvis_list',-30,30};
+
+% to prevent body segments from clipping into eachother
+S.bounds.distanceConstraints(1).point1 = 'calcn_r';
+S.bounds.distanceConstraints(1).point2 = 'calcn_l';
+S.bounds.distanceConstraints(1).direction = 'xz';
+S.bounds.distanceConstraints(1).lower_bound = 0.09;
+S.bounds.distanceConstraints(1).upper_bound = 2;
+
+S.bounds.distanceConstraints(2).point1 = 'hand_r';
+S.bounds.distanceConstraints(2).point2 = 'femur_r';
+S.bounds.distanceConstraints(2).direction = 'xz';
+S.bounds.distanceConstraints(2).lower_bound = 0.18;
+S.bounds.distanceConstraints(2).upper_bound = 2;
+
+S.bounds.distanceConstraints(3).point1 = 'hand_l';
+S.bounds.distanceConstraints(3).point2 = 'femur_l';
+S.bounds.distanceConstraints(3).direction = 'xz';
+S.bounds.distanceConstraints(3).lower_bound = 0.18;
+S.bounds.distanceConstraints(3).upper_bound = 2;
+
+S.bounds.distanceConstraints(4).point1 = 'tibia_r';
+S.bounds.distanceConstraints(4).point2 = 'tibia_l';
+S.bounds.distanceConstraints(4).direction = 'xz';
+S.bounds.distanceConstraints(4).lower_bound = 0.11;
+S.bounds.distanceConstraints(4).upper_bound = 2;
+
+S.bounds.distanceConstraints(4).point1 = 'toes_r';
+S.bounds.distanceConstraints(4).point2 = 'toes_l';
+S.bounds.distanceConstraints(4).direction = 'xz';
+S.bounds.distanceConstraints(4).lower_bound = 0.1;
+S.bounds.distanceConstraints(4).upper_bound = 2;
 
 % % S.metabolicE - metabolic energy
 % S.metabolicE.tanh_b = ;
@@ -118,16 +142,12 @@ S.subject.set_damping_coefficient_selected_dofs = {{'mtp_angle_l','mtp_angle_r'}
 % S.weights.slack_ctrl = ;
 % S.weights.pass_torq_includes_damping = ;
 
-% %S.Cpp2Dll: required inputs to convert .osim to .dll
-% S.Cpp2Dll.compiler = 'Visual Studio 17 2022';
-% S.Cpp2Dll.export3DSegmentOrigins = ;
-S.Cpp2Dll.verbose_mode = 0; % 0 for no outputs from cmake
-% S.Cpp2Dll.jointsOrder = ;
-% S.Cpp2Dll.coordinatesOrder = ;
+% %S.OpenSimADOptions: required inputs to convert .osim to .dll
+% S.OpenSimADOptions.compiler = 'Visual Studio 17 2022';
+S.OpenSimADOptions.verbose_mode = 0; % 0 for no outputs from cmake
+
         
 %% Run predictive simulations
-% Check for updates in osim2dll
-S.Cpp2Dll.PathCpp2Dll_Exe = InstallOsim2Dll_Exe(S.Cpp2Dll.PathCpp2Dll_Exe);
 
 % warning wrt pelvis heigt for IG
 if S.subject.adapt_IG_pelvis_y == 0 && S.subject.IG_selection ~= "quasi-random"

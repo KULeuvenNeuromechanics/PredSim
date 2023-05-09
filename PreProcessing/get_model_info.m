@@ -50,12 +50,6 @@ if isfield(ExtFunIO,"nCoordinates")
     ExtFunIO = rmfield(ExtFunIO,"nCoordinates");
 end
 
-% convert indices int32 to doubles
-IOfields = fields(ExtFunIO);
-for i=1:length(IOfields)
-    ExtFunIO.(IOfields{i}) = convert2double(ExtFunIO.(IOfields{i}));
-end
-
 % create model_info with IO inside
 model_info.ExtFunIO = ExtFunIO;
 
@@ -105,3 +99,4 @@ model_info.ExtFunIO.symQs = symQs;
 
 
 
+end % end of function
