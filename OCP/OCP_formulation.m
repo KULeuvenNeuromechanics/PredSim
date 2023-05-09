@@ -231,10 +231,10 @@ J           = 0; % Initialize cost function
 eq_constr   = {}; % Initialize equality constraint vector
 ineq_constr1   = {}; % Initialize inequality constraint vector
 ineq_constr2   = {}; % Initialize inequality constraint vector
-ineq_constr3   = {}; % Initialize inequality constraint vector
-ineq_constr4   = {}; % Initialize inequality constraint vector
-ineq_constr5   = {}; % Initialize inequality constraint vector
-ineq_constr6   = {}; % Initialize inequality constraint vector
+% ineq_constr3   = {}; % Initialize inequality constraint vector
+% ineq_constr4   = {}; % Initialize inequality constraint vector
+% ineq_constr5   = {}; % Initialize inequality constraint vector
+% ineq_constr6   = {}; % Initialize inequality constraint vector
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Time step
 h = tfk/N;
@@ -387,47 +387,80 @@ for j=1:d
     eq_constr{end+1} = Hilldiffj;
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Constraints to prevent parts of the skeleton to penetrate each other.
-    % Origins calcaneus (transv plane) at minimum 9 cm from each other.
-    if ~isempty(model_info.ExtFunIO.origin.calcn_r) &&  ~isempty(model_info.ExtFunIO.origin.calcn_l)
-        Qconstr = f_casadi.J_nn_2(Tj(model_info.ExtFunIO.origin.calcn_r([1 3]),1) - ...
-            Tj(model_info.ExtFunIO.origin.calcn_l([1 3]),1));
-        ineq_constr3{end+1} = Qconstr;
+    for i_dc=1:length(S.bounds.distanceConstraints)
+        pos1j = Tj(model_info.ExtFunIO.position.(S.bounds.distanceConstraints(i_dc).points1),1);
+        pos2j = Tj(model_info.ExtFunIO.position.(S.bounds.distanceConstraints(i_dc).points2),1);
+
+        if sum(S.bounds.distanceConstraints(i_dc).directionVector)==3 % 3D
+            Qconstr = f_casadi.J_nn_3(pos1j(S.bounds.distanceConstraints(i_dc).directionVector) ...
+                - pos2j(S.bounds.distanceConstraints(i_dc).directionVector));
+
+            % Euclidean distance, so use square distance and square bounds to avoid calculating sqrt of distance.
+            S.bounds.distanceConstraints(i_dc).lower_bound = S.bounds.distanceConstraints(i_dc).lower_bound^2;
+            S.bounds.distanceConstraints(i_dc).upper_bound = S.bounds.distanceConstraints(i_dc).upper_bound^2;
+
+        elseif sum(S.bounds.distanceConstraints(i_dc).directionVector)==2 % 2D
+            Qconstr = f_casadi.J_nn_2(pos1j(S.bounds.distanceConstraints(i_dc).directionVector) ...
+                - pos2j(S.bounds.distanceConstraints(i_dc).directionVector));
+
+            % Euclidean distance, so use square distance and square bounds to avoid calculating sqrt of distance.
+            S.bounds.distanceConstraints(i_dc).lower_bound = S.bounds.distanceConstraints(i_dc).lower_bound^2;
+            S.bounds.distanceConstraints(i_dc).upper_bound = S.bounds.distanceConstraints(i_dc).upper_bound^2;
+
+        elseif sum(S.bounds.distanceConstraints(i_dc).directionVector)==1 % 1D
+            Qconstr = pos1j(S.bounds.distanceConstraints(i_dc).directionVector) ...
+                - pos2j(S.bounds.distanceConstraints(i_dc).directionVector);
+
+        end
+
+        ineq_constr_distance{i_dc}{end+1} = Qconstr;
+
     end
-    % Constraint to prevent the arms to penetrate the skeleton
-    % Origins femurs and ipsilateral hands (transv plane) at minimum
-    % 18 cm from each other.
-    if ~isempty(model_info.ExtFunIO.origin.femur_r) &&  ~isempty(model_info.ExtFunIO.origin.hand_r)
-        Qconstr = f_casadi.J_nn_2(Tj(model_info.ExtFunIO.origin.femur_r([1 3]),1) - ...
-            Tj(model_info.ExtFunIO.origin.hand_r([1 3]),1));
-        ineq_constr4{end+1} = Qconstr;
-    end
-    if ~isempty(model_info.ExtFunIO.origin.femur_l) &&  ~isempty(model_info.ExtFunIO.origin.hand_l)
-        Qconstr = f_casadi.J_nn_2(Tj(model_info.ExtFunIO.origin.femur_l([1 3]),1) - ...
-            Tj(model_info.ExtFunIO.origin.hand_l([1 3]),1));
-        ineq_constr4{end+1} = Qconstr;
-    end
-    % Origins tibia (transv plane) at minimum 11 cm from each other.
-    if ~isempty(model_info.ExtFunIO.origin.tibia_r) &&  ~isempty(model_info.ExtFunIO.origin.tibia_l)
-        Qconstr = f_casadi.J_nn_2(Tj(model_info.ExtFunIO.origin.tibia_r([1 3]),1) - ...
-            Tj(model_info.ExtFunIO.origin.tibia_l([1 3]),1));
-        ineq_constr5{end+1} = Qconstr;
-    end
-    % Origins toes (transv plane) at minimum 10 cm from each other.
-    if ~isempty(model_info.ExtFunIO.origin.toes_r) &&  ~isempty(model_info.ExtFunIO.origin.toes_l)
-        Qconstr = f_casadi.J_nn_2(Tj(model_info.ExtFunIO.origin.toes_r([1 3]),1) - ...
-            Tj(model_info.ExtFunIO.origin.toes_l([1 3]),1));
-        ineq_constr6{end+1} = Qconstr;
-    end
+%     % Origins calcaneus (transv plane) at minimum 9 cm from each other.
+%     if ~isempty(model_info.ExtFunIO.origin.calcn_r) &&  ~isempty(model_info.ExtFunIO.origin.calcn_l)
+%         Qconstr = f_casadi.J_nn_2(Tj(model_info.ExtFunIO.origin.calcn_r([1 3]),1) - ...
+%             Tj(model_info.ExtFunIO.origin.calcn_l([1 3]),1));
+%         ineq_constr3{end+1} = Qconstr;
+%     end
+%     % Constraint to prevent the arms to penetrate the skeleton
+%     % Origins femurs and ipsilateral hands (transv plane) at minimum
+%     % 18 cm from each other.
+%     if ~isempty(model_info.ExtFunIO.origin.femur_r) &&  ~isempty(model_info.ExtFunIO.origin.hand_r)
+%         Qconstr = f_casadi.J_nn_2(Tj(model_info.ExtFunIO.origin.femur_r([1 3]),1) - ...
+%             Tj(model_info.ExtFunIO.origin.hand_r([1 3]),1));
+%         ineq_constr4{end+1} = Qconstr;
+%     end
+%     if ~isempty(model_info.ExtFunIO.origin.femur_l) &&  ~isempty(model_info.ExtFunIO.origin.hand_l)
+%         Qconstr = f_casadi.J_nn_2(Tj(model_info.ExtFunIO.origin.femur_l([1 3]),1) - ...
+%             Tj(model_info.ExtFunIO.origin.hand_l([1 3]),1));
+%         ineq_constr4{end+1} = Qconstr;
+%     end
+%     % Origins tibia (transv plane) at minimum 11 cm from each other.
+%     if ~isempty(model_info.ExtFunIO.origin.tibia_r) &&  ~isempty(model_info.ExtFunIO.origin.tibia_l)
+%         Qconstr = f_casadi.J_nn_2(Tj(model_info.ExtFunIO.origin.tibia_r([1 3]),1) - ...
+%             Tj(model_info.ExtFunIO.origin.tibia_l([1 3]),1));
+%         ineq_constr5{end+1} = Qconstr;
+%     end
+%     % Origins toes (transv plane) at minimum 10 cm from each other.
+%     if ~isempty(model_info.ExtFunIO.origin.toes_r) &&  ~isempty(model_info.ExtFunIO.origin.toes_l)
+%         Qconstr = f_casadi.J_nn_2(Tj(model_info.ExtFunIO.origin.toes_r([1 3]),1) - ...
+%             Tj(model_info.ExtFunIO.origin.toes_l([1 3]),1));
+%         ineq_constr6{end+1} = Qconstr;
+%     end
 
 end % End loop over collocation points
 
 eq_constr = vertcat(eq_constr{:});
 ineq_constr1 = vertcat(ineq_constr1{:});
 ineq_constr2 = vertcat(ineq_constr2{:});
-ineq_constr3 = vertcat(ineq_constr3{:});
-ineq_constr4 = vertcat(ineq_constr4{:});
-ineq_constr5 = vertcat(ineq_constr5{:});
-ineq_constr6 = vertcat(ineq_constr6{:});
+
+for i_dc=1:length(ineq_constr_distance)
+    ineq_constr_distance{i_dc} = vertcat(ineq_constr_distance{i_dc}{:});
+end
+% ineq_constr3 = vertcat(ineq_constr3{:});
+% ineq_constr4 = vertcat(ineq_constr4{:});
+% ineq_constr5 = vertcat(ineq_constr5{:});
+% ineq_constr6 = vertcat(ineq_constr6{:});
 
 
 % Casadi function to get constraints and objective
@@ -436,8 +469,7 @@ if nq.torqAct > 0
     coll_input_vars_def = [coll_input_vars_def,{a_ak,a_aj,e_ak}];
 end
 f_coll = Function('f_coll',coll_input_vars_def,...
-    {eq_constr,ineq_constr1,ineq_constr2,ineq_constr3,...
-    ineq_constr4,ineq_constr5,ineq_constr6,J});
+    {eq_constr,ineq_constr1,ineq_constr2,ineq_constr_distance{:},J});
 
 % assign function to multiple cores
 f_coll_map = f_coll.map(N,S.solver.parallel_mode,S.solver.N_threads);
@@ -448,8 +480,8 @@ coll_input_vars_eval = {tf,a(:,1:end-1), a_col, FTtilde(:,1:end-1), FTtilde_col,
 if nq.torqAct > 0
     coll_input_vars_eval = [coll_input_vars_eval, {a_a(:,1:end-1), a_a_col, e_a}];
 end
-[coll_eq_constr,coll_ineq_constr1,coll_ineq_constr2,coll_ineq_constr3,...
-    coll_ineq_constr4,coll_ineq_constr5,coll_ineq_constr6,Jall] = f_coll_map(coll_input_vars_eval{:});
+coll_ineq_constr_distance = cell(1,length(ineq_constr_distance));
+[coll_eq_constr,coll_ineq_constr1,coll_ineq_constr2,coll_ineq_constr_distance{:},Jall] = f_coll_map(coll_input_vars_eval{:});
 
 % equality constraints
 opti.subject_to(coll_eq_constr == 0);
@@ -457,6 +489,24 @@ opti.subject_to(coll_eq_constr == 0);
 % inequality constraints (logical indexing not possible in MX arrays)
 opti.subject_to(coll_ineq_constr1(:) >= 0);
 opti.subject_to(coll_ineq_constr2(:) <= 1/tact);
+
+for i_dc=1:length(ineq_constr_distance)
+    coll_ineq_constr_distance_i_dc = coll_ineq_constr_distance{i_dc};
+
+    if ~isempty(S.bounds.distanceConstraints(i_dc).lower_bound) && ...
+             ~isempty(S.bounds.distanceConstraints(i_dc).upper_bound)
+        % lower and upper bound
+        opti.subject_to(S.bounds.distanceConstraints(i_dc).lower_bound < coll_ineq_constr_distance_i_dc(:)...
+            < S.bounds.distanceConstraints(i_dc).upper_bound);
+    elseif ~isempty(S.bounds.distanceConstraints(i_dc).lower_bound)
+        % only lower bound
+        opti.subject_to(S.bounds.distanceConstraints(i_dc).lower_bound < coll_ineq_constr_distance_i_dc(:))
+    elseif ~isempty(S.bounds.distanceConstraints(i_dc).upper_bound)
+        % only upper bound
+        opti.subject_to(coll_ineq_constr_distance_i_dc(:) < S.bounds.distanceConstraints(i_dc).upper_bound);
+    end
+
+end
 if ~isempty(coll_ineq_constr3)
     opti.subject_to(S.bounds.calcn_dist.lower.^2 < coll_ineq_constr3(:) < 4);
 else
