@@ -14,7 +14,7 @@
 
 clear
 clc
-addpath(genpath('C\:GBW_MyPrograms\casadi_3_5_5'))
+addpath(genpath('C:\GBW_MyPrograms\casadi_3_5_5'))
 import casadi.*
 
 % add repository to workspace
@@ -42,6 +42,9 @@ results_file = fullfile(S.subject.save_folder,[post_process.result_filename '.ma
 load(results_file,'R','model_info');
 S = R.S;
 
+% temporary(?) fix for when in the settings structure another file was used
+S.subject.IK_Bounds = motion_file;
+
 % coordinates
 coord_names = fieldnames(IO.coordi);
 n_coord = length(coord_names);
@@ -60,8 +63,35 @@ for i = 1:100
     evaluated(:,i) = full(res1); % the evaluated external function
 end
 
+%% plotting
 
+% GRF
+figure
+fn = fieldnames(model_info.ExtFunIO.GRFs);
+[~,x] = size(evaluated);
+for i = 1:2
+    subplot(1,3,1)
+    plot(1:x,evaluated(model_info.ExtFunIO.GRFs.(fn{i})(2),:));
+    hold on;
+end
+ylim([0 1600])
+title('Vertical GRF');
 
+% R contact spheres
+for i = 3:8
+    subplot(1,3,2)
+    plot(1:x,evaluated(model_info.ExtFunIO.GRFs.(fn{i})(2),:));
+    hold on;
+end
+ylim([0 1600])
+title('Vertical Forces contactsphere R');
 
-
+% L contact spheres
+for i = 9:14
+    subplot(1,3,3)
+    plot(1:x,evaluated(model_info.ExtFunIO.GRFs.(fn{i})(2),:));
+    hold on;
+end
+ylim([0 1600])
+title('Vertical Forces contactsphere L');
 
