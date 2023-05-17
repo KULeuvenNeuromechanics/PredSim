@@ -1,4 +1,0 @@
-[submodule "opensimAD"]
-	path = opensimAD
-	url = https://github.com/Lars-DHondt-KUL/opensimAD.git
-	branch = matlab_implementation
