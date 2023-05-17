@@ -6,11 +6,14 @@
 % original author: Bram Van Den Bosch
 % original date: 11/May/2023
 %
-% Last edited by: 
-% Last edit: 
+% Last edited by: Bram Van Den Bosch
+% Last edit: 17/May/2023
 
-% TO DO: not rely on previous solution but create model_info and necessary
+% TO DO: 
+% * not rely on previous solution but create model_info and necessary
 % S settings if they do not exist yet
+% * find pelvis_ty in Qs for which it find the lowest residuals on
+% pelvis_ty
 
 clear
 clc
@@ -53,6 +56,8 @@ n_coord = length(coord_names);
 [bounds,scaling] = getBounds(S,model_info);
 Qs_IK = getIK(motion_file,model_info);
 
+Qs_IK.allfilt(:,6) = Qs_IK.allfilt(:,6);
+
 for i = 1:100
     Qs = Qs_IK.allfilt(i,2:end)';
     QsQdots1 = zeros(n_coord*2,1);
@@ -63,7 +68,7 @@ for i = 1:100
     evaluated(:,i) = full(res1); % the evaluated external function
 end
 
-%% plotting
+%% plot GRF related
 
 % GRF
 figure
@@ -95,3 +100,7 @@ end
 ylim([0 1600])
 title('Vertical Forces contactsphere L');
 
+%% Plot plevis_ty residuals
+
+figure
+plot(1:100,evaluated(5,:))
