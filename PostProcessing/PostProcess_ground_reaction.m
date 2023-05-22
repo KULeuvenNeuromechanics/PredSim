@@ -45,8 +45,8 @@ for i = 1:N
 end
 
 % Ground Reaction Forces
-R.ground_reaction.GRF_r = Foutk_opt(:,model_info.ExtFunIO.GRFs.right_foot);
-R.ground_reaction.GRF_l = Foutk_opt(:,model_info.ExtFunIO.GRFs.left_foot);
+R.ground_reaction.GRF_r = Foutk_opt(:,model_info.ExtFunIO.GRFs.right_total);
+R.ground_reaction.GRF_l = Foutk_opt(:,model_info.ExtFunIO.GRFs.left_total);
 R.colheaders.GRF = {'fore_aft','vertical','lateral'};
 
 

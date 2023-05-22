@@ -3,8 +3,10 @@ function [S] = osim2dll(S, osim_path)
 % osim2dll
 %   This functions uses the OpenSim model to construct a CasADi external
 %   function (.dll file) that contains an implicit formulation of the
-%   skeletal- and contact dynamics. More information can be found here:
-%   https://github.com/Lars-DHondt-KUL/opensimAD 
+%   skeletal and contact dynamics. More information can be found here:
+%   https://github.com/KULeuvenNeuromechanics/opensimAD
+%
+% See also generateExternalFunction
 % 
 % INPUT:
 %   - S -
@@ -42,28 +44,63 @@ if extFunOk && ~isfile(external_function_IO)
     extFunOk = false;
 end
 
-% test 2: existing external function files contain all outputs needed
+% test 2: do external function files contain all inputs/outputs needed
 if extFunOk
     load(external_function_IO,'IO');
 
+    % has field with inputs
+    extFunOk = isfield(IO,'input');
+
+    % input forces on bodies
+    if extFunOk && ~isempty(S.OpenSimADOptions.input3DBodyForces)
+        extFunOk = isfield(IO.input,'Forces');
+        for i=1:length(S.OpenSimADOptions.input3DBodyForces)
+            if ~extFunOk
+                break
+            end
+            extFunOk = isfield(IO.input.Forces,S.OpenSimADOptions.input3DBodyForces(i).name);
+        end
+    end
+
+    % input moments on bodies
+    if extFunOk && ~isempty(S.OpenSimADOptions.input3DBodyMoments)
+        extFunOk = isfield(IO.input,'Moments');
+        for i=1:length(S.OpenSimADOptions.input3DBodyMoments)
+            if ~extFunOk
+                break
+            end
+            extFunOk = isfield(IO.input.Moments,S.OpenSimADOptions.input3DBodyMoments(i).name);
+        end
+    end
+
+    % output total GRF per foot
     if extFunOk && S.OpenSimADOptions.exportGRFs
-        extFunOk = isfield(IO,'GRFs') && isfield(IO.GRFs,'right_foot')...
-            && isfield(IO.GRFs,'left_foot');
+        extFunOk = isfield(IO,'GRFs') && isfield(IO.GRFs,'right_total')...
+            && isfield(IO.GRFs,'left_total');
     end
 
+    % output GRF per contact sphere
     if extFunOk && S.OpenSimADOptions.exportSeparateGRFs
-        extFunOk = isfield(IO,'GRFs') && isfield(IO.GRFs,'contact_sphere_0');
+        if isfield(IO,'GRFs')
+            fields_GRF = fieldnames(IO.GRFs);
+            extFunOk = any(~strcmp(fields_GRF,'right_total') & ~strcmp(fields_GRF,'left_total'));
+        else
+            extFunOk = false;
+        end
     end
 
+    % output GRM per foot
     if extFunOk && S.OpenSimADOptions.exportGRMs
         extFunOk = isfield(IO,'GRMs') && isfield(IO.GRMs,'right_total')...
             && isfield(IO.GRMs,'left_total');
     end
 
+    % output power per contact sphere
     if extFunOk && S.OpenSimADOptions.exportContactPowers
         extFunOk = isfield(IO,'P_contact_deformation_y');
     end
 
+    % output point positions
     if extFunOk && ~isempty(S.OpenSimADOptions.export3DPositions)
         extFunOk = isfield(IO,'position');
         for i=1:length(S.OpenSimADOptions.export3DPositions)
@@ -74,6 +111,7 @@ if extFunOk
         end
     end
 
+    % output point velocities
     if extFunOk && ~isempty(S.OpenSimADOptions.export3DVelocities)
         extFunOk = isfield(IO,'velocity');
         for i=1:length(S.OpenSimADOptions.export3DVelocities)
@@ -85,7 +123,7 @@ if extFunOk
     end
 
     if ~extFunOk
-        disp(['   External function does not contain the required outputs. Removing files:'])
+        disp(['   External function does not contain the required inputs and outputs. Removing files:'])
         disp(['      ' external_function_dll])
         delete(external_function_dll)
         disp(['      ' external_function_IO])
@@ -113,13 +151,21 @@ else
 
     outputFilename = ['F_' osim_file_name];
 
+    % Not a setting, to protect users from themselves.
+    % Adding expression graphs to calculate 2nd order derivatives for large
+    % model (e.g. gait2392) causes size of foo_jac.c file to explode (~10
+    % mil lines). Compiler becomes bottleneck.
+    secondOrderDerivatives = false;
+
     generateExternalFunction(osim_path, S.misc.subject_path,...
         S.OpenSimADOptions.jointsOrder, S.OpenSimADOptions.coordinatesOrder,...
+        S.OpenSimADOptions.input3DBodyForces, S.OpenSimADOptions.input3DBodyMoments,...
         S.OpenSimADOptions.export3DPositions, S.OpenSimADOptions.export3DVelocities,...
         S.OpenSimADOptions.exportGRFs, S.OpenSimADOptions.exportGRMs,...
         S.OpenSimADOptions.exportSeparateGRFs, S.OpenSimADOptions.exportContactPowers,...
         outputFilename, S.OpenSimADOptions.compiler,...
-        S.OpenSimADOptions.verbose_mode, S.OpenSimADOptions.verify_ID);
+        S.OpenSimADOptions.verbose_mode, S.OpenSimADOptions.verify_ID,...
+        secondOrderDerivatives);
 
     disp(['   ... external function created (' num2str(toc(t0),'%.2f') ' s)'])
 

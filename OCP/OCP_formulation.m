@@ -1105,7 +1105,7 @@ for i = 1:size(q_opt_unsc.rad,1)
     [res] = F([Xk_Qs_Qdots_opt(i,:)';Xk_Qdotdots_opt(i,:)']);
     Foutk_opt(i,:) = full(res);
 end
-GRFk_opt = Foutk_opt(:,[model_info.ExtFunIO.GRFs.right_foot model_info.ExtFunIO.GRFs.left_foot]);
+GRFk_opt = Foutk_opt(:,[model_info.ExtFunIO.GRFs.right_total model_info.ExtFunIO.GRFs.left_total]);
 
 
 [idx_GC,idx_GC_base_forward_offset,HS1,HS_threshold] = getStancePhaseSimulation(GRFk_opt,model_info.mass/3);

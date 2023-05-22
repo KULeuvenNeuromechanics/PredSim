@@ -432,6 +432,16 @@ if ~isfield(S.OpenSimADOptions,'compiler')
     S.OpenSimADOptions.compiler = findVisualStudioInstallation;
 end
 
+% Input forces acting on bodies
+if ~isfield(S.OpenSimADOptions,'input3DBodyForces')
+    S.OpenSimADOptions.input3DBodyForces = [];
+end
+
+% Input forces acting on bodies
+if ~isfield(S.OpenSimADOptions,'input3DBodyMoments')
+    S.OpenSimADOptions.input3DBodyMoments = [];
+end
+
 % Export positions of points w.r.t. ground frame
 if ~isfield(S.OpenSimADOptions,'export3DPositions')
     S.OpenSimADOptions.export3DPositions = [];
@@ -441,7 +451,6 @@ end
 if ~isfield(S.OpenSimADOptions,'export3DVelocities')
     S.OpenSimADOptions.export3DVelocities = [];
 end
-
 
 % If you want to choose the order of the joints and coordinate outputs
 if ~isfield(S.OpenSimADOptions,'jointsOrder')
