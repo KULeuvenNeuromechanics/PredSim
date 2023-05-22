@@ -195,6 +195,17 @@ for i=1:length(S.bounds.distanceConstraints)
 
 end
 
+%% Adjust bounds
+% If 2D or 3D distance, we use square distance and square bounds to avoid calculating sqrt of distance.
+for i=1:length(S.bounds.distanceConstraints)
+
+    if length(S.bounds.distanceConstraints(i).directionVectorIdx)>1
+        S.bounds.distanceConstraints(i).lower_bound = S.bounds.distanceConstraints(i).lower_bound^2;
+        S.bounds.distanceConstraints(i).upper_bound = S.bounds.distanceConstraints(i).upper_bound^2;
+    end
+
+end
+
 
 
 

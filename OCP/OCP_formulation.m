@@ -396,19 +396,11 @@ for j=1:d
             Qconstr = f_casadi.J_nn_3(pos1j(S.bounds.distanceConstraints(i_dc).directionVectorIdx) ...
                 - pos2j(S.bounds.distanceConstraints(i_dc).directionVectorIdx));
 
-            % Euclidean distance, so use square distance and square bounds to avoid calculating sqrt of distance.
-            S.bounds.distanceConstraints(i_dc).lower_bound = S.bounds.distanceConstraints(i_dc).lower_bound^2;
-            S.bounds.distanceConstraints(i_dc).upper_bound = S.bounds.distanceConstraints(i_dc).upper_bound^2;
-
             ineq_constr_distance{i_dc}{end+1} = Qconstr;
 
         elseif length(S.bounds.distanceConstraints(i_dc).directionVectorIdx)==2 % 2D
             Qconstr = f_casadi.J_nn_2(pos1j(S.bounds.distanceConstraints(i_dc).directionVectorIdx) ...
                 - pos2j(S.bounds.distanceConstraints(i_dc).directionVectorIdx));
-
-            % Euclidean distance, so use square distance and square bounds to avoid calculating sqrt of distance.
-            S.bounds.distanceConstraints(i_dc).lower_bound = S.bounds.distanceConstraints(i_dc).lower_bound^2;
-            S.bounds.distanceConstraints(i_dc).upper_bound = S.bounds.distanceConstraints(i_dc).upper_bound^2;
 
             ineq_constr_distance{i_dc}{end+1} = Qconstr;
 
