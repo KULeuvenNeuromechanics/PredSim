@@ -7,7 +7,7 @@
 !/FiguresForDocumentation/*.png
 *.jpg
 *.eps
-
+Debug/*
 opensimAD/*
 App
 Subjects/*
