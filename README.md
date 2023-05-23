@@ -82,6 +82,7 @@ This code can automatically convert an OpenSim model to the external function us
 - Your model can have any Hill-type muscle model, but it will be implemented as a [DeGroote-Fregly muscle](https://doi.org/10.1007/s10439-016-1591-9).
 - Torque/force actuators of the class *ActivationCoordinateActuator* are supported. You can add actuators by running [_AdaptOpenSimModel.m_](https://github.com/KULeuvenNeuromechanics/PredSim/blob/master/AdaptOpenSimModel/AdaptOpenSimModel.m). Actuators are not required.
 - Ligament forces are not yet supported, but we plan to add them in the future.
+- If running simulation with different models of the same subject, be sure that the filename of the model is different for each model.
 
 
 ### Required Settings
