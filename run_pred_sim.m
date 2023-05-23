@@ -26,7 +26,7 @@ function [varargout] = run_pred_sim(S,osim_path)
 addpath([S.misc.main_path '\VariousFunctions'])
 
 % Settings that are not specified get thier default value
-S = getDefaultSettings(S);
+S = getDefaultSettings(S,osim_path);
 
 % Add CasADi to the path
 if ~isempty(S.solver.CasADi_path)

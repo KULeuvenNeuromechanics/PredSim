@@ -77,7 +77,7 @@ This code can automatically convert an OpenSim model to the external function us
 - Model should be 3D.
 - Your model should not have locked joints. Locked joints would technically require having kinematic constraints, which is possible but makes the problem more complicated. Replace them with weld joints instead.
 - Constraints on coordinates will be ignored (eg, coupling constraints).
-- Using SimmSplines to describe coordinates (e.g. Yamaguchi knee model) is not supported as the implementation in OpenSim is not really compatible with algorithmic differentiation. Change them to Polynomials instead. GeometryPaths can contain SimmSplines.
+- Using SimmSplines to describe coordinates (e.g. Yamaguchi knee model) is not supported as the implementation in OpenSim is not really compatible with algorithmic differentiation. Change them to Polynomials instead. GeometryPaths can contain SimmSplines. [_AdaptOpenSimModel.m_](https://github.com/KULeuvenNeuromechanics/PredSim/blob/master/AdaptOpenSimModel/AdaptOpenSimModel.m) takes care of changing present SimmSplines to polynomials.
 - The kinematic chains starting at *acromial_l* and *acromial_r* will be interpreted as arms, legs start at *hip_l* and *hip_r*. A model is not required to have arms.
 - Your model needs to have contact elements that interact with the ground. Only *SmoothSphereHalfSpaceForce* contact forces are supported. You can use [_AdaptOpenSimModel.m_](./AdaptOpenSimModel/AdaptOpenSimModel.m) to add contact geometries and forces to your model.
 - Your model can have any Hill-type muscle model, but it will be implemented as a [DeGroote-Fregly muscle](https://doi.org/10.1007/s10439-016-1591-9).
@@ -194,10 +194,12 @@ This code can automatically convert an OpenSim model to the external function us
 	- folder path to store the intermediate subject specific results (e.g. external function with skeletal dynamics, CasADi function with musculoskeletal geometry polynomials). If the folder does not exist, it is created automatically.
 - **S.subject.mass**: 
 	- mass of the subject in kilograms. Default is *[]* kilograms [double]. Default is empty, it will be overwritten by the mass extracted from the OpenSim model.
-- **s.subject.IG_pelvis_y**: 
-	- height from the ground of the pelvis for the quasi-random initial guess, in meters. Default is *[]* m [double]. Default is empty, it will be overwritten by pelvis height extracted from the OpenSim model.
-	- s.subject.IG_pelvis_y is also used to establish bounds on vertical pelvis position.
-- **s.subject.adapt_IG_pelvis_y**: 
+- **S.subject.IG_pelvis_y**: 
+	- height from ground to pelvis, in meters. Default is *[]* m [double]. Default is empty, it will be overwritten by pelvis height extracted from the OpenSim model.
+    - always used for the quasi-random initial guess
+    - used for data-informed initial guess when `S.subject.adapt_IG_pelvis_y = 1;`
+	- S.subject.IG_pelvis_y is also used to establish bounds on vertical pelvis position.
+- **S.subject.adapt_IG_pelvis_y**: 
 	- boolean to adjust the trajectory of height of pelvis from the ground for data-informed initial guess. Default is *0*. 0 means the trajectory will not be changed. If 1, the trajectory will be changed such that the average value of the trajectory is equal to s.subject.IG_pelvis_y.
 - **S.subject.v_pelvis_x_trgt**: 
 	- average velocity you want the model to have, in meters per second. Default is *1.25* m/s [double]

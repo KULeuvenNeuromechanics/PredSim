@@ -95,6 +95,7 @@ S.solver.CasADi_path    = 'C:\GBW_MyPrograms\casadi_3_5_5';
 % % S.subject
 % S.subject.mass              = ;
 % S.subject.IG_pelvis_y       = ;
+% S.subject.adapt_IG_pelvis_y = ;
 S.subject.v_pelvis_x_trgt   = 1.33;
 % S.subject.IK_Bounds = ;
 % S.subject.muscle_strength   = ;
@@ -129,6 +130,11 @@ S.Cpp2Dll.verbose_mode = 0; % 0 for no outputs from cmake
 %% Run predictive simulations
 % Check for updates in osim2dll
 S.Cpp2Dll.PathCpp2Dll_Exe = InstallOsim2Dll_Exe(S.Cpp2Dll.PathCpp2Dll_Exe);
+
+% warning wrt pelvis heigt for IG
+if S.subject.adapt_IG_pelvis_y == 0 && S.subject.IG_selection ~= "quasi-random"
+    uiwait(msgbox(["Pelvis height of the IG will not be changed.";"Set S.subject.adapt_IG_pelvis_y to 1 if you want to use the model's pelvis height."],"Warning","warn"));
+end
 
 % Start simulation
 if S.solver.run_as_batch_job
