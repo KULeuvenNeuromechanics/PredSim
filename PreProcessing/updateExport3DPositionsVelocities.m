@@ -18,13 +18,21 @@ function [S] = updateExport3DPositionsVelocities(S,osim_path)
 %
 % 
 % Original author: Lars D'Hondt
-% Original date: 9/May/2023s
+% Original date: 9/May/2023
 %
 % Last edit by: 
 % Last edit date: 
 % --------------------------------------------------------------------------
 
 import org.opensim.modeling.*;
+
+%% Add calcn origins for step length constraints
+if ~isempty(S.bounds.SLL.upper)
+    S.bounds.points(end+1).name = 'calcn_l';
+end
+if ~isempty(S.bounds.SLR.upper)
+    S.bounds.points(end+1).name = 'calcn_r';
+end
 
 %% Fill in blank inputs in points definitions
 pointNames = [];
@@ -122,7 +130,9 @@ for j=fields
     
     for i=1:length(segments)
         try
-            body = bodyset.get(segments(i).body);
+            if ~strcmpi(segments(i).body,'ground')
+                body = bodyset.get(segments(i).body);
+            end
             validNames(end+1) = i;
         catch
             warning(['   Cannot find body name "' segments(i).body '" in osim model. ',...
@@ -131,7 +141,21 @@ for j=fields
     end
     
     segments = segments(validNames);
+
+    % Remove duplicate entries
+    isUnique = true(size(segments));
+
+    for ii = 1:length(segments)-1
+        for jj = ii+1:length(segments)
+            if isequal(segments(ii),segments(jj))
+                isUnique(jj) = false;
+                break;
+            end
+        end
+    end
     
+    segments(~isUnique) = [];
+
     S.OpenSimADOptions.(j) = segments;
 end
 
