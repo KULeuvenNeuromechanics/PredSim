@@ -130,13 +130,13 @@ for j=fields
     
     for i=1:length(segments)
         try
-            if ~strcmpi(segments(i).body,'ground')
-                body = bodyset.get(segments(i).body);
-            end
+            body = bodyset.get(segments(i).body);
             validNames(end+1) = i;
         catch
-            warning(['   Cannot find body name "' segments(i).body '" in osim model. ',...
-                'Removing from S.OpenSimADOptions.' char(j) '.'])
+            if ~strcmpi(segments(i).body,'ground') % no warning for removing ground
+                warning(['   Cannot find body name "' segments(i).body '" in osim model. ',...
+                    'Removing from S.OpenSimADOptions.' char(j) '.'])
+            end
         end
     end
     
@@ -161,19 +161,26 @@ end
 
 %% Remove constraints that rely on undefined points
 
-validConstraints = zeros(length(S.bounds.distanceConstraints),1);
+validConstraints = true(length(S.bounds.distanceConstraints),1);
+pointNames = [];
 for i=1:length(S.OpenSimADOptions.export3DPositions)
-    pointNames{i} = S.OpenSimADOptions.export3DPositions(i).name;
+    pointNames{end+1} = S.OpenSimADOptions.export3DPositions(i).name;
+end
+for i=1:length(S.bounds.points)
+    if strcmpi(S.bounds.points(i).body,'ground')
+        % add points in ground to constraints we want to keep
+        pointNames{end+1} = S.bounds.points(i).name;
+    end
 end
 for i=1:length(S.bounds.distanceConstraints)
 
     if ~any(strcmp(pointNames,S.bounds.distanceConstraints(i).point1))
-        validConstraints(i) = 0;
+        validConstraints(i) = false;
         warning(['   Cannot find valid point "' S.bounds.distanceConstraints(i).point1,...
             '". Removing entry from S.bounds.distanceConstraints.'])
 
     elseif ~any(strcmp(pointNames,S.bounds.distanceConstraints(i).point2))
-        validConstraints(i) = 0;
+        validConstraints(i) = false;
         warning(['   Cannot find valid point "' S.bounds.distanceConstraints(i).point2,...
             '". Removing entry from S.bounds.distanceConstraints.'])
     end
@@ -181,6 +188,7 @@ for i=1:length(S.bounds.distanceConstraints)
 
 end
 
+S.bounds.distanceConstraints = S.bounds.distanceConstraints(validConstraints);
 
 %% Add field with indices of direction of distance
 for i=1:length(S.bounds.distanceConstraints)

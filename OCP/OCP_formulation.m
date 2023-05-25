@@ -392,9 +392,25 @@ for j=1:d
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Constraints to prevent parts of the skeleton to penetrate each other.
     for i_dc=1:length(S.bounds.distanceConstraints)
-        pos1j = Tj(model_info.ExtFunIO.position.(S.bounds.distanceConstraints(i_dc).point1),1);
-        pos2j = Tj(model_info.ExtFunIO.position.(S.bounds.distanceConstraints(i_dc).point2),1);
+        % get position of points
+        point1_i = S.bounds.points(strcmp({S.bounds.points.name},S.bounds.distanceConstraints(i_dc).point1));
+        if strcmpi(point1_i.body,'ground')
+            % position of point in ground is known
+            pos1j = point1_i.point_in_body;
+        else
+            % position of point in body is provided by external function
+            pos1j = Tj(model_info.ExtFunIO.position.(S.bounds.distanceConstraints(i_dc).point1),1);
+        end
+        point2_i = S.bounds.points(strcmp({S.bounds.points.name},S.bounds.distanceConstraints(i_dc).point2));
+        if strcmpi(point2_i.body,'ground')
+            % position of point in ground is known
+            pos2j = point2_i.point_in_body;
+        else
+            % position of point in body is provided by external function
+            pos2j = Tj(model_info.ExtFunIO.position.(S.bounds.distanceConstraints(i_dc).point2),1);
+        end
 
+        % calculate distance
         if length(S.bounds.distanceConstraints(i_dc).directionVectorIdx)==3 % 3D
             Qconstr = f_casadi.J_nn_3(pos1j(S.bounds.distanceConstraints(i_dc).directionVectorIdx) ...
                 - pos2j(S.bounds.distanceConstraints(i_dc).directionVectorIdx));
