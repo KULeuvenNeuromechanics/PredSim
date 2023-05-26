@@ -9,8 +9,14 @@ function [local_hash, branch_name, remote_hash] = get_git_hash
 % INPUT: none
 % 
 % OUTPUT:
-%   -hash-
+%   -local_hash-
 %   * the full hash for the commit you are currently using
+%
+%   -branch_name-
+%   * the branch you are currently using
+%
+%   -remote_hash-
+%   * the full hash for the latest commit on the remote
 % 
 % Original author: Bram Van Den Bosch
 % Original date: 28/02/2023
