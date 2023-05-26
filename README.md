@@ -157,6 +157,12 @@ This code can automatically convert an OpenSim model to the external function us
 	- damping coefficient of muscles. Default is *0.01* [double]. Used as damping value that is multiplied by the normalized muscle velocity, in the muscle velocity dependent term in calculation of normalized contractile element force of the muscle.
 - **S.misc.constant_pennation_angle**: 
 	- specify if pennation angle of the muscles is supposed to stay constant (0 or 1). Default is *0* [double]
+- **S.misc.git.local_hash**: 
+	- hash of the local instance [char]. You cannot change this setting.
+- **S.misc.git.branch_name**: 
+	- current branch of the local instance [char]. You cannot change this setting.
+- **S.misc.git.remote_hash**: 
+	- hash of the last commit on the remote [char]. You cannot change this setting.
 
 #### S.post_process
 
