@@ -1,4 +1,4 @@
-function hash = get_git_hash
+function [local_hash, branch_name, remote_hash] = get_git_hash
 % --------------------------------------------------------------------------
 %get_git_hash 
 %   Gets the hash of the current github code used. The git hash is used to
@@ -16,16 +16,32 @@ function hash = get_git_hash
 % Original date: 28/02/2023
 %
 % Last edit by: Bram Van Den Bosch
-% Last edit date: 13/04/2023
+% Last edit date: 26/05/2023
 % --------------------------------------------------------------------------
 
+% get hash of the local instance
 command = ['git rev-parse HEAD'];
-[status,hash] = system(command);
+[status,local_hash] = system(command);
 
-if contains(hash,"'git' is not recognized as an internal or external command")
-    warning('Unable to get git hash. Git seems not to be installed on your machine or cannot be executed from the command line.')
+if contains(local_hash,"'git' is not recognized as an internal or external command")
+    warning('Unable to get git hash. Git seems not to be installed on your machine or cannot be executed from the command line.');
 elseif status ~= 0 
     warning('Unable to get git hash. It is advised to get PredSim through GitHub to have version control and to receive future updates.');
+end
+
+if status == 0
+    % get name of the current branch
+    command = ['git branch --show-current'];
+    [~,branch_name] = system(command);
+    
+    % get the hash of the latest commit on the remote
+    command = ['git rev-parse origin/' branch_name];
+    [~,remote_hash] = system(command);
+    
+    % display warning, pointing to the most recent commit on the remote
+    if ~strcmp(local_hash,remote_hash)
+        warning(['There is a more recent version of this branch on the remote: https://github.com/KULeuvenNeuromechanics/PredSim/tree/' remote_hash]);
+    end
 end
 
 end
