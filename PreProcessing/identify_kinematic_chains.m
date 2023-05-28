@@ -51,17 +51,22 @@ n_joints = jointSet.getSize();
 jointi = model_info.ExtFunIO.jointi;
 
 %% Create table
+joint_struct = [];
 for i=1:n_joints
     joint_i = jointSet.get(i-1);
-    joint_struct(i).joint = char(joint_i.getName());
-    joint_struct(i).parent = char(joint_i.getParentFrame().findBaseFrame().getName());
-    joint_struct(i).child = char(joint_i.getChildFrame().findBaseFrame().getName());
+    if ~isfield(jointi,char(joint_i.getName()))
+        % skip joints that are not in jointi
+        continue
+    end
+    joint_struct(end+1).joint = char(joint_i.getName());
+    joint_struct(end).parent = char(joint_i.getParentFrame().findBaseFrame().getName());
+    joint_struct(end).child = char(joint_i.getChildFrame().findBaseFrame().getName());
 
     crd = [];
     for j=1:joint_i.numCoordinates()
         crd{j} = char(joint_i.get_coordinates(j-1).getName());
     end
-    joint_struct(i).coordinates = crd;
+    joint_struct(end).coordinates = crd;
 
 end
 
@@ -169,7 +174,7 @@ jointi.base_forward = [];
 jointi.base_vertical = [];
 jointi.base_lateral = [];
 
-for i=1:n_joints
+for i=1:size(joint_table,1)
 
     idx = find(contains(joint_table.child,joint_table.parent(i)));
     if isempty(idx)
@@ -315,19 +320,19 @@ end
 function [joints_chain, coords_chain] = getKinematicChain(joint_table,starting_joint)
     joints_chain = [];
     coords_chain = [];
-    condition = 1;
+    has_next_joint = true;
     next_joint = {starting_joint};
     if ~contains(joint_table.joint,next_joint)
         return
     end
-    while condition
+    while has_next_joint
         joints_chain{end+1,1} = next_joint{1};
         coords_i = joint_table.coordinates(strcmp(joint_table.joint,next_joint));
         coords_chain = [coords_chain(:); coords_i{:}];
         next_frame = joint_table.child(strcmp(joint_table.joint,next_joint));
         next_joint = joint_table.joint(strcmp(joint_table.parent,next_frame));
         if isempty(next_joint)
-            condition = 0;
+            has_next_joint = false;
         end
     end
 end

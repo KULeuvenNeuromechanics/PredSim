@@ -36,10 +36,10 @@ clc
 [pathHere,~,~] = fileparts(mfilename('fullpath'));
 
 % .osim file to adapt
-path_osim_in = fullfile(pathHere,'Falisse_et_al_2022.osim');
+path_osim_in = fullfile(pathHere,'LaiArnold_modified.osim');
 
 % adapted .osim file
-path_osim_out = fullfile(pathHere,'Falisse_et_al_2022.osim');
+path_osim_out = fullfile(pathHere,'LaiArnold_modified.osim');
 
 % reference model for contact
 path_reference_model = fullfile(pathHere,'Falisse_et_al_2022.osim');
@@ -47,8 +47,8 @@ path_reference_model = fullfile(pathHere,'Falisse_et_al_2022.osim');
 % select what to do
 add_actuators_bool = 1;
 add_contact_bool = 0;
-use_reference_contacts_bool = 1;
-scale_contact_location_bool = 1;
+use_reference_contacts_bool = 0;
+scale_contact_location_bool = 0;
 
 %% Define contact spheres
 
