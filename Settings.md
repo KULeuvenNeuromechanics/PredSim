@@ -1,4 +1,4 @@
-### Required Settings
+# Required Settings
 
 - **S.subject.name**: 
 	- the name or code of the subject you are simulating.
@@ -15,9 +15,9 @@
 - **S.solver.run_as_batch_job**: 
 	- specify if the OCP is to be solved as a batch job (0: no, 1: yes). Batch processing requires the [Parallel Computing Toolbox](https://nl.mathworks.com/products/parallel-computing.html).
 
-### OptionalSettings
+# OptionalSettings
 
-#### S.bounds
+## S.bounds
 
 - **S.bounds.a.lower**: 
 	- minimal muscle activation. Provide a number between 0 and 1. Default is *0.05* [double]
@@ -40,7 +40,7 @@
 - **S.bounds.coordinates**: 
 	- Cell array where 1st entry is dof name(s) , 2nd entry is its lower bound, and 3rd entry is its upper bound. Insert 'nan' or [] to lower bounds to only overwrite upper bounds, or vice versa. For another bound, add 3 more entries. For example, {{'knee_angle_r','knee_angle_l'},-120,10,'pelvis_tilt',[],30} implements limit of -120° and 10° on knee angles, and default lower bound with 30° upper bound for pelvis_tilt. This setting changes the bounds of the optimization variables. When formulating the OCP, the variables are sclaed w.r.t. their bounds to improve conditioning. Changing these bounds can have a strong influence on convergence.
 
-#### S.metabolicE - metabolic energy
+## S.metabolicE - metabolic energy
 
 - **S.metabolicE.tanh_b**: 
 	- hyperbolic tangeant smoothing factor used in the metabolic cost calculation. Default is *10* [double]
@@ -50,7 +50,7 @@
 		- [*Umberger2010*](https://doi.org/10.1098/rsif.2010.0084)
 		- [*Uchida2016*](https://doi.org/10.1371/journal.pone.0150378)
 
-#### S.misc - miscellanious
+## S.misc - miscellanious
 
 - **S.misc.gaitmotion_type**: 
 	- type of gait simulation. Default is *HalfGaitCycle* [char]. Other option is *FullGaitCycle* [char]. Simulating a half gait cycle reduces computation time, but is limited to symmetric models. Post-processing will always reconstruct a full gait cycle starting at right heel strike.
@@ -73,7 +73,7 @@
 - **S.misc.constant_pennation_angle**: 
 	- specify if pennation angle of the muscles is supposed to stay constant (0 or 1). Default is *0* [double]
 
-#### S.post_process
+## S.post_process
 
 - **S.post_process.make_plot**: 
 	- boolean to plot post processing results (0 or 1). Default is *0*.
@@ -84,7 +84,7 @@
 - **S.post_process.savename**: 
 	- Type of savename to use if S.post_process.result_filename is empty. Defaults is *structured* [char]. This uses the name of the .mat file of results is used as <S.subject.name>_v\<n>. Where <S.subject.name> is defined in S.subject.name. n = 1 if <S.subject.name>_v1.mat does not exist. n is increased until n is found such that <S.subject.name>_v\<n>.mat does not exist. To change this structuring process, change its implementation in [run_pred_sim.m file](https://github.com/KULeuvenNeuromechanics/PredSim/blob/master/run_pred_sim.m). An alternative option is *datetime* [char], this uses <S.subject.name>\_\<yyyymmddTHHMMSS>. Where \<yyyymmddTHHMMSS> is the system date and time when creating the savename.
 
-#### S.solver
+## S.solver
 
 - **S.solver.linear_solver**: 
 	- solver algorithm used for the OCP. Default is *mumps* [char].
@@ -99,7 +99,7 @@
 - **S.solver.N_meshes**: 
 	- number of mesh intervals. Default is *50* [double] for S.misc.gaitmotion_type = HalfGaitCycle and *100* for FullGaitCycle
 
-#### S.subject
+## S.subject
 
 - **S.subject.save_folder**: 
 	- folder path to store the intermediate subject specific results (e.g. external function with skeletal dynamics, CasADi function with musculoskeletal geometry polynomials). If the folder does not exist, it is created automatically.
@@ -139,7 +139,7 @@
 - **S.subject.set_limit_torque_coefficients_selected_dofs**: 
 	- Default values of coordinate limit torques are defined in the function [get_default_coord_limit_torque_coefficients.m](https://github.com/KULeuvenNeuromechanics/PredSim/blob/master/PreProcessing/get_default_coord_limit_torque_coefficients.m). If values other than these are to be used, they can be specified here.
 	
-#### S.weights
+## S.weights
 
 - **S.weights.E**: 
 	- weight on metabolic energy rate. Default is *500* [double]
@@ -158,7 +158,7 @@
 - **S.weights.slack_ctrl**: 
 	- weight on slack controls. Default is *0.001* [double]
 
-#### S.Cpp2Dll - These settings are only used during creation of the external function, and not during the OCP.
+## S.Cpp2Dll - These settings are only used during creation of the external function, and not during the OCP.
 
 - **S.Cpp2Dll.compiler**: 
 	- select compiler for cpp projects. For example, 'Visual Studio 14 2015 Win64' or 'Visual Studio 15 2017 Win64'. Default is *Visual Studio 15 2017 Win64* [char]
