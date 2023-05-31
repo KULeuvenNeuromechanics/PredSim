@@ -50,25 +50,22 @@ muscleNames = muscle_info.muscle_names;
 NMuscle = muscle_info.NMuscle;
 
 %% read default muscle- and tendon parameters from opensim model file
-[FMo, lMo, lTs, alphao, vMmax] = getMTparameters(osim_path,muscleNames);
+[FMo, lMo, lTs, alphao, vMmax, fiber_damping, muscle_pass_stiff_scale,...
+    tendon_stiff] = getMTparameters(osim_path,muscleNames);
 
 %% parameters not from osim file
-% default tendon stiffness
-tendon_stiff = 35*ones(1,NMuscle);
-
-% specific tensions of muscle fibers
-specific_tension = getSpecificTensions(muscleNames)';
-
-% ratio of slow twitch muscle fibers
-slow_twitch_fiber_ratio = getSlowTwitchRatios(muscleNames)';
-
-% strength of active muscle force
+% strength: scale factor for active fiber force
 muscle_strength = ones(1,NMuscle);
 
-% stiffness of muscle fibers
+% stiffness shift: onset of passive fiber force-length w.r.t. norm fiber force
 muscle_pass_stiff_shift = ones(1,NMuscle);
-muscle_pass_stiff_scale = ones(1,NMuscle);
 
+
+% specific tensions of muscle fibers (for metabolics)
+specific_tension = getSpecificTensions(muscleNames)';
+
+% ratio of slow twitch muscle fibers (for metabolics)
+slow_twitch_fiber_ratio = getSlowTwitchRatios(muscleNames)';
 
 
 %% Organise in struct
@@ -88,6 +85,7 @@ end
 [parameters] = double_array_to_struct_array(parameters,'muscle_strength',muscle_strength);
 [parameters] = double_array_to_struct_array(parameters,'muscle_pass_stiff_shift',muscle_pass_stiff_shift);
 [parameters] = double_array_to_struct_array(parameters,'muscle_pass_stiff_scale',muscle_pass_stiff_scale);
+[parameters] = double_array_to_struct_array(parameters,'fiber_damping',fiber_damping);
 [parameters] = double_array_to_struct_array(parameters,'muscle_mass',[]);
 
 muscle_info.parameters = parameters;
@@ -110,8 +108,8 @@ end
 
 model_info.muscle_info = muscle_info;
 
-% Time constants of excitation-activation dynamics are fixed.
-model_info.muscle_info.tact = 0.015; % activation
-model_info.muscle_info.tdeact = 0.06; % deactivation
+% Time constants of excitation-activation dynamics
+model_info.muscle_info.tact = S.subject.muscle_activation_time_constant; % activation
+model_info.muscle_info.tdeact = S.subject.muscle_deactivation_time_constant; % deactivation
 
 end

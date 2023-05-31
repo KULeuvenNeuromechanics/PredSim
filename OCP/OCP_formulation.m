@@ -72,14 +72,6 @@ sumCross = sum(model_info.muscle_info.muscle_spanning_joint_info);
 tact = model_info.muscle_info.tact; % Activation time constant
 tdeact = model_info.muscle_info.tdeact; % Deactivation time constant
 
-%% Metabolic energy model parameters
-% We extract the specific tensions and slow twitch rations.
-tensions = struct_array_to_double_array(model_info.muscle_info.parameters,'specific_tension');
-pctsts = struct_array_to_double_array(model_info.muscle_info.parameters,'slow_twitch_fiber_ratio');
-
-%% Function to compute muscle mass
-MuscleMass = struct_array_to_double_array(model_info.muscle_info.parameters,'muscle_mass');
-
 %% Get bounds and initial guess
 
 [bounds,scaling] = getBounds(S,model_info);
@@ -269,7 +261,7 @@ for j=1:d
     [Hilldiffj,FTj,Fcej,Fpassj,Fisoj] = ...
         f_casadi.forceEquilibrium_FtildeState_all_tendon(akj(:,j+1),...
         FTtildekj_nsc(:,j+1),dFTtildej_nsc(:,j),...
-        lMTj,vMTj,tensions);
+        lMTj,vMTj);
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Get metabolic energy rate if in the cost function
     % Get muscle fiber lengths
@@ -283,7 +275,7 @@ for j=1:d
         % Get metabolic energy rate Bhargava et al. (2004)
         [e_totj,~,~,~,~,~] = f_casadi.getMetabolicEnergySmooth2004all(...
             akj(:,j+1),akj(:,j+1),lMtildej,vMj,Fcej,Fpassj,...
-            MuscleMass',pctsts,Fisoj,model_info.mass,S.metabolicE.tanh_b);
+            Fisoj,S.metabolicE.tanh_b);
     else
         error('No energy model selected');
     end
@@ -378,8 +370,8 @@ for j=1:d
 
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Activation dynamics (implicit formulation)
-    act1 = vAk_nsc + akj(:,j+1)./(ones(size(akj(:,j+1),1),1)*tdeact);
-    act2 = vAk_nsc + akj(:,j+1)./(ones(size(akj(:,j+1),1),1)*tact);
+    act1 = vAk_nsc + akj(:,j+1)./(ones(size(akj(:,j+1),1),1)*model_info.muscle_info.tdeact);
+    act2 = vAk_nsc + akj(:,j+1)./(ones(size(akj(:,j+1),1),1)*model_info.muscle_info.tact);
     ineq_constr1{end+1} = act1;
     ineq_constr2{end+1} = act2;
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -456,7 +448,7 @@ opti.subject_to(coll_eq_constr == 0);
 
 % inequality constraints (logical indexing not possible in MX arrays)
 opti.subject_to(coll_ineq_constr1(:) >= 0);
-opti.subject_to(coll_ineq_constr2(:) <= 1/tact);
+opti.subject_to(coll_ineq_constr2(:) <= 1/model_info.muscle_info.tact);
 if ~isempty(coll_ineq_constr3)
     opti.subject_to(S.bounds.calcn_dist.lower.^2 < coll_ineq_constr3(:) < 4);
 else
@@ -853,7 +845,7 @@ for k=1:N
             f_casadi.forceEquilibrium_FtildeState_all_tendon(...
             a_col_opt_unsc(count,:)',FTtilde_col_opt_unsc(count,:)',...
             dFTtilde_col_opt_unsc(count,:)',full(lMTkj_opt_all),...
-            full(vMTkj_opt_all),tensions);
+            full(vMTkj_opt_all));
         % muscle-tendon kinematics
         [~,lMtilde_opt_all] = f_casadi.FiberLength_TendonForce_tendon(...
             FTtilde_col_opt_unsc(count,:)',full(lMTkj_opt_all));
@@ -868,7 +860,7 @@ for k=1:N
             a_col_opt_unsc(count,:)',a_col_opt_unsc(count,:)',...
             full(lMtilde_opt_all),...
             full(vM_opt_all),full(Fce_opt_all),full(Fpass_opt_all),...
-            MuscleMass',pctsts,full(Fiso_opt_all),model_info.mass,S.metabolicE.tanh_b);
+            full(Fiso_opt_all),S.metabolicE.tanh_b);
         else
             error('No energy model selected');
         end

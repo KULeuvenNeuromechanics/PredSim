@@ -379,6 +379,14 @@ if ~isfield(S.subject,'set_limit_torque_coefficients_selected_dofs')
     S.subject.set_limit_torque_coefficients_selected_dofs = []; 
 end
 
+% muscle activation dynamics time constants
+if ~isfield(S.subject,'muscle_activation_time_constant')
+    S.subject.muscle_activation_time_constant = 0.015;
+end
+if ~isfield(S.subject,'muscle_deactivation_time_constant')
+    S.subject.muscle_deactivation_time_constant = 0.06;
+end
+
 %% weights
 
 % weight on metabolic energy rate
