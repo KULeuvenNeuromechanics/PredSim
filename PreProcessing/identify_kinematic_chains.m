@@ -196,17 +196,20 @@ for j=1:6
 
     tr1 = sptr.getTransformAxis(j-1);
     ax_j = tr1.get_axis().getAsMat;
-    crd_j = char(tr1.get_coordinates(0));
-    istr = strcmp(model.getCoordinateSet.get(crd_j).getMotionType(),'Translational');
+    CoordNames = tr1.getCoordinateNames;
+    if ~strcmp(char(CoordNames),'()')
+        crd_j = char(tr1.get_coordinates(0));
+        istr = strcmp(model.getCoordinateSet.get(crd_j).getMotionType(),'Translational');
 
-    jointi.floating_base(end+1) = model_info.ExtFunIO.coordi.(crd_j);
-    if istr
-        if ax_j(1) == 1
-            jointi.base_forward = model_info.ExtFunIO.coordi.(crd_j);
-        elseif ax_j(2) == 1
-            jointi.base_vertical = model_info.ExtFunIO.coordi.(crd_j);
-        elseif ax_j(3) == 1
-            jointi.base_lateral = model_info.ExtFunIO.coordi.(crd_j);
+        jointi.floating_base(end+1) = model_info.ExtFunIO.coordi.(crd_j);
+        if istr
+            if ax_j(1) == 1
+                jointi.base_forward = model_info.ExtFunIO.coordi.(crd_j);
+            elseif ax_j(2) == 1
+                jointi.base_vertical = model_info.ExtFunIO.coordi.(crd_j);
+            elseif ax_j(3) == 1
+                jointi.base_lateral = model_info.ExtFunIO.coordi.(crd_j);
+            end
         end
     end
 
