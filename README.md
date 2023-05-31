@@ -85,4 +85,4 @@ This code can automatically convert an OpenSim model to the external function us
 - **S.solver.run_as_batch_job**: 
 	- specify if the OCP is to be solved as a batch job (0: no, 1: yes). Batch processing requires the [Parallel Computing Toolbox](https://nl.mathworks.com/products/parallel-computing.html).
 
-You can find the description of additional settings in [Settings.md](https://github.com/KULeuvenNeuromechanics/PredSim/blob/master/Settings.md)
+You can find the description of additional settings in [Settings.md](Settings.md)
