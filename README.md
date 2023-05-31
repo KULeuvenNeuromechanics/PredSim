@@ -4,6 +4,8 @@
 Predictive Simulations of Human Movement
 ============
 
+![Predictive simulation of human walking](/FiguresForDocumentation/Falisse_et_al_2022_v1.gif)
+
 This repository contains code and data to generate three-dimensional muscle-driven predictive simulations of human gait. The simulation framework is [developed by Falisse *et al.*](#citations). The implementation in this repo is aimed at letting you run simulations with your customized musculoskeletal models[*](#before-running-a-simulations).
 If you want to reproduce specific published results, you are adviced to visit the [repo corresponding to the paper](#citations).
 
