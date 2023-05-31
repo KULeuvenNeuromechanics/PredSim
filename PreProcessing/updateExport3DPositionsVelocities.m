@@ -106,6 +106,22 @@ for i=1:length(S.bounds.distanceConstraints)
 
 end
 
+%% Remove duplicate points
+segments = S.bounds.points;
+isUnique = true(size(segments));
+
+for ii = 1:length(segments)-1
+    for jj = ii+1:length(segments)
+        if isequal(segments(ii),segments(jj))
+            isUnique(jj) = false;
+            break;
+        end
+    end
+end
+
+segments(~isUnique) = [];
+
+S.bounds.points = segments;
 
 %% Add points for constraints to export3DPositions
 

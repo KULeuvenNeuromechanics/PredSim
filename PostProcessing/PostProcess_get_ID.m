@@ -42,7 +42,7 @@ for i = 1:N
     % Assign Qdots
     F_ext_input(model_info.ExtFunIO.input.Qdots.all,1) = R.kinematics.Qdots_rad(i,:);
     % Assign Qdotdots (A)
-    F_ext_input(model_info.ExtFunIO.input.Qdotdots.all,1) = R.kinematics.Qdotdots_rad(i,:);
+    F_ext_input(model_info.ExtFunIO.input.Qdotdots.all,1) = R.kinematics.Qddots_rad(i,:);
 
     % Evaluate external function
     res = F(F_ext_input);
