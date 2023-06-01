@@ -162,7 +162,7 @@ This code can automatically convert an OpenSim model to the external function us
 - **S.misc.git.branch_name**: 
 	- current branch of the local instance [char]. You cannot change this setting.
 - **S.misc.git.remote_hash**: 
-	- hash of the last commit on the remote [char]. This is the identifier of the latest version on the remote. You cannot change this setting.
+	- hash of the last commit on the remote [char]. This is the identifier of the latest version on the remote, i.e. GitHub. You cannot change this setting.
 
 #### S.post_process
 
