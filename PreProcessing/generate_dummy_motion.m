@@ -3,7 +3,7 @@ function [Qs] = generate_dummy_motion(S,model_info,n_data_points)
 % generate_dummy_motion
 %   Generate a set of coordinate values for an OpenSim model. Coordinate
 %   values are taken in the range of motion. Upper and lower bounds are
-%   determined from (in ascending order of priority)
+%   determined from (in descending order of priority)
 %       1) user input of individual bounds (S.misc.msk_geom_bounds)
 %       2) user input of table with default bounds (S.misc.default_msk_geom_bounds)
 %       3) coordinate value range from .osim file
