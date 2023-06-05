@@ -153,7 +153,7 @@ This code can automatically convert an OpenSim model to the external function us
 - **S.misc.poly_order.upper**: 
 	- maximal order of polynomial function. Default is *9* [double]
 - **S.misc.default_msk_geom_bound**:
-	- file with default values for upper and lower bounds for approximating musculoskeletal geometry. Rotations are assumed in degrees, translations in meters. Default is *'default_msk_geom_bounds'* [char]
+	- file with default values for upper and lower bounds for approximating musculoskeletal geometry. Rotations are assumed in degrees, translations in meters. Default is *'default_msk_geom_bounds.csv'* [char]
 - **S.misc.msk_geom_bounds**: 
 	- Cell array where 1st entry is dof name(s) , 2nd entry is its lower bounds, and 3rd entry is its upper bounds. Insert nan to lower bounds to only overwrite upper bounds. For another bound, add 3 more entries. For example, {{'knee_angle_r','knee_angle_l'},-120,10,'lumbar_extension',nan,30} implements limit of -120° and 10° on knee angles, and default lower bound with 30° upper bound for lumbar_extension.
 	> Order of priority for bounds:
