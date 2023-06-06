@@ -69,7 +69,8 @@ S.solver.run_as_batch_job = 0;
 % S.misc.msk_geom_eq         = '';
 % S.misc.poly_order.lower    = ;
 % S.misc.poly_order.upper    = ;
-% S.misc.msk_geom_bounds      = {{'knee_angle_r','knee_angle_l'},-120,10,'pelvis_tilt',-30,30};
+% S.misc.default_msk_geom_bound = ;
+% S.misc.msk_geom_bounds      = {{'knee_angle_r','knee_angle_l'},-120,10,'lumbar_extension',nan,30};
 % S.misc.gaitmotion_type = 'FullGaitCycle';
 
 % % S.post_process
@@ -77,7 +78,7 @@ S.post_process.make_plot = 1;
 % S.post_process.savename  = 'datetime';
 % S.post_process.load_prev_opti_vars = 1;
 % S.post_process.rerun   = 1;
-% S.post_process.result_filename = 'Falisse_et_al_2022_v9';
+% S.post_process.result_filename = '';
 
 % % S.solver
 % S.solver.linear_solver  = '';
