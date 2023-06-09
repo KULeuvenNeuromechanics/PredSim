@@ -379,6 +379,21 @@ if ~isfield(S.subject,'set_stiffness_coefficient_selected_dofs')
     S.subject.set_stiffness_coefficient_selected_dofs = []; 
 end
 
+% neutral position for stiffness coefficient for specific degrees of freedon
+if ~isfield(S.subject,'set_stiffness_offset_selected_dofs')
+    S.subject.set_stiffness_offset_selected_dofs = []; 
+end
+
+% default limit torque coefficient
+if ~isfield(S.subject,'default_coord_lim_torq_coeff')
+    S.subject.default_coord_lim_torq_coeff = 'default_coord_lim_torq_coeff.csv';
+end
+
+% scale factor for limit torque amplitude
+if ~isfield(S.subject,'scale_default_coord_lim_torq')
+    S.subject.scale_default_coord_lim_torq = [];
+end
+
 % limit torque coefficient for specific degrees of freedon
 if ~isfield(S.subject,'set_limit_torque_coefficients_selected_dofs')
     S.subject.set_limit_torque_coefficients_selected_dofs = []; 
