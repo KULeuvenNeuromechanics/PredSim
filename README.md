@@ -43,7 +43,7 @@ Lastly, seperate pieces of code were put together to streamline performing predi
 
 To run this code you need to have the following softwares on your machine:
 
-- MATLAB. [Statistics and Machine Learning Toolbox](https://nl.mathworks.com/products/statistics.html) is required. [Parallel Computing Toolbox](https://nl.mathworks.com/products/parallel-computing.html) is optional. The code has been tested on MATLAB 2021b. MATLAB 2022b is known to not work.
+- MATLAB. [Statistics and Machine Learning Toolbox](https://nl.mathworks.com/products/statistics.html) is required. [Parallel Computing Toolbox](https://nl.mathworks.com/products/parallel-computing.html) is optional. The code has mainly been developed and tested on MATLAB 2021b, but is expected to run on any recent version.
 - [OpenSim](https://simtk.org/projects/opensim) 4.3 or later. Older versions do not work.
 - [CasADi](https://web.casadi.org/get/). The code has been tested on CasADi 3.5.5.
 - [Microsoft Visual Studio](https://visualstudio.microsoft.com/). In Visual Studio Installer, [select to include Desktop development with C++](/FiguresForDocumentation/fig_MSVS.png). The code has been tested on MSVS Community 2015, 2017, 2019, and 2022.
@@ -53,14 +53,18 @@ To run this code you need to have the following softwares on your machine:
 
 ## How to setup the code
 
-1. Clone this repository to your machine. Make sure there are no spaces in the path. If you have a computer with restricted permissions, make sure you have permission to run executables from the selected folder (For computers with KU Leuven BioMed Group policies, this is C:\GBW_MyPrograms\ ).
-2. Get the OpenSim API running on MATLAB. See [Setting up your Matlab Scripting Environment](https://simtk-confluence.stanford.edu:8443/display/OpenSim/Scripting+with+Matlab#ScriptingwithMatlab-MatlabSetupSettingupyourMatlabScriptingEnvironment).
-3. In main.m, change [S.solver.CasaADi_path](https://github.com/KULeuvenNeuromechanics/PredSim/blob/9fbbd43cf83617620e428d2c91f222c909a1349c/main.m#L84) to reflect the location where you installed CasADi. 
-4. In main.m, change [S.Cpp2Dll.PathCpp2Dll_Exe](https://github.com/KULeuvenNeuromechanics/PredSim/blob/9fbbd43cf83617620e428d2c91f222c909a1349c/main.m#L115) to specify where you want to have the executable installed that will convert the OpenSim models to the external function. If you have a computer with KU Leuven GBW restrictions, be sure to have this path go into your 'C:\GBW_MyPrograms' folder.
-5. In main.m, change [S.Cpp2Dll.compiler](https://github.com/KULeuvenNeuromechanics/PredSim/blob/9fbbd43cf83617620e428d2c91f222c909a1349c/main.m#L116) to your version of Visual Studio. Not setting a version will assume the 2017 version.
-6. Make sure the opensimAD submodule is installed. If \opensimAD\ is empty, open git command prompt and run `git submodule update --init` in this repository.
 
-After perfoming these steps, run the main script. If you don't receive any errors, your results should be the same as https://github.com/KULeuvenNeuromechanics/PredSim/tree/master/Tests/Falisse_et_al_2022_Results. If that is the case, you have succesfully intalled and set up the code. You are ready to do your own simulations.
+1. Fork this repository to your github account. If you want the fork to be private, follow [these steps](PrivateForkPredSim.md) instead.
+2. Clone the fork to your machine. Make sure there are no spaces in the path. If you have a computer with restricted permissions, make sure you have permission to run executables from the selected folder (For computers with KU Leuven BioMed Group policies, this is C:\GBW_MyPrograms\ ).
+*Do not download the code as zip.*
+3. Get the OpenSim API running on MATLAB. See [Setting up your Matlab Scripting Environment](https://simtk-confluence.stanford.edu:8443/display/OpenSim/Scripting+with+Matlab#ScriptingwithMatlab-MatlabSetupSettingupyourMatlabScriptingEnvironment).
+4. In main.m, change [S.solver.CasADi_path](https://github.com/KULeuvenNeuromechanics/PredSim/blob/9fbbd43cf83617620e428d2c91f222c909a1349c/main.m#L84) to reflect the location where you installed CasADi. 
+5. In main.m, change [S.Cpp2Dll.PathCpp2Dll_Exe](https://github.com/KULeuvenNeuromechanics/PredSim/blob/9fbbd43cf83617620e428d2c91f222c909a1349c/main.m#L115) to specify where you want to have the executable installed that will convert the OpenSim models to the external function. If you have a computer with KU Leuven GBW restrictions, be sure to have this path go into your 'C:\GBW_MyPrograms' folder.
+> note: When running the code for the 1st time, it will download some dependencies. Mind your internet connection.
+6. Make sure the opensimAD submodule is installed. If PredSim\opensimAD\ is empty, open git command prompt, go to ...\PredSim\ , and run `git submodule update --init`.
+
+
+After perfoming these steps, run the main script. (Expected run time is 40 minutes, depending on hardware.) If you don't receive any errors, your results should be the same as https://github.com/KULeuvenNeuromechanics/PredSim/tree/master/Tests/Falisse_et_al_2022_Results. If that is the case, you have succesfully intalled and set up the code. You are ready to do your own simulations.
 
 ## How to use the code
 
@@ -74,12 +78,13 @@ This code can automatically convert an OpenSim model to the external function us
 - Model should be 3D.
 - Your model should not have locked joints. Locked joints would technically require having kinematic constraints, which is possible but makes the problem more complicated. Replace them with weld joints instead.
 - Constraints on coordinates will be ignored (eg, coupling constraints).
-- Using SimmSplines to describe coordinates (e.g. Yamaguchi knee model) is not supported as the implementation in OpenSim is not really compatible with algorithmic differentiation. Change them to Polynomials instead. GeometryPaths can contain SimmSplines.
+- Using SimmSplines to describe coordinates (e.g. Yamaguchi knee model) is not supported as the implementation in OpenSim is not really compatible with algorithmic differentiation. Change them to Polynomials instead. GeometryPaths can contain SimmSplines. [_AdaptOpenSimModel.m_](https://github.com/KULeuvenNeuromechanics/PredSim/blob/master/AdaptOpenSimModel/AdaptOpenSimModel.m) takes care of changing present SimmSplines to polynomials.
 - The kinematic chains starting at *acromial_l* and *acromial_r* will be interpreted as arms, legs start at *hip_l* and *hip_r*. A model is not required to have arms.
 - Your model needs to have contact elements that interact with the ground. Only *SmoothSphereHalfSpaceForce* contact forces are supported. You can use [_AdaptOpenSimModel.m_](https://github.com/KULeuvenNeuromechanics/PredSim/blob/master/AdaptOpenSimModel/AdaptOpenSimModel.m) to add contact geometries and forces to your model.
 - Your model can have any Hill-type muscle model, but it will be implemented as a [DeGroote-Fregly muscle](https://doi.org/10.1007/s10439-016-1591-9).
 - Torque/force actuators of the class *ActivationCoordinateActuator* are supported. You can add actuators by running [_AdaptOpenSimModel.m_](https://github.com/KULeuvenNeuromechanics/PredSim/blob/master/AdaptOpenSimModel/AdaptOpenSimModel.m). Actuators are not required.
 - Ligament forces are not yet supported, but we plan to add them in the future.
+- If running simulation with different models of the same subject, be sure that the filename of the model is different for each model.
 
 
 ### Required Settings
@@ -149,8 +154,16 @@ This code can automatically convert an OpenSim model to the external function us
 	- minimal order of polynomial function. Default is *3* [double]
 - **S.misc.poly_order.upper**: 
 	- maximal order of polynomial function. Default is *9* [double]
+- **S.misc.default_msk_geom_bound**:
+	- file with default values for upper and lower bounds for approximating musculoskeletal geometry. Rotations are assumed in degrees, translations in meters. Default is *'default_msk_geom_bounds.csv'* [char].
+	The provided file should be compatible with [`readtable`](https://mathworks.com/help/matlab/ref/readtable.html). The table should contain a column with coordinate names (header: name), a column with lower bounds, in degrees and meters (header: lower), and a column with upper bounds, in degrees and meters (header: upper). To set only the upper or lower bound of a coordinate, set the other one to `nan`;
 - **S.misc.msk_geom_bounds**: 
-	- Cell array where 1st entry is dof name(s) , 2nd entry is its lower bounds, and 3rd entry is its upper bounds. Insert nan to lower bounds to only overwrite upper bounds. For another bound, add 3 more entries. For example, {{'knee_angle_r','knee_angle_l'},-120,10,'pelvis_tilt',nan,30} implements limit of -120 and 10 on knee angles, and default lower bund with 30 upper bound for pelvis_tilt. Defaults values are defined in the function [get_default_bounds_dummy_motion.m file](https://github.com/KULeuvenNeuromechanics/PredSim/blob/master/PreProcessing/get_default_bounds_dummy_motion.m).
+	- Cell array where 1st entry is dof name(s) , 2nd entry is its lower bounds, and 3rd entry is its upper bounds. Insert nan to lower bounds to only overwrite upper bounds. For another bound, add 3 more entries. For example, {{'knee_angle_r','knee_angle_l'},-120,10,'lumbar_extension',nan,30} implements limit of -120° and 10° on knee angles, and default lower bound with 30° upper bound for lumbar_extension.
+	> Order of priority for bounds:
+	> 1. Individual bounds from settings (S.misc.msk_geom_bounds)
+	> 2. Default bounds from table (S.misc.default_msk_geom_bound)
+	> 3. Read from model file. Qs: min and max coordinate values
+
 - **S.misc.visualize_bounds**: 
 	- specify if bounds and initial guess are visualized (0 or 1). Default is *0* [double]
 - **S.misc.dampingCoefficient**: 
@@ -196,10 +209,12 @@ This code can automatically convert an OpenSim model to the external function us
 	- folder path to store the intermediate subject specific results (e.g. external function with skeletal dynamics, CasADi function with musculoskeletal geometry polynomials). If the folder does not exist, it is created automatically.
 - **S.subject.mass**: 
 	- mass of the subject in kilograms. Default is *[]* kilograms [double]. Default is empty, it will be overwritten by the mass extracted from the OpenSim model.
-- **s.subject.IG_pelvis_y**: 
-	- height from the ground of the pelvis for the quasi-random initial guess, in meters. Default is *[]* m [double]. Default is empty, it will be overwritten by pelvis height extracted from the OpenSim model.
-	- s.subject.IG_pelvis_y is also used to establish bounds on vertical pelvis position.
-- **s.subject.adapt_IG_pelvis_y**: 
+- **S.subject.IG_pelvis_y**: 
+	- height from ground to pelvis, in meters. Default is *[]* m [double]. Default is empty, it will be overwritten by pelvis height extracted from the OpenSim model.
+    - always used for the quasi-random initial guess
+    - used for data-informed initial guess when `S.subject.adapt_IG_pelvis_y = 1;`
+	- S.subject.IG_pelvis_y is also used to establish bounds on vertical pelvis position.
+- **S.subject.adapt_IG_pelvis_y**: 
 	- boolean to adjust the trajectory of height of pelvis from the ground for data-informed initial guess. Default is *0*. 0 means the trajectory will not be changed. If 1, the trajectory will be changed such that the average value of the trajectory is equal to s.subject.IG_pelvis_y.
 - **S.subject.v_pelvis_x_trgt**: 
 	- average velocity you want the model to have, in meters per second. Default is *1.25* m/s [double]

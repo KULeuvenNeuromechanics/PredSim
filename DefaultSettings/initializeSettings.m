@@ -15,7 +15,7 @@ function [S] = initializeSettings()
 % Original date: 01/12/2021
 %
 % Last edit by: Bram Van Den Bosch
-% Last edit date: 26/05/2023
+% Last edit date: 26/May/2023
 % --------------------------------------------------------------------------
 
 S = struct;
@@ -44,5 +44,9 @@ S.misc.poly_order = [];
 
 % save the git hash
 [S.misc.git.local_hash,S.misc.git.branch_name, S.misc.git.remote_hash] = get_git_hash;
+
+% initiate for warning
+S.subject.adapt_IG_pelvis_y = 0;
+
 
 end
