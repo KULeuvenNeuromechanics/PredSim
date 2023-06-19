@@ -48,6 +48,7 @@ To run this code you need to have the following softwares on your machine:
 - [CasADi](https://web.casadi.org/get/). The code has been tested on CasADi 3.5.5.
 - [Microsoft Visual Studio](https://visualstudio.microsoft.com/). In Visual Studio Installer, [select to include Desktop development with C++](/FiguresForDocumentation/fig_MSVS.png). The code has been tested on MSVS Community 2015, 2017, 2019, and 2022.
 - [CMake](https://cmake.org/download/). The code has been tested on CMake 3.22.0.
+- [Git](https://git-scm.com/download/win). The code has been tested on Git 2.40.0.windows.1. Add Git to your system Path.
 
 
 ## How to setup the code
@@ -169,6 +170,12 @@ This code can automatically convert an OpenSim model to the external function us
 	- damping coefficient of muscles. Default is *0.01* [double]. Used as damping value that is multiplied by the normalized muscle velocity, in the muscle velocity dependent term in calculation of normalized contractile element force of the muscle.
 - **S.misc.constant_pennation_angle**: 
 	- specify if pennation angle of the muscles is supposed to stay constant (0 or 1). Default is *0* [double]
+- **S.misc.git.local_hash**: 
+	- hash of the local instance [char]. This is the identifier of the version of the code on your machine. You cannot change this setting.
+- **S.misc.git.branch_name**: 
+	- current branch of the local instance [char]. You cannot change this setting.
+- **S.misc.git.remote_hash**: 
+	- hash of the last commit on the remote [char]. This is the identifier of the latest version on the remote, i.e. GitHub. You cannot change this setting.
 
 #### S.post_process
 
