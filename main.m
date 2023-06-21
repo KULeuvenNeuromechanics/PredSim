@@ -8,7 +8,8 @@ clear
 close all
 clc
 % path to the repository folder
-[pathRepo,~,~] = fileparts(mfilename('fullpath'));
+% [pathRepo,~,~] = fileparts(mfilename('fullpath'));
+pathRepo = pwd;
 % path to the folder that contains the repository folder
 [pathRepoFolder,~,~] = fileparts(pathRepo);
 
@@ -32,12 +33,15 @@ S.subject.save_folder  = fullfile(pathRepoFolder,'PredSimResults',S.subject.name
 S.subject.IG_selection = fullfile(S.misc.main_path,'OCP','IK_Guess_Full_GC.mot');
 S.subject.IG_selection_gaitCyclePercent = 100;
 
+% S.misc.gaitmotion_type = 'HalfGaitCycle'; 
+% S.misc.gaitmotion_type = 'FullGaitCycle'; 
+
 % give the path to the osim model of your subject
 osim_path = fullfile(pathRepo,'Subjects',S.subject.name,[S.subject.name '.osim']);
 
 % path to folder with program to create dll files from opensim model (will
 % be downloaded automatically if it is not there)
-S.Cpp2Dll.PathCpp2Dll_Exe = 'C:\GBW_MyPrograms\Osim2Dll_exe';
+S.Cpp2Dll.PathCpp2Dll_Exe = [pathRepo '\Osim2Dll_exe']; %'C:\GBW_MyPrograms\Osim2Dll_exe';
 
 % Do you want to run the simulation as a batch job (parallel computing toolbox)
 S.solver.run_as_batch_job = 0;
@@ -45,6 +49,17 @@ S.solver.run_as_batch_job = 0;
 %% Optional inputs
 % see README.md in the main folder for information about these optional
 % inputs.
+
+% Muscle synergies
+S.Syn = 1; % 1 = implement muscle synergies
+S.NSyn_r = 2;
+S.NSyn_l = 2; % if half cycle (symmetric) should be the same as NSyn_l
+% (for now, this is not automatic) TO DO
+S.weights.Syn_constr = 1e4; % cost function weight for (a-WH)^2
+S.SynConstrLower = -0.001;
+S.SynConstrUpper = 0.001;
+S.misc.gaitmotion_type = 'HalfGaitCycle'; %'FullGaitCycle'; 
+S.sim_name = 'Syn_2R_2L_HalfCycle';
 
 % % S.bounds
 % S.bounds.a.lower            = ;
@@ -73,21 +88,21 @@ S.solver.run_as_batch_job = 0;
 % S.misc.gaitmotion_type = 'FullGaitCycle';
 
 % % S.post_process
-S.post_process.make_plot = 1;
+S.post_process.make_plot = 0;
 % S.post_process.savename  = 'datetime';
-S.post_process.load_prev_opti_vars = 1;
+% S.post_process.load_prev_opti_vars = 1;
 % S.post_process.rerun   = 1;
-S.post_process.result_filename = 'Falisse_et_al_2022_v9';
+S.post_process.result_filename = S.sim_name; % 'Falisse_et_al_2022_2Syn_half'; 
 
 % % S.solver
 % S.solver.linear_solver  = '';
 % S.solver.tol_ipopt      = ;
-% S.solver.max_iter       = 5;
+% S.solver.max_iter       = 100;
 % S.solver.parallel_mode  = '';
 % S.solver.N_threads      = 6;
 % S.solver.N_meshes       = 100;
 % S.solver.par_cluster_name = ;
-S.solver.CasADi_path    = 'C:\GBW_MyPrograms\casadi_3_5_5';
+S.solver.CasADi_path    = 'C:\Users\febre\Documents\MATLAB\casadi-windows-matlabR2016a-v3.5.5'; %'C:\GBW_MyPrograms\casadi_3_5_5';
 
 
 % % S.subject
@@ -119,9 +134,9 @@ S.subject.set_damping_coefficient_selected_dofs = {{'mtp_angle_l','mtp_angle_r'}
 % S.weights.pass_torq_includes_damping = ;
 
 % %S.Cpp2Dll: required inputs to convert .osim to .dll
-% S.Cpp2Dll.compiler = 'Visual Studio 17 2022';
+S.Cpp2Dll.compiler = 'Visual Studio 15 2017 Win64'; % 'Visual Studio 17 2022';
 % S.Cpp2Dll.export3DSegmentOrigins = ;
-S.Cpp2Dll.verbose_mode = 0; % 0 for no outputs from cmake
+S.Cpp2Dll.verbose_mode = 1; % 0 for no outputs from cmake
 % S.Cpp2Dll.jointsOrder = ;
 % S.Cpp2Dll.coordinatesOrder = ;
         

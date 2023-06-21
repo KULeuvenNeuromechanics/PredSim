@@ -19,8 +19,8 @@ function [] = OCP_formulation(S,model_info,f_casadi)
 % Original author: Dhruv Gupta and Lars D'Hondt
 % Original date: Januari-May/2022
 %
-% Last edit by: 
-% Last edit date: 
+% Last edit by: Míriam Febrer (add synergies)
+% Last edit date: June 2023
 % --------------------------------------------------------------------------
 
 disp('Start formulating OCP...')
@@ -197,6 +197,60 @@ opti.subject_to(bounds.Qdotdots.lower'*ones(1,d*N) < A_col < ...
     bounds.Qdotdots.upper'*ones(1,d*N));
 opti.set_initial(A_col, guess.Qdotdots_col');
 
+% If Muscle synergies, add additional variables
+if (S.Syn)
+    
+    % Additional states
+    % Synergy activations at mesh points (right)
+        % For now, I use bounds and initial guess from muscle activations
+    SynH_r = opti.variable(S.NSyn_r,N+1);
+    opti.subject_to(bounds.a.lower(1:S.NSyn_r)'*ones(1,N+1) < SynH_r < ...
+        bounds.a.upper(1:S.NSyn_r)'*ones(1,N+1));
+    opti.set_initial(SynH_r, guess.a(:,1:S.NSyn_r)');
+    
+    % Synergy activations at collocation points (right)
+        % For now, I use bounds and initial guess from muscle activations
+    SynH_r_col = opti.variable(S.NSyn_r,d*N);
+    opti.subject_to(bounds.a.lower(1:S.NSyn_r)'*ones(1,d*N) < SynH_r_col < ...
+        bounds.a.upper(1:S.NSyn_r)'*ones(1,d*N));
+    opti.set_initial(SynH_r_col, guess.a_col(:,1:S.NSyn_r)');
+    
+    % Synergy activations at mesh points (left)
+    SynH_l = opti.variable(S.NSyn_l,N+1);
+    opti.subject_to(bounds.a.lower(1:S.NSyn_l)'*ones(1,N+1) < SynH_l < ...
+        bounds.a.upper(1:S.NSyn_l)'*ones(1,N+1));
+    opti.set_initial(SynH_l, guess.a(:,1:S.NSyn_l)');
+    
+    % Synergy activations at collocation points (left)
+    SynH_l_col = opti.variable(S.NSyn_l,d*N);
+    opti.subject_to(bounds.a.lower(1:S.NSyn_l)'*ones(1,d*N) < SynH_l_col < ...
+        bounds.a.upper(1:S.NSyn_l)'*ones(1,d*N));
+    opti.set_initial(SynH_l_col, guess.a_col(:,1:S.NSyn_l)');
+    
+    % Additional controls    
+        % (Are time derivative of synergy activations at mesh points needed as additional controls?)
+   
+    % Additional parameters
+    % Synergy weights as (static?) parameters
+        % Bounded between 0 and 1
+        % IG 0.2 (random, could be another value if it makes sense)
+    if strcmp(S.misc.gaitmotion_type,'HalfGaitCycle') % same weights right and left
+        
+        SynW = opti.variable(NMuscle/2,S.NSyn_r);
+        opti.subject_to(zeros(NMuscle/2,S.NSyn_r) < SynW < ones(NMuscle/2,S.NSyn_r));
+        opti.set_initial(SynW, 0.2*ones(NMuscle/2,S.NSyn_r));
+        
+    elseif strcmp(S.misc.gaitmotion_type,'FullGaitCycle')
+        SynW_r = opti.variable(NMuscle/2,S.NSyn_r);
+        opti.subject_to(zeros(NMuscle/2,S.NSyn_r) < SynW_r < ones(NMuscle/2,S.NSyn_r));
+        opti.set_initial(SynW_r, 0.2*ones(NMuscle/2,S.NSyn_r));
+        
+        SynW_l = opti.variable(NMuscle/2,S.NSyn_l);
+        opti.subject_to(zeros(NMuscle/2,S.NSyn_l) < SynW_l < ones(NMuscle/2,S.NSyn_l));
+        opti.set_initial(SynW_l, 0.2*ones(NMuscle/2,S.NSyn_l));
+    end
+end
+
 %% OCP: collocation equations
 % Define CasADi variables for static parameters
 tfk         = MX.sym('tfk'); % MX variable for final time
@@ -227,6 +281,26 @@ end
 % Define CasADi variables for "slack" controls
 dFTtildej   = MX.sym('dFTtildej',NMuscle,d);
 Aj          = MX.sym('Aj',nq.all,d);
+
+if (S.Syn)
+    % Define CasADi variables for additional variables
+    SynH_rk          = MX.sym('SynH_rk',S.NSyn_r);
+    SynH_rj          = MX.sym('SynH_rkmesh',S.NSyn_r,d);
+    SynH_rkj         = [SynH_rk SynH_rj];
+    
+    SynH_lk          = MX.sym('SynH_lk',S.NSyn_l);
+    SynH_lj          = MX.sym('SynH_lkmesh',S.NSyn_l,d);
+    SynH_lkj         = [SynH_lk SynH_lj];
+    
+    %     vSynHk     = MX.sym('vSynHk',S.NSyn);
+    if strcmp(S.misc.gaitmotion_type,'HalfGaitCycle') % same weights right and left
+        SynW_k         = MX.sym('SynW_k',NMuscle/2,S.NSyn_r);
+    elseif strcmp(S.misc.gaitmotion_type,'FullGaitCycle') 
+        SynW_rk         = MX.sym('SynW_rk',NMuscle/2,S.NSyn_r);
+        SynW_lk         = MX.sym('SynW_lk',NMuscle/2,S.NSyn_l);
+    end
+end
+
 J           = 0; % Initialize cost function
 eq_constr   = {}; % Initialize equality constraint vector
 ineq_constr1   = {}; % Initialize inequality constraint vector
@@ -235,6 +309,17 @@ ineq_constr3   = {}; % Initialize inequality constraint vector
 ineq_constr4   = {}; % Initialize inequality constraint vector
 ineq_constr5   = {}; % Initialize inequality constraint vector
 ineq_constr6   = {}; % Initialize inequality constraint vector
+if (S.Syn)
+    ineq_constr7   = {}; % Initialize inequality constraint vector
+end
+
+if (S.Syn) % for reading right - left synergies results
+    % 3D model 'Falisse_et_al_2022'
+    % TO DO: automate this?
+    idx_m_r = [1:43,87,89,91];
+    idx_m_l = [44:86,88,90,92];
+end
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Time step
 h = tfk/N;
@@ -333,7 +418,19 @@ for j=1:d
     if nq.arms > 0
         J = J + W.slack_ctrl * B(j+1) *(f_casadi.J_arms_dof(Aj(model_info.ExtFunIO.jointi.armsi,j)))*h;
     end
-
+    if (S.Syn)
+        % Instead of a - WH = 0 as an equality constraint, have it as a
+        % term in the cost function to be minimized (+ inequality constraint)      
+        
+        if strcmp(S.misc.gaitmotion_type,'HalfGaitCycle') % same weights right and left
+            syn_constr_j_r = akj(idx_m_r,j+1) - SynW_k*SynH_rkj(:,j+1);
+            syn_constr_j_l = akj(idx_m_l,j+1) - SynW_k*SynH_lkj(:,j+1);
+        elseif strcmp(S.misc.gaitmotion_type,'FullGaitCycle')
+            syn_constr_j_r = akj(idx_m_r,j+1) - SynW_rk*SynH_rkj(:,j+1);
+            syn_constr_j_l = akj(idx_m_l,j+1) - SynW_lk*SynH_lkj(:,j+1);
+        end
+        J = J + W.Syn_constr * B(j+1) *(f_casadi.J_muscles([syn_constr_j_r;syn_constr_j_l]))*h;   % scale??
+    end
     
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Call external function (run inverse dynamics)
@@ -418,6 +515,14 @@ for j=1:d
             Tj(model_info.ExtFunIO.origin.toes_l([1 3]),1));
         ineq_constr6{end+1} = Qconstr;
     end
+    % Synergies: a - WH = 0
+    if (S.Syn)
+        if strcmp(S.misc.gaitmotion_type,'HalfGaitCycle')
+            ineq_constr7{end+1} =  [akj(idx_m_r,j+1);akj(idx_m_l,j+1)] - [SynW_k*SynH_rkj(:,j+1);SynW_k*SynH_lkj(:,j+1)];
+        elseif strcmp(S.misc.gaitmotion_type,'FullGaitCycle')
+            ineq_constr7{end+1} =  [akj(idx_m_r,j+1);akj(idx_m_l,j+1)] - [SynW_rk*SynH_rkj(:,j+1);SynW_lk*SynH_lkj(:,j+1)];
+        end
+    end
 
 end % End loop over collocation points
 
@@ -428,16 +533,31 @@ ineq_constr3 = vertcat(ineq_constr3{:});
 ineq_constr4 = vertcat(ineq_constr4{:});
 ineq_constr5 = vertcat(ineq_constr5{:});
 ineq_constr6 = vertcat(ineq_constr6{:});
-
+if (S.Syn)
+    ineq_constr7 = vertcat(ineq_constr7{:});
+end
 
 % Casadi function to get constraints and objective
 coll_input_vars_def = {tfk,ak,aj,FTtildek,FTtildej,Qsk,Qsj,Qdotsk,Qdotsj,vAk,dFTtildej,Aj};
 if nq.torqAct > 0
     coll_input_vars_def = [coll_input_vars_def,{a_ak,a_aj,e_ak}];
 end
-f_coll = Function('f_coll',coll_input_vars_def,...
-    {eq_constr,ineq_constr1,ineq_constr2,ineq_constr3,...
-    ineq_constr4,ineq_constr5,ineq_constr6,J});
+if (S.Syn)
+    %     coll_input_vars_def = [coll_input_vars_def,{SynHk,SynHj,vSynHk}];
+    if strcmp(S.misc.gaitmotion_type,'HalfGaitCycle') % same weights right and left
+        coll_input_vars_def = [coll_input_vars_def,{SynH_rk,SynH_rj,SynH_lk,SynH_lj,SynW_k}];
+    elseif strcmp(S.misc.gaitmotion_type,'FullGaitCycle') % same weights right and left
+        coll_input_vars_def = [coll_input_vars_def,{SynH_rk,SynH_rj,SynH_lk,SynH_lj,SynW_rk,SynW_lk}];
+    end
+    % end
+    f_coll = Function('f_coll',coll_input_vars_def,...
+        {eq_constr,ineq_constr1,ineq_constr2,ineq_constr3,...
+        ineq_constr4,ineq_constr5,ineq_constr6,ineq_constr7,J});
+else
+    f_coll = Function('f_coll',coll_input_vars_def,...
+        {eq_constr,ineq_constr1,ineq_constr2,ineq_constr3,...
+        ineq_constr4,ineq_constr5,ineq_constr6,J});
+end
 
 % assign function to multiple cores
 f_coll_map = f_coll.map(N,S.solver.parallel_mode,S.solver.N_threads);
@@ -448,8 +568,21 @@ coll_input_vars_eval = {tf,a(:,1:end-1), a_col, FTtilde(:,1:end-1), FTtilde_col,
 if nq.torqAct > 0
     coll_input_vars_eval = [coll_input_vars_eval, {a_a(:,1:end-1), a_a_col, e_a}];
 end
-[coll_eq_constr,coll_ineq_constr1,coll_ineq_constr2,coll_ineq_constr3,...
-    coll_ineq_constr4,coll_ineq_constr5,coll_ineq_constr6,Jall] = f_coll_map(coll_input_vars_eval{:});
+if (S.Syn)
+    %     coll_input_vars_eval = [coll_input_vars_eval,{SynH(:,1:end-1), SynH_col,vSynH}];
+    if strcmp(S.misc.gaitmotion_type,'HalfGaitCycle') % same weights right and left
+        coll_input_vars_eval = [coll_input_vars_eval,{SynH_r(:,1:end-1), SynH_r_col,SynH_l(:,1:end-1), SynH_l_col,SynW}];
+    elseif strcmp(S.misc.gaitmotion_type,'FullGaitCycle') % same weights right and left
+        coll_input_vars_eval = [coll_input_vars_eval,{SynH_r(:,1:end-1), SynH_r_col,SynH_l(:,1:end-1), SynH_l_col,SynW_r,SynW_l}];
+    end
+    
+    % end
+    [coll_eq_constr,coll_ineq_constr1,coll_ineq_constr2,coll_ineq_constr3,...
+        coll_ineq_constr4,coll_ineq_constr5,coll_ineq_constr6,coll_ineq_constr7,Jall] = f_coll_map(coll_input_vars_eval{:});
+else
+    [coll_eq_constr,coll_ineq_constr1,coll_ineq_constr2,coll_ineq_constr3,...
+        coll_ineq_constr4,coll_ineq_constr5,coll_ineq_constr6,Jall] = f_coll_map(coll_input_vars_eval{:});
+end
 
 % equality constraints
 opti.subject_to(coll_eq_constr == 0);
@@ -481,7 +614,9 @@ if ~isempty(coll_ineq_constr6)
 else
     disp('   Minimal distance between toes not constrained. To do so, please use "toes_r" and "toes_l" as body names in the OpenSim model.')
 end
-
+if (S.Syn)
+    opti.subject_to(S.SynConstrLower < coll_ineq_constr7(:) < S.SynConstrUpper); 
+end
 
 % Loop over mesh points
 for k=1:N
@@ -494,6 +629,10 @@ for k=1:N
     if nq.torqAct > 0
         a_akj = [a_a(:,k), a_a_col(:,(k-1)*d+1:k*d)];
     end
+    if (S.Syn)
+        SynH_rkj = [SynH_r(:,k), SynH_r_col(:,(k-1)*d+1:k*d)];
+        SynH_lkj = [SynH_l(:,k), SynH_l_col(:,(k-1)*d+1:k*d)];
+    end
 
     % Add equality constraints (next interval starts with end values of
     % states from previous interval)
@@ -503,6 +642,10 @@ for k=1:N
     opti.subject_to(Qdots(:,k+1) == Qdotskj*D); % scaled
     if nq.torqAct > 0
         opti.subject_to(a_a(:,k+1) == a_akj*D);
+    end
+    if (S.Syn)
+        opti.subject_to(SynH_r(:,k+1) == SynH_rkj*D);
+        opti.subject_to(SynH_l(:,k+1) == SynH_lkj*D);
     end
 
 end % End loop over mesh points
@@ -526,6 +669,10 @@ if strcmp(S.misc.gaitmotion_type,'HalfGaitCycle')
     if ~isempty(model_info.ExtFunIO.symQs.ActOpp)
         opti.subject_to(a_a(model_info.ExtFunIO.symQs.ActOpp,end) + a_a(model_info.ExtFunIO.symQs.ActOpp,1) == 0);
     end
+    % Symmetry constraints for synergies
+    % (do we need this, if weights are the same right-left and symmetry is imposed for activations?)
+    opti.subject_to(SynH_r(:,end) - SynH_l(:,1) == 0);
+    opti.subject_to(SynH_l(:,end) - SynH_r(:,1) == 0);
 
 else
     opti.subject_to(Qs(model_info.ExtFunIO.symQs.QsFullGC,end) - Qs(model_info.ExtFunIO.symQs.QsFullGC,1) == 0);
@@ -537,6 +684,10 @@ else
     % Torque actuator activations
     if nq.torqAct > 0
         opti.subject_to(a_a(:,end) - a_a(:,1) == 0);
+    end
+    if (S.Syn)
+        opti.subject_to(SynH_r(:,end) - SynH_r(:,1) == 0);
+        opti.subject_to(SynH_l(:,end) - SynH_l(:,1) == 0);
     end
 
 end
@@ -692,6 +843,25 @@ dFTtilde_col_opt=reshape(w_opt(starti:starti+NMuscle*(d*N)-1),NMuscle,d*N)';
 starti = starti + NMuscle*(d*N);
 qdotdot_col_opt =reshape(w_opt(starti:starti+nq.all*(d*N)-1),nq.all,(d*N))';
 starti = starti + nq.all*(d*N);
+if (S.Syn)
+    SynH_r_opt = reshape(w_opt(starti:starti+S.NSyn_r*(N+1)-1),S.NSyn_r,N+1)';
+    starti = starti + S.NSyn_r*(N+1);
+    SynH_r_col_opt = reshape(w_opt(starti:starti+S.NSyn_r*(d*N)-1),S.NSyn_r,d*N)';
+    starti = starti + S.NSyn_r*(d*N);    
+    SynH_l_opt = reshape(w_opt(starti:starti+S.NSyn_l*(N+1)-1),S.NSyn_l,N+1)';
+    starti = starti + S.NSyn_l*(N+1);
+    SynH_l_col_opt = reshape(w_opt(starti:starti+S.NSyn_l*(d*N)-1),S.NSyn_l,d*N)';
+    starti = starti + S.NSyn_l*(d*N);    
+    if strcmp(S.misc.gaitmotion_type,'HalfGaitCycle')
+        SynW_opt = reshape(w_opt(starti:starti+NMuscle/2*S.NSyn_r-1),NMuscle/2,S.NSyn_r)';
+        starti = starti + NMuscle/2*S.NSyn_r;
+    elseif strcmp(S.misc.gaitmotion_type,'FullGaitCycle')
+        SynW_r_opt = reshape(w_opt(starti:starti+NMuscle/2*S.NSyn_r-1),NMuscle/2,S.NSyn_r)';
+        starti = starti + NMuscle/2*S.NSyn_r;
+        SynW_l_opt = reshape(w_opt(starti:starti+NMuscle/2*S.NSyn_l-1),NMuscle/2,S.NSyn_l)';
+        starti = starti + NMuscle/2*S.NSyn_l;
+    end
+end
 if starti - 1 ~= length(w_opt)
     disp('error when extracting results')
 end
@@ -709,6 +879,12 @@ if nq.torqAct > 0
     a_a_mesh_col_opt=zeros(N*(d+1)+1,nq.torqAct);
     a_a_mesh_col_opt(1:(d+1):end,:)= a_a_opt;
 end
+if (S.Syn)
+    SynH_r_mesh_col_opt=zeros(N*(d+1)+1,S.NSyn_r);
+    SynH_r_mesh_col_opt(1:(d+1):end,:)= SynH_r_opt;
+    SynH_l_mesh_col_opt=zeros(N*(d+1)+1,S.NSyn_l);
+    SynH_l_mesh_col_opt(1:(d+1):end,:)= SynH_l_opt;
+end
 for k=1:N
     rangei = k*(d+1)-(d-1):k*(d+1);
     rangebi = (k-1)*d+1:k*d;
@@ -718,6 +894,10 @@ for k=1:N
     Qdots_mesh_col_opt(rangei,:) = Qdots_col_opt(rangebi,:);
     if nq.torqAct > 0
         a_a_mesh_col_opt(rangei,:) = a_a_col_opt(rangebi,:);
+    end
+    if (S.Syn)
+        SynH_r_mesh_col_opt(rangei,:) = SynH_r_col_opt(rangebi,:);
+        SynH_l_mesh_col_opt(rangei,:) = SynH_l_col_opt(rangebi,:);
     end
 end
 
@@ -756,6 +936,13 @@ if nq.torqAct > 0
     a_a_opt_unsc = a_a_opt(1:end-1,:);
     % Torque actuator activations (1:N)
     a_a_opt_unsc_all = a_a_opt;
+end
+if (S.Syn)
+    % Muscle synergies (1:N-1) at mesh points
+    SynH_r_opt_unsc = SynH_r_opt(1:end-1,:).*repmat(...
+        scaling.a,size(SynH_r_opt(1:end-1,:),1),size(SynH_r_opt,2)); % same scaling as a
+    SynH_l_opt_unsc = SynH_l_opt(1:end-1,:).*repmat(...
+        scaling.a,size(SynH_l_opt(1:end-1,:),1),size(SynH_l_opt,2)); % same scaling as a
 end
 
 % Controls at mesh points
@@ -798,7 +985,13 @@ qdotdot_col_opt_unsc.deg(:,model_info.ExtFunIO.jointi.rotations) ...
 dFTtilde_col_opt_unsc = dFTtilde_col_opt.*repmat(...
     scaling.dFTtilde,size(dFTtilde_col_opt,1),size(dFTtilde_col_opt,2));
 dFTtilde_opt_unsc = dFTtilde_col_opt_unsc(d:d:end,:);
-
+if (S.Syn)
+    % Muscle synergies (1:N-1) at collocation points
+    SynH_r_col_opt_unsc = SynH_r_col_opt.*repmat(...
+        scaling.a,size(SynH_r_col_opt,1),size(SynH_r_col_opt,2));
+    SynH_l_col_opt_unsc = SynH_l_col_opt.*repmat(...
+        scaling.a,size(SynH_l_col_opt,1),size(SynH_l_col_opt,2));
+end
 
 %% Time grid
 % Mesh points
@@ -832,6 +1025,7 @@ if assert_v_tg > 1*10^(-S.solver.tol_ipopt)
 end
 
 %% Decompose optimal cost
+% TO DO: add muscle synergies term (ongoing)
 J_opt           = 0;
 E_cost          = 0;
 A_cost          = 0;
@@ -841,6 +1035,9 @@ Pass_cost       = 0;
 vA_cost         = 0;
 dFTtilde_cost   = 0;
 QdotdotArm_cost = 0;
+if (S.Syn)
+    Syn_cost = 0;
+end
 count           = 1;
 h_opt           = tf_opt/N;
 for k=1:N
@@ -897,6 +1094,18 @@ for k=1:N
             QdotdotArm_cost = QdotdotArm_cost + W.slack_ctrl*B(j+1)*...
                 (f_casadi.J_arms_dof(qdotdot_col_opt(count,model_info.ExtFunIO.jointi.armsi)))*h_opt;
         end
+        if (S.Syn)
+            
+            if strcmp(S.misc.gaitmotion_type,'HalfGaitCycle') % same weights right and left
+                syn_constr_j_r = a_col_opt(count,idx_m_r) - SynH_r_col_opt(count,:)*SynW_k';
+                syn_constr_j_l = a_col_opt(count,idx_m_l) - SynH_l_col_opt(count,:)*SynW_k';
+            elseif strcmp(S.misc.gaitmotion_type,'FullGaitCycle')
+                syn_constr_j_r = a_col_opt(count,idx_m_r) - SynH_r_col_opt(count,:)*SynW_rk';
+                syn_constr_j_l = a_col_opt(count,idx_m_l) - SynH_l_col_opt(count,:)*SynW_lk';
+            end
+            
+            J_opt = J_opt + W.Syn_constr * B(j+1) *(f_casadi.J_muscles([syn_constr_j_r';syn_constr_j_l']))*h_opt; 
+        end
 
         E_cost = E_cost + W.E*B(j+1)*...
             (f_casadi.J_muscles_exp(e_tot_opt_all,W.E_exp))/model_info.mass*h_opt;
@@ -910,6 +1119,10 @@ for k=1:N
             (f_casadi.J_muscles(vA_opt(k,:)))*h_opt;
         dFTtilde_cost = dFTtilde_cost + W.slack_ctrl*B(j+1)*...
             (f_casadi.J_muscles(dFTtilde_col_opt(count,:)))*h_opt;
+%         if (S.Syn)
+%             Syn_cost = Syn_cost + ...
+%                 W.Syn_constr * B(j+1) *(f_casadi.J_muscles([syn_constr_j_r';syn_constr_j_l']))*h_opt;
+%         end
         count = count + 1;
     end
 end
@@ -922,22 +1135,43 @@ Pass_costf = full(Pass_cost);
 vA_costf = full(vA_cost);
 dFTtilde_costf = full(dFTtilde_cost);
 QdotdotArm_costf = full(QdotdotArm_cost);
-
-contributionCost.absoluteValues = 1/(dist_trav_opt)*[E_costf,A_costf,...
-    Arm_costf,Qdotdot_costf,Pass_costf,vA_costf,dFTtilde_costf,...
-    QdotdotArm_costf];
-contributionCost.relativeValues = 1/(dist_trav_opt)*[E_costf,A_costf,...
-    Arm_costf,Qdotdot_costf,Pass_costf,vA_costf,dFTtilde_costf,...
-    QdotdotArm_costf]./J_optf*100;
-contributionCost.relativeValuesRound2 = ...
-    round(contributionCost.relativeValues,2);
-contributionCost.labels = {'metabolic energy','muscle activation',...
-    'actuator excitation','joint accelerations','limit torques','dadt','dFdt',...
-    'arm accelerations'};
-
-% assertCost should be 0
-assertCost = abs(J_optf - 1/(dist_trav_opt)*(E_costf+A_costf + Arm_costf + ...
-    Qdotdot_costf + Pass_costf + vA_costf + dFTtilde_costf + QdotdotArm_costf));
+% if (S.Syn)
+%     Syn_costf = full(Syn_cost);
+% end
+% if (S.Syn)
+%     contributionCost.absoluteValues = 1/(dist_trav_opt)*[E_costf,A_costf,...
+%         Arm_costf,Qdotdot_costf,Pass_costf,vA_costf,dFTtilde_costf,...
+%         QdotdotArm_costf,Syn_costf];
+%     contributionCost.relativeValues = 1/(dist_trav_opt)*[E_costf,A_costf,...
+%         Arm_costf,Qdotdot_costf,Pass_costf,vA_costf,dFTtilde_costf,...
+%         QdotdotArm_costf,Syn_costf]./J_optf*100;
+%     contributionCost.relativeValuesRound2 = ...
+%         round(contributionCost.relativeValues,2);
+%     contributionCost.labels = {'metabolic energy','muscle activation',...
+%         'actuator excitation','joint accelerations','limit torques','dadt','dFdt',...
+%         'arm accelerations','synergy constraint'};
+%     
+%     % assertCost should be 0
+%     assertCost = abs(J_optf - 1/(dist_trav_opt)*(E_costf+A_costf + Arm_costf + ...
+%         Qdotdot_costf + Pass_costf + vA_costf + dFTtilde_costf + QdotdotArm_costf + Syn_costf));
+%     
+% else
+    contributionCost.absoluteValues = 1/(dist_trav_opt)*[E_costf,A_costf,...
+        Arm_costf,Qdotdot_costf,Pass_costf,vA_costf,dFTtilde_costf,...
+        QdotdotArm_costf];
+    contributionCost.relativeValues = 1/(dist_trav_opt)*[E_costf,A_costf,...
+        Arm_costf,Qdotdot_costf,Pass_costf,vA_costf,dFTtilde_costf,...
+        QdotdotArm_costf]./J_optf*100;
+    contributionCost.relativeValuesRound2 = ...
+        round(contributionCost.relativeValues,2);
+    contributionCost.labels = {'metabolic energy','muscle activation',...
+        'actuator excitation','joint accelerations','limit torques','dadt','dFdt',...
+        'arm accelerations'};
+    
+    % assertCost should be 0
+    assertCost = abs(J_optf - 1/(dist_trav_opt)*(E_costf+A_costf + Arm_costf + ...
+        Qdotdot_costf + Pass_costf + vA_costf + dFTtilde_costf + QdotdotArm_costf));
+% end
 
 assertCost2 = abs(stats.iterations.obj(end) - J_optf);
 
@@ -966,6 +1200,8 @@ end
 % end
 
 %% Reconstruct full gait cycle
+
+% REVISE IF SYNERGIES OK
 
 % joint accelerations controls on mesh points (2:N)
 qddot_opt_unsc.deg = qdotdot_col_opt_unsc.deg(d:d:end,:);
@@ -1031,6 +1267,15 @@ if strcmp(S.misc.gaitmotion_type,'HalfGaitCycle')
         e_a_opt_unsc(idx_2nd_half_GC,model_info.ExtFunIO.symQs.ActOpp) = -e_a_opt_unsc(idx_2nd_half_GC,model_info.ExtFunIO.symQs.ActOpp);
 
     end
+    
+    % Synergy activations
+    if(S.Syn)
+        SynH_r_opt_unsc_half = SynH_r_opt_unsc;
+        SynH_l_opt_unsc_half = SynH_l_opt_unsc;
+        SynH_r_opt_unsc = [SynH_r_opt_unsc_half; SynH_l_opt_unsc_half]; % mesh points
+        SynH_l_opt_unsc = [SynH_l_opt_unsc_half; SynH_r_opt_unsc_half];
+    end
+    
 
 end
 
@@ -1069,6 +1314,11 @@ if nq.torqAct > 0
     e_a_GC = e_a_opt_unsc(idx_GC,:);
 end
 
+if(S.Syn)
+    SynH_r_GC = SynH_r_opt_unsc(idx_GC,:);
+    SynH_l_GC = SynH_l_opt_unsc(idx_GC,:);
+end
+
 % adjust forward position to be continuous and start at 0
 Qs_GC(idx_GC_base_forward_offset,model_info.ExtFunIO.jointi.base_forward) = Qs_GC(idx_GC_base_forward_offset,model_info.ExtFunIO.jointi.base_forward) + dist_trav_opt;
 Qs_GC(:,model_info.ExtFunIO.jointi.base_forward) = Qs_GC(:,model_info.ExtFunIO.jointi.base_forward) - Qs_GC(1,model_info.ExtFunIO.jointi.base_forward);
@@ -1096,6 +1346,17 @@ R.kinematics.Qdots = Qdots_GC;
 R.kinematics.Qddots = Qdotdots_GC;
 R.muscles.a = Acts_GC;
 R.muscles.da = dActs_GC;
+if (S.Syn)
+    R.muscles.SynH_r = SynH_r_GC; %SynH_opt_unsc;  
+    R.muscles.SynH_l = SynH_l_GC; %SynH_opt_unsc;    
+    if strcmp(S.misc.gaitmotion_type,'HalfGaitCycle')
+        R.muscles.SynW_r = SynW_opt;
+        R.muscles.SynW_l = SynW_opt;
+    elseif strcmp(S.misc.gaitmotion_type,'FullGaitCycle')    
+        R.muscles.SynW_r = SynW_r_opt;
+        R.muscles.SynW_l = SynW_l_opt;
+    end
+end
 R.muscles.FTtilde = FTtilde_GC;
 R.muscles.dFTtilde = dFTtilde_GC;
 if nq.torqAct > 0
