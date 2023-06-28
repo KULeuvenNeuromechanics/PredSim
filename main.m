@@ -4,14 +4,26 @@
 % required inputs are necessary to start the simulations. Optional inputs,
 % if left empty, will be taken from getDefaultSettings.m.
 
-clear
-close all
-clc
+% clear
+% close all
+% clc
 % path to the repository folder
 % [pathRepo,~,~] = fileparts(mfilename('fullpath'));
 pathRepo = pwd;
 % path to the folder that contains the repository folder
 [pathRepoFolder,~,~] = fileparts(pathRepo);
+
+max_iter = 4000;
+
+%% 5 + 5
+Syn = 1;
+NSyn_r = 5;
+NSyn_l = 5;
+weights.Syn_constr = 1e4; % cost function weight for (a-WH)^2
+SynConstrLower = -0.001;
+SynConstrUpper = 0.001;
+gaitmotion_type = 'HalfGaitCycle'; % gaitmotion_type = 'FullGaitCycle';
+sim_name = 'Syn_5R_5L_HalfCycle_onlyMeshPoints_ineqConstrOutLoop';
 
 %% Initialize S
 pathDefaultSettings = fullfile(pathRepo,'DefaultSettings');
@@ -50,16 +62,27 @@ S.solver.run_as_batch_job = 0;
 % see README.md in the main folder for information about these optional
 % inputs.
 
+% % Muscle synergies
+% S.Syn = 1; % 1 = implement muscle synergies
+% S.NSyn_r = 2;
+% S.NSyn_l = 2; % if half cycle (symmetric) should be the same as NSyn_l
+% % (for now, this is not automatic) TO DO
+% S.weights.Syn_constr = 1e4; % cost function weight for (a-WH)^2
+% S.SynConstrLower = -0.001;
+% S.SynConstrUpper = 0.001;
+% S.misc.gaitmotion_type = 'HalfGaitCycle'; %'FullGaitCycle'; 
+% S.sim_name = 'Syn_2R_2L_HalfCycle';
+
 % Muscle synergies
-S.Syn = 1; % 1 = implement muscle synergies
-S.NSyn_r = 2;
-S.NSyn_l = 2; % if half cycle (symmetric) should be the same as NSyn_l
+S.Syn = Syn; % 1 = implement muscle synergies
+S.NSyn_r = NSyn_r;
+S.NSyn_l = NSyn_l; % if half cycle (symmetric) should be the same as NSyn_l
 % (for now, this is not automatic) TO DO
-S.weights.Syn_constr = 1e4; % cost function weight for (a-WH)^2
-S.SynConstrLower = -0.001;
-S.SynConstrUpper = 0.001;
-S.misc.gaitmotion_type = 'HalfGaitCycle'; %'FullGaitCycle'; 
-S.sim_name = 'Syn_2R_2L_HalfCycle';
+S.weights.Syn_constr = weights.Syn_constr; % cost function weight for (a-WH)^2
+S.SynConstrLower = SynConstrLower;
+S.SynConstrUpper = SynConstrUpper;
+S.misc.gaitmotion_type = gaitmotion_type; 
+S.sim_name = sim_name;
 
 % % S.bounds
 % S.bounds.a.lower            = ;
@@ -97,7 +120,7 @@ S.post_process.result_filename = S.sim_name; % 'Falisse_et_al_2022_2Syn_half';
 % % S.solver
 % S.solver.linear_solver  = '';
 % S.solver.tol_ipopt      = ;
-% S.solver.max_iter       = 100;
+S.solver.max_iter       = max_iter;
 % S.solver.parallel_mode  = '';
 % S.solver.N_threads      = 6;
 % S.solver.N_meshes       = 100;
