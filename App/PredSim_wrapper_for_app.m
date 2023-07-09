@@ -42,8 +42,15 @@ end
 % Assume constand BMI
 % U.Mass = 23.1481*U.Height^2;
 
+sf_height = U.Height/1.80;
+sf_mass = U.Mass/85;
+
+% sf_force = U.Force_sf;
+sf_force = sf_mass^(2/3);
+
 % Scale
 scaleOsim(pathRepo, U, sf);
+
 
 
 %% Inputs
@@ -70,26 +77,34 @@ S.solver.run_as_batch_job = 0;
 
 % casadi folder
 S.solver.CasADi_path    = U.PathCasadi;
-S.solver.tol_ipopt      = 3;
+% S.solver.tol_ipopt      = 3;
 
 
+% scale all with body size (sf_force) and also scale each with segment size^2
+S.subject.MT_params  = {
+    {'glut_max_r','iliopsoas_r','glut_max_l','iliopsoas_l'},'FMo',sf_force*(sqrt(sf.torso*sf.upp_leg)*sf.upp_leg),...
+    {'hamstrings_r','bifemsh_r','rect_fem_r','vasti_r','hamstrings_l','bifemsh_l','rect_fem_l','vasti_l'},'FMo',sf_force*(sf.upp_leg^2),...
+    {'gastroc_r','soleus_r','tib_ant_r','gastroc_l','soleus_l','tib_ant_l'},'FMo',sf_force*(sf.low_leg^2)};
 
-if length(U.Force_sf)==1
-    S.subject.MT_params  = {{'hamstrings_r','bifemsh_r','glut_max_r','iliopsoas_r',...
-        'rect_fem_r','vasti_r','gastroc_r','soleus_r','tib_ant_r','hamstrings_l','bifemsh_l',...
-        'glut_max_l','iliopsoas_l','rect_fem_l','vasti_l','gastroc_l','soleus_l','tib_ant_l'},...
-        'FMo',U.Force_sf};
-else
+% scale all with body size (sf_force) and also scale each with segment size^3 (force * moment arm)
+S.subject.scale_actuator_torque = {
+    'lumbar_extension',sf_force*(sqrt(sf.torso*sf.shoulder)*sf.torso*sf_upp_leg),...
+    {'arm_flex_r','arm_flex_l'},sf_force*(sqrt(sf.torso*sf.shoulder)*sf.shoulder^2),...
+    {'elbow_flex_r','elbow_flex_l'},sf_force*sf.upp_arm^3};
 
-end
 
-S.subject.tendon_stiff_scale      = {{'soleus_l','soleus_r','gastroc_r','gastroc_l'},0.7};
+S.subject.set_stiffness_coefficient_selected_dofs = {
+    {'mtp_angle_l','mtp_angle_r'},25*sf_force*(sf.low_leg^2*sf.foot)};
 
-S.subject.set_stiffness_coefficient_selected_dofs = {{'mtp_angle_l','mtp_angle_r'},25};
+S.subject.set_damping_coefficient_selected_dofs = {
+    'lumbar_extension',2*sf_force*(sqrt(sf.torso*sf.shoulder)*sf.torso*sf_upp_leg),...
+    {'arm_flex_r','arm_flex_l'},0.5*sf_force*sf_force*(sqrt(sf.torso*sf.shoulder)*sf.shoulder^2),...
+    {'elbow_flex_r','elbow_flex_l'},0.5*sf_force*sf.upp_arm^3,...
+    {'mtp_angle_l','mtp_angle_r'},2*sf_force*(sf.low_leg^2*sf.foot)};
 
-S.subject.set_damping_coefficient_selected_dofs = {{'mtp_angle_l','mtp_angle_r'},2,...
-    {'arm_flex_r','arm_flex_l','elbow_flex_r','elbow_flex_l'},0.5};
 
+S.subject.tendon_stiff_scale = {
+    {'soleus_l','soleus_r','gastroc_r','gastroc_l'},0.7};
 
 S.subject.adapt_IG_pelvis_y = 1;
 
@@ -112,14 +127,6 @@ if U.Speed > 0
     S.subject.IG_selection = fullfile(S.misc.main_path,'Subjects','Vitruvian_Man','IG',name_ig);
     S.subject.IG_selection_gaitCyclePercent = 200;
 
-%     if U.Speed < 1.8
-%         % S.subject.IG_selection = fullfile(S.misc.main_path,'OCP','IK_Guess_Default.mot');
-%         % S.subject.IG_selection_gaitCyclePercent = 50;
-%         S.subject.IG_selection = fullfile(S.misc.main_path,'Subjects','Vitruvian_Man','Vitruvian_Man.mot');
-%         S.subject.IG_selection_gaitCyclePercent = 200;
-%     else
-%         S.subject.IG_selection = 'quasi-random';
-%     end
 else
     S.weights.velocity = -5e4;
     S.subject.v_pelvis_x_trgt   = [2,10];
@@ -128,14 +135,10 @@ else
     S.subject.IG_selection_gaitCyclePercent = 200;
 end
 
-% %S.Cpp2Dll: required inputs to convert .osim to .dll
-% optional: if you want to install the opensimExe
-S.Cpp2Dll.PathCpp2Dll_Exe = InstallOsim2Dll_Exe('C:\GBW_MyPrograms\Osim2Dll_exe'); %(optional: if you want to install the opensimExe)
-% S.Cpp2Dll.compiler = 'Visual Studio 15 2017 Win64';
-S.Cpp2Dll.export3DSegmentOrigins = [];
-S.Cpp2Dll.verbose_mode = 0; % 0 for no outputs from cmake
-% S.Cpp2Dll.jointsOrder = ;
-% S.Cpp2Dll.coordinatesOrder = ;
+% S.bounds.coordinates = [];
+
+S.OpenSimADOptions.verbose_mode = false;
+
         
 %% Run predictive simulations
 savename = run_pred_sim(S,osim_path);

@@ -83,59 +83,7 @@ S.bounds.distanceConstraints(5).direction = 'xz';
 S.bounds.distanceConstraints(5).lower_bound = 0.1;
 S.bounds.distanceConstraints(5).upper_bound = 2;
 
-% % impose minimum on step width
-% min_step_width = 0.3;
-% 
-% S.bounds.distanceConstraints(end+1).point1 = 'calcn_r';
-% S.bounds.distanceConstraints(end).point2 = 'ground';
-% S.bounds.distanceConstraints(end).direction = 'z';
-% S.bounds.distanceConstraints(end).lower_bound = min_step_width;
-% S.bounds.distanceConstraints(end).upper_bound = 1;
-% 
-% S.bounds.distanceConstraints(end+1).point1 = 'ground';
-% S.bounds.distanceConstraints(end).point2 = 'calcn_l';
-% S.bounds.distanceConstraints(end).direction = 'z';
-% S.bounds.distanceConstraints(end).lower_bound = min_step_width;
-% S.bounds.distanceConstraints(end).upper_bound = 1;
-% 
-% S.bounds.distanceConstraints(end+1).point1 = 'toes_r';
-% S.bounds.distanceConstraints(end).point2 = 'ground';
-% S.bounds.distanceConstraints(end).direction = 'z';
-% S.bounds.distanceConstraints(end).lower_bound = min_step_width;
-% S.bounds.distanceConstraints(end).upper_bound = 1;
-% 
-% S.bounds.distanceConstraints(end+1).point1 = 'ground';
-% S.bounds.distanceConstraints(end).point2 = 'toes_l';
-% S.bounds.distanceConstraints(end).direction = 'z';
-% S.bounds.distanceConstraints(end).lower_bound = min_step_width;
-% S.bounds.distanceConstraints(end).upper_bound = 1;
 
-% impose maximum on step width
-max_step_width = 0.07;
-
-S.bounds.distanceConstraints(end+1).point1 = 'calcn_r';
-S.bounds.distanceConstraints(end).point2 = 'ground';
-S.bounds.distanceConstraints(end).direction = 'z';
-S.bounds.distanceConstraints(end).lower_bound = -max_step_width;
-S.bounds.distanceConstraints(end).upper_bound = max_step_width;
-
-S.bounds.distanceConstraints(end+1).point1 = 'ground';
-S.bounds.distanceConstraints(end).point2 = 'calcn_l';
-S.bounds.distanceConstraints(end).direction = 'z';
-S.bounds.distanceConstraints(end).lower_bound = -max_step_width;
-S.bounds.distanceConstraints(end).upper_bound = max_step_width;
-
-S.bounds.distanceConstraints(end+1).point1 = 'toes_r';
-S.bounds.distanceConstraints(end).point2 = 'ground';
-S.bounds.distanceConstraints(end).direction = 'z';
-S.bounds.distanceConstraints(end).lower_bound = -max_step_width;
-S.bounds.distanceConstraints(end).upper_bound = max_step_width;
-
-S.bounds.distanceConstraints(end+1).point1 = 'ground';
-S.bounds.distanceConstraints(end).point2 = 'toes_l';
-S.bounds.distanceConstraints(end).direction = 'z';
-S.bounds.distanceConstraints(end).lower_bound = -max_step_width;
-S.bounds.distanceConstraints(end).upper_bound = max_step_width;
 
 % % S.metabolicE - metabolic energy
 % S.metabolicE.tanh_b = ;

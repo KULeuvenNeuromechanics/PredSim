@@ -68,6 +68,11 @@ end
 actuator_info.NActuators = length(coord_names);
 
 %
+scale_factors = unpack_name_value_combinations(S.subject.scale_actuator_torque, coord_names, 1);
+scale_factors(isnan(scale_factors)) = 1;
+max_torque = max_torque.*scale_factors;
+
+%
 [parameters] = double_array_to_struct_array([],'coord_name',coord_names);
 [parameters] = double_array_to_struct_array(parameters,'coordi',coordi);
 [parameters] = double_array_to_struct_array(parameters,'max_torque',max_torque);
