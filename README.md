@@ -55,13 +55,11 @@ To run this code you need to have the following softwares on your machine:
 
 
 1. Fork this repository to your github account. If you want the fork to be private, follow [these steps](PrivateForkPredSim.md) instead.
-2. Clone the fork to your machine. Make sure there are no spaces in the path. If you have a computer with restricted permissions, make sure you have permission to run executables from the selected folder (For computers with KU Leuven BioMed Group policies, this is C:\GBW_MyPrograms\ ).
+2. Clone the fork to your machine. If you have a computer with restricted permissions, make sure you have permission to run executables from the selected folder (For computers with KU Leuven BioMed Group policies, this is C:\GBW_MyPrograms\ ).
 *Do not download the code as zip.*
 3. Get the OpenSim API running on MATLAB. See [Setting up your Matlab Scripting Environment](https://simtk-confluence.stanford.edu:8443/display/OpenSim/Scripting+with+Matlab#ScriptingwithMatlab-MatlabSetupSettingupyourMatlabScriptingEnvironment).
 4. In main.m, change [S.solver.CasADi_path](https://github.com/KULeuvenNeuromechanics/PredSim/blob/9fbbd43cf83617620e428d2c91f222c909a1349c/main.m#L84) to reflect the location where you installed CasADi. 
-5. In main.m, change [S.Cpp2Dll.PathCpp2Dll_Exe](https://github.com/KULeuvenNeuromechanics/PredSim/blob/9fbbd43cf83617620e428d2c91f222c909a1349c/main.m#L115) to specify where you want to have the executable installed that will convert the OpenSim models to the external function. If you have a computer with KU Leuven GBW restrictions, be sure to have this path go into your 'C:\GBW_MyPrograms' folder.
-> note: When running the code for the 1st time, it will download some dependencies. Mind your internet connection.
-6. Make sure the opensimAD submodule is installed. If PredSim\opensimAD\ is empty, open git command prompt, go to ...\PredSim\ , and run `git submodule update --init`.
+5. Make sure the opensimAD submodule is installed. If PredSim\opensimAD\ is empty, open git command prompt, go to ...\PredSim\ , and run `git submodule update --init`.
 
 
 After perfoming these steps, run the main script. (Expected run time is 40 minutes, depending on hardware.) If you don't receive any errors, your results should be the same as https://github.com/KULeuvenNeuromechanics/PredSim/tree/master/Tests/Falisse_et_al_2022_Results. If that is the case, you have succesfully intalled and set up the code. You are ready to do your own simulations.
@@ -79,7 +77,6 @@ This code can automatically convert an OpenSim model to the external function us
 - Your model should not have locked joints. Locked joints would technically require having kinematic constraints, which is possible but makes the problem more complicated. Replace them with weld joints instead.
 - Constraints on coordinates will be ignored (eg, coupling constraints).
 - Using SimmSplines to describe coordinates (e.g. Yamaguchi knee model) is not supported as the implementation in OpenSim is not really compatible with algorithmic differentiation. Change them to Polynomials instead. GeometryPaths can contain SimmSplines. [_AdaptOpenSimModel.m_](https://github.com/KULeuvenNeuromechanics/PredSim/blob/master/AdaptOpenSimModel/AdaptOpenSimModel.m) takes care of changing present SimmSplines to polynomials.
-- The kinematic chains starting at *acromial_l* and *acromial_r* will be interpreted as arms, legs start at *hip_l* and *hip_r*. A model is not required to have arms.
 - Your model needs to have contact elements that interact with the ground. Only *SmoothSphereHalfSpaceForce* contact forces are supported. You can use [_AdaptOpenSimModel.m_](https://github.com/KULeuvenNeuromechanics/PredSim/blob/master/AdaptOpenSimModel/AdaptOpenSimModel.m) to add contact geometries and forces to your model.
 - Your model can have any Hill-type muscle model, but it will be implemented as a [DeGroote-Fregly muscle](https://doi.org/10.1007/s10439-016-1591-9).
 - Torque/force actuators of the class *ActivationCoordinateActuator* are supported. You can add actuators by running [_AdaptOpenSimModel.m_](https://github.com/KULeuvenNeuromechanics/PredSim/blob/master/AdaptOpenSimModel/AdaptOpenSimModel.m). Actuators are not required.
@@ -91,16 +88,14 @@ This code can automatically convert an OpenSim model to the external function us
 
 - **S.subject.name**: 
 	- the name or code of the subject you are simulating.
+- **osim_path**: 
+	- path to the scaled opensim model of the subject.	
 - **S.subject.save_folder**: 
 	- path to the folder where you want to store the results of the OCP. If the folder does not exist yet on your machine, it will be created automatically.
 - **S.subject.IG_selection**: 
 	- either choose 'quasi-random' or give the path to a .mot file you want to use as initial guess.
-- **osim_path**: 
-	- path to the scaled opensim model of the subject.
 - **S.subject.IG_selection_gaitCyclePercent**: 
 	- if S.subject.IG_selection is a .mot file, S.subject.IG_selection_gaitCyclePercent is required. Here, specify what percent of gait cycle does the .mot file contain. For example, if the .mot file has 2 gait cycles, S.subject.IG_selection_gaitCyclePercent is 200.
-- **S.Cpp2Dll.PathCpp2Dll_Exe**:
-	- path to folder with compiled [opensimAD](https://github.com/Lars-DHondt-KUL/opensimAD) files to create dll files from opensim model. It will be downloaded or updated automatically when required.
 - **S.solver.run_as_batch_job**: 
 	- specify if the OCP is to be solved as a batch job (0: no, 1: yes). Batch processing requires the [Parallel Computing Toolbox](https://nl.mathworks.com/products/parallel-computing.html).
 
@@ -110,12 +105,6 @@ This code can automatically convert an OpenSim model to the external function us
 
 - **S.bounds.a.lower**: 
 	- minimal muscle activation. Provide a number between 0 and 1. Default is *0.05* [double]
-- **S.bounds.calcn_dist.lower**: 
-	- minimal distance between calcanei (origin) in the transversal plane. Default is *0.09* m [double]
-- **S.bounds.toes_dist.lower**: 
-	- minimal distance between toes (origin) in the transversal plane. Default is *0.10* m [double]
-- **S.bounds.tibia_dist.lower**: 
-	- minimal distance between tibiae (origin) in the transversal plane. Default is *0.11* m [double]
 - **S.bounds.SLL.upper**: 
 	- upper bound on left step length in meters. If not specified, no bound is implemented on left step length. 
 - **S.bounds.SLR.upper**: 
@@ -128,6 +117,18 @@ This code can automatically convert an OpenSim model to the external function us
 	- upper bound on final time in seconds for full gait cycle simulation. Default is *2* s [double]. For half gait cycle simulation, half of this value gets implemented as upper bound for final time.
 - **S.bounds.coordinates**: 
 	- Cell array where 1st entry is dof name(s) , 2nd entry is its lower bound, and 3rd entry is its upper bound. Insert 'nan' or [] to lower bounds to only overwrite upper bounds, or vice versa. For another bound, add 3 more entries. For example, {{'knee_angle_r','knee_angle_l'},-120,10,'pelvis_tilt',[],30} implements limit of -120° and 10° on knee angles, and default lower bound with 30° upper bound for pelvis_tilt. This setting changes the bounds of the optimization variables. When formulating the OCP, the variables are sclaed w.r.t. their bounds to improve conditioning. Changing these bounds can have a strong influence on convergence.
+- **S.bounds.points**:
+	- Cell array of structs where each cell defines a point. Points are used to define distanceconstraints. Each struct has the following fields:
+		- body: name of a body in the OpenSim model [char].
+		- point_in_body: xyz position of the point in the local frame of the body. Default is *[0, 0, 0]* [1x3 double].
+		- name: name of the point. Default is name of the body [char]. 
+- **S.bounds.distanceConstraints**:
+	- Cell array of structs where each cell defines a constraint on the distance between two points. Each struct has the following fields:
+		- point1: name of a point. If this is the name of a body in the OpenSim model, and no point with this name is defined, the origin of this body will be used [char]
+		- point2: name of a point. If this is the name of a body in the OpenSim model, and no point with this name is defined, the origin of this body will be used [char]
+		- direction: direction in which the distance  is constrained. Accepted inputs are: 1) any combination `x`, `y`, and `z`; and 2) `sagittal`, `coronal`, `frontal`, or `transverse` [char]. Note that for distances in one dimension (`point1 - point2`) the sign is kept 
+		- lower_bound: lower bound on the distance, in m [double]. Default is no lower bound applied.
+		- upper_bound: upper bound on the distance, in m [double]. Default is no upper bound applied.
 
 #### S.metabolicE - metabolic energy
 
@@ -251,7 +252,12 @@ This code can automatically convert an OpenSim model to the external function us
 	- scale factor for the amplitude of all coordinate limit torques. Default is empty [double].
 - **S.subject.set_limit_torque_coefficients_selected_dofs**: 
 	- Set limit torque coefficients for a coordinate. Default is empty [cell array] with pattern {coordinate name(s) [char, cell array of chars], K [4x1 double], theta [2x1 double]}.
-	
+- **S.subject.base_joints_legs**:
+	- Joint name that is the base of a leg, left and right. Default is 'hip' [char]
+- **S.subject.base_joints_arms**:
+	- Joint name that is the base of an arm, left and right. Default is 'acromial' [char]
+
+
 #### S.weights
 
 - **S.weights.E**: 
@@ -271,25 +277,40 @@ This code can automatically convert an OpenSim model to the external function us
 - **S.weights.slack_ctrl**: 
 	- weight on slack controls. Default is *0.001* [double]
 
-#### S.Cpp2Dll - These settings are only used during creation of the external function, and not during the OCP.
+#### S.OpenSimADOptions
+These settings are passed to OpenSimAD.
 
-- **S.Cpp2Dll.compiler**: 
-	- select compiler for cpp projects. For example, 'Visual Studio 14 2015 Win64' or 'Visual Studio 15 2017 Win64'. Default is *Visual Studio 15 2017 Win64* [char]
-- **S.Cpp2Dll.PathCpp2Dll_Exe**: 
-	- Path with exectuables to create .cpp file. You can use the function S.Cpp2Dll.PathCpp2Dll_Exe = InstallOsim2Dll_Exe(ExeDir) to download this exectuable with the input 'ExeDir' to folder in which you want to install the executable. The output argument of this function gives you the path to the folder with the exectutable. Default is empty.
-- **S.Cpp2Dll.export3DSegmentOrigins**: 
-	- Export 3D segment origins. Default is S.Cpp2Dll.export3DSegmentOrigins = {'calcn_r', 'calcn_l', 'femur_r', 'femur_l', 'hand_r','hand_l', 'tibia_r', 'tibia_l', 'toes_r', 'toes_l'};
-- **S.Cpp2Dll.jointsOrder**: 
-	- If you want to choose the order of the joints outputs. Default is empty, which uses the joint order of the .osim file.
-- **S.Cpp2Dll.coordinatesOrder**: 
-	- If you want to choose the order of the coordinate outputs. Default is empty, which uses the coordinate order of the .osim file. S.Cpp2Dll.jointsOrder and S.Cpp2Dll.coordinatesOrder are included in the settings to aid backward compatibility with previous versions of this code. Ideally, these settings should be left empty.
-- **S.Cpp2Dll.exportGRFs**: 
-	- Export total GRFs (0 or 1). If True, right and left 3D GRFs (in this order) are exported. Set False or do not pass as argument to not export those variables. Default is 1.
-- **S.Cpp2Dll.exportSeparateGRFs**: 
-	- Export separate GRFs (0 or 1). If True, right and left 3D GRFs (in this order) are exported for each of the contact spheres. Set False or do not pass as argument to not export those variables. Default is 1.
-- **S.Cpp2Dll.exportGRMs**: 
-	- Export GRMs (0 or 1). If True, right and left 3D GRMs (in this order) are exported. Set False or do not pass as argument to not export those variables. Default is 1.
-- **S.Cpp2Dll.exportContactPowers**: 
-	- Export contact sphere vertical deformation power (0 or 1). If True, right and left vertical deformation power of all contact spheres are exported. Set False or do not pass as argument to not export those variables. Default is 1.
-- **S.Cpp2Dll.verbose_mode**: 
-	- Verbose mode (0 or 1). 0: only warnings and errors, 1: all information on building .dll file.
+- **S.OpenSimADOptions.compiler**: 
+	- command prompt argument for the compiler. [char]
+	By default, PredSim will look for the most recent version that is installed in either `C:/Program Files/Microsoft Visual Studio/` or `C:/Program Files (x86)/Microsoft Visual Studio/`.
+   	If you get an error about not finding a compiler, use this setting to specify your compiler:
+       - Visual studio 2015: 'Visual Studio 14 2015 Win64'
+       - Visual studio 2017: 'Visual Studio 15 2017 Win64'
+       - Visual studio 2017: 'Visual Studio 16 2019'
+       - Visual studio 2017: 'Visual Studio 17 2022'
+- **S.OpenSimADOptions.verbose_mode**:
+	- print outputs from windows command prompt to matlab command window (and log file). Default is *true* [bool].
+- **S.OpenSimADOptions.verify_ID**:
+	- verify the generated function versus the inverse dynamics tool in OpenSim. Default is *false* [bool].
+- **S.OpenSimADOptions.jointsOrder**: 
+	- If you want to choose the order of the joints outputs. Default is empty, which uses the joint order of the .osim file. [cell array of char]
+- **S.OpenSimADOptions.coordinatesOrder**: 
+	- If you want to choose the order of the coordinate outputs. Default is empty, which uses the coordinate order of the .osim file. [cell array of char]
+	S.OpenSimADOptions.jointsOrder and S.OpenSimADOptions.coordinatesOrder are included in the settings to aid backward compatibility.
+- **S.OpenSimADOptions.input3DBodyForces**:
+	- add 3D force vectors that act on bodies. Default is empty. Needs further implementations before this can be used.
+- **S.OpenSimADOptions.input3DBodyMoments**:
+	- add 3D moment vectors that act on bodies. Default is empty. Needs further implementations before this can be used.
+- **S.OpenSimADOptions.export3DPositions**:
+	- export 3D position of points in bodies, in ground reference frame. Default is empty. Needs further implementations before this can be used.
+- **S.OpenSimADOptions.export3DVelocities**:
+	- export 3D velocity of points in bodies, in ground reference frame. Default is empty. Needs further implementations before this can be used.
+- **S.OpenSimADOptions.exportGRFs**: 
+	- Export total ground reaction forces of left and right side. Default is *true* [bool]
+- **S.OpenSimADOptions.exportSeparateGRFs**: 
+	- Export ground reaction forces of each contact element. Default is *true* [bool]
+- **S.OpenSimADOptions.exportGRMs**: 
+	- Export total ground reaction moments of left and right side. Default is *true* [bool]
+- **S.OpenSimADOptions.exportContactPowers**: 
+	- Export power due to vertical compression of each contact element. Default is *true* [bool]
+
