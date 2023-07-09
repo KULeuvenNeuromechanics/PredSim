@@ -4,8 +4,8 @@ function guess = getGuess_DI_opti(S,model_info,scaling,d)
 %   This script provides an inital guess for the design variables.
 %   The guess is data-informed (DI). We use experimental data to provide an
 %   initial guess of the joint variables but set constant values to the 
-%   muscle variable and the arm variables. We use a pre-defined final time 
-%   that is function of the imposed speed.
+%   muscle variable and the actuator variables. We use a pre-defined final 
+%   time that is function of the imposed speed.
 %   
 % INPUT:
 %   - S -
@@ -25,7 +25,7 @@ function guess = getGuess_DI_opti(S,model_info,scaling,d)
 %   * initial guess values for all optimisation variables
 % 
 % Original author: Antoine Falisse
-% Original date: 12/19/2018
+% Original date: 19/Dec/2018
 %
 % Last edit by: 
 % Last edit date: 
@@ -82,10 +82,10 @@ guess.Qs(:,model_info.ExtFunIO.jointi.base_forward) = guess.Qs(:,model_info.ExtF
     guess.Qs(1,model_info.ExtFunIO.jointi.base_forward);
 
 if S.subject.adapt_IG_pelvis_y
-    % Adjust pelvis height (correction factot 0.955 because pelvis is lower
-    % when walking w.r.t. standing
-    guess.Qs(:,model_info.ExtFunIO.coordi.pelvis_ty) = guess.Qs(:,model_info.ExtFunIO.coordi.pelvis_ty) ...
-        - mean(guess.Qs(:,model_info.ExtFunIO.coordi.pelvis_ty)) + model_info.IG_pelvis_y*0.955;
+    % Adjust pelvis height
+    guess.Qs(:,model_info.ExtFunIO.jointi.base_vertical) = ...
+        guess.Qs(:,model_info.ExtFunIO.jointi.base_vertical) ...
+        - mean(guess.Qs(:,model_info.ExtFunIO.base_vertical)) + model_info.IG_pelvis_y;
 end
 
 % Interpolation
@@ -145,16 +145,22 @@ end
 
 %% Final time
 % The final time is function of the imposed speed
-% all_speeds = 0.73:0.1:5;
-% % all_speeds = 0.73:0.1:2.73;
-% all_tf = 0.70:-((0.70-0.35)/(length(all_speeds)-1)):0.35;
-% idx_speed = find(all_speeds==mean(S.subject.v_pelvis_x_trgt));
-% if isempty(idx_speed)
-%     idx_speed = find(all_speeds > mean(S.subject.v_pelvis_x_trgt),1,'first');
-% end
-% guess.tf = all_tf(idx_speed);
+all_speeds = 0.73:0.1:5;
+all_tf = 0.70:-((0.70-0.35)/(length(all_speeds)-1)):0.35;
+idx_speed = find(all_speeds==S.subject.v_pelvis_x_trgt);
+if isempty(idx_speed)
+    idx_speed = find(all_speeds > S.subject.v_pelvis_x_trgt,1,'first');
+end
+guess.tf = all_tf(idx_speed);
 
-guess.tf = -0.1750*mean(S.subject.v_pelvis_x_trgt) + 0.8277;
+% extrapolate outside of 0.73:5 range
+if isempty(idx_speed)
+    guess.tf = -0.1750*S.subject.v_pelvis_x_trgt + 0.8277;
+end
+% avoid going too low
+if guess.tf < 0.15
+    guess.tf = 0.15;
+end
 
 %% Scaling
 guess.Qs = guess.Qs./repmat(scaling.Qs,N+1,1);

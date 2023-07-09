@@ -1,4 +1,4 @@
-function [S] = getDefaultSettings(S)
+function [S] = getDefaultSettings(S,osim_path)
 % --------------------------------------------------------------------------
 % getDefaultSettings 
 %   This functions sets default settings when the user didn't specify the
@@ -7,6 +7,9 @@ function [S] = getDefaultSettings(S)
 % INPUT:
 %   - S -
 %   * setting structure S
+%   
+%   - osim_path -
+%   * path to the osim model
 %
 % 
 % OUTPUT:
@@ -17,7 +20,7 @@ function [S] = getDefaultSettings(S)
 % Original date: 30/11/2021
 %
 % Last edit by: Bram Van Den Bosch
-% Last edit date: 17/01/2022
+% Last edit date: 05/05/2023
 % --------------------------------------------------------------------------
 
 %% bounds
@@ -25,26 +28,6 @@ function [S] = getDefaultSettings(S)
 % minimal muscle activation, a number between 0 and 1
 if ~isfield(S.bounds.a,'lower')
     S.bounds.a.lower = 0.05;
-end
-
-% minimal distance between orginins calcanei, in meters
-if ~isfield(S.bounds.calcn_dist,'lower')
-    S.bounds.calcn_dist.lower = 0.09;
-end
-
-% minimal distance between femur and hand orginins, in meters
-if ~isfield(S.bounds.femur_hand_dist,'lower')
-    S.bounds.femur_hand_dist.lower = sqrt(0.00324);
-end
-
-% minimal distance between origins toes, in meters
-if ~isfield(S.bounds.toes_dist,'lower')
-    S.bounds.toes_dist.lower = 0.10;
-end
-
-% minimal distance between origins tibiae, in meters
-if ~isfield(S.bounds.tibia_dist,'lower')
-    S.bounds.tibia_dist.lower = 0.11;
 end
 
 % upper bound on left step length, in meters
@@ -75,6 +58,14 @@ end
 % manually overwrite coordinate bounds
 if ~isfield(S.bounds,'coordinates')
     S.bounds.coordinates = [];
+end
+
+% constraints on distance between points
+if ~isfield(S.bounds,'points')
+    S.bounds.points = [];
+end
+if ~isfield(S.bounds,'distanceConstraints')
+    S.bounds.distanceConstraints = [];
 end
 
 %% metabolicE
@@ -121,10 +112,17 @@ if ~isfield(S.misc.poly_order,'upper')
 end
 
 % name to save musculoskeletal geometry CasADi function
-S.misc.msk_geom_name = 'f_lMT_vMT_dM';
+[~, model_name, ~] = fileparts(osim_path);
+model_name = char(strrep(model_name, ' ', '_'));
+S.misc.msk_geom_name = [model_name '_f_lMT_vMT_dM'];
 if strcmp(S.misc.msk_geom_eq,'polynomials') 
     S.misc.msk_geom_name = [S.misc.msk_geom_name '_poly_',...
         num2str(S.misc.poly_order.lower) '_' num2str(S.misc.poly_order.upper)];
+end
+
+% default coordinate bounds used to approximate musculoskeletal geometry
+if ~isfield(S.misc,'default_msk_geom_bounds')
+    S.misc.default_msk_geom_bounds = 'default_msk_geom_bounds.csv';
 end
 
 % manually overwrite coordinate bounds used to approximate musculoskeletal geometry
@@ -157,11 +155,6 @@ if ~isfield(S.misc,'constant_pennation_angle')
     S.misc.constant_pennation_angle = 0;
 end
 
-% when evaluating the external function, overwrite selected coordinate
-% positions with 0
-if ~isfield(S.misc,'coordPosZeroForExternal')
-    S.misc.coordPosZeroForExternal = [];
-end
 
 %% post_process
 
@@ -175,23 +168,26 @@ if ~isfield(S.post_process,'savename')
     S.post_process.savename = 'structured';
 end
 
-% rerun post-processing without solving OCP
-if ~isfield(S.post_process,'rerun')
-    S.post_process.rerun = 0;
-end
-
-% rerun post-processing without solving OCP, and start from raw solution vector
-if ~isfield(S.post_process,'rerun_from_w')
-    S.post_process.rerun_from_w = 0;
-end
-
 % filename of the result to post-process
 if ~isfield(S.post_process,'result_filename')
     S.post_process.result_filename = [];
 end
 
-if (S.post_process.rerun || S.post_process.rerun_from_w) && isempty(S.post_process.result_filename)
+% rerun post-processing without solving OCP
+if ~isfield(S.post_process,'rerun')
+    S.post_process.rerun = 0;
+end
+if S.post_process.rerun && isempty(S.post_process.result_filename)
     error('Please provide the name of the result to post-process. (S.post_process.result_filename)')
+end
+
+% load w_opt and reconstruct R before rerunning the post-processing
+% Advanced feature, for debugging only, you should not need this.
+if ~isfield(S.post_process,'load_prev_opti_vars')
+    S.post_process.load_prev_opti_vars = 0;
+end
+if S.post_process.load_prev_opti_vars && isempty(S.post_process.result_filename)
+    error('Please provide the name of the result from which to load the optimization variables. (S.post_process.result_filename)')
 end
 
 %% solver
@@ -266,11 +262,6 @@ end
 % height of the pelvis for the initial guess, in meters
 if ~isfield(S.subject,'IG_pelvis_y')
    S.subject.IG_pelvis_y = [];
-end
-
-% adapt pelvis height of the data-informed initial guess based on IG_pelvis_y
-if ~isfield(S.subject,'adapt_IG_pelvis_y')
-   S.subject.adapt_IG_pelvis_y = 0;
 end
 
 % average velocity you want the model to have, in meters per second
@@ -376,9 +367,34 @@ if ~isfield(S.subject,'set_stiffness_coefficient_selected_dofs')
     S.subject.set_stiffness_coefficient_selected_dofs = []; 
 end
 
+% neutral position for stiffness coefficient for specific degrees of freedon
+if ~isfield(S.subject,'set_stiffness_offset_selected_dofs')
+    S.subject.set_stiffness_offset_selected_dofs = []; 
+end
+
+% default limit torque coefficient
+if ~isfield(S.subject,'default_coord_lim_torq_coeff')
+    S.subject.default_coord_lim_torq_coeff = 'default_coord_lim_torq_coeff.csv';
+end
+
+% scale factor for limit torque amplitude
+if ~isfield(S.subject,'scale_default_coord_lim_torq')
+    S.subject.scale_default_coord_lim_torq = [];
+end
+
 % limit torque coefficient for specific degrees of freedon
 if ~isfield(S.subject,'set_limit_torque_coefficients_selected_dofs')
     S.subject.set_limit_torque_coefficients_selected_dofs = []; 
+end
+
+% joints that are considered base of a leg
+if ~isfield(S.subject,'base_joints_legs')
+    S.subject.base_joints_legs = 'hip';
+end
+
+% joints that are considered base of an arm
+if ~isfield(S.subject,'base_joints_arms')
+    S.subject.base_joints_arms = 'acromial';
 end
 
 %% weights
@@ -424,82 +440,80 @@ if ~isfield(S.weights,'slack_ctrl')
     S.weights.slack_ctrl = 0.001; 
 end
 
-% weight on velocity (can be added to maximise velocity)
-if ~isfield(S.weights,'velocity')
-    S.weights.velocity = 0; 
-end
+%% OpenSimADOptions
 
-%% .osim 2 dll
-
-% settings for functions to conver .osim model to expression graph (.dll)
-% file to solve inverse dynamics
-if ~isfield(S,'Cpp2Dll')
-    S.Cpp2Dll = [];
+% settings for functions to convert .osim model to expression graph 
+% file (.dll) to solve inverse dynamics
+if ~isfield(S,'OpenSimADOptions')
+    S.OpenSimADOptions = [];
 end
 
 % select compiler for cpp projects 
 %   Visual studio 2015: 'Visual Studio 14 2015 Win64'
 %   Visual studio 2017: 'Visual Studio 15 2017 Win64'
-if ~isfield(S.Cpp2Dll,'compiler')
-    S.Cpp2Dll.compiler = 'Visual Studio 15 2017 Win64';
+%   Visual studio 2017: 'Visual Studio 16 2019'
+%   Visual studio 2017: 'Visual Studio 17 2022'
+if ~isfield(S.OpenSimADOptions,'compiler')
+    S.OpenSimADOptions.compiler = findVisualStudioInstallation;
 end
 
-% Path with exectuables to create .cpp file. You can use the function 
-% S.Cpp2Dll.PathCpp2Dll_Exe = InstallOsim2Dll_Exe(ExeDir) to download 
-% this exectuable with the input 'ExeDir' to folder in which you want to
-% install the executable. The output argument of this function gives
-% you the path to the folder with the exectutable
-if ~isfield(S.Cpp2Dll,'PathCpp2Dll_Exe')
-    S.Cpp2Dll.PathCpp2Dll_Exe = [];
+% Input forces acting on bodies
+if ~isfield(S.OpenSimADOptions,'input3DBodyForces')
+    S.OpenSimADOptions.input3DBodyForces = [];
 end
 
-% Export 3D segment origins.
-if ~isfield(S.Cpp2Dll,'export3DSegmentOrigins')
-    S.Cpp2Dll.export3DSegmentOrigins = {'calcn_r', 'calcn_l', 'femur_r', 'femur_l',...
-        'hand_r','hand_l', 'tibia_r', 'tibia_l', 'toes_r', 'toes_l'};
+% Input forces acting on bodies
+if ~isfield(S.OpenSimADOptions,'input3DBodyMoments')
+    S.OpenSimADOptions.input3DBodyMoments = [];
+end
+
+% Export positions of points w.r.t. ground frame
+if ~isfield(S.OpenSimADOptions,'export3DPositions')
+    S.OpenSimADOptions.export3DPositions = [];
+end
+
+% Export velocities of points w.r.t. ground frame
+if ~isfield(S.OpenSimADOptions,'export3DVelocities')
+    S.OpenSimADOptions.export3DVelocities = [];
 end
 
 % If you want to choose the order of the joints and coordinate outputs
-if ~isfield(S.Cpp2Dll,'jointsOrder')
-    S.Cpp2Dll.jointsOrder = [];
+if ~isfield(S.OpenSimADOptions,'jointsOrder')
+    S.OpenSimADOptions.jointsOrder = [];
 end
-if ~isfield(S.Cpp2Dll,'coordinatesOrder')
-    S.Cpp2Dll.coordinatesOrder = [];
-end
-
-% Export total GRFs; If True, right and left 3D GRFs (in this order) are exported.
-% % Set False or do not pass as argument to not export those variables.
-if ~isfield(S.Cpp2Dll,'exportGRFs')
-    S.Cpp2Dll.exportGRFs = true;
+if ~isfield(S.OpenSimADOptions,'coordinatesOrder')
+    S.OpenSimADOptions.coordinatesOrder = [];
 end
 
-% Export separate GRFs. If True, right and left 3D GRFs (in this order) 
-% are exported for each of the contact spheres.Set False or do not pass
-% as argument to not export those variables.
-if ~isfield(S.Cpp2Dll,'exportSeparateGRFs')
-    S.Cpp2Dll.exportSeparateGRFs = true;
+% Export total GRFs
+if ~isfield(S.OpenSimADOptions,'exportGRFs')
+    S.OpenSimADOptions.exportGRFs = true;
 end
 
-% # Export GRMs. If True, right and left 3D GRMs (in this order) are exported.
-%  Set False or do not pass as argument to not export those variables.
-if ~isfield(S.Cpp2Dll,'exportGRMs')
-    S.Cpp2Dll.exportGRMs = true;
+% Export separate GRFs of each contact element
+if ~isfield(S.OpenSimADOptions,'exportSeparateGRFs')
+    S.OpenSimADOptions.exportSeparateGRFs = true;
 end
 
-% Export contact sphere vertical deformation power. If True, right and left
-% vertical deformation power of all contact spheres are exported.Set False
-% or do not pass as argument to not export those variables.
-if ~isfield(S.Cpp2Dll,'exportContactPowers')
-    S.Cpp2Dll.exportContactPowers = true;
+% Export GRMs.
+if ~isfield(S.OpenSimADOptions,'exportGRMs')
+    S.OpenSimADOptions.exportGRMs = true;
 end
 
-% 0: only warnings and errors
-% 1: all information on building .dll file
-if ~isfield(S.Cpp2Dll,'verbose_mode')
-    S.Cpp2Dll.verbose_mode = true;
+% Export contact sphere vertical deformation power.
+if ~isfield(S.OpenSimADOptions,'exportContactPowers')
+    S.OpenSimADOptions.exportContactPowers = true;
+end
+
+% Print outputs from compiler
+if ~isfield(S.OpenSimADOptions,'verbose_mode')
+    S.OpenSimADOptions.verbose_mode = true;
 end 
 
-
+% Test external function versus ID Tool
+if ~isfield(S.OpenSimADOptions,'verify_ID')
+    S.OpenSimADOptions.verify_ID = false;
+end 
 
 
 end

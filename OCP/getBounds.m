@@ -131,18 +131,12 @@ bounds.Qs.lower(idx_shoulder_add_rot) = bounds.Qs.lower(idx_shoulder_add_rot) - 
 % The bounds are extended by 3 times the absolute difference between upper
 % and lower bounds.
 Qdots_range = abs(bounds.Qdots.upper - bounds.Qdots.lower);
-if max(S.subject.v_pelvis_x_trgt) > 4
-    Qdots_range = Qdots_range*1.5;
-end
 bounds.Qdots.lower = bounds.Qdots.lower - 3*Qdots_range;
 bounds.Qdots.upper = bounds.Qdots.upper + 3*Qdots_range;
 
 % The bounds are extended by 3 times the absolute difference between upper
 % and lower bounds.
 Qdotdots_range = abs(bounds.Qdotdots.upper - bounds.Qdotdots.lower);
-if max(S.subject.v_pelvis_x_trgt) > 4
-    Qdotdots_range = Qdotdots_range*1.5;
-end
 bounds.Qdotdots.lower = bounds.Qdotdots.lower - 3*Qdotdots_range;
 bounds.Qdotdots.upper = bounds.Qdotdots.upper + 3*Qdotdots_range;
 
@@ -152,19 +146,11 @@ bounds.Qdotdots.upper = bounds.Qdotdots.upper + 3*Qdotdots_range;
 bounds.Qs.upper(model_info.ExtFunIO.jointi.base_forward) = 4;  
 bounds.Qs.lower(model_info.ExtFunIO.jointi.base_forward) = 0;
 % Pelvis_ty
-if length(model_info.ExtFunIO.jointi.floating_base)==6
-    bounds.Qs.upper(model_info.ExtFunIO.jointi.floating_base(5)) = model_info.IG_pelvis_y*1.2;
-    bounds.Qs.lower(model_info.ExtFunIO.jointi.floating_base(5)) = model_info.IG_pelvis_y*0.5;
-    
-elseif length(model_info.ExtFunIO.jointi.floating_base)==3
-    bounds.Qs.upper(model_info.ExtFunIO.jointi.floating_base(3)) = model_info.IG_pelvis_y*1.2;
-    bounds.Qs.lower(model_info.ExtFunIO.jointi.floating_base(3)) = model_info.IG_pelvis_y*0.5;
-
-end
+bounds.Qs.upper(model_info.ExtFunIO.jointi.base_vertical) = model_info.IG_pelvis_y*1.2;
+bounds.Qs.lower(model_info.ExtFunIO.jointi.base_vertical) = model_info.IG_pelvis_y*0.5;
 % Pelvis_tz
 bounds.Qs.upper(model_info.ExtFunIO.jointi.base_lateral) = 0.1;
 bounds.Qs.lower(model_info.ExtFunIO.jointi.base_lateral) = -0.1;
-
 % Elbow
 bounds.Qs.lower(idx_elbow) = 0;
 % Mtp
@@ -180,16 +166,13 @@ bounds.Qs.lower(model_info.ExtFunIO.jointi.floating_base(1)) = -20*pi/180;
 
 % We adjust some bounds when we increase the speed to allow for the
 % generation of running motions.
-if max(S.subject.v_pelvis_x_trgt) > 1.33
+if S.subject.v_pelvis_x_trgt > 1.33
     % Shoulder flexion
     bounds.Qs.lower(idx_shoulder_flex) = -50*pi/180;
     % Pelvis tx
     bounds.Qdots.upper(model_info.ExtFunIO.jointi.base_forward) = 8;
 end
-if max(S.subject.v_pelvis_x_trgt) > 4
-    % Pelvis tx
-    bounds.Qdots.upper(model_info.ExtFunIO.jointi.base_forward) = 16;
-end
+
 if strcmp(S.misc.gaitmotion_type,'HalfGaitCycle')
     bounds.Qs.upper(model_info.ExtFunIO.jointi.base_forward) = ...
         bounds.Qs.upper(model_info.ExtFunIO.jointi.base_forward)/2;

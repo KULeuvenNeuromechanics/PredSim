@@ -1,4 +1,4 @@
-function [] = add_pred_sim_to_batch(S,osim_path)
+function [varargout] = add_pred_sim_to_batch(S,osim_path)
 % --------------------------------------------------------------------------
 % add_pred_sim_to_batch
 %   This functions runs the predictive simulation as a batch job. Doing so
@@ -63,4 +63,7 @@ end
 batch(myCluster,'run_pred_sim',0,{S,osim_path},'CurrentFolder',S.misc.main_path,...
     'AdditionalPaths',additional_paths);
 
-
+% Return optional outputs
+if nargout >= 1
+    varargout{1} = S.solver.job_id;
+end

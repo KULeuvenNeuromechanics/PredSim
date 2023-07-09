@@ -49,10 +49,7 @@ end
 [f_casadi.getMetabolicEnergySmooth2004all] = createCasadi_E_Metab(S,model_info);
 
 %% Create Casadi function to get step length
-if isfield(model_info.ExtFunIO,'origin') && ...
-        isfield(model_info.ExtFunIO.origin,'calcn_r') && isfield(model_info.ExtFunIO.origin,'calcn_l') && ...
-        ~isempty(model_info.ExtFunIO.origin.calcn_r) &&  ~isempty(model_info.ExtFunIO.origin.calcn_l)
-    
+if ~isempty(S.bounds.SLL.upper) || ~isempty(S.bounds.SLR.upper)
     [f_casadi.f_getCalcnOriginInWorldFrame,f_casadi.f_getStepLength] = createCasadi_StepLength(S,model_info);
 end
 

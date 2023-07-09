@@ -8,7 +8,9 @@
 *.jpg
 *.eps
 
+Debug/*
 opensimAD/*
+
 
 App/images
 App/old

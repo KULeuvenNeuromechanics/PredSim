@@ -41,14 +41,16 @@ if strcmp(S.misc.msk_geom_eq,'polynomials')
     if ~isfile(fullfile(S.misc.subject_path,S.misc.msk_geom_name)) || ~isempty(S.misc.msk_geom_bounds)
         % Analyze the muscle-tendon lengths, velocities, and moment arms in function of coordinate values
         t0 = tic;
-        muscle_data = muscleAnalysisAPI(S,osim_path,model_info,500); % faster version
-        disp(['   analysing MSK geometry: ' num2str(toc(t0)) ' s'])
+        muscle_data = muscleAnalysisAPI(S,osim_path,model_info); % faster version
+        disp(['   analysing MSK geometry: ' num2str(toc(t0),'%.2f') ' s'])
 
         % fit polynomial to approximate the results
         t1 = tic;
         [model_info] = PolynomialFit(S,muscle_data,model_info);
-        disp(['   approximating MSK geometry: ' num2str(toc(t1)) ' s'])
-        disp(['   (total duration: ' num2str(toc(t0)) ' s)'])
+        disp(['   approximating MSK geometry: ' num2str(toc(t1),'%.2f') ' s'])
+%         disp(['   (total duration: ' num2str(toc(t0)) ' s)'])
+    else
+        disp(['   using existing MSK geometry ' S.misc.msk_geom_name])
     end
 
 else

@@ -31,7 +31,6 @@ t0 = tic;
 N = S.solver.N_meshes; % number of mesh intervals
 W = S.weights; % weights optimization
 nq = model_info.ExtFunIO.jointi.nq; % lengths of coordinate subsets
-setup.derivatives =  'AD'; % Algorithmic differentiation
 
 %% Load external functions
 import casadi.*
@@ -39,8 +38,15 @@ import casadi.*
 % OpenSim/Simbody C++ API. This external function is compiled as a dll from
 % which we create a Function instance using CasADi in MATLAB. More details
 % about the external function can be found in the documentation.
-F  = external('F',fullfile(S.misc.subject_path,S.misc.external_function));
-
+pathmain = pwd;
+% [filepath,~,~] = fileparts(mfilename('fullpath'));
+% [pathRepo,~,~] = fileparts(filepath);
+% addpath(genpath(pathRepo));
+% Loading external functions.
+setup.derivatives =  'AD'; % Algorithmic differentiation
+cd(S.misc.subject_path)
+F  = external('F',S.misc.external_function);
+cd(pathmain);
 
 %% Collocation Scheme
 % We use a pseudospectral direct collocation method, i.e. we use Lagrange
@@ -125,7 +131,7 @@ opti.subject_to(bounds.FTtilde.lower'*ones(1,d*N) < FTtilde_col < ...
 opti.set_initial(FTtilde_col, guess.FTtilde_col');
 % Qs at mesh points
 Qs = opti.variable(nq.all,N+1);
-% We want to constraint the pelvis_tx and pelvis_tz position at the first mesh point,
+% We want to constraint the pelvis_tx position at the first mesh point,
 % and avoid redundant bounds
 lboundsQsk = bounds.Qs.lower'*ones(1,N+1);
 lboundsQsk(model_info.ExtFunIO.jointi.base_forward,1) = ...
@@ -223,12 +229,9 @@ dFTtildej   = MX.sym('dFTtildej',NMuscle,d);
 Aj          = MX.sym('Aj',nq.all,d);
 J           = 0; % Initialize cost function
 eq_constr   = {}; % Initialize equality constraint vector
-ineq_constr1   = {}; % Initialize inequality constraint vector
-ineq_constr2   = {}; % Initialize inequality constraint vector
-ineq_constr3   = {}; % Initialize inequality constraint vector
-ineq_constr4   = {}; % Initialize inequality constraint vector
-ineq_constr5   = {}; % Initialize inequality constraint vector
-ineq_constr6   = {}; % Initialize inequality constraint vector
+ineq_constr_deact = {}; % Initialize inequality constraint vector
+ineq_constr_act = {}; % Initialize inequality constraint vector
+ineq_constr_distance = cell(length(S.bounds.distanceConstraints),1);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Time step
 h = tfk/N;
@@ -242,10 +245,6 @@ for j=1:d
     dFTtildej_nsc = dFTtildej.*scaling.dFTtilde;
     Aj_nsc = Aj.*(scaling.Qdotdots'*ones(1,size(Aj,2)));
     vAk_nsc = vAk.*scaling.vA;
-    
-    QsQdotskj_nsc = MX(nq.all*2, d+1);
-    QsQdotskj_nsc(1:2:end,:) = Qskj_nsc;
-    QsQdotskj_nsc(2:2:end,:) = Qdotskj_nsc;
     
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Get muscle-tendon lengths, velocities, and moment arms
@@ -330,9 +329,20 @@ for j=1:d
 
     
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    % Call external function (run inverse dynamics)
-    [Tj] = F([QsQdotskj_nsc(:,j+1);Aj_nsc(:,j)]);
-% 
+    % Create zero (sparse) input vector for external function
+    F_ext_input = MX(model_info.ExtFunIO.input.nInputs,1);
+    % Assign Qs
+    F_ext_input(model_info.ExtFunIO.input.Qs.all,1) = Qskj_nsc(:,j+1);
+    % Assign Qdots
+    F_ext_input(model_info.ExtFunIO.input.Qdots.all,1) = Qdotskj_nsc(:,j+1);
+    % Assign Qdotdots (A)
+    F_ext_input(model_info.ExtFunIO.input.Qdotdots.all,1) = Aj_nsc(:,j);
+    % Assign forces and moments 
+    % (not used yet)
+
+    % Evaluate external function
+    [Tj] = F(F_ext_input);
+
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Add path constraints
     for i=1:nq.all
@@ -374,61 +384,62 @@ for j=1:d
     % Activation dynamics (implicit formulation)
     act1 = vAk_nsc + akj(:,j+1)./(ones(size(akj(:,j+1),1),1)*tdeact);
     act2 = vAk_nsc + akj(:,j+1)./(ones(size(akj(:,j+1),1),1)*tact);
-    ineq_constr1{end+1} = act1;
-    ineq_constr2{end+1} = act2;
+    ineq_constr_deact{end+1} = act1;
+    ineq_constr_act{end+1} = act2;
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Contraction dynamics (implicit formulation)
     eq_constr{end+1} = Hilldiffj;
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Constraints to prevent parts of the skeleton to penetrate each other.
-    if isfield(model_info.ExtFunIO,'origin')
-        % Origins calcaneus (transv plane) at minimum 9 cm from each other.
-        if isfield(model_info.ExtFunIO.origin,'calcn_r') && isfield(model_info.ExtFunIO.origin,'calcn_l') && ...
-                ~isempty(model_info.ExtFunIO.origin.calcn_r) &&  ~isempty(model_info.ExtFunIO.origin.calcn_l)
-            Qconstr = f_casadi.J_nn_2(Tj(model_info.ExtFunIO.origin.calcn_r([1 3]),1) - ...
-                Tj(model_info.ExtFunIO.origin.calcn_l([1 3]),1));
-            ineq_constr3{end+1} = Qconstr;
+    for i_dc=1:length(S.bounds.distanceConstraints)
+        % get position of points
+        point1_i = S.bounds.points(strcmp({S.bounds.points.name},S.bounds.distanceConstraints(i_dc).point1));
+        if strcmpi(point1_i.body,'ground')
+            % position of point in ground is known
+            pos1j = point1_i.point_in_body;
+        else
+            % position of point in body is provided by external function
+            pos1j = Tj(model_info.ExtFunIO.position.(S.bounds.distanceConstraints(i_dc).point1),1);
         end
-        % Constraint to prevent the arms to penetrate the skeleton
-        % Origins femurs and ipsilateral hands (transv plane) at minimum
-        % 18 cm from each other.
-        if isfield(model_info.ExtFunIO.origin,'femur_r') && isfield(model_info.ExtFunIO.origin,'hand_r') && ...
-                ~isempty(model_info.ExtFunIO.origin.femur_r) &&  ~isempty(model_info.ExtFunIO.origin.hand_r)
-            Qconstr = f_casadi.J_nn_2(Tj(model_info.ExtFunIO.origin.femur_r([1 3]),1) - ...
-                Tj(model_info.ExtFunIO.origin.hand_r([1 3]),1));
-            ineq_constr4{end+1} = Qconstr;
+        point2_i = S.bounds.points(strcmp({S.bounds.points.name},S.bounds.distanceConstraints(i_dc).point2));
+        if strcmpi(point2_i.body,'ground')
+            % position of point in ground is known
+            pos2j = point2_i.point_in_body;
+        else
+            % position of point in body is provided by external function
+            pos2j = Tj(model_info.ExtFunIO.position.(S.bounds.distanceConstraints(i_dc).point2),1);
         end
-        if isfield(model_info.ExtFunIO.origin,'femur_l') && isfield(model_info.ExtFunIO.origin,'hand_l') && ...
-                ~isempty(model_info.ExtFunIO.origin.femur_l) &&  ~isempty(model_info.ExtFunIO.origin.hand_l)
-            Qconstr = f_casadi.J_nn_2(Tj(model_info.ExtFunIO.origin.femur_l([1 3]),1) - ...
-                Tj(model_info.ExtFunIO.origin.hand_l([1 3]),1));
-            ineq_constr4{end+1} = Qconstr;
+
+        % calculate distance
+        if length(S.bounds.distanceConstraints(i_dc).directionVectorIdx)==3 % 3D
+            Qconstr = f_casadi.J_nn_3(pos1j(S.bounds.distanceConstraints(i_dc).directionVectorIdx) ...
+                - pos2j(S.bounds.distanceConstraints(i_dc).directionVectorIdx));
+
+            ineq_constr_distance{i_dc}{end+1} = Qconstr;
+
+        elseif length(S.bounds.distanceConstraints(i_dc).directionVectorIdx)==2 % 2D
+            Qconstr = f_casadi.J_nn_2(pos1j(S.bounds.distanceConstraints(i_dc).directionVectorIdx) ...
+                - pos2j(S.bounds.distanceConstraints(i_dc).directionVectorIdx));
+
+            ineq_constr_distance{i_dc}{end+1} = Qconstr;
+
+        elseif length(S.bounds.distanceConstraints(i_dc).directionVectorIdx)==1 % 1D
+            Qconstr = pos1j(S.bounds.distanceConstraints(i_dc).directionVectorIdx) ...
+                - pos2j(S.bounds.distanceConstraints(i_dc).directionVectorIdx);
+
+            ineq_constr_distance{i_dc}{end+1} = Qconstr;
         end
-        % Origins tibia (transv plane) at minimum 11 cm from each other.
-        if isfield(model_info.ExtFunIO.origin,'tibia_r') && isfield(model_info.ExtFunIO.origin,'tibia_l') && ...
-                ~isempty(model_info.ExtFunIO.origin.tibia_r) &&  ~isempty(model_info.ExtFunIO.origin.tibia_l)
-            Qconstr = f_casadi.J_nn_2(Tj(model_info.ExtFunIO.origin.tibia_r([1 3]),1) - ...
-                Tj(model_info.ExtFunIO.origin.tibia_l([1 3]),1));
-            ineq_constr5{end+1} = Qconstr;
-        end
-        % Origins toes (transv plane) at minimum 10 cm from each other.
-        if isfield(model_info.ExtFunIO.origin,'toes_r') && isfield(model_info.ExtFunIO.origin,'toes_l') && ...
-                ~isempty(model_info.ExtFunIO.origin.toes_r) &&  ~isempty(model_info.ExtFunIO.origin.toes_l)
-            Qconstr = f_casadi.J_nn_2(Tj(model_info.ExtFunIO.origin.toes_r([1 3]),1) - ...
-                Tj(model_info.ExtFunIO.origin.toes_l([1 3]),1));
-            ineq_constr6{end+1} = Qconstr;
-        end
+
     end
 
 end % End loop over collocation points
 
 eq_constr = vertcat(eq_constr{:});
-ineq_constr1 = vertcat(ineq_constr1{:});
-ineq_constr2 = vertcat(ineq_constr2{:});
-ineq_constr3 = vertcat(ineq_constr3{:});
-ineq_constr4 = vertcat(ineq_constr4{:});
-ineq_constr5 = vertcat(ineq_constr5{:});
-ineq_constr6 = vertcat(ineq_constr6{:});
+ineq_constr_deact = vertcat(ineq_constr_deact{:});
+ineq_constr_act = vertcat(ineq_constr_act{:});
+for i_dc=1:length(ineq_constr_distance)
+    ineq_constr_distance{i_dc} = vertcat(ineq_constr_distance{i_dc}{:});
+end
 
 
 % Casadi function to get constraints and objective
@@ -437,10 +448,9 @@ if nq.torqAct > 0
     coll_input_vars_def = [coll_input_vars_def,{a_ak,a_aj,e_ak}];
 end
 f_coll = Function('f_coll',coll_input_vars_def,...
-    {eq_constr,ineq_constr1,ineq_constr2,ineq_constr3,...
-    ineq_constr4,ineq_constr5,ineq_constr6,J});
+    {eq_constr,ineq_constr_deact,ineq_constr_act,ineq_constr_distance{:},J});
 
-% assign function to multiple cores
+% Repeat function for each mesh interval and assign evaluation to multiple threads
 f_coll_map = f_coll.map(N,S.solver.parallel_mode,S.solver.N_threads);
 
 % evaluate function with opti variables
@@ -449,40 +459,32 @@ coll_input_vars_eval = {tf,a(:,1:end-1), a_col, FTtilde(:,1:end-1), FTtilde_col,
 if nq.torqAct > 0
     coll_input_vars_eval = [coll_input_vars_eval, {a_a(:,1:end-1), a_a_col, e_a}];
 end
-[coll_eq_constr,coll_ineq_constr1,coll_ineq_constr2,coll_ineq_constr3,...
-    coll_ineq_constr4,coll_ineq_constr5,coll_ineq_constr6,Jall] = f_coll_map(coll_input_vars_eval{:});
+coll_ineq_constr_distance = cell(1,length(ineq_constr_distance));
+[coll_eq_constr,coll_ineq_constr_deact,coll_ineq_constr_act,coll_ineq_constr_distance{:},Jall] = f_coll_map(coll_input_vars_eval{:});
 
 % equality constraints
 opti.subject_to(coll_eq_constr == 0);
 
 % inequality constraints (logical indexing not possible in MX arrays)
-opti.subject_to(coll_ineq_constr1(:) >= 0);
-opti.subject_to(coll_ineq_constr2(:) <= 1/tact);
-if isfield(model_info.ExtFunIO,'origin')
-    if ~isempty(coll_ineq_constr3)
-        opti.subject_to(S.bounds.calcn_dist.lower.^2 < coll_ineq_constr3(:) < 4);
-    else
-        disp('   Minimal distance between calcanei not constrained. To do so, please use "calcn_r" and "calcn_l" as body names in the OpenSim model.')
+opti.subject_to(coll_ineq_constr_deact(:) >= 0);
+opti.subject_to(coll_ineq_constr_act(:) <= 1/tact);
+
+for i_dc=1:length(ineq_constr_distance)
+    coll_ineq_constr_distance_i_dc = coll_ineq_constr_distance{i_dc};
+
+    if ~isempty(S.bounds.distanceConstraints(i_dc).lower_bound) && ...
+             ~isempty(S.bounds.distanceConstraints(i_dc).upper_bound)
+        % lower and upper bound
+        opti.subject_to(S.bounds.distanceConstraints(i_dc).lower_bound < coll_ineq_constr_distance_i_dc(:)...
+            < S.bounds.distanceConstraints(i_dc).upper_bound);
+    elseif ~isempty(S.bounds.distanceConstraints(i_dc).lower_bound)
+        % only lower bound
+        opti.subject_to(S.bounds.distanceConstraints(i_dc).lower_bound < coll_ineq_constr_distance_i_dc(:))
+    elseif ~isempty(S.bounds.distanceConstraints(i_dc).upper_bound)
+        % only upper bound
+        opti.subject_to(coll_ineq_constr_distance_i_dc(:) < S.bounds.distanceConstraints(i_dc).upper_bound);
     end
-    if ~isempty(coll_ineq_constr4)
-        opti.subject_to(S.bounds.femur_hand_dist.lower.^2 < coll_ineq_constr4(:) < 4);
-    end
-    if isempty(model_info.ExtFunIO.origin.femur_r) || isempty(model_info.ExtFunIO.origin.hand_r)
-        disp('   Minimal distance between right arm and body not constrained. To do so, please use "femur_r" and "hand_r" as body names in the OpenSim model.')
-    end
-    if isempty(model_info.ExtFunIO.origin.femur_l) || isempty(model_info.ExtFunIO.origin.hand_l)
-        disp('   Minimal distance between left arm and body not constrained. To do so, please use "femur_l" and "hand_l" as body names in the OpenSim model.')
-    end
-    if ~isempty(coll_ineq_constr5)
-        opti.subject_to(S.bounds.tibia_dist.lower.^2 < coll_ineq_constr5(:) < 4);
-    else
-        disp('   Minimal distance between tibias not constrained. To do so, please use "tibia_r" and "tibia_l" as body names in the OpenSim model.')
-    end
-    if ~isempty(coll_ineq_constr6)
-        opti.subject_to(S.bounds.toes_dist.lower.^2 < coll_ineq_constr6(:) < 4);
-    else
-        disp('   Minimal distance between toes not constrained. To do so, please use "toes_r" and "toes_l" as body names in the OpenSim model.')
-    end
+
 end
 
 % Loop over mesh points
@@ -515,10 +517,8 @@ if strcmp(S.misc.gaitmotion_type,'HalfGaitCycle')
     % Qs and Qdots
     opti.subject_to(Qs(model_info.ExtFunIO.symQs.QsInvA,end) - Qs(model_info.ExtFunIO.symQs.QsInvB,1) == 0);
     opti.subject_to(Qdots(model_info.ExtFunIO.symQs.QdotsInvA,end) - Qdots(model_info.ExtFunIO.symQs.QdotsInvB,1) == 0);
-    if ~isempty(model_info.ExtFunIO.symQs.QsOpp)
-        opti.subject_to(Qs(model_info.ExtFunIO.symQs.QsOpp,end) + Qs(model_info.ExtFunIO.symQs.QsOpp,1) == 0);
-        opti.subject_to(Qdots(model_info.ExtFunIO.symQs.QsOpp,end) + Qdots(model_info.ExtFunIO.symQs.QsOpp,1) == 0);
-    end
+    opti.subject_to(Qs(model_info.ExtFunIO.symQs.QsOpp,end) + Qs(model_info.ExtFunIO.symQs.QsOpp,1) == 0);
+    opti.subject_to(Qdots(model_info.ExtFunIO.symQs.QsOpp,end) + Qdots(model_info.ExtFunIO.symQs.QsOpp,1) == 0);
     % Muscle activations
     opti.subject_to(a(model_info.ExtFunIO.symQs.MusInvA,end) - a(model_info.ExtFunIO.symQs.MusInvB,1) == 0);
     % Muscle-tendon forces
@@ -550,12 +550,7 @@ Qs_nsc = Qs.*(scaling.Qs'*ones(1,N+1));
 dist_trav_tot = Qs_nsc(model_info.ExtFunIO.jointi.base_forward,end) - ...
     Qs_nsc(model_info.ExtFunIO.jointi.base_forward,1);
 vel_aver_tot = dist_trav_tot/tf;
-if length(S.subject.v_pelvis_x_trgt) == 1
-    opti.subject_to(vel_aver_tot - S.subject.v_pelvis_x_trgt == 0)
-else
-    opti.subject_to(vel_aver_tot >= min(S.subject.v_pelvis_x_trgt))
-    opti.subject_to(vel_aver_tot <= max(S.subject.v_pelvis_x_trgt))
-end
+opti.subject_to(vel_aver_tot - S.subject.v_pelvis_x_trgt == 0)
 
 % optional constraints
 if strcmp(S.misc.gaitmotion_type,'HalfGaitCycle')
@@ -565,15 +560,11 @@ if strcmp(S.misc.gaitmotion_type,'HalfGaitCycle')
     end
     % upper bound on step length for right foot (left foot is already symmetric
     if ~isempty(S.bounds.SLL.upper) || ~isempty(S.bounds.SLR.upper)
-        if ~isempty(model_info.ExtFunIO.origin.calcn_r) &&  ~isempty(model_info.ExtFunIO.origin.calcn_l)
-            [step_length_r,~] = f_casadi.f_getStepLength(Qs_nsc(:,1),Qs_nsc(:,end));
-            if ~isempty(S.bounds.SLL.upper)
-                opti.subject_to(step_length_r <= S.bounds.SLL.upper)
-            elseif ~isempty(S.bounds.SLR.upper)
-                opti.subject_to(step_length_r <= S.bounds.SLR.upper)
-            end
-        else
-            disp('   Unable to constrain step length. To do so, please use "calcn_r" and "calcn_l" as body names in the OpenSim model.')
+        [step_length_r,~] = f_casadi.f_getStepLength(Qs_nsc(:,1),Qs_nsc(:,end));
+        if ~isempty(S.bounds.SLL.upper)
+            opti.subject_to(step_length_r <= S.bounds.SLL.upper)
+        elseif ~isempty(S.bounds.SLR.upper)
+            opti.subject_to(step_length_r <= S.bounds.SLR.upper)
         end
     end
 
@@ -584,16 +575,12 @@ elseif strcmp(S.misc.gaitmotion_type,'FullGaitCycle')
     end
     % upper bound on step length for left and/or right foot
     if ~isempty(S.bounds.SLL.upper) || ~isempty(S.bounds.SLR.upper)
-        if ~isempty(model_info.ExtFunIO.origin.calcn_r) &&  ~isempty(model_info.ExtFunIO.origin.calcn_l)
-            [step_length_r,step_length_l] = f_casadi.f_getStepLength(Qs_nsc(:,1),Qs_nsc(:,end));
-            if ~isempty(S.bounds.SLL.upper)
-                opti.subject_to(step_length_l <= S.bounds.SLL.upper)
-            end
-            if ~isempty(S.bounds.SLR.upper)
-                opti.subject_to(step_length_r <= S.bounds.SLR.upper)
-            end
-        else
-            disp('   Unable to constrain step length. To do so, please use "calcn_r" and "calcn_l" as body names in the OpenSim model.')
+        [step_length_r,step_length_l] = f_casadi.f_getStepLength(Qs_nsc(:,1),Qs_nsc(:,end));
+        if ~isempty(S.bounds.SLL.upper)
+            opti.subject_to(step_length_l <= S.bounds.SLL.upper)
+        end
+        if ~isempty(S.bounds.SLR.upper)
+            opti.subject_to(step_length_r <= S.bounds.SLR.upper)
         end
     end
 end
@@ -601,25 +588,15 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Scale cost function
 Jall_sc = sum(Jall)/dist_trav_tot;
-% Add velocity cost
-if S.weights.velocity~=0
-    Jall_sc = Jall_sc + S.weights.velocity*vel_aver_tot;
-end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-%%
-if S.post_process.rerun_from_w
-    % For debugging only: load w_opt and reconstruct R before rerunning the post-processing.
-    Outname = fullfile(S.subject.save_folder,[S.post_process.result_filename '.mat']);
-    clear 'S'
-    load(Outname,'w_opt','stats','setup','model_info','R','S');
-    scaling = setup.scaling;
-    if exist('R','var')
-        S = R.S;
-    end
-    clear 'R'
+disp(' ')
+disp(['...OCP formulation done. Time elapsed ' num2str(toc(t0),'%.2f') ' s'])
+disp(' ')
 
-else
+%%
+
+if ~S.post_process.load_prev_opti_vars
     % Create NLP solver
     opti.minimize(Jall_sc);
     options.ipopt.hessian_approximation = 'limited-memory';
@@ -630,10 +607,10 @@ else
     options.ipopt.constr_viol_tol       = 1*10^(-S.solver.tol_ipopt);
     opti.solver('ipopt', options);
     % timer
-    disp(['... OCP formulation done. Time elapsed ' num2str(toc(t0)) ' s'])
-    % Create and save diary
-    Outname = fullfile(S.subject.save_folder,[S.post_process.result_filename '_log.txt']);
-    diary(Outname);
+    
+    disp('Starting NLP solver...')
+    disp(' ')
+    t0s = tic;
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Solve problem
     % Opti does not use bounds on variables but constraints. This function
@@ -641,8 +618,10 @@ else
     [w_opt,stats] = solve_NLPSOL(opti,options);
     
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    diary off
-    % Extract results
+    disp(' ')
+    disp(['...Exit NLP solver. Time elapsed ' num2str(toc(t0s),'%.2f') ' s'])
+    disp(' ')
+    disp(' ')
     % Create setup
     setup.tolerance.ipopt = S.solver.tol_ipopt;
     setup.bounds = bounds;
@@ -652,12 +631,27 @@ else
     Outname = fullfile(S.subject.save_folder,[S.post_process.result_filename '.mat']);
     save(Outname,'w_opt','stats','setup','model_info','S');
 
+else % S.post_process.load_prev_opti_vars = true
+    
+    % Advanced feature, for debugging only: load w_opt and reconstruct R before rerunning the post-processing.
+    Outname = fullfile(S.subject.save_folder,[S.post_process.result_filename '.mat']);
+    disp(['Loading vector with optimization variables from previous solution: ' Outname])
+    clear 'S'
+    load(Outname,'w_opt','stats','setup','model_info','R','S');
+    scaling = setup.scaling;
+    if exist('R','var')
+        S = R.S;
+    end
+    clear 'R'
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Essential post processing
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 %% Read from the vector with optimization results
+disp('Retrieving solution...')
+disp(' ')
 
 NParameters = 1;
 tf_opt = w_opt(1:NParameters);
@@ -828,7 +822,7 @@ dist_trav_opt = q_opt_unsc_all.rad(end,model_info.ExtFunIO.jointi.base_forward) 
 time_elaps_opt = tf_opt; % time elapsed
 vel_aver_opt = dist_trav_opt/time_elaps_opt;
 % assert_v_tg should be 0
-assert_v_tg = max(abs(vel_aver_opt-S.subject.v_pelvis_x_trgt));
+assert_v_tg = abs(vel_aver_opt-S.subject.v_pelvis_x_trgt);
 if assert_v_tg > 1*10^(-S.solver.tol_ipopt)
     disp('Issue when reconstructing average speed')
 end
@@ -843,7 +837,6 @@ Pass_cost       = 0;
 vA_cost         = 0;
 dFTtilde_cost   = 0;
 QdotdotArm_cost = 0;
-velocity_cost   = 0;
 count           = 1;
 h_opt           = tf_opt/N;
 for k=1:N
@@ -900,7 +893,7 @@ for k=1:N
             QdotdotArm_cost = QdotdotArm_cost + W.slack_ctrl*B(j+1)*...
                 (f_casadi.J_arms_dof(qdotdot_col_opt(count,model_info.ExtFunIO.jointi.armsi)))*h_opt;
         end
-        
+
         E_cost = E_cost + W.E*B(j+1)*...
             (f_casadi.J_muscles_exp(e_tot_opt_all,W.E_exp))/model_info.mass*h_opt;
         A_cost = A_cost + W.a*B(j+1)*...
@@ -916,38 +909,31 @@ for k=1:N
         count = count + 1;
     end
 end
-if S.weights.velocity~=0
-    J_opt = J_opt + S.weights.velocity*vel_aver_opt;
-    
-    velocity_cost = S.weights.velocity*vel_aver_opt;
-end
-
 J_optf = full(J_opt);
 E_costf = full(E_cost);
 A_costf = full(A_cost);
-Actu_costf = full(Actu_cost);
+Arm_costf = full(Actu_cost);
 Qdotdot_costf = full(Qdotdot_cost);
 Pass_costf = full(Pass_cost);
 vA_costf = full(vA_cost);
 dFTtilde_costf = full(dFTtilde_cost);
 QdotdotArm_costf = full(QdotdotArm_cost);
 
-
 contributionCost.absoluteValues = 1/(dist_trav_opt)*[E_costf,A_costf,...
-    Actu_costf,Qdotdot_costf,Pass_costf,vA_costf,dFTtilde_costf,...
-    QdotdotArm_costf, velocity_cost];
+    Arm_costf,Qdotdot_costf,Pass_costf,vA_costf,dFTtilde_costf,...
+    QdotdotArm_costf];
 contributionCost.relativeValues = 1/(dist_trav_opt)*[E_costf,A_costf,...
-    Actu_costf,Qdotdot_costf,Pass_costf,vA_costf,dFTtilde_costf,...
-    QdotdotArm_costf, velocity_cost]./J_optf*100;
+    Arm_costf,Qdotdot_costf,Pass_costf,vA_costf,dFTtilde_costf,...
+    QdotdotArm_costf]./J_optf*100;
 contributionCost.relativeValuesRound2 = ...
     round(contributionCost.relativeValues,2);
 contributionCost.labels = {'metabolic energy','muscle activation',...
     'actuator excitation','joint accelerations','limit torques','dadt','dFdt',...
-    'arm accelerations' ,'velocity'};
+    'arm accelerations'};
 
 % assertCost should be 0
-assertCost = abs(J_optf - 1/(dist_trav_opt)*(E_costf+A_costf + Actu_costf + ...
-    Qdotdot_costf + Pass_costf + vA_costf + dFTtilde_costf + QdotdotArm_costf) - velocity_cost);
+assertCost = abs(J_optf - 1/(dist_trav_opt)*(E_costf+A_costf + Arm_costf + ...
+    Qdotdot_costf + Pass_costf + vA_costf + dFTtilde_costf + QdotdotArm_costf));
 
 assertCost2 = abs(stats.iterations.obj(end) - J_optf);
 
@@ -964,8 +950,8 @@ end
 % [coll_eq_constr_opt,coll_ineq_constr1_opt,coll_ineq_constr2_opt,coll_ineq_constr3_opt,...
 %     coll_ineq_constr4_opt,coll_ineq_constr5_opt,coll_ineq_constr6_opt,Jall_opt] = f_coll_map(tf_opt,...
 %     a_opt(1:end-1,:)', a_col_opt', FTtilde_opt(1:end-1,:)', FTtilde_col_opt', Qs_opt(1:end-1,:)', ...
-%     Qs_col_opt', Qdots_opt(1:end-1,:)', Qdots_col_opt', ...
-%     vA_opt', dFTtilde_col_opt', qdotdot_col_opt', a_a_opt(1:end-1,:)', a_a_col_opt', e_a_opt');
+%     Qs_col_opt', Qdots_opt(1:end-1,:)', Qdots_col_opt', a_a_opt(1:end-1,:)', a_a_col_opt', ...
+%     vA_opt', e_a_opt', dFTtilde_col_opt', qdotdot_col_opt');
 % 
 % Jall_sc_opt = full(sum(Jall_opt)/dist_trav_opt);
 % assertCost3 = abs(stats.iterations.obj(end) - Jall_sc_opt);
@@ -976,314 +962,117 @@ end
 % end
 
 %% Reconstruct full gait cycle
-% Ground reaction forces at mesh points (N), except #1
-Xk_Qs_Qdots_opt             = zeros(N,2*nq.all);
-Xk_Qs_Qdots_opt(:,1:2:end)  = q_opt_unsc_all.rad(2:end,:);
-Xk_Qs_Qdots_opt(:,2:2:end)  = qdot_opt_unsc_all.rad(2:end,:);
-Xk_Qdotdots_opt             = qdotdot_col_opt_unsc.rad(d:d:end,:);
-Foutk_opt                   = zeros(N,F.nnz_out);
-for i = 1:N
-    % ID moments
-%     [res] = F([Xk_Qs_Qdots_opt(i,:)';Xk_Qdotdots_opt(i,:)']);
-    [res] = evaluate_external_function(S,model_info,Xk_Qs_Qdots_opt(i,:),[],Xk_Qdotdots_opt(i,:));
-    Foutk_opt(i,:) = full(res);
-end
-GRFk_opt = Foutk_opt(:,[model_info.ExtFunIO.GRFs.right_foot model_info.ExtFunIO.GRFs.left_foot]);
+
+% joint accelerations controls on mesh points (2:N)
+qddot_opt_unsc.deg = qdotdot_col_opt_unsc.deg(d:d:end,:);
+qddot_opt_unsc.rad = qdotdot_col_opt_unsc.rad(d:d:end,:);
 
 if strcmp(S.misc.gaitmotion_type,'HalfGaitCycle')
-    % detect heelstrike
-    [IC1i_c,IC1i_s,HS1] = getHeelstrikeSimulation(GRFk_opt,N);
-        
+    % Use symmetry to reconstruct 2nd half of the gait cycle
+
+    idx_2nd_half_GC = N+1:2*N;
+
     % Qs
-    Qs_GC = zeros(N*2,size(q_opt_unsc.deg,2));
-    Qs_GC(1:N-IC1i_s+1,:) = q_opt_unsc.deg(IC1i_s:end,:);
-    Qs_GC(N-IC1i_s+2:N-IC1i_s+1+N,model_info.ExtFunIO.symQs.QsInvA) = q_opt_unsc.deg(1:end,model_info.ExtFunIO.symQs.QsInvB);
-    Qs_GC(N-IC1i_s+2:N-IC1i_s+1+N,model_info.ExtFunIO.symQs.QsOpp) = -q_opt_unsc.deg(1:end,model_info.ExtFunIO.symQs.QsOpp);
-    Qs_GC(N-IC1i_s+2:N-IC1i_s+1+N,model_info.ExtFunIO.jointi.base_forward) = ...
-        q_opt_unsc.deg(1:end,model_info.ExtFunIO.jointi.base_forward) + ...
-        q_opt_unsc_all.deg(end,model_info.ExtFunIO.jointi.base_forward);
-    Qs_GC(N-IC1i_s+2+N:2*N,:) = q_opt_unsc.deg(1:IC1i_s-1,:);
-    Qs_GC(N-IC1i_s+2+N:2*N,model_info.ExtFunIO.jointi.base_forward) = ...
-        q_opt_unsc.deg(1:IC1i_s-1,model_info.ExtFunIO.jointi.base_forward) + ...
-        2*q_opt_unsc_all.deg(end,model_info.ExtFunIO.jointi.base_forward);
-    % If the first heel strike was on the left foot then we invert so that
-    % we always start with the right foot, for analysis purpose
-    if strcmp(HS1,'l')
-        Qs_GC(:,model_info.ExtFunIO.symQs.QsInvA)  = Qs_GC(:,model_info.ExtFunIO.symQs.QsInvB);
-        Qs_GC(:,model_info.ExtFunIO.symQs.QsOpp) = -Qs_GC(:,model_info.ExtFunIO.symQs.QsOpp);
-    end
-    temp_Qs_GC_pelvis_tx = Qs_GC(1,model_info.ExtFunIO.jointi.base_forward);
-    Qs_GC(:,model_info.ExtFunIO.jointi.base_forward) = Qs_GC(:,model_info.ExtFunIO.jointi.base_forward)-...
-        temp_Qs_GC_pelvis_tx;
-    
+    q_opt_unsc.deg = [q_opt_unsc.deg(1:end,:); q_opt_unsc.deg(1:end,:)];
+    q_opt_unsc.deg(idx_2nd_half_GC,model_info.ExtFunIO.symQs.QsInvA) = q_opt_unsc.deg(idx_2nd_half_GC,model_info.ExtFunIO.symQs.QsInvB);
+    q_opt_unsc.deg(idx_2nd_half_GC,model_info.ExtFunIO.symQs.QsOpp) = -q_opt_unsc.deg(idx_2nd_half_GC,model_info.ExtFunIO.symQs.QsOpp);
+    q_opt_unsc.deg(idx_2nd_half_GC,model_info.ExtFunIO.jointi.base_forward) = q_opt_unsc.deg(idx_2nd_half_GC,model_info.ExtFunIO.jointi.base_forward) + dist_trav_opt;
+
+    q_opt_unsc.rad = q_opt_unsc.deg;
+    q_opt_unsc.rad(:,model_info.ExtFunIO.jointi.rotations) = q_opt_unsc.rad(:,model_info.ExtFunIO.jointi.rotations).*pi/180;
+
+    dist_trav_opt = dist_trav_opt*2;
+
     % Qdots
-    Qdots_GC = zeros(N*2,size(Qs_GC,2));
-    Qdots_GC(1:N-IC1i_s+1,:) = qdot_opt_unsc.deg(IC1i_s:end,:);
-    Qdots_GC(N-IC1i_s+2:N-IC1i_s+1+N,model_info.ExtFunIO.symQs.QdotsInvA) = ...
-        qdot_opt_unsc.deg(1:end,model_info.ExtFunIO.symQs.QdotsInvB);
-    Qdots_GC(N-IC1i_s+2:N-IC1i_s+1+N,model_info.ExtFunIO.symQs.QsOpp) = ...
-        -qdot_opt_unsc.deg(1:end,model_info.ExtFunIO.symQs.QsOpp);
-    Qdots_GC(N-IC1i_s+2+N:2*N,:) = qdot_opt_unsc.deg(1:IC1i_s-1,:);
-    % If the first heel strike was on the left foot then we invert so that
-    % we always start with the right foot, for analysis purpose
-    if strcmp(HS1,'l')
-        Qdots_GC(:,model_info.ExtFunIO.symQs.QdotsInvA) = Qdots_GC(:,model_info.ExtFunIO.symQs.QdotsInvB);
-        Qdots_GC(:,model_info.ExtFunIO.symQs.QsOpp) = -Qdots_GC(:,model_info.ExtFunIO.symQs.QsOpp);
-    end
-    
+    qdot_opt_unsc.deg = [qdot_opt_unsc.deg(1:end,:); qdot_opt_unsc.deg(1:end,:)];
+    qdot_opt_unsc.deg(idx_2nd_half_GC,model_info.ExtFunIO.symQs.QdotsInvA) = qdot_opt_unsc.deg(idx_2nd_half_GC,model_info.ExtFunIO.symQs.QdotsInvB);
+    qdot_opt_unsc.deg(idx_2nd_half_GC,model_info.ExtFunIO.symQs.QsOpp) = -qdot_opt_unsc.deg(idx_2nd_half_GC,model_info.ExtFunIO.symQs.QsOpp);
+
+    qdot_opt_unsc.rad = qdot_opt_unsc.deg;
+    qdot_opt_unsc.rad(:,model_info.ExtFunIO.jointi.rotations) = qdot_opt_unsc.rad(:,model_info.ExtFunIO.jointi.rotations).*pi/180;
+
     % Qdotdots
-    Qdotdots_GC = zeros(N*2,size(Qs_opt,2));
-    Qdotdots_GC(1:N-IC1i_c+1,:) = Xk_Qdotdots_opt(IC1i_c:end,:);
-    Qdotdots_GC(N-IC1i_c+2:N-IC1i_c+1+N,model_info.ExtFunIO.symQs.QdotsInvA) = ...
-        Xk_Qdotdots_opt(1:end,model_info.ExtFunIO.symQs.QdotsInvB);
-    Qdotdots_GC(N-IC1i_c+2:N-IC1i_c+1+N,model_info.ExtFunIO.symQs.QsOpp) = ...
-        -Xk_Qdotdots_opt(1:end,model_info.ExtFunIO.symQs.QsOpp);
-    Qdotdots_GC(N-IC1i_c+2+N:2*N,:) = Xk_Qdotdots_opt(1:IC1i_c-1,:);
-    % If the first heel strike was on the left foot then we invert so that
-    % we always start with the right foot, for analysis purpose
-    if strcmp(HS1,'l')
-        Qdotdots_GC(:,model_info.ExtFunIO.symQs.QdotsInvA) = Qdotdots_GC(:,model_info.ExtFunIO.symQs.QdotsInvB);
-        Qdotdots_GC(:,model_info.ExtFunIO.symQs.QsOpp) = -Qdotdots_GC(:,model_info.ExtFunIO.symQs.QsOpp);
-    end
-    
-    % Muscle activations
-    Acts_GC = zeros(N*2,NMuscle);
-    Acts_GC(1:N-IC1i_s+1,:) = a_opt_unsc(IC1i_s:end,:);
-    Acts_GC(N-IC1i_s+2:N-IC1i_s+1+N,model_info.ExtFunIO.symQs.MusInvA) =...
-        a_opt_unsc(1:end,model_info.ExtFunIO.symQs.MusInvB);
-    Acts_GC(N-IC1i_s+2+N:2*N,:) = a_opt_unsc(1:IC1i_s-1,:);
-    % If the first heel strike was on the left foot then we invert so that
-    % we always start with the right foot, for analysis purpose
-    if strcmp(HS1,'l')
-        Acts_GC(:,model_info.ExtFunIO.symQs.MusInvA) = Acts_GC(:,model_info.ExtFunIO.symQs.MusInvB);
-    end
+    qddot_opt_unsc.deg = [qddot_opt_unsc.deg; qddot_opt_unsc.deg(1:end,:)];
+    qddot_opt_unsc.deg(idx_2nd_half_GC,model_info.ExtFunIO.symQs.QdotsInvA) = qddot_opt_unsc.deg(idx_2nd_half_GC,model_info.ExtFunIO.symQs.QdotsInvB);
+    qddot_opt_unsc.deg(idx_2nd_half_GC,model_info.ExtFunIO.symQs.QsOpp) = -qddot_opt_unsc.deg(idx_2nd_half_GC,model_info.ExtFunIO.symQs.QsOpp);
 
-    % Time derivatives of muscle activations
-    dActs_GC = zeros(N*2,NMuscle);
-    dActs_GC(1:N-IC1i_s+1,:) = vA_opt_unsc(IC1i_s:end,:);
-    dActs_GC(N-IC1i_s+2:N-IC1i_s+1+N,model_info.ExtFunIO.symQs.MusInvA) =...
-        vA_opt_unsc(1:end,model_info.ExtFunIO.symQs.MusInvB);
-    dActs_GC(N-IC1i_s+2+N:2*N,:) = vA_opt_unsc(1:IC1i_s-1,:);
-    % If the first heel strike was on the left foot then we invert so that
-    % we always start with the right foot, for analysis purpose
-    if strcmp(HS1,'l')
-        dActs_GC(:,model_info.ExtFunIO.symQs.MusInvA) = dActs_GC(:,model_info.ExtFunIO.symQs.MusInvB);
-    end
-    
-    % Muscle-Tendon Forces
-    FTtilde_GC = zeros(N*2,NMuscle);
-    FTtilde_GC(1:N-IC1i_s+1,:) = FTtilde_opt_unsc(IC1i_s:end,:);
-    FTtilde_GC(N-IC1i_s+2:N-IC1i_s+1+N,model_info.ExtFunIO.symQs.MusInvA) = ...
-        FTtilde_opt_unsc(1:end,model_info.ExtFunIO.symQs.MusInvB);
-    FTtilde_GC(N-IC1i_s+2+N:2*N,:) = FTtilde_opt_unsc(1:IC1i_s-1,:);
-    % If the first heel strike was on the left foot then we invert so that
-    % we always start with the right foot, for analysis purpose
-    if strcmp(HS1,'l')
-        FTtilde_GC(:,model_info.ExtFunIO.symQs.MusInvA) = FTtilde_GC(:,model_info.ExtFunIO.symQs.MusInvB);
-    end
-
-    % Time derivative of muscle-tendon force
-    dFTtilde_GC = zeros(N*2,NMuscle);
-    dFTtilde_GC(1:N-IC1i_c+1,:) = dFTtilde_opt_unsc(IC1i_c:end,:);
-    dFTtilde_GC(N-IC1i_c+2:N-IC1i_c+1+N,model_info.ExtFunIO.symQs.MusInvA) = ...
-        dFTtilde_opt_unsc(1:end,model_info.ExtFunIO.symQs.MusInvB);
-    dFTtilde_GC(N-IC1i_c+2+N:2*N,:) = dFTtilde_opt_unsc(1:IC1i_c-1,:);
-    % If the first heel strike was on the left foot then we invert so that
-    % we always start with the right foot, for analysis purpose
-    if strcmp(HS1,'l')
-        dFTtilde_GC(:,model_info.ExtFunIO.symQs.MusInvA) = dFTtilde_GC(:,model_info.ExtFunIO.symQs.MusInvB);
-    end
- 
-    if nq.torqAct > 0
-        % Torque actuator activations
-        a_a_GC = zeros(N*2,nq.torqAct);
-        a_a_GC(1:N-IC1i_s+1,:) = a_a_opt_unsc(IC1i_s:end,:);
-        a_a_GC(N-IC1i_s+2:N-IC1i_s+1+N,model_info.ExtFunIO.symQs.ActInvA) =...
-            a_a_opt_unsc(1:end,model_info.ExtFunIO.symQs.ActInvB);
-        a_a_GC(N-IC1i_s+2:N-IC1i_s+1+N,model_info.ExtFunIO.symQs.ActOpp) =...
-            -a_a_opt_unsc(1:end,model_info.ExtFunIO.symQs.ActOpp);
-        a_a_GC(N-IC1i_s+2+N:2*N,:) = a_a_opt_unsc(1:IC1i_s-1,:);
-        % If the first heel strike was on the left foot then we invert so that
-        % we always start with the right foot, for analysis purpose
-        if strcmp(HS1,'l')
-            a_a_GC(:,model_info.ExtFunIO.symQs.ActInvA) = a_a_GC(:,model_info.ExtFunIO.symQs.ActInvB);
-            a_a_GC(:,model_info.ExtFunIO.symQs.ActOpp) = -a_a_GC(:,model_info.ExtFunIO.symQs.ActOpp);
-        end
-    
-        % Torque actuator excitations
-        e_a_GC = zeros(N*2,nq.torqAct);
-        e_a_GC(1:N-IC1i_s+1,:) = e_a_opt_unsc(IC1i_s:end,:);
-        e_a_GC(N-IC1i_s+2:N-IC1i_s+1+N,model_info.ExtFunIO.symQs.ActInvA) =...
-            e_a_opt_unsc(1:end,model_info.ExtFunIO.symQs.ActInvB);
-        e_a_GC(N-IC1i_s+2:N-IC1i_s+1+N,model_info.ExtFunIO.symQs.ActOpp) =...
-            -e_a_opt_unsc(1:end,model_info.ExtFunIO.symQs.ActOpp);
-        e_a_GC(N-IC1i_s+2+N:2*N,:) = e_a_opt_unsc(1:IC1i_s-1,:);
-        % If the first heel strike was on the left foot then we invert so that
-        % we always start with the right foot, for analysis purpose
-        if strcmp(HS1,'l')
-            e_a_GC(:,model_info.ExtFunIO.symQs.ActInvA) = e_a_GC(:,model_info.ExtFunIO.symQs.ActInvB);
-            e_a_GC(:,model_info.ExtFunIO.symQs.ActOpp) = -e_a_GC(:,model_info.ExtFunIO.symQs.ActOpp);
-        end
-    end
-
-
-    % Ground reaction forces
-    GRFs_opt = zeros(N*2,6);
-    GRFs_opt(1:N-IC1i_c+1,:) = GRFk_opt(IC1i_c:end,1:6);
-    GRFs_opt(N-IC1i_c+2:N-IC1i_c+1+N,:) = GRFk_opt(1:end,[4:6,1:3]);
-    GRFs_opt(N-IC1i_c+2:N-IC1i_c+1+N,[3,6]) = ...
-        -GRFs_opt(N-IC1i_c+2:N-IC1i_c+1+N,[3,6]);
-    GRFs_opt(N-IC1i_c+2+N:2*N,:) = GRFk_opt(1:IC1i_c-1,1:6);
-    % If the first heel strike was on the left foot then we invert so that
-    % we always start with the right foot, for analysis purpose
-    if strcmp(HS1,'l')
-        GRFs_opt(:,[4:6,1:3]) = GRFs_opt(:,:);
-        GRFs_opt(:,[3,6]) = -GRFs_opt(:,[3,6]);
-    end
-
-    % Joint torques
-    Ts_opt = zeros(N*2,size(Qs_opt,2));
-    Ts_opt(1:N-IC1i_c+1,1:nq.all) = Foutk_opt(IC1i_c:end,1:nq.all);
-    Ts_opt(N-IC1i_c+2:N-IC1i_c+1+N,model_info.ExtFunIO.symQs.QsInvA) = Foutk_opt(1:end,model_info.ExtFunIO.symQs.QsInvB);
-    Ts_opt(N-IC1i_c+2:N-IC1i_c+1+N,model_info.ExtFunIO.symQs.QsOpp) = -Foutk_opt(1:end,model_info.ExtFunIO.symQs.QsOpp);
-    Ts_opt(N-IC1i_c+2+N:2*N,1:nq.all) = Foutk_opt(1:IC1i_c-1,1:nq.all);
-    % If the first heel strike was on the left foot then we invert so that
-    % we always start with the right foot, for analysis purpose
-    if strcmp(HS1,'l')
-        Ts_opt(:,model_info.ExtFunIO.symQs.QsInvA) = Ts_opt(:,model_info.ExtFunIO.symQs.QsInvB);
-        Ts_opt(:,model_info.ExtFunIO.symQs.QsOpp) = -Ts_opt(:,model_info.ExtFunIO.symQs.QsOpp);
-    end
-
-elseif strcmp(S.misc.gaitmotion_type,'FullGaitCycle')
-    % detect heelstrike
-    [IC1i_c,IC1i_s,HS1] = getHeelstrikeSimulation(GRFk_opt,N);
-        
-    % Qs
-    Qs_GC = zeros(N,size(q_opt_unsc.deg,2));
-    Qs_GC(1:N-IC1i_s+1,:) = q_opt_unsc.deg(IC1i_s:end,:);
-    Qs_GC(N-IC1i_s+2:N,:) = q_opt_unsc.deg(1:IC1i_s-1,:);
-    Qs_GC(N-IC1i_s+2:N,model_info.ExtFunIO.jointi.base_forward) = ...
-        q_opt_unsc.deg(1:IC1i_s-1,model_info.ExtFunIO.jointi.base_forward) + ...
-        q_opt_unsc_all.deg(end,model_info.ExtFunIO.jointi.base_forward);
-    % If the first heel strike was on the left foot then we invert so that
-    % we always start with the right foot, for analysis purpose
-    if strcmp(HS1,'l')
-        Qs_GC(:,model_info.ExtFunIO.symQs.QdotsInvA)  = Qs_GC(:,model_info.ExtFunIO.symQs.QdotsInvB);
-        Qs_GC(:,model_info.ExtFunIO.symQs.QsOpp)       = -Qs_GC(:,model_info.ExtFunIO.symQs.QsOpp);
-    end
-    temp_Qs_GC_pelvis_tx = Qs_GC(1,model_info.ExtFunIO.jointi.base_forward);
-    Qs_GC(:,model_info.ExtFunIO.jointi.base_forward) = Qs_GC(:,model_info.ExtFunIO.jointi.base_forward)-...
-        temp_Qs_GC_pelvis_tx;
-    
-    % Qdots
-    Qdots_GC = zeros(N,size(Qs_GC,2));
-    Qdots_GC(1:N-IC1i_s+1,:) = qdot_opt_unsc.deg(IC1i_s:end,:);
-    Qdots_GC(N-IC1i_s+2:N,:) = qdot_opt_unsc.deg(1:IC1i_s-1,:);
-    % If the first heel strike was on the left foot then we invert so that
-    % we always start with the right foot, for analysis purpose
-    if strcmp(HS1,'l')
-        Qdots_GC(:,model_info.ExtFunIO.symQs.QdotsInvA) = Qdots_GC(:,model_info.ExtFunIO.symQs.QdotsInvB);
-        Qdots_GC(:,model_info.ExtFunIO.symQs.QsOpp) = -Qdots_GC(:,model_info.ExtFunIO.symQs.QsOpp);
-    end
-    
-    % Qdotdots
-    Qdotdots_GC = zeros(N,size(Qs_opt,2));
-    Qdotdots_GC(1:N-IC1i_c+1,:) = Xk_Qdotdots_opt(IC1i_c:end,:);
-    Qdotdots_GC(N-IC1i_c+2:N,:) = Xk_Qdotdots_opt(1:IC1i_c-1,:);
-    % If the first heel strike was on the left foot then we invert so that
-    % we always start with the right foot, for analysis purpose
-    if strcmp(HS1,'l')
-        Qdotdots_GC(:,model_info.ExtFunIO.symQs.QdotsInvA) = Qdotdots_GC(:,model_info.ExtFunIO.symQs.QdotsInvB);
-        Qdotdots_GC(:,model_info.ExtFunIO.symQs.QsOpp) = -Qdotdots_GC(:,model_info.ExtFunIO.symQs.QsOpp);
-    end
+    qddot_opt_unsc.rad = qddot_opt_unsc.deg;
+    qddot_opt_unsc.rad(:,model_info.ExtFunIO.jointi.rotations) = qddot_opt_unsc.rad(:,model_info.ExtFunIO.jointi.rotations).*pi/180;
 
     % Muscle activations
-    Acts_GC = zeros(N,NMuscle);
-    Acts_GC(1:N-IC1i_s+1,:) = a_opt_unsc(IC1i_s:end,:);
-    Acts_GC(N-IC1i_s+2:N,:) = a_opt_unsc(1:IC1i_s-1,:);
-    % If the first heel strike was on the left foot then we invert so that
-    % we always start with the right foot, for analysis purpose
-    if strcmp(HS1,'l')
-        Acts_GC(:,model_info.ExtFunIO.symQs.MusInvA) = Acts_GC(:,model_info.ExtFunIO.symQs.MusInvB);
-    end
+    a_opt_unsc = [a_opt_unsc(1:end,:); a_opt_unsc(1:end,:)];
+    a_opt_unsc(idx_2nd_half_GC,model_info.ExtFunIO.symQs.MusInvA) = a_opt_unsc(idx_2nd_half_GC,model_info.ExtFunIO.symQs.MusInvB);
 
     % Time derivatives of muscle activations
-    dActs_GC = zeros(N,NMuscle);
-    dActs_GC(1:N-IC1i_c+1,:) = vA_opt_unsc(IC1i_c:end,:);
-    dActs_GC(N-IC1i_c+2:N,:) = vA_opt_unsc(1:IC1i_c-1,:);
-    % If the first heel strike was on the left foot then we invert so that
-    % we always start with the right foot, for analysis purpose
-    if strcmp(HS1,'l')
-        dActs_GC(:,model_info.ExtFunIO.symQs.MusInvA) = dActs_GC(:,model_info.ExtFunIO.symQs.MusInvB);
-    end
+    vA_opt_unsc = [vA_opt_unsc(1:end,:); vA_opt_unsc(1:end,:)];
+    vA_opt_unsc(idx_2nd_half_GC,model_info.ExtFunIO.symQs.MusInvA) = vA_opt_unsc(idx_2nd_half_GC,model_info.ExtFunIO.symQs.MusInvB);
 
-    % Muscle-Tendon Forces
-    FTtilde_GC = zeros(N,NMuscle);
-    FTtilde_GC(1:N-IC1i_s+1,:) = FTtilde_opt_unsc(IC1i_s:end,:);
-    FTtilde_GC(N-IC1i_s+2:N,:) = FTtilde_opt_unsc(1:IC1i_s-1,:);
-    % If the first heel strike was on the left foot then we invert so that
-    % we always start with the right foot, for analysis purpose
-    if strcmp(HS1,'l')
-        FTtilde_GC(:,model_info.ExtFunIO.symQs.MusInvA) = FTtilde_GC(:,model_info.ExtFunIO.symQs.MusInvB);
-    end
+    % Muscle-tendon forces
+    FTtilde_opt_unsc = [FTtilde_opt_unsc(1:end,:); FTtilde_opt_unsc(1:end,:)];
+    FTtilde_opt_unsc(idx_2nd_half_GC,model_info.ExtFunIO.symQs.MusInvA) = FTtilde_opt_unsc(idx_2nd_half_GC,model_info.ExtFunIO.symQs.MusInvB);
 
     % Time derivative of muscle-tendon force
-    dFTtilde_GC = zeros(N,NMuscle);
-    dFTtilde_GC(1:N-IC1i_c+1,:) = dFTtilde_opt_unsc(IC1i_c:end,:);
-    dFTtilde_GC(N-IC1i_c+2:N,:) = dFTtilde_opt_unsc(1:IC1i_c-1,:);
-    % If the first heel strike was on the left foot then we invert so that
-    % we always start with the right foot, for analysis purpose
-    if strcmp(HS1,'l')
-        dFTtilde_GC(:,model_info.ExtFunIO.symQs.MusInvA) = dFTtilde_GC(:,model_info.ExtFunIO.symQs.MusInvB);
-    end
+    dFTtilde_opt_unsc = [dFTtilde_opt_unsc; dFTtilde_opt_unsc(1:end,:)];
+    dFTtilde_opt_unsc(idx_2nd_half_GC,model_info.ExtFunIO.symQs.MusInvA) = dFTtilde_opt_unsc(idx_2nd_half_GC,model_info.ExtFunIO.symQs.MusInvB);
 
     if nq.torqAct > 0
         % Torque actuator activations
-        a_a_GC = zeros(N,nq.torqAct);
-        a_a_GC(1:N-IC1i_s+1,:) = a_a_opt_unsc(IC1i_s:end,:);
-        a_a_GC(N-IC1i_s+2:N,:) = a_a_opt_unsc(1:IC1i_s-1,:);
-        % If the first heel strike was on the left foot then we invert so that
-        % we always start with the right foot, for analysis purpose
-        if strcmp(HS1,'l')
-            a_a_GC(:,model_info.ExtFunIO.symQs.ActInvA) = a_a_GC(:,model_info.ExtFunIO.symQs.ActInvB);
-            a_a_GC(:,model_info.ExtFunIO.symQs.ActOpp) = -a_a_GC(:,model_info.ExtFunIO.symQs.ActOpp);
-        end
-        
+        a_a_opt_unsc = [a_a_opt_unsc(1:end,:); a_a_opt_unsc(1:end,:)];
+        a_a_opt_unsc(idx_2nd_half_GC,model_info.ExtFunIO.symQs.ActInvA) = a_a_opt_unsc(idx_2nd_half_GC,model_info.ExtFunIO.symQs.ActInvB);
+        a_a_opt_unsc(idx_2nd_half_GC,model_info.ExtFunIO.symQs.ActOpp) = -a_a_opt_unsc(idx_2nd_half_GC,model_info.ExtFunIO.symQs.ActOpp);
+
         % Torque actuator excitations
-        e_a_GC = zeros(N,nq.torqAct);
-        e_a_GC(1:N-IC1i_s+1,:) = e_a_opt_unsc(IC1i_s:end,:);
-        e_a_GC(N-IC1i_s+2:N,:) = e_a_opt_unsc(1:IC1i_s-1,:);
-        % If the first heel strike was on the left foot then we invert so that
-        % we always start with the right foot, for analysis purpose
-        if strcmp(HS1,'l')
-            e_a_GC(:,model_info.ExtFunIO.symQs.ActInvA) = e_a_GC(:,model_info.ExtFunIO.symQs.ActInvB);
-            e_a_GC(:,model_info.ExtFunIO.symQs.ActOpp) = -e_a_GC(:,model_info.ExtFunIO.symQs.ActOpp);
-        end
+        e_a_opt_unsc = [e_a_opt_unsc(1:end,:); e_a_opt_unsc(1:end,:)];
+        e_a_opt_unsc(idx_2nd_half_GC,model_info.ExtFunIO.symQs.ActInvA) = e_a_opt_unsc(idx_2nd_half_GC,model_info.ExtFunIO.symQs.ActInvB);
+        e_a_opt_unsc(idx_2nd_half_GC,model_info.ExtFunIO.symQs.ActOpp) = -e_a_opt_unsc(idx_2nd_half_GC,model_info.ExtFunIO.symQs.ActOpp);
+
     end
 
-    % Ground reaction forces
-    GRFs_opt = zeros(N,6);
-    GRFs_opt(1:N-IC1i_c+1,:) = GRFk_opt(IC1i_c:end,1:6);
-    GRFs_opt(N-IC1i_c+2:N,:) = GRFk_opt(1:IC1i_c-1,1:6);
-    % If the first heel strike was on the left foot then we invert so that
-    % we always start with the right foot, for analysis purpose
-    if strcmp(HS1,'l')
-        GRFs_opt(:,[4:6,1:3]) = GRFs_opt(:,:);
-        GRFs_opt(:,[3,6]) = -GRFs_opt(:,[3,6]);
-    end
-
-    % Joint torques
-    Ts_opt = zeros(N,size(Qs_opt,2));
-    Ts_opt(1:N-IC1i_c+1,1:nq.all) = Foutk_opt(IC1i_c:end,1:nq.all);
-    Ts_opt(N-IC1i_c+2:N,1:nq.all) = Foutk_opt(1:IC1i_c-1,1:nq.all);
-    % If the first heel strike was on the left foot then we invert so that
-    % we always start with the right foot, for analysis purpose
-    if strcmp(HS1,'l')
-        Ts_opt(:,model_info.ExtFunIO.symQs.QsInvA) = Ts_opt(:,model_info.ExtFunIO.symQs.QsInvB);
-        Ts_opt(:,model_info.ExtFunIO.symQs.QsOpp) = -Ts_opt(:,model_info.ExtFunIO.symQs.QsOpp);
-    end
-    
 end
+
+% express slack controls on mesh points 1:N to be consistent
+qddot_opt_unsc.deg = [qddot_opt_unsc.deg(end,:); qddot_opt_unsc.deg(1:end-1,:)];
+qddot_opt_unsc.rad = [qddot_opt_unsc.rad(end,:); qddot_opt_unsc.rad(1:end-1,:)];
+dFTtilde_opt_unsc = [dFTtilde_opt_unsc(end,:); dFTtilde_opt_unsc(1:end-1,:)];
+
+%% Gait cycle starts at right side initial contact
+
+% Ground reaction forces at mesh points (1:N-1)
+Foutk_opt                   = zeros(size(q_opt_unsc.rad,1),F.nnz_out);
+for i = 1:size(q_opt_unsc.rad,1)
+    % Create zero input vector for external function
+    F_ext_input = zeros(model_info.ExtFunIO.input.nInputs,1);
+    % Assign Qs
+    F_ext_input(model_info.ExtFunIO.input.Qs.all,1) = q_opt_unsc.rad(i,:);
+    % Assign Qdots
+    F_ext_input(model_info.ExtFunIO.input.Qdots.all,1) = qdot_opt_unsc.rad(i,:);
+    % Assign Qdotdots (A)
+    F_ext_input(model_info.ExtFunIO.input.Qdotdots.all,1) = qddot_opt_unsc.rad(i,:);
+
+    % Evaluate external function
+    res = F(F_ext_input);
+    Foutk_opt(i,:) = full(res);
+end
+GRFk_opt = Foutk_opt(:,[model_info.ExtFunIO.GRFs.right_total model_info.ExtFunIO.GRFs.left_total]);
+
+
+[idx_GC,idx_GC_base_forward_offset,HS1,HS_threshold] = getStancePhaseSimulation(GRFk_opt,model_info.mass/3);
+
+Qs_GC = q_opt_unsc.deg(idx_GC,:);
+Qdots_GC = qdot_opt_unsc.deg(idx_GC,:);
+Qdotdots_GC = qddot_opt_unsc.deg(idx_GC,:);
+Acts_GC = a_opt_unsc(idx_GC,:);
+dActs_GC = vA_opt_unsc(idx_GC,:);
+FTtilde_GC = FTtilde_opt_unsc(idx_GC,:);
+dFTtilde_GC = dFTtilde_opt_unsc(idx_GC,:);
+if nq.torqAct > 0
+    a_a_GC = a_a_opt_unsc(idx_GC,:);
+    e_a_GC = e_a_opt_unsc(idx_GC,:);
+end
+
+% adjust forward position to be continuous and start at 0
+Qs_GC(idx_GC_base_forward_offset,model_info.ExtFunIO.jointi.base_forward) = Qs_GC(idx_GC_base_forward_offset,model_info.ExtFunIO.jointi.base_forward) + dist_trav_opt;
+Qs_GC(:,model_info.ExtFunIO.jointi.base_forward) = Qs_GC(:,model_info.ExtFunIO.jointi.base_forward) - Qs_GC(1,model_info.ExtFunIO.jointi.base_forward);
 
 %% Unscale actuator torques
 if nq.torqAct > 0
@@ -1293,11 +1082,8 @@ if nq.torqAct > 0
     end
 end
 
-%% Convert joint accelerations to °/s^2
-Qdotdots_GC(:,model_info.ExtFunIO.jointi.rotations) = Qdotdots_GC(:,model_info.ExtFunIO.jointi.rotations)*180/pi;
-
 %% Save the results
-% Struct with results
+% Structure Results_all
 R.S = S;
 R.objective = contributionCost;
 R.time.mesh = tgrid;
@@ -1306,11 +1092,9 @@ R.time.mesh_GC = t_mesh_GC;
 R.colheaders.coordinates = model_info.ExtFunIO.coord_names.all;
 R.colheaders.muscles = model_info.muscle_info.muscle_names;
 R.colheaders.objective = contributionCost.labels;
-R.kinematics.avg_velocity = vel_aver_opt;
 R.kinematics.Qs = Qs_GC;
 R.kinematics.Qdots = Qdots_GC;
 R.kinematics.Qddots = Qdotdots_GC;
-
 R.muscles.a = Acts_GC;
 R.muscles.da = dActs_GC;
 R.muscles.FTtilde = FTtilde_GC;
@@ -1324,10 +1108,8 @@ else
     R.torque_actuators.e = [];
     R.torque_actuators.T = [];
 end
-
-R.kinetics.T_ID_0 = Ts_opt;
-R.ground_reaction.GRF_r_0 = GRFs_opt(:,1:3);
-R.ground_reaction.GRF_l_0 = GRFs_opt(:,4:6);
+R.ground_reaction.threshold = HS_threshold;
+R.ground_reaction.initial_contact_side = HS1;
 
 
 % save results
@@ -1336,8 +1118,5 @@ disp(['Saving results as: ' Outname])
 save(Outname,'w_opt','stats','setup','R','model_info');
 
 
-
-
-
-
 end
+
