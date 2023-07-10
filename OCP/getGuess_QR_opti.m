@@ -53,6 +53,15 @@ coordi = model_info.ExtFunIO.coordi;
 
 guess.tf = -0.1750*mean(S.subject.v_pelvis_x_trgt) + 0.8277;
 
+% extrapolate outside of 0.73:5 range
+if isempty(idx_speed)
+    guess.tf = -0.1750*S.subject.v_pelvis_x_trgt + 0.8277;
+end
+% avoid going too low
+if guess.tf < 0.15
+    guess.tf = 0.15;
+end
+
 %% Qs
 % The model is moving forward but with a standing position (Qs=0)
 guess.Qs = zeros(N,nq.all);
