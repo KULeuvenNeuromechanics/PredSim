@@ -23,7 +23,7 @@ addpath(fullfile(S.misc.main_path,'VariousFunctions'))
 
 %% Required inputs
 % name of the subject
-S.subject.name = 'Vitruvian_Man_v2'; %'Falisse_et_al_2022';
+S.subject.name = 'Vitruvian_Man_v3'; %'Falisse_et_al_2022';
 
 % path to folder where you want to store the results of the OCP
 S.subject.save_folder  = fullfile(pathRepoFolder,'PredSimResults',S.subject.name); 
@@ -132,10 +132,12 @@ S.subject.mtp_type          = '2022paper';
 % S.subject.muscle_coordination = ;
 % S.subject.set_stiffness_coefficient_selected_dofs = {{'mtp_angle_l','mtp_angle_r'},25};
 % S.subject.set_damping_coefficient_selected_dofs = {{'mtp_angle_l','mtp_angle_r'},2};
+% S.subject.set_stiffness_coefficient_selected_dofs = {'lumbar_extension',1};
 S.subject.set_damping_coefficient_selected_dofs = {
 %     'lumbar_extension',1,...
     {'arm_flex_r','arm_flex_l'},0.5,...
-    {'elbow_flex_r','elbow_flex_l'},0.25};
+%     {'elbow_flex_r','elbow_flex_l'},0.25
+    };
 
 % S.subject.set_limit_torque_coefficients_selected_dofs = ...
 %     {{'knee_angle_r','knee_angle_l'},-[11.03 -11.33 -6.09 33.94]',-[0.13 -2.4]',...
@@ -144,13 +146,13 @@ S.subject.set_damping_coefficient_selected_dofs = {
 % S.subject.base_joints_arms = [];
 
 % % S.weights
-S.weights.E         = 0.05;
-% S.weights.E_exp     = ;
-S.weights.q_dotdot  = 0.5;
-S.weights.e_arm     = 10;
-S.weights.pass_torq = 0.001;
-S.weights.a         = 1;
-S.weights.slack_ctrl = 0.001;
+% S.weights.E         = 0.5;
+% % S.weights.E_exp     = ;
+% S.weights.q_dotdot  = 10;
+% S.weights.e_arm     = 100;
+% S.weights.pass_torq = 0.1;
+% S.weights.a         = 10;
+% S.weights.slack_ctrl = 0.001;
 % S.weights.pass_torq_includes_damping = ;
 
 % %S.OpenSimADOptions: required inputs to convert .osim to .dll

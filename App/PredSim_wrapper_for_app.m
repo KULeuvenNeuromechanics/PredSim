@@ -90,33 +90,35 @@ S.subject.MT_params  = {
 S.subject.scale_actuator_torque = {
     'lumbar_extension',sf_force*(sqrt(sf.torso*sf.shoulder)*sf.torso*sf.upp_leg),...
     {'arm_flex_r','arm_flex_l'},sf_force*(sqrt(sf.torso*sf.shoulder)*sf.shoulder^2),...
-    {'elbow_flex_r','elbow_flex_l'},sf_force*sf.upp_arm^3};
+%     {'elbow_flex_r','elbow_flex_l'},sf_force*sf.upp_arm^3
+    };
 
 
-S.subject.set_stiffness_coefficient_selected_dofs = {
-    {'mtp_angle_l','mtp_angle_r'},25*sf_force*(sf.low_leg^2*sf.foot)};
+% S.subject.set_stiffness_coefficient_selected_dofs = {
+% %     {'arm_flex_r','arm_flex_l'},2*sf_force*sf_force*(sqrt(sf.torso*sf.shoulder)*sf.shoulder^2),...
+%     {'elbow_flex_r','elbow_flex_l'},1*sf_force*sf.upp_arm^3,...
+%     };
+% S.subject.set_stiffness_offset_selected_dofs = {{'elbow_flex_r','elbow_flex_l'},45*pi/180};
 
 S.subject.set_damping_coefficient_selected_dofs = {
 %     'lumbar_extension',2*sf_force*(sqrt(sf.torso*sf.shoulder)*sf.torso*sf.upp_leg),...
-    {'arm_flex_r','arm_flex_l'},0.5*sf_force*sf_force*(sqrt(sf.torso*sf.shoulder)*sf.shoulder^2),...
-    {'elbow_flex_r','elbow_flex_l'},0.5*sf_force*sf.upp_arm^3,...
-    {'mtp_angle_l','mtp_angle_r'},2*sf_force*(sf.low_leg^2*sf.foot)};
+    {'arm_flex_r','arm_flex_l'},0.2*sf_force*sf_force*(sqrt(sf.torso*sf.shoulder)*sf.shoulder^2),...
+%     {'elbow_flex_r','elbow_flex_l'},0.25*sf_force*sf.upp_arm^3,...
+    };
 
 
-S.subject.tendon_stiff_scale = {
-    {'soleus_l','soleus_r','gastroc_r','gastroc_l'},0.7};
+S.subject.tendon_stiff_scale = {{'soleus_l','soleus_r','gastroc_r','gastroc_l'},0.7};
 
 S.subject.adapt_IG_pelvis_y = 1;
 
 % % S.weights
-S.weights.E         = 0.05*0;
+S.weights.E         = 0.05;
 % S.weights.E_exp     = ;
 S.weights.q_dotdot  = 1;
-S.weights.e_arm     = 10;
+S.weights.e_arm     = 4;
 S.weights.pass_torq = 0;
 S.weights.a         = 1;
-% S.weights.slack_ctrl = 0.001;
-% S.weights.pass_torq_includes_damping = ;
+S.weights.slack_ctrl = 0.001;
 
 
 if U.Speed > 0
@@ -138,8 +140,8 @@ end
 
 % S.bounds.coordinates = [];
 
-S.OpenSimADOptions.verbose_mode = false;
-S.OpenSimADOptions.compiler = 'Visual Studio 14 2015 Win64';
+% S.OpenSimADOptions.verbose_mode = false;
+% S.OpenSimADOptions.compiler = 'Visual Studio 14 2015 Win64';
 
 %% Run predictive simulations
 savename = run_pred_sim(S,osim_path);

@@ -29,12 +29,6 @@ if ~isfield(S,'subject')
     S.subject = [];
 end
 
-% <<<<<<< HEAD
-% upper bound on left step length, in meters
-if ~isfield(S.bounds.SLL,'upper')
-    S.bounds.SLL.upper = [];
-end
-% =======
 % folder path to store the subject specific results
 if ~isfield(S.subject,'save_folder')
    error('Please provide a folder to store the results in. Specify the folder path in S.subject.save_folder.'); 
@@ -60,7 +54,6 @@ end
 % average velocity you want the model to have, in meters per second
 if ~isfield(S.subject,'v_pelvis_x_trgt')
     S.subject.v_pelvis_x_trgt = 1.25;
-% >>>>>>> update_bounds
 end
 
 % muscle strength
@@ -91,28 +84,11 @@ if ~isfield(S.subject,'scale_MT_params')
     S.subject.scale_MT_params = []; 
 end
 
-% <<<<<<< HEAD
-% constraints on distance between points
-if ~isfield(S.bounds,'points')
-    S.bounds.points = [];
-end
-if ~isfield(S.bounds,'distanceConstraints')
-    S.bounds.distanceConstraints = [];
-end
-
-%% metabolicE
-
-% hyperbolic tangent smoothing factor (used in metabolic cost)
-if ~isfield(S.metabolicE,'tanh_b')
-    S.metabolicE.tanh_b = 10;
-end
-% =======
 % muscle spasticity
 if ~isfield(S.subject,'spasticity')
     S.subject.spasticity = []; 
 elseif ~isempty(S.subject.spasticity)
     warning('spasticity is not yet implemented.')
-% >>>>>>> update_bounds
 end
 
 % muscle coordination
@@ -137,9 +113,24 @@ if ~isfield(S.subject,'stiffness_coefficient_all_dofs')
     S.subject.stiffness_coefficient_all_dofs = 0; 
 end
 
+% neutral position for stiffness coefficient for specific degrees of freedon
+if ~isfield(S.subject,'set_stiffness_offset_selected_dofs')
+    S.subject.set_stiffness_offset_selected_dofs = []; 
+end
+
 % different stiffness coefficient for specific degrees of freedon
 if ~isfield(S.subject,'set_stiffness_coefficient_selected_dofs')
     S.subject.set_stiffness_coefficient_selected_dofs = []; 
+end
+
+% default limit torque coefficient
+if ~isfield(S.subject,'default_coord_lim_torq_coeff')
+    S.subject.default_coord_lim_torq_coeff = 'default_coord_lim_torq_coeff.csv';
+end
+
+% scale factor for limit torque amplitude
+if ~isfield(S.subject,'scale_default_coord_lim_torq')
+    S.subject.scale_default_coord_lim_torq = [];
 end
 
 % limit torque coefficient for specific degrees of freedon
@@ -147,6 +138,20 @@ if ~isfield(S.subject,'set_limit_torque_coefficients_selected_dofs')
     S.subject.set_limit_torque_coefficients_selected_dofs = []; 
 end
 
+% joints that are considered base of a leg
+if ~isfield(S.subject,'base_joints_legs')
+    S.subject.base_joints_legs = 'hip';
+end
+
+% joints that are considered base of an arm
+if ~isfield(S.subject,'base_joints_arms')
+    S.subject.base_joints_arms = 'acromial';
+end
+
+% scale factor for maximal actuator torque
+if ~isfield(S.subject,'scale_actuator_torque')
+    S.subject.scale_actuator_torque = [];
+end
 
 %% misc
 if ~isfield(S,'misc')
@@ -244,51 +249,6 @@ if ~isfield(S.misc,'scaling_Moments')
     S.misc.scaling_Moments = [];
 end
 
-%% weights
-if ~isfield(S,'weights')
-    S.weights = [];
-end
-
-% weight on metabolic energy rate
-if ~isfield(S.weights,'E')
-    S.weights.E = 500; 
-end
-
-% exponent for the metabolic energy rate
-if ~isfield(S.weights,'E_exp')
-    S.weights.E_exp = 2; 
-end
-
-% weight on joint accelerations
-if ~isfield(S.weights,'q_dotdot')
-    S.weights.q_dotdot = 50000; 
-end
-
-% weight on arm excitations
-if ~isfield(S.weights,'e_arm')
-    S.weights.e_arm = 10^6; 
-end
-
-% weight on passive torques
-if ~isfield(S.weights,'pass_torq')
-    S.weights.pass_torq = 1000; 
-end
-
-% damping can be included in the passive torques that go in the cost
-% function
-if ~isfield(S.weights,'pass_torq_includes_damping')
-    S.weights.pass_torq_includes_damping = 0; 
-end
-
-% weight on muscle activations
-if ~isfield(S.weights,'a')
-    S.weights.a = 2000; 
-end
-
-% weight on slack controls
-if ~isfield(S.weights,'slack_ctrl')
-    S.weights.slack_ctrl = 0.001; 
-end
 
 %% metabolicE
 if ~isfield(S,'metabolicE')
@@ -308,38 +268,6 @@ end
 %% bounds
 if ~isfield(S,'bounds')
     S.bounds = [];
-end
-
-% distance between orginins calcanei, in meters
-if ~isfield(S.bounds,'calcn_dist')
-    S.bounds.calcn_dist = [];
-end
-if ~isfield(S.bounds.calcn_dist,'lower')
-    S.bounds.calcn_dist.lower = 0.09;
-end
-
-% distance between femur and hand orginins, in meters
-if ~isfield(S.bounds,'femur_hand_dist')
-    S.bounds.femur_hand_dist = [];
-end
-if ~isfield(S.bounds.femur_hand_dist,'lower')
-    S.bounds.femur_hand_dist.lower = sqrt(0.0324);
-end
-
-% distance between origins toes, in meters
-if ~isfield(S.bounds,'toes_dist')
-    S.bounds.toes_dist  = [];
-end
-if ~isfield(S.bounds.toes_dist,'lower')
-    S.bounds.toes_dist.lower = 0.10;
-end
-
-% distance between origins tibiae, in meters
-if ~isfield(S.bounds,'tibia_dist')
-    S.bounds.tibia_dist = [];
-end
-if ~isfield(S.bounds.tibia_dist,'lower')
-    S.bounds.tibia_dist.lower = 0.11;
 end
 
 % upper bound on left step length, in meters
@@ -431,6 +359,13 @@ if ~isfield(S.bounds.factor_IG_pelvis_ty,'upper')
     S.bounds.factor_IG_pelvis_ty.upper = 1.2;
 end
 
+% constraints on distance between points
+if ~isfield(S.bounds,'points')
+    S.bounds.points = [];
+end
+if ~isfield(S.bounds,'distanceConstraints')
+    S.bounds.distanceConstraints = [];
+end
 
 %% solver
 if ~isfield(S,'solver')
@@ -518,134 +453,8 @@ end
 if ~isfield(S.post_process,'load_prev_opti_vars')
     S.post_process.load_prev_opti_vars = 0;
 end
-% <<<<<<< HEAD
-
-% muscle stiffness
-if ~isfield(S.subject,'muscle_pass_stiff_shift')
-    S.subject.muscle_pass_stiff_shift = [];
-end
-if ~isfield(S.subject,'muscle_pass_stiff_scale')
-    S.subject.muscle_pass_stiff_scale = [];
-end
-
-% tendon stiffness
-if ~isfield(S.subject,'tendon_stiff_scale')
-    S.subject.tendon_stiff_scale = [];
-end
-
-% initial guess inputs
-% input should be a string: "quasi-random" or the path to a .mot file
-if ~isfield(S.subject,'IG_selection')
-    error('Please specify what you want to use as an initial guess. Either choose "quasi-random" or specify the path of a .mot file in S.subject.IG_selection.')
-else
-    [~,NAME,EXT] = fileparts(S.subject.IG_selection);
-    if EXT == ".mot" && isfile(S.subject.IG_selection)
-        disp(['Using ',char(S.subject.IG_selection), ' as initial guess.'])
-        if ~isfield(S.subject,'IG_selection_gaitCyclePercent')
-            error('Please specify what percent of gait cycle data is present in the initial guess file in S.subject.IG_selection_gaitCyclePercent. For example, use 50, 100, and 200 if the provided intial guess file has half a gait cycle, full gait cycle or two full gait cycles, respectively.')
-        end
-        if ((strcmp(S.misc.gaitmotion_type,'FullGaitCycle')) && (S.subject.IG_selection_gaitCyclePercent < 100))
-            error('Cannot use an initial guess of an incomplete gait cycle for predictive simulation of a full gait cycle. Please adjust S.misc.gaitmotion_type or initial guess file.')
-        elseif ((strcmp(S.misc.gaitmotion_type,'HalfGaitCycle')) && (S.subject.IG_selection_gaitCyclePercent < 50))
-            error('Cannot use an initial guess of less than half gait gait cycle for predictive simulation of a half gait cycle. Please adjust S.misc.gaitmotion_type or initial guess file.')
-        end
-        
-    elseif EXT == ".mot" && ~isfile(S.subject.IG_selection)
-        error('The motion file path you specified does not exist. Check if the path exists or if you made a typo.')
-        
-    elseif EXT == "" && NAME == "quasi-random"
-         disp('Using a quasi-random initial guess.')
-         
-    elseif EXT == "" && NAME ~= "quasi-random"
-        error('Please specify what you want to use as an initial guess. Either choose "quasi-random" or specify the path of a .mot file.')
-    end
-end
-
-% initial guess bounds
-if ~isfield(S.subject,'IK_Bounds')
-    S.subject.IK_Bounds = fullfile(S.misc.main_path,'OCP','IK_Bounds_Default.mot');
-elseif ~isfile(S.subject.IK_Bounds)
-    error('The motion file you specified in S.subject.IK_Bounds does not exist.')
-end
-disp([char(S.subject.IK_Bounds), ' will be used to determine bounds.'])
-
-% type of mtp joint used in the model
-if ~isfield(S.subject,'mtp_type')
-    S.subject.mtp_type = ''; 
-end
-
-% muscle tendon properties
-if ~isfield(S.subject,'scale_MT_params')
-    S.subject.scale_MT_params = []; 
-end
-
-% muscle spasticity
-if ~isfield(S.subject,'spasticity')
-    S.subject.spasticity = []; 
-elseif ~isempty(S.subject.spasticity)
-    warning('spasticity is not yet implemented.')
-end
-
-% muscle coordination
-if ~isfield(S.subject,'muscle_coordination')
-    S.subject.muscle_coordination = []; 
-elseif ~isempty(S.subject.muscle_coordination)
-    warning('muscle coordination is not yet implemented.')
-end
-
-% damping coefficient for all degrees of freedon
-if ~isfield(S.subject,'damping_coefficient_all_dofs')
-    S.subject.damping_coefficient_all_dofs = 0.1; 
-end
-
-% different damping coefficient for specific degrees of freedon
-if ~isfield(S.subject,'set_damping_coefficient_selected_dofs')
-    S.subject.set_damping_coefficient_selected_dofs = []; 
-end
-
-% stiffness coefficient for all degrees of freedon
-if ~isfield(S.subject,'stiffness_coefficient_all_dofs')
-    S.subject.stiffness_coefficient_all_dofs = 0; 
-end
-
-% different stiffness coefficient for specific degrees of freedon
-if ~isfield(S.subject,'set_stiffness_coefficient_selected_dofs')
-    S.subject.set_stiffness_coefficient_selected_dofs = []; 
-end
-
-% neutral position for stiffness coefficient for specific degrees of freedon
-if ~isfield(S.subject,'set_stiffness_offset_selected_dofs')
-    S.subject.set_stiffness_offset_selected_dofs = []; 
-end
-
-% default limit torque coefficient
-if ~isfield(S.subject,'default_coord_lim_torq_coeff')
-    S.subject.default_coord_lim_torq_coeff = 'default_coord_lim_torq_coeff.csv';
-end
-
-% scale factor for limit torque amplitude
-if ~isfield(S.subject,'scale_default_coord_lim_torq')
-    S.subject.scale_default_coord_lim_torq = [];
-end
-
-% limit torque coefficient for specific degrees of freedon
-if ~isfield(S.subject,'set_limit_torque_coefficients_selected_dofs')
-    S.subject.set_limit_torque_coefficients_selected_dofs = []; 
-end
-
-% joints that are considered base of a leg
-if ~isfield(S.subject,'base_joints_legs')
-    S.subject.base_joints_legs = 'hip';
-end
-
-% joints that are considered base of an arm
-if ~isfield(S.subject,'base_joints_arms')
-    S.subject.base_joints_arms = 'acromial';
-end
-
-% scale factor for maximal actuator torque
-if ~isfield(S.subject,'scale_actuator_torque')
-    S.subject.scale_actuator_torque = [];
+if S.post_process.load_prev_opti_vars && isempty(S.post_process.result_filename)
+    error('Please provide the name of the result from which to load the optimization variables. (S.post_process.result_filename)')
 end
 
 %% weights
@@ -697,17 +506,6 @@ if ~isfield(S.weights,'slack_ctrl')
 end
 
 %% OpenSimADOptions
-% =======
-if S.post_process.load_prev_opti_vars && isempty(S.post_process.result_filename)
-    error('Please provide the name of the result from which to load the optimization variables. (S.post_process.result_filename)')
-end
-
-%% .osim 2 dll
-if ~isfield(S,'osim2dll')
-    S.osim2dll = [];
-end
-% >>>>>>> update_bounds
-
 % settings for functions to convert .osim model to expression graph 
 % file (.dll) to solve inverse dynamics
 if ~isfield(S,'OpenSimADOptions')

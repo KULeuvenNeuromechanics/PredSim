@@ -1109,6 +1109,7 @@ R.colheaders.objective = contributionCost.labels;
 R.kinematics.Qs = Qs_GC;
 R.kinematics.Qdots = Qdots_GC;
 R.kinematics.Qddots = Qdotdots_GC;
+R.kinematics.avg_velocity = vel_aver_opt;
 R.muscles.a = Acts_GC;
 R.muscles.da = dActs_GC;
 R.muscles.FTtilde = FTtilde_GC;
