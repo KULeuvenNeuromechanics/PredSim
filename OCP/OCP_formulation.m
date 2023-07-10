@@ -517,8 +517,10 @@ if strcmp(S.misc.gaitmotion_type,'HalfGaitCycle')
     % Qs and Qdots
     opti.subject_to(Qs(model_info.ExtFunIO.symQs.QsInvA,end) - Qs(model_info.ExtFunIO.symQs.QsInvB,1) == 0);
     opti.subject_to(Qdots(model_info.ExtFunIO.symQs.QdotsInvA,end) - Qdots(model_info.ExtFunIO.symQs.QdotsInvB,1) == 0);
-    opti.subject_to(Qs(model_info.ExtFunIO.symQs.QsOpp,end) + Qs(model_info.ExtFunIO.symQs.QsOpp,1) == 0);
-    opti.subject_to(Qdots(model_info.ExtFunIO.symQs.QsOpp,end) + Qdots(model_info.ExtFunIO.symQs.QsOpp,1) == 0);
+    if ~isempty(model_info.ExtFunIO.symQs.QsOpp)
+        opti.subject_to(Qs(model_info.ExtFunIO.symQs.QsOpp,end) + Qs(model_info.ExtFunIO.symQs.QsOpp,1) == 0);
+        opti.subject_to(Qdots(model_info.ExtFunIO.symQs.QsOpp,end) + Qdots(model_info.ExtFunIO.symQs.QsOpp,1) == 0);
+    end
     % Muscle activations
     opti.subject_to(a(model_info.ExtFunIO.symQs.MusInvA,end) - a(model_info.ExtFunIO.symQs.MusInvB,1) == 0);
     % Muscle-tendon forces

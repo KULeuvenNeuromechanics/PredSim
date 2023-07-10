@@ -23,21 +23,21 @@ addpath(fullfile(S.misc.main_path,'VariousFunctions'))
 
 %% Required inputs
 % name of the subject
-S.subject.name = 'Falisse_et_al_2022'; %'LaiArnold_modified'
+S.subject.name = '2D_gait_moco'; %'Falisse_et_al_2022'; %'LaiArnold_modified'
 
 % path to folder where you want to store the results of the OCP
 S.subject.save_folder  = fullfile(pathRepoFolder,'PredSimResults',S.subject.name); 
 
 % either choose "quasi-random" or give the path to a .mot file you want to use as initial guess
-% S.subject.IG_selection = 'quasi-random';
-S.subject.IG_selection = fullfile(S.misc.main_path,'OCP','IK_Guess_Full_GC.mot');
-S.subject.IG_selection_gaitCyclePercent = 100;
+S.subject.IG_selection = 'quasi-random';
+% S.subject.IG_selection = fullfile(S.misc.main_path,'OCP','IK_Guess_Full_GC.mot');
+% S.subject.IG_selection_gaitCyclePercent = 100;
 
 % give the path to the osim model of your subject
 osim_path = fullfile(pathRepo,'Subjects',S.subject.name,[S.subject.name '.osim']);
 
 % Do you want to run the simulation as a batch job (parallel computing toolbox)
-S.solver.run_as_batch_job = 1;
+S.solver.run_as_batch_job = 0;
 
 %% Optional inputs
 % see README.md in the main folder for information about these optional
@@ -52,90 +52,39 @@ S.solver.run_as_batch_job = 1;
 % S.bounds.t_final.lower      = ;
 % S.bounds.coordinates        = {{'knee_angle_r'},-1.70,3.055,{'mtp_angle_'},-1.05,0.5};
 
-% to prevent body segments from clipping into eachother
-S.bounds.distanceConstraints(1).point1 = 'calcn_r';
-S.bounds.distanceConstraints(1).point2 = 'calcn_l';
-S.bounds.distanceConstraints(1).direction = 'xz';
-S.bounds.distanceConstraints(1).lower_bound = 0.09;
-S.bounds.distanceConstraints(1).upper_bound = 2;
-
-S.bounds.distanceConstraints(2).point1 = 'hand_r';
-S.bounds.distanceConstraints(2).point2 = 'femur_r';
-S.bounds.distanceConstraints(2).direction = 'xz';
-S.bounds.distanceConstraints(2).lower_bound = 0.18;
-S.bounds.distanceConstraints(2).upper_bound = 2;
-
-S.bounds.distanceConstraints(3).point1 = 'hand_l';
-S.bounds.distanceConstraints(3).point2 = 'femur_l';
-S.bounds.distanceConstraints(3).direction = 'xz';
-S.bounds.distanceConstraints(3).lower_bound = 0.18;
-S.bounds.distanceConstraints(3).upper_bound = 2;
-
-S.bounds.distanceConstraints(4).point1 = 'tibia_r';
-S.bounds.distanceConstraints(4).point2 = 'tibia_l';
-S.bounds.distanceConstraints(4).direction = 'xz';
-S.bounds.distanceConstraints(4).lower_bound = 0.11;
-S.bounds.distanceConstraints(4).upper_bound = 2;
-
-S.bounds.distanceConstraints(5).point1 = 'toes_r';
-S.bounds.distanceConstraints(5).point2 = 'toes_l';
-S.bounds.distanceConstraints(5).direction = 'xz';
-S.bounds.distanceConstraints(5).lower_bound = 0.1;
-S.bounds.distanceConstraints(5).upper_bound = 2;
-
-% % impose minimum on step width
-% min_step_width = 0.3;
+% % to prevent body segments from clipping into eachother
+% S.bounds.distanceConstraints(1).point1 = 'calcn_r';
+% S.bounds.distanceConstraints(1).point2 = 'calcn_l';
+% S.bounds.distanceConstraints(1).direction = 'xz';
+% S.bounds.distanceConstraints(1).lower_bound = 0.09;
+% S.bounds.distanceConstraints(1).upper_bound = 2;
 % 
-% S.bounds.distanceConstraints(end+1).point1 = 'calcn_r';
-% S.bounds.distanceConstraints(end).point2 = 'ground';
-% S.bounds.distanceConstraints(end).direction = 'z';
-% S.bounds.distanceConstraints(end).lower_bound = min_step_width;
-% S.bounds.distanceConstraints(end).upper_bound = 1;
+% S.bounds.distanceConstraints(2).point1 = 'hand_r';
+% S.bounds.distanceConstraints(2).point2 = 'femur_r';
+% S.bounds.distanceConstraints(2).direction = 'xz';
+% S.bounds.distanceConstraints(2).lower_bound = 0.18;
+% S.bounds.distanceConstraints(2).upper_bound = 2;
 % 
-% S.bounds.distanceConstraints(end+1).point1 = 'ground';
-% S.bounds.distanceConstraints(end).point2 = 'calcn_l';
-% S.bounds.distanceConstraints(end).direction = 'z';
-% S.bounds.distanceConstraints(end).lower_bound = min_step_width;
-% S.bounds.distanceConstraints(end).upper_bound = 1;
+% S.bounds.distanceConstraints(3).point1 = 'hand_l';
+% S.bounds.distanceConstraints(3).point2 = 'femur_l';
+% S.bounds.distanceConstraints(3).direction = 'xz';
+% S.bounds.distanceConstraints(3).lower_bound = 0.18;
+% S.bounds.distanceConstraints(3).upper_bound = 2;
 % 
-% S.bounds.distanceConstraints(end+1).point1 = 'toes_r';
-% S.bounds.distanceConstraints(end).point2 = 'ground';
-% S.bounds.distanceConstraints(end).direction = 'z';
-% S.bounds.distanceConstraints(end).lower_bound = min_step_width;
-% S.bounds.distanceConstraints(end).upper_bound = 1;
+% S.bounds.distanceConstraints(4).point1 = 'tibia_r';
+% S.bounds.distanceConstraints(4).point2 = 'tibia_l';
+% S.bounds.distanceConstraints(4).direction = 'xz';
+% S.bounds.distanceConstraints(4).lower_bound = 0.11;
+% S.bounds.distanceConstraints(4).upper_bound = 2;
 % 
-% S.bounds.distanceConstraints(end+1).point1 = 'ground';
-% S.bounds.distanceConstraints(end).point2 = 'toes_l';
-% S.bounds.distanceConstraints(end).direction = 'z';
-% S.bounds.distanceConstraints(end).lower_bound = min_step_width;
-% S.bounds.distanceConstraints(end).upper_bound = 1;
+% S.bounds.distanceConstraints(5).point1 = 'toes_r';
+% S.bounds.distanceConstraints(5).point2 = 'toes_l';
+% S.bounds.distanceConstraints(5).direction = 'xz';
+% S.bounds.distanceConstraints(5).lower_bound = 0.1;
+% S.bounds.distanceConstraints(5).upper_bound = 2;
 
-% impose maximum on step width
-max_step_width = 0.07;
 
-S.bounds.distanceConstraints(end+1).point1 = 'calcn_r';
-S.bounds.distanceConstraints(end).point2 = 'ground';
-S.bounds.distanceConstraints(end).direction = 'z';
-S.bounds.distanceConstraints(end).lower_bound = -max_step_width;
-S.bounds.distanceConstraints(end).upper_bound = max_step_width;
 
-S.bounds.distanceConstraints(end+1).point1 = 'ground';
-S.bounds.distanceConstraints(end).point2 = 'calcn_l';
-S.bounds.distanceConstraints(end).direction = 'z';
-S.bounds.distanceConstraints(end).lower_bound = -max_step_width;
-S.bounds.distanceConstraints(end).upper_bound = max_step_width;
-
-S.bounds.distanceConstraints(end+1).point1 = 'toes_r';
-S.bounds.distanceConstraints(end).point2 = 'ground';
-S.bounds.distanceConstraints(end).direction = 'z';
-S.bounds.distanceConstraints(end).lower_bound = -max_step_width;
-S.bounds.distanceConstraints(end).upper_bound = max_step_width;
-
-S.bounds.distanceConstraints(end+1).point1 = 'ground';
-S.bounds.distanceConstraints(end).point2 = 'toes_l';
-S.bounds.distanceConstraints(end).direction = 'z';
-S.bounds.distanceConstraints(end).lower_bound = -max_step_width;
-S.bounds.distanceConstraints(end).upper_bound = max_step_width;
 
 % % S.metabolicE - metabolic energy
 % S.metabolicE.tanh_b = ;
@@ -152,7 +101,7 @@ S.bounds.distanceConstraints(end).upper_bound = max_step_width;
 % S.misc.gaitmotion_type = 'FullGaitCycle';
 
 % % S.post_process
-S.post_process.make_plot = 1;
+S.post_process.make_plot = 0;
 % S.post_process.savename  = 'datetime';
 % S.post_process.load_prev_opti_vars = 1;
 % S.post_process.rerun   = 1;
@@ -183,19 +132,21 @@ S.subject.mtp_type          = '2022paper';
 % S.subject.scale_MT_params         = {{'soleus_l'},'FMo',0.9,{'soleus_l'},'alphao',1.1};
 % S.subject.spasticity        = ;
 % S.subject.muscle_coordination = ;
-S.subject.set_stiffness_coefficient_selected_dofs = {{'mtp_angle_l','mtp_angle_r'},25};
-S.subject.set_damping_coefficient_selected_dofs = {{'mtp_angle_l','mtp_angle_r'},2};
+% S.subject.set_stiffness_coefficient_selected_dofs = {{'mtp_angle_l','mtp_angle_r'},25};
+% S.subject.set_damping_coefficient_selected_dofs = {{'mtp_angle_l','mtp_angle_r'},2};
 % S.subject.set_limit_torque_coefficients_selected_dofs = ...
 %     {{'knee_angle_r','knee_angle_l'},-[11.03 -11.33 -6.09 33.94]',-[0.13 -2.4]',...
 %     {'mtp_angle_r','mtp_angle_l'},-[0.18 -70.08 -0.9 14.87]',-[65/180*pi 0]'};
+S.subject.base_joints_legs = 'hip';
+S.subject.base_joints_arms = [];
 
 % % S.weights
-% S.weights.E         = ;
-% S.weights.E_exp     = ;
-% S.weights.q_dotdot  = ;
-% S.weights.e_arm     = ;
-% S.weights.pass_torq = ;
-% S.weights.a         = ;
+% S.weights.E         = 0;
+% % S.weights.E_exp     = ;
+% S.weights.q_dotdot  = 0;
+% S.weights.e_arm     = 10;
+% S.weights.pass_torq = 1;
+% S.weights.a         = 10*18;
 % S.weights.slack_ctrl = ;
 % S.weights.pass_torq_includes_damping = ;
 

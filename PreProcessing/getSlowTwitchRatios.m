@@ -20,6 +20,8 @@ function slow_twitch_fiber_ratio = getSlowTwitchRatios(muscleNames)
 % Last edit date: 
 % --------------------------------------------------------------------------
 
+%% gait2392 muscles
+% right muscles
 pctst_data.glut_med1_r = 0.55;
 pctst_data.glut_med2_r = 0.55;
 pctst_data.glut_med3_r = 0.55;
@@ -67,6 +69,7 @@ pctst_data.extobl_r = 0.58;
 pctst_data.add_long_r = 0.50;
 pctst_data.add_brev_r = 0.50;
 
+% left muscles
 pctst_data.glut_med1_l = 0.55;
 pctst_data.glut_med2_l = 0.55;
 pctst_data.glut_med3_l = 0.55;
@@ -114,6 +117,22 @@ pctst_data.extobl_l = 0.58;
 pctst_data.add_long_l = 0.50;
 pctst_data.add_brev_l = 0.50;
 
+%% gait1018 muscle groups
+% Right muscle groups
+pctst_data.hamstrings_r = 0.5425;
+pctst_data.glut_max_r = 0.55;
+pctst_data.iliopsoas_r = 0.50;
+pctst_data.vasti_r = 0.543;
+pctst_data.gastroc_r = 0.566;
+
+%  reft muscle groups
+pctst_data.hamstrings_l = 0.5425;
+pctst_data.glut_max_l = 0.55;
+pctst_data.iliopsoas_l = 0.50;
+pctst_data.vasti_l = 0.543;
+pctst_data.gastroc_l = 0.566;
+
+%%
 slow_twitch_fiber_ratio = zeros(length(muscleNames),1);
 for i = 1:length(muscleNames)
     if isfield(pctst_data,muscleNames{i})
