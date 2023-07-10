@@ -397,6 +397,11 @@ if ~isfield(S.subject,'base_joints_arms')
     S.subject.base_joints_arms = 'acromial';
 end
 
+% scale factor for maximal actuator torque
+if ~isfield(S.subject,'scale_actuator_torque')
+    S.subject.scale_actuator_torque = [];
+end
+
 %% weights
 
 % weight on metabolic energy rate
@@ -433,6 +438,11 @@ end
 % weight on muscle activations
 if ~isfield(S.weights,'a')
     S.weights.a = 2000; 
+end
+
+% weight on target velocity (if not imposed)
+if ~isfield(S.weights,'velocity')
+    S.weights.velocity = 0; 
 end
 
 % weight on slack controls

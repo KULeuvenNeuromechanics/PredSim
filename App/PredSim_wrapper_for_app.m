@@ -109,12 +109,12 @@ S.subject.tendon_stiff_scale = {
 S.subject.adapt_IG_pelvis_y = 1;
 
 % % S.weights
-% S.weights.E         = 0.05*0;
-% % S.weights.E_exp     = ;
-% S.weights.q_dotdot  = 1;
-% S.weights.e_arm     = 10;
-% S.weights.pass_torq = 0;
-% S.weights.a         = 1;
+S.weights.E         = 0.05*0;
+% S.weights.E_exp     = ;
+S.weights.q_dotdot  = 1;
+S.weights.e_arm     = 10;
+S.weights.pass_torq = 0;
+S.weights.a         = 1;
 % S.weights.slack_ctrl = 0.001;
 % S.weights.pass_torq_includes_damping = ;
 
