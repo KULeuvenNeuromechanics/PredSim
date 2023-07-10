@@ -85,7 +85,7 @@ if S.subject.adapt_IG_pelvis_y
     % Adjust pelvis height
     guess.Qs(:,model_info.ExtFunIO.jointi.base_vertical) = ...
         guess.Qs(:,model_info.ExtFunIO.jointi.base_vertical) ...
-        - mean(guess.Qs(:,model_info.ExtFunIO.base_vertical)) + model_info.IG_pelvis_y;
+        - mean(guess.Qs(:,model_info.ExtFunIO.jointi.base_vertical)) + model_info.IG_pelvis_y;
 end
 
 % Interpolation
