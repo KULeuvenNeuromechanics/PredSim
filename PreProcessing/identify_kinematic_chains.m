@@ -75,10 +75,10 @@ joint_table = struct2table(joint_struct);
 %% Find limbs
 base_legs = S.subject.base_joints_legs;
 base_arms = S.subject.base_joints_arms;
-if ~iscell(base_legs)
+if ~iscell(base_legs) && ~isempty(base_legs)
     base_legs = {base_legs};
 end
-if ~iscell(base_arms)
+if ~iscell(base_arms) && ~isempty(base_arms)
     base_arms = {base_arms};
 end
 
@@ -131,7 +131,7 @@ for i=1:length(base_arms)
     if isempty(base_joint_idx)
         base_joint_idx = find(strcmpi(joint_table.joint,[base_arms{i} '_r'])|strcmpi(joint_table.joint,['r_' base_arms{i}]));
         if isempty(base_joint_idx)
-            error([base_arms{i} ' is not recognised as a joint name on the right side.']);
+            error(['"' base_arms{i} '" is not recognised as a joint name on the right side.']);
         end
     end
     [base_joint_l, base_joint_r] = mirrorName(joint_table.joint{base_joint_idx});
@@ -186,34 +186,54 @@ end
 fl_b = floating_base.getConcreteClassName();
 if strcmp(fl_b,'CustomJoint')
     floating_base = CustomJoint.safeDownCast(floating_base);
-elseif strcmp(fl_b,'PlanarJoint')
-    floating_base = PlanarJoint.safeDownCast(floating_base);
-end
 
-sptr = floating_base.getSpatialTransform();
+    sptr = floating_base.getSpatialTransform();
 
-for j=1:6
-
-    tr1 = sptr.getTransformAxis(j-1);
-    ax_j = tr1.get_axis().getAsMat;
-    CoordNames = tr1.getCoordinateNames;
-    if ~strcmp(char(CoordNames),'()')
-        crd_j = char(tr1.get_coordinates(0));
-        istr = strcmp(model.getCoordinateSet.get(crd_j).getMotionType(),'Translational');
-
-        jointi.floating_base(end+1) = model_info.ExtFunIO.coordi.(crd_j);
-        if istr
-            if ax_j(1) == 1
-                jointi.base_forward = model_info.ExtFunIO.coordi.(crd_j);
-            elseif ax_j(2) == 1
-                jointi.base_vertical = model_info.ExtFunIO.coordi.(crd_j);
-            elseif ax_j(3) == 1
-                jointi.base_lateral = model_info.ExtFunIO.coordi.(crd_j);
+    for j=1:6
+    
+        tr1 = sptr.getTransformAxis(j-1);
+        ax_j = tr1.get_axis().getAsMat;
+        CoordNames = tr1.getCoordinateNames;
+        if ~strcmp(char(CoordNames),'()')
+            crd_j = char(tr1.get_coordinates(0));
+            istr = strcmp(model.getCoordinateSet.get(crd_j).getMotionType(),'Translational');
+    
+            jointi.floating_base(end+1) = model_info.ExtFunIO.coordi.(crd_j);
+            if istr
+                if ax_j(1) == 1
+                    jointi.base_forward = model_info.ExtFunIO.coordi.(crd_j);
+                elseif ax_j(2) == 1
+                    jointi.base_vertical = model_info.ExtFunIO.coordi.(crd_j);
+                elseif ax_j(3) == 1
+                    jointi.base_lateral = model_info.ExtFunIO.coordi.(crd_j);
+                end
             end
         end
+    
     end
 
+elseif strcmp(fl_b,'PlanarJoint')
+    floating_base = PlanarJoint.safeDownCast(floating_base);
+
+    % rotation around z
+    crd_rz = char(floating_base.get_coordinates(0).getName());
+    jointi.floating_base(end+1) = model_info.ExtFunIO.coordi.(crd_rz);
+
+    % translation along x
+    crd_tx = char(floating_base.get_coordinates(1).getName());
+    jointi.base_forward = model_info.ExtFunIO.coordi.(crd_tx);
+    jointi.floating_base(end+1) = model_info.ExtFunIO.coordi.(crd_tx);
+
+    % translation along y
+    crd_ty = char(floating_base.get_coordinates(2).getName());
+    jointi.base_forward = model_info.ExtFunIO.coordi.(crd_tx);
+    jointi.floating_base(end+1) = model_info.ExtFunIO.coordi.(crd_ty);
+
 end
+
+
+
+
 
 jointi.torso = setdiff(1:numel(fields(model_info.ExtFunIO.coordi)),...
     [jointi.floating_base,jointi.leg_r,jointi.leg_l,jointi.arm_r,jointi.arm_l]);
