@@ -517,8 +517,10 @@ if strcmp(S.misc.gaitmotion_type,'HalfGaitCycle')
     % Qs and Qdots
     opti.subject_to(Qs(model_info.ExtFunIO.symQs.QsInvA,end) - Qs(model_info.ExtFunIO.symQs.QsInvB,1) == 0);
     opti.subject_to(Qdots(model_info.ExtFunIO.symQs.QdotsInvA,end) - Qdots(model_info.ExtFunIO.symQs.QdotsInvB,1) == 0);
-    opti.subject_to(Qs(model_info.ExtFunIO.symQs.QsOpp,end) + Qs(model_info.ExtFunIO.symQs.QsOpp,1) == 0);
-    opti.subject_to(Qdots(model_info.ExtFunIO.symQs.QsOpp,end) + Qdots(model_info.ExtFunIO.symQs.QsOpp,1) == 0);
+    if ~isempty(model_info.ExtFunIO.symQs.QsOpp)
+        opti.subject_to(Qs(model_info.ExtFunIO.symQs.QsOpp,end) + Qs(model_info.ExtFunIO.symQs.QsOpp,1) == 0);
+        opti.subject_to(Qdots(model_info.ExtFunIO.symQs.QsOpp,end) + Qdots(model_info.ExtFunIO.symQs.QsOpp,1) == 0);
+    end
     % Muscle activations
     opti.subject_to(a(model_info.ExtFunIO.symQs.MusInvA,end) - a(model_info.ExtFunIO.symQs.MusInvB,1) == 0);
     % Muscle-tendon forces
@@ -550,7 +552,12 @@ Qs_nsc = Qs.*(scaling.Qs'*ones(1,N+1));
 dist_trav_tot = Qs_nsc(model_info.ExtFunIO.jointi.base_forward,end) - ...
     Qs_nsc(model_info.ExtFunIO.jointi.base_forward,1);
 vel_aver_tot = dist_trav_tot/tf;
-opti.subject_to(vel_aver_tot - S.subject.v_pelvis_x_trgt == 0)
+if length(S.subject.v_pelvis_x_trgt) == 1
+    opti.subject_to(vel_aver_tot - S.subject.v_pelvis_x_trgt == 0)
+else
+    opti.subject_to(vel_aver_tot >= min(S.subject.v_pelvis_x_trgt))
+    opti.subject_to(vel_aver_tot <= max(S.subject.v_pelvis_x_trgt))
+end
 
 % optional constraints
 if strcmp(S.misc.gaitmotion_type,'HalfGaitCycle')
@@ -588,6 +595,10 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Scale cost function
 Jall_sc = sum(Jall)/dist_trav_tot;
+% Add velocity cost
+if S.weights.velocity~=0
+    Jall_sc = Jall_sc + S.weights.velocity*vel_aver_tot;
+end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 disp(' ')

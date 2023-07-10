@@ -333,7 +333,17 @@ classdef Vitruvian_Man_EN_exported < matlab.apps.AppBase
 
 
             % start simulation
-            resultpath = PredSim_wrapper_for_app(U,app.scale_factors);
+            try
+                resultpath = PredSim_wrapper_for_app(U,app.scale_factors);
+            catch ME
+                % close thinking balloon if simulation gives error
+                app.Image.Enable = 'off';
+                app.Image.Visible = 'off';
+                app.Image2.Enable = 'off';
+                app.Image2.Visible = 'off';
+                
+                rethrow(ME);
+            end
 
             app.Image.Enable = 'off';
             app.Image.Visible = 'off';
@@ -341,19 +351,19 @@ classdef Vitruvian_Man_EN_exported < matlab.apps.AppBase
             app.Image2.Visible = 'off';
 
 
-            % command for running .py file
-            [distance_i,avg_v_i] = calcDistance(app,resultpath);
-            dist       = replace(num2str(distance_i*1e-3),'.',',');
-            vel        = replace(num2str(avg_v_i),'.',',');
-            llen       = replace(num2str(app.LichaamslengteEditField.Value),'.',',');
-            mass       = replace(num2str(app.MassaEditField.Value),'.',',');
-            shoulders  = replace(num2str(app.AfstandtussenschoudersEditField.Value),'.',',');
-            arm_upper  = replace(num2str(app.AfstandschoudertotelleboogEditField.Value),'.',',');
-            arm_lower  = replace(num2str(app.AfstandelleboogtotvingertopEditField.Value),'.',',');
-            leg_upper  = replace(num2str(app.AfstandheuptotknieEditField.Value),'.',',');
-            leg_lower  = replace(num2str(app.AfstandknietotgrondEditField.Value),'.',',');
-            foot       = replace(num2str(app.LengtevanvoetEditField.Value),'.',',');
-            strength   = replace(num2str(app.SpierkrachtEditField.Value),'.',',');
+%             % command for running .py file
+%             [distance_i,avg_v_i] = calcDistance(app,resultpath);
+%             dist       = replace(num2str(distance_i*1e-3),'.',',');
+%             vel        = replace(num2str(avg_v_i),'.',',');
+%             llen       = replace(num2str(app.LichaamslengteEditField.Value),'.',',');
+%             mass       = replace(num2str(app.MassaEditField.Value),'.',',');
+%             shoulders  = replace(num2str(app.AfstandtussenschoudersEditField.Value),'.',',');
+%             arm_upper  = replace(num2str(app.AfstandschoudertotelleboogEditField.Value),'.',',');
+%             arm_lower  = replace(num2str(app.AfstandelleboogtotvingertopEditField.Value),'.',',');
+%             leg_upper  = replace(num2str(app.AfstandheuptotknieEditField.Value),'.',',');
+%             leg_lower  = replace(num2str(app.AfstandknietotgrondEditField.Value),'.',',');
+%             foot       = replace(num2str(app.LengtevanvoetEditField.Value),'.',',');
+%             strength   = replace(num2str(app.SpierkrachtEditField.Value),'.',',');           
 %             cmd = ['autoFill.py ' app.GroupName ' ' app.ModelName ...
 %                 ' ' dist ' ' vel ' ' llen ' ' mass ' ' shoulders ' ' arm_upper...
 %                 ' ' arm_lower ' ' leg_upper ' ' leg_lower ' ' foot ' ' strength];
@@ -534,7 +544,7 @@ classdef Vitruvian_Man_EN_exported < matlab.apps.AppBase
             app.GroepEditField.FontSize = 30;
             app.GroepEditField.FontColor = [0.5412 0.2706 0.0706];
             app.GroepEditField.BackgroundColor = [1 0.9725 0.8627];
-            app.GroepEditField.Placeholder = '(Enter the name of your group)';
+%             app.GroepEditField.Placeholder = '(Enter the name of your group)';
             app.GroepEditField.Position = [172 796 344 44];
 
             % Create LichaamslengteEditFieldLabel
@@ -771,7 +781,7 @@ classdef Vitruvian_Man_EN_exported < matlab.apps.AppBase
             app.NaamEditField.FontSize = 30;
             app.NaamEditField.FontColor = [0.5412 0.2706 0.0706];
             app.NaamEditField.BackgroundColor = [1 0.9725 0.8627];
-            app.NaamEditField.Placeholder = '(Name)';
+%             app.NaamEditField.Placeholder = '(Name)';
             app.NaamEditField.Position = [857 796 244 44];
 
             % Create kgLabel
@@ -925,7 +935,9 @@ classdef Vitruvian_Man_EN_exported < matlab.apps.AppBase
 
         % Construct app
         function app = Vitruvian_Man_EN_exported
-
+            
+            clc
+            
             % Create UIFigure and components
             createComponents(app)
 

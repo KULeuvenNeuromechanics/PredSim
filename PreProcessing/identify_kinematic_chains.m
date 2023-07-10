@@ -290,6 +290,8 @@ for i=1:length(joints_not_limbs)
 
 end
 
+QsInv = [];
+QsOpp = [];
 for j=1:length(coords_inverse)
     QsInv(j,1) = model_info.ExtFunIO.coordi.(coords_inverse{j});
 end
