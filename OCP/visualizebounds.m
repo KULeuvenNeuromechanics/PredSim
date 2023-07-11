@@ -101,7 +101,7 @@ end
 s = sgtitle('Time derivative of muscle-tendon forces');
 set(s,'Fontsize',title_Fontsize)
 figure()
-for i = 1:nq.arms
+for i = 1:nq.torqAct
     subplot(3,3,i)
     plot([1,N],[bounds.a_a.upper(:,i),bounds.a_a.upper(:,i)],...
         'b--','linewidth',2);
@@ -113,7 +113,7 @@ end
 s = sgtitle('Torque actuator activations');
 set(s,'Fontsize',title_Fontsize)
 figure()
-for i = 1:nq.arms
+for i = 1:nq.torqAct
     subplot(3,3,i)
     plot([1,N],[bounds.e_a.upper(:,i),bounds.e_a.upper(:,i)],...
         'b--','linewidth',2);

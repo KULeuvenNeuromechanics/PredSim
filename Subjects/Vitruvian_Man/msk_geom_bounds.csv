@@ -1,0 +1,12 @@
+name,lower,upper
+hip_flexion_r,-50,50
+hip_flexion_l,-50,50
+knee_angle_r,-80,10
+knee_angle_l,-80,10
+ankle_angle_r,-30,30
+ankle_angle_l,-30,30
+mtp_angle_r,-20,50
+mtp_angle_l,-20,50
+lumbar_extension,-30,30
+lumbar_bending,-30,30
+lumbar_rotation,-30,30

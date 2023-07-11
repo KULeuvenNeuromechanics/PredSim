@@ -19,11 +19,22 @@ clc
 % Construct a cell array with full paths to files with saved results for
 % which you want to appear on the plotted figures.
 results_folder = fullfile(pathRepoFolder,'PredSimResults');
-result_paths{1} = fullfile(pathRepo,'Tests','Falisse_et_al_2022_Results','Falisse_et_al_2022_v1.mat');
+% result_paths{1} = fullfile(pathRepo,'Tests','Falisse_et_al_2022_Results','Falisse_et_al_2022_v1.mat');
 % result_paths{2} = fullfile(results_folder,'Falisse_et_al_2022','Falisse_et_al_2022_job668.mat');
+result_paths{1} = 'D:\PredSimResults\Vitruvian_Man\IG_v12ms_ATx70.mat';
+result_paths{end+1} = 'D:\PredSimResults\Vitruvian_Man\IG_v14ms_ATx70.mat';
+result_paths{end+1} = 'D:\PredSimResults\Vitruvian_Man\IG_v16ms_ATx70.mat';
+result_paths{end+1} = 'D:\PredSimResults\Vitruvian_Man\IG_v18ms_ATx70.mat';
+result_paths{end+1} = 'D:\PredSimResults\Vitruvian_Man\IG_v20ms_ATx70.mat';
+result_paths{end+1} = 'D:\PredSimResults\Vitruvian_Man\IG_v25ms_ATx70.mat';
+result_paths{end+1} = 'D:\PredSimResults\Vitruvian_Man\IG_v30ms_ATx70.mat';
+result_paths{end+1} = 'D:\PredSimResults\Vitruvian_Man\IG_v35ms_ATx70.mat';
+result_paths{end+1} = 'D:\PredSimResults\Vitruvian_Man\IG_v40ms_ATx70.mat';
 
 % Cell array with legend name for each result
 legend_names = {'Reference result', 'Your first simulation'};
+legend_names = {'1.2 AT 70%', '1.4 AT 70%', '1.6 AT 70%', '1.8 AT 70%',...
+     '2.0 AT 70%', '2.5 AT 70%', '3.0 AT 70%', '3.5 AT 70%', '4.0 AT 70%'};
 
 % Path to the folder where figures are saved
 figure_folder = results_folder;
@@ -72,19 +83,19 @@ figure_settings(fig_count).savepath = fullfile(figure_folder,[figure_savename '_
 figure_settings(fig_count).filetype = {};
 fig_count = fig_count+1;
 
-figure_settings(fig_count).name = 'all_angles';
-figure_settings(fig_count).dofs = {'all_coords'};
-figure_settings(fig_count).variables = {'Qdots'};
-figure_settings(fig_count).savepath = fullfile(figure_folder,[figure_savename '_' figure_settings(fig_count).name]);
-figure_settings(fig_count).filetype = {};
-fig_count = fig_count+1;
+% figure_settings(fig_count).name = 'all_angles';
+% figure_settings(fig_count).dofs = {'all_coords'};
+% figure_settings(fig_count).variables = {'Qdots'};
+% figure_settings(fig_count).savepath = fullfile(figure_folder,[figure_savename '_' figure_settings(fig_count).name]);
+% figure_settings(fig_count).filetype = {};
+% fig_count = fig_count+1;
 
-figure_settings(fig_count).name = 'all_angles';
-figure_settings(fig_count).dofs = {'all_coords'};
-figure_settings(fig_count).variables = {'Qddots'};
-figure_settings(fig_count).savepath = fullfile(figure_folder,[figure_savename '_' figure_settings(fig_count).name]);
-figure_settings(fig_count).filetype = {};
-fig_count = fig_count+1;
+% figure_settings(fig_count).name = 'all_angles';
+% figure_settings(fig_count).dofs = {'all_coords'};
+% figure_settings(fig_count).variables = {'Qddots'};
+% figure_settings(fig_count).savepath = fullfile(figure_folder,[figure_savename '_' figure_settings(fig_count).name]);
+% figure_settings(fig_count).filetype = {};
+% fig_count = fig_count+1;
 
 % figure_settings(fig_count).name = 'all_activations';
 % figure_settings(fig_count).dofs = {'muscles_r'};
@@ -101,12 +112,12 @@ fig_count = fig_count+1;
 % figure_settings(fig_count).filetype = {'jpeg'};
 % fig_count = fig_count+1;
 
-figure_settings(fig_count).name = 'torques';
-figure_settings(fig_count).dofs = {'all_coords'};
-figure_settings(fig_count).variables = {'T_ID'};
-figure_settings(fig_count).savepath = fullfile(figure_folder,[figure_savename '_' figure_settings(fig_count).name]);
-figure_settings(fig_count).filetype = {};
-fig_count = fig_count+1;
+% figure_settings(fig_count).name = 'torques';
+% figure_settings(fig_count).dofs = {'all_coords'};
+% figure_settings(fig_count).variables = {'T_ID'};
+% figure_settings(fig_count).savepath = fullfile(figure_folder,[figure_savename '_' figure_settings(fig_count).name]);
+% figure_settings(fig_count).filetype = {};
+% fig_count = fig_count+1;
 
 % figure_settings(fig_count).name = 'ankle_muscles';
 % figure_settings(fig_count).dofs = {'soleus_r','med_gas_r','lat_gas_r','tib_ant_r'};
@@ -115,12 +126,26 @@ fig_count = fig_count+1;
 % figure_settings(fig_count).filetype = {};
 % fig_count = fig_count+1;
 
-% figure_settings(fig_count).name = 'grfs';
-% figure_settings(fig_count).dofs = {'custom'};
-% figure_settings(fig_count).variables = {'GRF'};
-% figure_settings(fig_count).savepath = fullfile(figure_folder,[figure_savename '_' figure_settings(fig_count).name]);
-% figure_settings(fig_count).filetype = {};
-% fig_count = fig_count+1;
+figure_settings(fig_count).name = 'selected_muscles_1';
+figure_settings(fig_count).dofs = {'hamstrings_r','bifemsh_r','rect_fem_r','vasti_r'};
+figure_settings(fig_count).variables = {'a','FT','lMtilde','Wdot','Edot_gait'};
+figure_settings(fig_count).savepath = fullfile(figure_folder,[figure_savename '_' figure_settings(fig_count).name]);
+figure_settings(fig_count).filetype = {};
+fig_count = fig_count+1;
+
+figure_settings(fig_count).name = 'selected_muscles_2';
+figure_settings(fig_count).dofs = {'glut_max_r','iliopsoas_r','gastroc_r','soleus_r','tib_ant_r'};
+figure_settings(fig_count).variables = {'a','FT','lMtilde','Wdot','Edot_gait'};
+figure_settings(fig_count).savepath = fullfile(figure_folder,[figure_savename '_' figure_settings(fig_count).name]);
+figure_settings(fig_count).filetype = {};
+fig_count = fig_count+1;
+
+figure_settings(fig_count).name = 'grfs';
+figure_settings(fig_count).dofs = {'custom'};
+figure_settings(fig_count).variables = {'GRF'};
+figure_settings(fig_count).savepath = fullfile(figure_folder,[figure_savename '_' figure_settings(fig_count).name]);
+figure_settings(fig_count).filetype = {};
+fig_count = fig_count+1;
 
 % figure_settings(fig_count).name = 'template';
 % figure_settings(fig_count).dofs = {'custom'};

@@ -4440,7 +4440,7 @@
 					<!--Path to a Component that satisfies the Socket 'frame' of type PhysicalFrame (description: The frame to which this geometry is attached.).-->
 					<socket_frame>/bodyset/calcn_r</socket_frame>
 					<!--Location of geometry center in the PhysicalFrame.-->
-					<location>0.01 0 0</location>
+					<location>0.031307527581931796 0.010435842527310599 0</location>
 					<!--Default appearance for this Geometry-->
 					<Appearance>
 						<!--Flag indicating whether the associated Geometry is visible or hidden.-->
@@ -4480,7 +4480,7 @@
 					<!--Path to a Component that satisfies the Socket 'frame' of type PhysicalFrame (description: The frame to which this geometry is attached.).-->
 					<socket_frame>/bodyset/calcn_l</socket_frame>
 					<!--Location of geometry center in the PhysicalFrame.-->
-					<location>0.01 0 0</location>
+					<location>0.031307527581931796 0.010435842527310599 0</location>
 					<!--Default appearance for this Geometry-->
 					<Appearance>
 						<!--Flag indicating whether the associated Geometry is visible or hidden.-->

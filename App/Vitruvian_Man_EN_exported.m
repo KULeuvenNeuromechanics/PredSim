@@ -84,7 +84,7 @@ classdef Vitruvian_Man_EN_exported < matlab.apps.AppBase
         path_geom
         path_casadi
         ModelName
-        GroupName
+        GroupName = 'Test1';
         tbldata = cell(1,4);
         idx_sel_data = 1;
         sel_mot_file
@@ -168,6 +168,7 @@ classdef Vitruvian_Man_EN_exported < matlab.apps.AppBase
                 return
             end
             % loop over files
+            distance_all = zeros(length(MatFiles),1);
             for i=1:length(MatFiles)
                 % calc distance walked for given energy budget
                 [distance_i,avg_v_i] = calcDistance(app,char(fullfile(MatFiles(i).folder,MatFiles(i).name)));
@@ -179,8 +180,12 @@ classdef Vitruvian_Man_EN_exported < matlab.apps.AppBase
                 app.tbldata{i,2} = fullfile(MatFiles(i).folder,[name_tmp '.mot']);
                 app.tbldata{i,3} = distance_i;
                 app.tbldata{i,3} = avg_v_i;
-                
+                distance_all(i) = distance_i;
             end
+            
+            [~,idx] = sort(distance_all);
+            idx = flip(idx);
+            app.tbldata = app.tbldata(idx,:);
 
             if ~isempty(app.tbldata{1,1})
                 app.NaamAfstandSnelheidListBox.Items = app.tbldata(:,1);
@@ -208,7 +213,8 @@ classdef Vitruvian_Man_EN_exported < matlab.apps.AppBase
         
         function [total_distance, avg_vel] = calcDistance(app,savepath)
             %% get distance
-            E_metab = 778e3; % 778 kJ = 1 pancake
+%             E_metab = 778e3; % 778 kJ = 1 pancake
+            E_metab = 471e3; % 471 kJ = 150g fondant chocolate (1 pack)
             try
                 load(savepath,'R');
                 COT = R.metabolics.Bhargava2004.COT;
@@ -399,7 +405,8 @@ classdef Vitruvian_Man_EN_exported < matlab.apps.AppBase
             while strcmp(GroupName_tmp(end),'_') && length(GroupName_tmp)>1
                 GroupName_tmp = GroupName_tmp(1:end-1);
             end
-            app.GroupName = GroupName_tmp;
+%             app.GroupName = GroupName_tmp;
+            app.ModelName = GroupName_tmp;
 
             % load table with results for this group
             loadResultsTable(app);
@@ -496,7 +503,7 @@ classdef Vitruvian_Man_EN_exported < matlab.apps.AppBase
         % Value changed function: SnelheidSlider
         function SnelheidSliderValueChanged(app, event)
             v = app.SnelheidSlider.Value;
-            if v < app.SnelheidSlider.Limits(2)
+            if v < app.SnelheidSlider.Limits(2)-1
                 app.usr_speed = round(app.SnelheidSlider.Value)/3.6;
             else
                 app.usr_speed = -1;
@@ -542,7 +549,7 @@ classdef Vitruvian_Man_EN_exported < matlab.apps.AppBase
             app.GroepEditFieldLabel.FontSize = 30;
             app.GroepEditFieldLabel.FontColor = [0.5412 0.2706 0.0706];
             app.GroepEditFieldLabel.Position = [88 798 83 42];
-            app.GroepEditFieldLabel.Text = 'Group';
+            app.GroepEditFieldLabel.Text = 'Name';
 
             % Create GroepEditField
             app.GroepEditField = uieditfield(app.UIFigure, 'text');
@@ -790,6 +797,8 @@ classdef Vitruvian_Man_EN_exported < matlab.apps.AppBase
             app.NaamEditField.BackgroundColor = [1 0.9725 0.8627];
 %             app.NaamEditField.Placeholder = '(Name)';
             app.NaamEditField.Position = [857 796 244 44];
+            app.NaamEditField.Enable = 'off';
+            app.NaamEditField.Visible = 'off';
 
             % Create kgLabel
             app.kgLabel = uilabel(app.UIFigure);
@@ -826,6 +835,7 @@ classdef Vitruvian_Man_EN_exported < matlab.apps.AppBase
             app.Label.FontColor = [0.5412 0.2706 0.0706];
             app.Label.Position = [487 163 25 42];
             app.Label.Text = '%';
+            app.Label.Visible = 'off';
 
             % Create SpierkrachtEditFieldLabel
             app.SpierkrachtEditFieldLabel = uilabel(app.UIFigure);
@@ -834,6 +844,8 @@ classdef Vitruvian_Man_EN_exported < matlab.apps.AppBase
             app.SpierkrachtEditFieldLabel.FontColor = [0.5412 0.2706 0.0706];
             app.SpierkrachtEditFieldLabel.Position = [88 163 127 42];
             app.SpierkrachtEditFieldLabel.Text = 'Force';
+            app.SpierkrachtEditFieldLabel.Enable = 'off';
+            app.SpierkrachtEditFieldLabel.Visible = 'off';
 
             % Create SpierkrachtEditField
             app.SpierkrachtEditField = uieditfield(app.UIFigure, 'numeric');
@@ -846,6 +858,8 @@ classdef Vitruvian_Man_EN_exported < matlab.apps.AppBase
             app.SpierkrachtEditField.BackgroundColor = [1 0.9725 0.8627];
             app.SpierkrachtEditField.Position = [388 164 74 41];
             app.SpierkrachtEditField.Value = 100;
+            app.SpierkrachtEditField.Enable = 'off';
+            app.SpierkrachtEditField.Visible = 'off';
 
             % Create SpeelvideoButton
             app.SpeelvideoButton = uibutton(app.UIFigure, 'push');
@@ -899,11 +913,11 @@ classdef Vitruvian_Man_EN_exported < matlab.apps.AppBase
 
             % Create SnelheidSlider
             app.SnelheidSlider = uislider(app.UIFigure);
-            app.SnelheidSlider.Limits = [1 20];
-            app.SnelheidSlider.MajorTicks = [1 5 10 15 20];
-            app.SnelheidSlider.MajorTickLabels = {'1', '5', '10', '15', 'max'};
+            app.SnelheidSlider.Limits = [1 15];
+            app.SnelheidSlider.MajorTicks = [1 5 10 15];
+            app.SnelheidSlider.MajorTickLabels = {'1', '5', '10', 'max'};
             app.SnelheidSlider.ValueChangedFcn = createCallbackFcn(app, @SnelheidSliderValueChanged, true);
-            app.SnelheidSlider.MinorTicks = [1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20];
+            app.SnelheidSlider.MinorTicks = [1 2 3 4 5 6 7 8 9 10 11 12 13 14 15];
             app.SnelheidSlider.FontName = 'Blackadder ITC';
             app.SnelheidSlider.FontSize = 25;
             app.SnelheidSlider.FontColor = [0.5412 0.2706 0.0706];

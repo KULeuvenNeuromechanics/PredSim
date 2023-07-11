@@ -49,6 +49,9 @@ for ii=1:Nfields/(Nvalues+1)
     if ~iscell(names_i)
         names_i = {names_i};
     end
+    if strcmp(names_i{1},'all')
+        names_i = valid_names;
+    end
     for jj=1:length(names_i)
         idx_ij = find(contains(valid_names(:),names_i(jj)));
         if isempty(idx_ij)

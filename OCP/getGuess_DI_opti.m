@@ -147,15 +147,15 @@ end
 % The final time is function of the imposed speed
 all_speeds = 0.73:0.1:5;
 all_tf = 0.70:-((0.70-0.35)/(length(all_speeds)-1)):0.35;
-idx_speed = find(all_speeds==S.subject.v_pelvis_x_trgt);
+idx_speed = find(all_speeds==mean(S.subject.v_pelvis_x_trgt));
 if isempty(idx_speed)
-    idx_speed = find(all_speeds > S.subject.v_pelvis_x_trgt,1,'first');
+    idx_speed = find(all_speeds > mean(S.subject.v_pelvis_x_trgt),1,'first');
 end
 guess.tf = all_tf(idx_speed);
 
 % extrapolate outside of 0.73:5 range
 if isempty(idx_speed)
-    guess.tf = -0.1750*S.subject.v_pelvis_x_trgt + 0.8277;
+    guess.tf = -0.1750*mean(S.subject.v_pelvis_x_trgt) + 0.8277;
 end
 % avoid going too low
 if guess.tf < 0.15
