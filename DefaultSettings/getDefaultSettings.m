@@ -474,9 +474,9 @@ if ~isfield(S.weights,'q_dotdot')
     S.weights.q_dotdot = 50000; 
 end
 
-% weight on arm excitations
-if ~isfield(S.weights,'e_arm')
-    S.weights.e_arm = 10^6; 
+% weight on torque actuator excitations
+if ~isfield(S.weights,'e_torqAct')
+    S.weights.e_torqAct = 10^6; 
 end
 
 % weight on passive torques
@@ -493,6 +493,11 @@ end
 % weight on muscle activations
 if ~isfield(S.weights,'a')
     S.weights.a = 2000; 
+end
+
+% exponent for muscle activations
+if ~isfield(S.weights,'a_exp')
+    S.weights.a_exp = 2; 
 end
 
 % weight on target velocity (if not imposed)

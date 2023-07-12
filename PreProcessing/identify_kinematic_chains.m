@@ -131,7 +131,9 @@ for i=1:length(base_arms)
     if isempty(base_joint_idx)
         base_joint_idx = find(strcmpi(joint_table.joint,[base_arms{i} '_r'])|strcmpi(joint_table.joint,['r_' base_arms{i}]));
         if isempty(base_joint_idx)
-            error(['"' base_arms{i} '" is not recognised as a joint name on the right side.']);
+%             disp(['   No arms detected.'])
+%             error(['"' base_arms{i} '" is not recognised as a joint name on the right side.']);
+            continue
         end
     end
     [base_joint_l, base_joint_r] = mirrorName(joint_table.joint{base_joint_idx});

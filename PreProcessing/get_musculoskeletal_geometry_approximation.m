@@ -40,6 +40,8 @@ if strcmp(S.misc.msk_geom_eq,'polynomials')
     % available, because the analysis takes long. (4 minutes)
     if ~isfile(fullfile(S.misc.subject_path,S.misc.msk_geom_name)) || ~isempty(S.misc.msk_geom_bounds)
         % Analyze the muscle-tendon lengths, velocities, and moment arms in function of coordinate values
+        disp(' ')
+        disp('   Start analysing musculoskeletal geometry...')
         t0 = tic;
         muscle_data = muscleAnalysisAPI(S,osim_path,model_info); % faster version
         disp(['   analysing MSK geometry: ' num2str(toc(t0),'%.2f') ' s'])

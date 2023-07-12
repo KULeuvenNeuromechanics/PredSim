@@ -169,6 +169,8 @@ else
 
     disp(['   ... external function created (' num2str(toc(t0),'%.2f') ' s)'])
 
+    cd(S.misc.main_path)
+
 end
 
 S.misc.external_function = ['F_' osim_file_name '.dll'];
