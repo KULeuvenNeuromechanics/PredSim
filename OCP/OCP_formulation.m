@@ -1,4 +1,5 @@
 % synergies only mesh points
+% add track synergy weights
 function [] = OCP_formulation(S,model_info,f_casadi)
 % --------------------------------------------------------------------------
 % OCP_formulation
@@ -20,8 +21,8 @@ function [] = OCP_formulation(S,model_info,f_casadi)
 % Original author: Dhruv Gupta and Lars D'Hondt
 % Original date: Januari-May/2022
 %
-% Last edit by: Míriam Febrer (add synergies)
-% Last edit date: June 2023
+% Last edit by: Míriam Febrer (add synergies, add weights tracking)
+% Last edit date: July 2023
 % --------------------------------------------------------------------------
 
 disp('Start formulating OCP...')
@@ -501,6 +502,30 @@ for j=1:d
 
 
 end % End loop over collocation points
+
+% If synergy weights are tracked
+if (S.Syn)
+    if (S.Syn_cf_knownSynW)
+        if strcmp(S.misc.gaitmotion_type,'HalfGaitCycle') % same weights right and left 
+            
+        SynW_k_sel = SynW_k(S.knownSynW_idx,:); % select the weights that
+        % we want to impose/track (there are no conditions/constraints applied to the other weights)
+        Jtemp = 0;
+        for i = 1:S.NSyn_r
+            for k = 1:length(S.knownSynW_idx)
+                Jtemp = Jtemp + (SynW_k_sel(k,i)-S.knownSynW(k,i)).^2;
+            end
+        end
+        Jtemp = Jtemp/(length(S.knownSynW_idx)); % should we divide by another value?
+        % for now, I divide by the number of muscles for which we know weights
+        % (but maybe this should be multiplied by the number of synergies)
+        J = J + W.knownSynW * Jtemp;
+                    
+        elseif strcmp(S.misc.gaitmotion_type,'FullGaitCycle')
+            % TO DO: here we can track both, only right or only left
+        end
+    end
+end
 
 % Synergies: a - WH = 0
 % Only applied for mesh points
