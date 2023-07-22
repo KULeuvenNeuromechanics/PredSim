@@ -62,13 +62,6 @@ else
     Qs = generate_dummy_motion(S,model_info,n_data_points);
 end
 
-%%
-q.labels = [{'time'}, coord_names'];
-q.data = [linspace(0,10,n_data_points)', Qs];
-q.inDeg = 'No';
-
-write_motionFile_v40(q,'dummy_motion.mot');
-
 %% Initialise model
 import org.opensim.modeling.*;
 model = Model(osim_path);

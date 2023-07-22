@@ -69,8 +69,8 @@ S.solver.run_as_batch_job = 0;
 % casadi folder
 S.solver.CasADi_path    = U.PathCasadi;
 
-% S.solver.tol_ipopt      = 3;
-S.OpenSimADOptions.compiler = 'Visual Studio 14 2015 Win64';
+S.solver.tol_ipopt = 3;
+% S.OpenSimADOptions.compiler = 'Visual Studio 14 2015 Win64';
 
 %% Scaling
 
@@ -130,7 +130,7 @@ S.weights.slack_ctrl = 0.001;
 if U.Speed > 0
     S.subject.v_pelvis_x_trgt = U.Speed;
     S.weights.velocity = 0;
-    v_ig = [10:2:20,25:5:40];
+    v_ig = [12:2:20,25:5:40];
     [~,idxv] = min((v_ig/10 - S.subject.v_pelvis_x_trgt).^2);
     name_ig = ['IG_v' num2str(v_ig(idxv)) 'ms_ATx70.mot'];
     S.subject.IG_selection = fullfile(S.misc.main_path,'Subjects','Vitruvian_Man','IG',name_ig);

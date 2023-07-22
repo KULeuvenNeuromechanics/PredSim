@@ -104,7 +104,7 @@ S.weights.pass_torq = 0;
 % Do not print outputs from OpenSimAD
 S.OpenSimADOptions.verbose_mode = false;
 
-        
+
 %% Run predictive simulations
 
 % Start simulation

@@ -1,4 +1,4 @@
-classdef Vitruvian_Man_EN_exported < matlab.apps.AppBase
+classdef Vitruvian_Man_EN_exported_ratios < matlab.apps.AppBase
 
     % Properties that correspond to app components
     properties (Access = public)
@@ -108,12 +108,12 @@ classdef Vitruvian_Man_EN_exported < matlab.apps.AppBase
         % read user inputs
         function [] = readUserInput(app)
             app.usr_height = app.LichaamslengteEditField.Value;
-            app.usr_fingertip_elbow = app.AfstandelleboogtotvingertopEditField.Value;
-            app.usr_elbow_shoulder = app.AfstandschoudertotelleboogEditField.Value;
-            app.usr_shoulder_width = app.AfstandtussenschoudersEditField.Value;
-            app.usr_hip_knee = app.AfstandheuptotknieEditField.Value;
-            app.usr_knee_ground = app.AfstandknietotgrondEditField.Value;
-            app.usr_foot_length = app.LengtevanvoetEditField.Value;
+            app.usr_fingertip_elbow = app.AfstandelleboogtotvingertopEditField.Value*app.usr_height;
+            app.usr_elbow_shoulder = app.AfstandschoudertotelleboogEditField.Value*app.usr_height;
+            app.usr_shoulder_width = app.AfstandtussenschoudersEditField.Value*app.usr_height;
+            app.usr_hip_knee = app.AfstandheuptotknieEditField.Value*app.usr_height;
+            app.usr_knee_ground = app.AfstandknietotgrondEditField.Value*app.usr_height;
+            app.usr_foot_length = app.LengtevanvoetEditField.Value*app.usr_height;
         end
         
         % set default user inputs
@@ -138,12 +138,12 @@ classdef Vitruvian_Man_EN_exported < matlab.apps.AppBase
             app.MassaEditField.Limits = mlim;
             
             
-            app.AfstandelleboogtotvingertopEditField.Limits(2) = app.usr_height/2;
-            app.AfstandschoudertotelleboogEditField.Limits(2) = app.usr_height/2;
-            app.AfstandtussenschoudersEditField.Limits(2) = app.usr_height/2;
-            app.AfstandheuptotknieEditField.Limits(2) = app.usr_height/2;
-            app.AfstandknietotgrondEditField.Limits(2) = app.usr_height/2;
-            app.LengtevanvoetEditField.Limits(2) = app.usr_height/2;
+            app.AfstandelleboogtotvingertopEditField.Limits(2) = app.usr_height/2/180;
+            app.AfstandschoudertotelleboogEditField.Limits(2) = app.usr_height/2/180;
+            app.AfstandtussenschoudersEditField.Limits(2) = app.usr_height/2/180;
+            app.AfstandheuptotknieEditField.Limits(2) = app.usr_height/2/180;
+            app.AfstandknietotgrondEditField.Limits(2) = app.usr_height/2/180;
+            app.LengtevanvoetEditField.Limits(2) = app.usr_height/2/180;
 
         end
 
@@ -568,6 +568,8 @@ classdef Vitruvian_Man_EN_exported < matlab.apps.AppBase
             app.LichaamslengteEditFieldLabel.FontColor = [0.5412 0.2706 0.0706];
             app.LichaamslengteEditFieldLabel.Position = [88 683 159 42];
             app.LichaamslengteEditFieldLabel.Text = 'Height';
+            app.LichaamslengteEditFieldLabel.Enable = 'off';
+            app.LichaamslengteEditFieldLabel.Visible = 'off';
 
             % Create LichaamslengteEditField
             app.LichaamslengteEditField = uieditfield(app.UIFigure, 'numeric');
@@ -581,6 +583,8 @@ classdef Vitruvian_Man_EN_exported < matlab.apps.AppBase
             app.LichaamslengteEditField.BackgroundColor = [1 0.9725 0.8627];
             app.LichaamslengteEditField.Position = [388 684 74 41];
             app.LichaamslengteEditField.Value = 180;
+            app.LichaamslengteEditField.Enable = 'off';
+            app.LichaamslengteEditField.Visible = 'off';
 
             % Create AfstandvanvingertoptotelleboogLabel
             app.AfstandvanvingertoptotelleboogLabel = uilabel(app.UIFigure);
@@ -592,7 +596,7 @@ classdef Vitruvian_Man_EN_exported < matlab.apps.AppBase
 
             % Create AfstandelleboogtotvingertopEditField
             app.AfstandelleboogtotvingertopEditField = uieditfield(app.UIFigure, 'numeric');
-            app.AfstandelleboogtotvingertopEditField.Limits = [10 100];
+            app.AfstandelleboogtotvingertopEditField.Limits = [10 100]/180;
             app.AfstandelleboogtotvingertopEditField.ValueDisplayFormat = '%111g';
             app.AfstandelleboogtotvingertopEditField.HorizontalAlignment = 'center';
             app.AfstandelleboogtotvingertopEditField.FontName = 'Blackadder ITC';
@@ -600,7 +604,7 @@ classdef Vitruvian_Man_EN_exported < matlab.apps.AppBase
             app.AfstandelleboogtotvingertopEditField.FontColor = [0.5412 0.2706 0.0706];
             app.AfstandelleboogtotvingertopEditField.BackgroundColor = [1 0.9725 0.8627];
             app.AfstandelleboogtotvingertopEditField.Position = [388 424 74 41];
-            app.AfstandelleboogtotvingertopEditField.Value = 45;
+            app.AfstandelleboogtotvingertopEditField.Value = 45/180;
 
             % Create AfstandschoudertotelleboogEditFieldLabel
             app.AfstandschoudertotelleboogEditFieldLabel = uilabel(app.UIFigure);
@@ -612,7 +616,7 @@ classdef Vitruvian_Man_EN_exported < matlab.apps.AppBase
 
             % Create AfstandschoudertotelleboogEditField
             app.AfstandschoudertotelleboogEditField = uieditfield(app.UIFigure, 'numeric');
-            app.AfstandschoudertotelleboogEditField.Limits = [5 100];
+            app.AfstandschoudertotelleboogEditField.Limits = [5 100]/180;
             app.AfstandschoudertotelleboogEditField.ValueDisplayFormat = '%111g';
             app.AfstandschoudertotelleboogEditField.HorizontalAlignment = 'center';
             app.AfstandschoudertotelleboogEditField.FontName = 'Blackadder ITC';
@@ -620,7 +624,7 @@ classdef Vitruvian_Man_EN_exported < matlab.apps.AppBase
             app.AfstandschoudertotelleboogEditField.FontColor = [0.5412 0.2706 0.0706];
             app.AfstandschoudertotelleboogEditField.BackgroundColor = [1 0.9725 0.8627];
             app.AfstandschoudertotelleboogEditField.Position = [388 489 74 41];
-            app.AfstandschoudertotelleboogEditField.Value = 22.5;
+            app.AfstandschoudertotelleboogEditField.Value = 22.5/180;
 
             % Create AfstandheuptotknieEditFieldLabel
             app.AfstandheuptotknieEditFieldLabel = uilabel(app.UIFigure);
@@ -632,7 +636,7 @@ classdef Vitruvian_Man_EN_exported < matlab.apps.AppBase
 
             % Create AfstandheuptotknieEditField
             app.AfstandheuptotknieEditField = uieditfield(app.UIFigure, 'numeric');
-            app.AfstandheuptotknieEditField.Limits = [10 100];
+            app.AfstandheuptotknieEditField.Limits = [10 100]/180;
             app.AfstandheuptotknieEditField.ValueDisplayFormat = '%111g';
             app.AfstandheuptotknieEditField.HorizontalAlignment = 'center';
             app.AfstandheuptotknieEditField.FontName = 'Blackadder ITC';
@@ -640,7 +644,7 @@ classdef Vitruvian_Man_EN_exported < matlab.apps.AppBase
             app.AfstandheuptotknieEditField.FontColor = [0.5412 0.2706 0.0706];
             app.AfstandheuptotknieEditField.BackgroundColor = [1 0.9725 0.8627];
             app.AfstandheuptotknieEditField.Position = [388 359 74 41];
-            app.AfstandheuptotknieEditField.Value = 45;
+            app.AfstandheuptotknieEditField.Value = 45/180;
 
             % Create AfstandknietotgrondEditFieldLabel
             app.AfstandknietotgrondEditFieldLabel = uilabel(app.UIFigure);
@@ -652,7 +656,7 @@ classdef Vitruvian_Man_EN_exported < matlab.apps.AppBase
 
             % Create AfstandknietotgrondEditField
             app.AfstandknietotgrondEditField = uieditfield(app.UIFigure, 'numeric');
-            app.AfstandknietotgrondEditField.Limits = [10 100];
+            app.AfstandknietotgrondEditField.Limits = [10 100]/180;
             app.AfstandknietotgrondEditField.ValueDisplayFormat = '%111g';
             app.AfstandknietotgrondEditField.HorizontalAlignment = 'center';
             app.AfstandknietotgrondEditField.FontName = 'Blackadder ITC';
@@ -660,7 +664,7 @@ classdef Vitruvian_Man_EN_exported < matlab.apps.AppBase
             app.AfstandknietotgrondEditField.FontColor = [0.5412 0.2706 0.0706];
             app.AfstandknietotgrondEditField.BackgroundColor = [1 0.9725 0.8627];
             app.AfstandknietotgrondEditField.Position = [388 295 74 41];
-            app.AfstandknietotgrondEditField.Value = 45;
+            app.AfstandknietotgrondEditField.Value = 45/180;
 
             % Create AfstandtussenschoudersEditFieldLabel
             app.AfstandtussenschoudersEditFieldLabel = uilabel(app.UIFigure);
@@ -672,7 +676,7 @@ classdef Vitruvian_Man_EN_exported < matlab.apps.AppBase
 
             % Create AfstandtussenschoudersEditField
             app.AfstandtussenschoudersEditField = uieditfield(app.UIFigure, 'numeric');
-            app.AfstandtussenschoudersEditField.Limits = [10 100];
+            app.AfstandtussenschoudersEditField.Limits = [10 100]/180;
             app.AfstandtussenschoudersEditField.ValueDisplayFormat = '%111g';
             app.AfstandtussenschoudersEditField.HorizontalAlignment = 'center';
             app.AfstandtussenschoudersEditField.FontName = 'Blackadder ITC';
@@ -680,63 +684,63 @@ classdef Vitruvian_Man_EN_exported < matlab.apps.AppBase
             app.AfstandtussenschoudersEditField.FontColor = [0.5412 0.2706 0.0706];
             app.AfstandtussenschoudersEditField.BackgroundColor = [1 0.9725 0.8627];
             app.AfstandtussenschoudersEditField.Position = [388 555 74 41];
-            app.AfstandtussenschoudersEditField.Value = 45;
+            app.AfstandtussenschoudersEditField.Value = 45/180;
 
-            % Create cmLabel
-            app.cmLabel = uilabel(app.UIFigure);
-            app.cmLabel.FontName = 'Blackadder ITC';
-            app.cmLabel.FontSize = 30;
-            app.cmLabel.FontColor = [0.5412 0.2706 0.0706];
-            app.cmLabel.Position = [487 683 31 42];
-            app.cmLabel.Text = 'cm';
-
-            % Create cmLabel_2
-            app.cmLabel_2 = uilabel(app.UIFigure);
-            app.cmLabel_2.FontName = 'Blackadder ITC';
-            app.cmLabel_2.FontSize = 30;
-            app.cmLabel_2.FontColor = [0.5412 0.2706 0.0706];
-            app.cmLabel_2.Position = [487 554 31 42];
-            app.cmLabel_2.Text = 'cm';
-
-            % Create cmLabel_3
-            app.cmLabel_3 = uilabel(app.UIFigure);
-            app.cmLabel_3.FontName = 'Blackadder ITC';
-            app.cmLabel_3.FontSize = 30;
-            app.cmLabel_3.FontColor = [0.5412 0.2706 0.0706];
-            app.cmLabel_3.Position = [487 488 31 42];
-            app.cmLabel_3.Text = 'cm';
-
-            % Create cmLabel_4
-            app.cmLabel_4 = uilabel(app.UIFigure);
-            app.cmLabel_4.FontName = 'Blackadder ITC';
-            app.cmLabel_4.FontSize = 30;
-            app.cmLabel_4.FontColor = [0.5412 0.2706 0.0706];
-            app.cmLabel_4.Position = [487 423 31 42];
-            app.cmLabel_4.Text = 'cm';
-
-            % Create cmLabel_5
-            app.cmLabel_5 = uilabel(app.UIFigure);
-            app.cmLabel_5.FontName = 'Blackadder ITC';
-            app.cmLabel_5.FontSize = 30;
-            app.cmLabel_5.FontColor = [0.5412 0.2706 0.0706];
-            app.cmLabel_5.Position = [487 358 31 42];
-            app.cmLabel_5.Text = 'cm';
-
-            % Create cmLabel_6
-            app.cmLabel_6 = uilabel(app.UIFigure);
-            app.cmLabel_6.FontName = 'Blackadder ITC';
-            app.cmLabel_6.FontSize = 30;
-            app.cmLabel_6.FontColor = [0.5412 0.2706 0.0706];
-            app.cmLabel_6.Position = [487 294 31 42];
-            app.cmLabel_6.Text = 'cm';
-
-            % Create cmLabel_9
-            app.cmLabel_9 = uilabel(app.UIFigure);
-            app.cmLabel_9.FontName = 'Blackadder ITC';
-            app.cmLabel_9.FontSize = 30;
-            app.cmLabel_9.FontColor = [0.5412 0.2706 0.0706];
-            app.cmLabel_9.Position = [487 230 31 42];
-            app.cmLabel_9.Text = 'cm';
+%             % Create cmLabel
+%             app.cmLabel = uilabel(app.UIFigure);
+%             app.cmLabel.FontName = 'Blackadder ITC';
+%             app.cmLabel.FontSize = 30;
+%             app.cmLabel.FontColor = [0.5412 0.2706 0.0706];
+%             app.cmLabel.Position = [487 683 31 42];
+%             app.cmLabel.Text = 'cm';
+% 
+%             % Create cmLabel_2
+%             app.cmLabel_2 = uilabel(app.UIFigure);
+%             app.cmLabel_2.FontName = 'Blackadder ITC';
+%             app.cmLabel_2.FontSize = 30;
+%             app.cmLabel_2.FontColor = [0.5412 0.2706 0.0706];
+%             app.cmLabel_2.Position = [487 554 31 42];
+%             app.cmLabel_2.Text = 'cm';
+% 
+%             % Create cmLabel_3
+%             app.cmLabel_3 = uilabel(app.UIFigure);
+%             app.cmLabel_3.FontName = 'Blackadder ITC';
+%             app.cmLabel_3.FontSize = 30;
+%             app.cmLabel_3.FontColor = [0.5412 0.2706 0.0706];
+%             app.cmLabel_3.Position = [487 488 31 42];
+%             app.cmLabel_3.Text = 'cm';
+% 
+%             % Create cmLabel_4
+%             app.cmLabel_4 = uilabel(app.UIFigure);
+%             app.cmLabel_4.FontName = 'Blackadder ITC';
+%             app.cmLabel_4.FontSize = 30;
+%             app.cmLabel_4.FontColor = [0.5412 0.2706 0.0706];
+%             app.cmLabel_4.Position = [487 423 31 42];
+%             app.cmLabel_4.Text = 'cm';
+% 
+%             % Create cmLabel_5
+%             app.cmLabel_5 = uilabel(app.UIFigure);
+%             app.cmLabel_5.FontName = 'Blackadder ITC';
+%             app.cmLabel_5.FontSize = 30;
+%             app.cmLabel_5.FontColor = [0.5412 0.2706 0.0706];
+%             app.cmLabel_5.Position = [487 358 31 42];
+%             app.cmLabel_5.Text = 'cm';
+% 
+%             % Create cmLabel_6
+%             app.cmLabel_6 = uilabel(app.UIFigure);
+%             app.cmLabel_6.FontName = 'Blackadder ITC';
+%             app.cmLabel_6.FontSize = 30;
+%             app.cmLabel_6.FontColor = [0.5412 0.2706 0.0706];
+%             app.cmLabel_6.Position = [487 294 31 42];
+%             app.cmLabel_6.Text = 'cm';
+% 
+%             % Create cmLabel_9
+%             app.cmLabel_9 = uilabel(app.UIFigure);
+%             app.cmLabel_9.FontName = 'Blackadder ITC';
+%             app.cmLabel_9.FontSize = 30;
+%             app.cmLabel_9.FontColor = [0.5412 0.2706 0.0706];
+%             app.cmLabel_9.Position = [487 230 31 42];
+%             app.cmLabel_9.Text = 'cm';
 
             % Create LengtevanvoetEditFieldLabel
             app.LengtevanvoetEditFieldLabel = uilabel(app.UIFigure);
@@ -748,7 +752,7 @@ classdef Vitruvian_Man_EN_exported < matlab.apps.AppBase
 
             % Create LengtevanvoetEditField
             app.LengtevanvoetEditField = uieditfield(app.UIFigure, 'numeric');
-            app.LengtevanvoetEditField.Limits = [10 100];
+            app.LengtevanvoetEditField.Limits = [10 100]/180;
             app.LengtevanvoetEditField.ValueDisplayFormat = '%111g';
             app.LengtevanvoetEditField.HorizontalAlignment = 'center';
             app.LengtevanvoetEditField.FontName = 'Blackadder ITC';
@@ -756,7 +760,7 @@ classdef Vitruvian_Man_EN_exported < matlab.apps.AppBase
             app.LengtevanvoetEditField.FontColor = [0.5412 0.2706 0.0706];
             app.LengtevanvoetEditField.BackgroundColor = [1 0.9725 0.8627];
             app.LengtevanvoetEditField.Position = [388 230 74 41];
-            app.LengtevanvoetEditField.Value = 30;
+            app.LengtevanvoetEditField.Value = 30/180;
 
             % Create MaaktekeningButton
             app.MaaktekeningButton = uibutton(app.UIFigure, 'push');
@@ -807,6 +811,8 @@ classdef Vitruvian_Man_EN_exported < matlab.apps.AppBase
             app.kgLabel.FontColor = [0.5412 0.2706 0.0706];
             app.kgLabel.Position = [487 618 28 42];
             app.kgLabel.Text = 'kg';
+            app.kgLabel.Enable = 'off';
+            app.kgLabel.Visible = 'off';
 
             % Create MassaEditFieldLabel
             app.MassaEditFieldLabel = uilabel(app.UIFigure);
@@ -815,6 +821,7 @@ classdef Vitruvian_Man_EN_exported < matlab.apps.AppBase
             app.MassaEditFieldLabel.FontColor = [0.5412 0.2706 0.0706];
             app.MassaEditFieldLabel.Position = [88 618 124 42];
             app.MassaEditFieldLabel.Text = 'Mass';
+            app.MassaEditFieldLabel.Visible = 'off';
 
             % Create MassaEditField
             app.MassaEditField = uieditfield(app.UIFigure, 'numeric');
@@ -827,6 +834,8 @@ classdef Vitruvian_Man_EN_exported < matlab.apps.AppBase
             app.MassaEditField.BackgroundColor = [1 0.9725 0.8627];
             app.MassaEditField.Position = [388 619 74 41];
             app.MassaEditField.Value = 75;
+            app.MassaEditField.Enable = 'off';
+            app.MassaEditField.Visible = 'off';
 
             % Create Label
             app.Label = uilabel(app.UIFigure);
@@ -955,7 +964,7 @@ classdef Vitruvian_Man_EN_exported < matlab.apps.AppBase
     methods (Access = public)
 
         % Construct app
-        function app = Vitruvian_Man_EN_exported
+        function app = Vitruvian_Man_EN_exported_ratios
             
             clc
             
