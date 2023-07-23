@@ -101,15 +101,15 @@ S.subject.scale_actuator_torque = {
 %     };
 % S.subject.set_stiffness_offset_selected_dofs = {{'elbow_flex_r','elbow_flex_l'},45*pi/180};
 
-S.subject.set_damping_coefficient_selected_dofs = {
-%     'lumbar_extension',2*sf_force*(sqrt(sf.torso*sf.shoulder)*sf.torso*sf.upp_leg),...
-    {'arm_flex_r','arm_flex_l'},0.2*sf_force*(sqrt(sf.torso*sf.shoulder)*sf.shoulder^2),...
-    };
-
-pass_torq_arm = 10*sf_force*(sqrt(sf.torso*sf.shoulder)*sf.shoulder^2);
-
-S.subject.set_limit_torque_coefficients_selected_dofs = ...
-    {{'arm_flex_r','arm_flex_l'},[-pass_torq_arm; 22; pass_torq_arm; -22], [-1, 1]};
+% S.subject.set_damping_coefficient_selected_dofs = {
+% %     'lumbar_extension',2*sf_force*(sqrt(sf.torso*sf.shoulder)*sf.torso*sf.upp_leg),...
+%     {'arm_flex_r','arm_flex_l'},0.2*sf_force*(sqrt(sf.torso*sf.shoulder)*sf.shoulder^2),...
+%     };
+% 
+% pass_torq_arm = 10*sf_force*(sqrt(sf.torso*sf.shoulder)*sf.shoulder^2);
+% 
+% S.subject.set_limit_torque_coefficients_selected_dofs = ...
+%     {{'arm_flex_r','arm_flex_l'},[-pass_torq_arm; 22; pass_torq_arm; -22], [-1, 1]};
 
 S.subject.scale_default_coord_lim_torq = sf_mass*sf_legLength;
 
@@ -132,8 +132,11 @@ if U.Speed > 0
     S.weights.velocity = 0;
     v_ig = [12:2:20,25:5:40];
     [~,idxv] = min((v_ig/10 - S.subject.v_pelvis_x_trgt).^2);
-    name_ig = ['IG_v' num2str(v_ig(idxv)) 'ms_ATx70.mot'];
-    S.subject.IG_selection = fullfile(S.misc.main_path,'Subjects','Vitruvian_Man','IG',name_ig);
+%     name_ig = ['IG_v' num2str(v_ig(idxv)) 'ms_ATx70.mot'];
+%     S.subject.IG_selection = fullfile(S.misc.main_path,'Subjects','Vitruvian_Man','IG',name_ig);
+    
+    name_ig = ['IG_v' num2str(v_ig(idxv)) 'ms.mot'];
+    S.subject.IG_selection = fullfile(S.misc.main_path,'Subjects','Vitruvian_Man','IG','old',name_ig);
     S.subject.IG_selection_gaitCyclePercent = 200;
 
 else
