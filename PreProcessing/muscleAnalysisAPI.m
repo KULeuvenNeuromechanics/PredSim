@@ -57,7 +57,7 @@ if length(varargin)==1
     end
 else
     % number of data points
-    n_data_points = 5000;
+    n_data_points = 500;
     % get dummy motion
     Qs = generate_dummy_motion(S,model_info,n_data_points);
 end

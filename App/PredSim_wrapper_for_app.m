@@ -70,6 +70,7 @@ S.solver.run_as_batch_job = 0;
 S.solver.CasADi_path    = U.PathCasadi;
 
 S.solver.tol_ipopt = 3;
+S.solver.max_iter = 1000;
 % S.OpenSimADOptions.compiler = 'Visual Studio 14 2015 Win64';
 
 %% Scaling
@@ -94,22 +95,15 @@ S.subject.scale_actuator_torque = {
     {'arm_flex_r','arm_flex_l'},sf_force*(sqrt(sf.torso*sf.shoulder)*sf.shoulder^2) % ~ torso and shoulder
     };
 
+S.subject.set_damping_coefficient_selected_dofs = {
+%     'lumbar_extension',2*sf_force*(sqrt(sf.torso*sf.shoulder)*sf.torso*sf.upp_leg),...
+    {'arm_flex_r','arm_flex_l'},0.2*sf_force*(sqrt(sf.torso*sf.shoulder)*sf.shoulder^2),...
+    };
 
-% S.subject.set_stiffness_coefficient_selected_dofs = {
-% %     {'arm_flex_r','arm_flex_l'},2*sf_force*sf_force*(sqrt(sf.torso*sf.shoulder)*sf.shoulder^2),...
-%     {'elbow_flex_r','elbow_flex_l'},1*sf_force*sf.upp_arm^3,...
-%     };
-% S.subject.set_stiffness_offset_selected_dofs = {{'elbow_flex_r','elbow_flex_l'},45*pi/180};
+pass_torq_arm = 10*sf_force*(sqrt(sf.torso*sf.shoulder)*sf.shoulder^2);
 
-% S.subject.set_damping_coefficient_selected_dofs = {
-% %     'lumbar_extension',2*sf_force*(sqrt(sf.torso*sf.shoulder)*sf.torso*sf.upp_leg),...
-%     {'arm_flex_r','arm_flex_l'},0.2*sf_force*(sqrt(sf.torso*sf.shoulder)*sf.shoulder^2),...
-%     };
-% 
-% pass_torq_arm = 10*sf_force*(sqrt(sf.torso*sf.shoulder)*sf.shoulder^2);
-% 
-% S.subject.set_limit_torque_coefficients_selected_dofs = ...
-%     {{'arm_flex_r','arm_flex_l'},[-pass_torq_arm; 22; pass_torq_arm; -22], [-1, 1]};
+S.subject.set_limit_torque_coefficients_selected_dofs = ...
+    {{'arm_flex_r','arm_flex_l'},[-pass_torq_arm; 22; pass_torq_arm; -22], [-1, 1]};
 
 S.subject.scale_default_coord_lim_torq = sf_mass*sf_legLength;
 
@@ -132,18 +126,17 @@ if U.Speed > 0
     S.weights.velocity = 0;
     v_ig = [12:2:20,25:5:40];
     [~,idxv] = min((v_ig/10 - S.subject.v_pelvis_x_trgt).^2);
-%     name_ig = ['IG_v' num2str(v_ig(idxv)) 'ms_ATx70.mot'];
-%     S.subject.IG_selection = fullfile(S.misc.main_path,'Subjects','Vitruvian_Man','IG',name_ig);
-    
-    name_ig = ['IG_v' num2str(v_ig(idxv)) 'ms.mot'];
-    S.subject.IG_selection = fullfile(S.misc.main_path,'Subjects','Vitruvian_Man','IG','old',name_ig);
+    name_ig = ['IG_v' num2str(v_ig(idxv)) 'ms_ATx70.mot'];
+    S.subject.IG_selection = fullfile(S.misc.main_path,'Subjects',...
+        'Vitruvian_Man','IG',name_ig);
     S.subject.IG_selection_gaitCyclePercent = 200;
 
 else
     S.weights.velocity = -5e4;
     S.subject.v_pelvis_x_trgt   = [2,10];
 
-    S.subject.IG_selection = fullfile(S.misc.main_path,'Subjects','Vitruvian_Man','IG','IG_v40ms_ATx70.mot');
+    S.subject.IG_selection = fullfile(S.misc.main_path,'Subjects',...
+        'Vitruvian_Man','IG','IG_v40ms_ATx70.mot');
     S.subject.IG_selection_gaitCyclePercent = 200;
 end
 
@@ -155,7 +148,6 @@ S.subject.adapt_IG_pelvis_y = 1;
 
 S.bounds.Qs = {
     'pelvis_tx',0,4*sf_legLength,...
-...    'lumbar_extension',-20,20,...
     {'arm_flex_r','arm_flex_l'},-60,60
     };
 
