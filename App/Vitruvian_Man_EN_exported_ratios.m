@@ -118,12 +118,12 @@ classdef Vitruvian_Man_EN_exported_ratios < matlab.apps.AppBase
         
         % set default user inputs
         function [] = writeDefaultUserInput(app)
-            app.AfstandelleboogtotvingertopEditField.Value = round(app.usr_fingertip_elbow,1);
-            app.AfstandschoudertotelleboogEditField.Value = round(app.usr_elbow_shoulder,1);
-            app.AfstandtussenschoudersEditField.Value = round(app.usr_shoulder_width,1);
-            app.AfstandheuptotknieEditField.Value = round(app.usr_hip_knee,1);
-            app.AfstandknietotgrondEditField.Value = round(app.usr_knee_ground,1);
-            app.LengtevanvoetEditField.Value = round(app.usr_foot_length,1);
+            app.AfstandelleboogtotvingertopEditField.Value = round(app.usr_fingertip_elbow/app.usr_height,3);
+            app.AfstandschoudertotelleboogEditField.Value = round(app.usr_elbow_shoulder/app.usr_height,3);
+            app.AfstandtussenschoudersEditField.Value = round(app.usr_shoulder_width/app.usr_height,3);
+            app.AfstandheuptotknieEditField.Value = round(app.usr_hip_knee/app.usr_height,3);
+            app.AfstandknietotgrondEditField.Value = round(app.usr_knee_ground/app.usr_height,3);
+            app.LengtevanvoetEditField.Value = round(app.usr_foot_length/app.usr_height,3);
         end
         
         % set limits on input
@@ -411,6 +411,12 @@ classdef Vitruvian_Man_EN_exported_ratios < matlab.apps.AppBase
             % load table with results for this group
             loadResultsTable(app);
             
+            % reset defaults
+            readUserInput(app)
+            updateUserInput(app)
+            writeDefaultUserInput(app)
+            updateInputLimits(app)
+
         end
 
         % Value changed function: NaamEditField
@@ -497,7 +503,7 @@ classdef Vitruvian_Man_EN_exported_ratios < matlab.apps.AppBase
                 app.sel_osim_file = model_info.osim_path;
             end
             
-
+            loadResultsTable(app)
         end
 
         % Value changed function: SnelheidSlider
