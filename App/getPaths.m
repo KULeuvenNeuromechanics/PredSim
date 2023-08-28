@@ -3,7 +3,7 @@ function [init_path_savefolder,init_path_geom,init_path_casadi] = getPaths()
 
     % fill these in based on your computer
     if strcmp(name,'GBW-L-W2122')
-        init_path_savefolder = 'C:\Users\u0150099\OneDrive - KU Leuven\Results_PredSim_App\Testing';
+        init_path_savefolder = 'C:\Users\u0150099\OneDrive - KU Leuven\Results_PredSim_App\TGCS';
         init_path_geom = 'C:\GBW_MyPrograms\OpenSim 4.3\Geometry';
         init_path_casadi = 'C:\GBW_MyPrograms\casadi_3_5_5';
     elseif strcmp(name, 'GBW-L-W2075')
