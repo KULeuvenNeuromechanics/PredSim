@@ -27,7 +27,7 @@ addpath([pathRepo '/PreProcessing'])
 addpath([pathRepo '/OCP'])
 
 %% input
-name_1 = 'Falisse_et_al_2022';
+name_1 = 'Falisse_et_al_2022'; 
 post_process.result_filename = 'Falisse_et_al_2022_v1';
 F1  = external('F',fullfile(pathRepo,'Subjects',name_1,['F_' name_1 '.dll'])); 
 
