@@ -250,6 +250,20 @@ if ~isfield(S.misc,'scaling_Moments')
 end
 
 
+% default coordinate bounds
+if ~isfield(S.weights,'default_coordspecific_weights')
+    S.weights.default_coordspecific_weights = fullfile(S.misc.main_path,...
+        'DefaultSettings','Default_CoordSpecific_Weights.csv');
+end
+
+% manually overwrite coordspecific weights
+if ~isfield(S.weights,'set_coordspecific_Qdotdots')
+    S.weights.set_coordspecific_Qdotdots = [];
+end
+if ~isfield(S.weights,'set_coordspecific_PassTorq')
+    S.weights.set_coordspecific_PassTorq = [];
+end
+
 %% metabolicE
 if ~isfield(S,'metabolicE')
     S.metabolicE = [];
