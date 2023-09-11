@@ -29,7 +29,6 @@ t0 = tic;
 %% User inputs (typical settings structure)
 % settings for optimization
 N = S.solver.N_meshes; % number of mesh intervals
-W = S.weights; % weights optimization
 nq = model_info.ExtFunIO.jointi.nq; % lengths of coordinate subsets
 
 %% Load external functions
@@ -99,6 +98,11 @@ end
 if (S.misc.visualize_bounds)
     visualizebounds
 end
+
+%% Cost function weights
+[S] = getCoordSpecificWeights(S,model_info);
+
+W = S.weights; % weights optimization
 
 %% OCP create variables and bounds
 % using opti
@@ -320,12 +324,16 @@ for j=1:d
         eq_constr{end+1} = (h*da_adtj - a_ap)./scaling.a_a;
     end
 
+    % Apply weights
+    Qdotdotj_cost_weighted = Aj_nsc(:,j).*W.coordspecific_Qdotdots(:);
+    Tau_passj_cost_weighted = Tau_passj_cost.*W.coordspecific_PassTorq(:);
+
     % Add contribution to the cost function
     J = J + ...
         W.E          * B(j+1) *(f_casadi.J_muscles_exp(e_totj,W.E_exp))/model_info.mass*h + ...
         W.a          * B(j+1) *(f_casadi.J_muscles(akj(:,j+1)'))*h + ...
-        W.q_dotdot   * B(j+1) *(f_casadi.J_not_arms_dof(Aj(model_info.ExtFunIO.jointi.noarmsi,j)))*h + ...
-        W.pass_torq  * B(j+1) *(f_casadi.J_lim_torq(Tau_passj_cost))*h + ...
+        W.q_dotdot   * B(j+1) *(f_casadi.J_not_arms_dof(Qdotdotj_cost_weighted(model_info.ExtFunIO.jointi.noarmsi)))*h + ...
+        W.pass_torq  * B(j+1) *(f_casadi.J_lim_torq(Tau_passj_cost_weighted))*h + ...
         W.slack_ctrl * B(j+1) *(f_casadi.J_muscles(vAk))*h + ...
         W.slack_ctrl * B(j+1) *(f_casadi.J_muscles(dFTtildej(:,j)))*h;
 
@@ -333,7 +341,7 @@ for j=1:d
         J = J + W.e_arm      * B(j+1) *(f_casadi.J_torq_act(e_ak))*h;
     end
     if nq.arms > 0
-        J = J + W.slack_ctrl * B(j+1) *(f_casadi.J_arms_dof(Aj(model_info.ExtFunIO.jointi.armsi,j)))*h;
+        J = J + W.slack_ctrl * B(j+1) *(f_casadi.J_arms_dof(Qdotdotj_cost_weighted(model_info.ExtFunIO.jointi.armsi)))*h;
     end
 
     
@@ -879,13 +887,17 @@ for k=1:N
         
         % passive moments
         Tau_passkj = full(f_casadi.AllPassiveTorques_cost(q_col_opt_unsc.rad(count,:),qdot_col_opt_unsc.rad(count,:)));
+        Tau_passkj_weighted = Tau_passkj.*W.coordspecific_PassTorq(:);
+
+        % weighted accelerations
+        qdotdot_col_opt_weighted = qdotdot_col_opt_unsc.rad(count,:).*W.coordspecific_Qdotdots(:);
 
         % objective function
         J_opt = J_opt + 1/(dist_trav_opt)*(...
             W.E*B(j+1)          *(f_casadi.J_muscles_exp(e_tot_opt_all,W.E_exp))/model_info.mass*h_opt + ...
             W.a*B(j+1)          *(f_casadi.J_muscles(a_col_opt(count,:)))*h_opt + ...
-            W.q_dotdot*B(j+1)   *(f_casadi.J_not_arms_dof(qdotdot_col_opt(count,model_info.ExtFunIO.jointi.noarmsi)))*h_opt + ...
-            W.pass_torq*B(j+1)  *(f_casadi.J_lim_torq(Tau_passkj))*h_opt + ... 
+            W.q_dotdot*B(j+1)   *(f_casadi.J_not_arms_dof(qdotdot_col_opt_weighted(model_info.ExtFunIO.jointi.noarmsi)))*h_opt + ...
+            W.pass_torq*B(j+1)  *(f_casadi.J_lim_torq(Tau_passkj_weighted))*h_opt + ... 
             W.slack_ctrl*B(j+1) *(f_casadi.J_muscles(vA_opt(k,:)))*h_opt + ...
             W.slack_ctrl*B(j+1) *(f_casadi.J_muscles(dFTtilde_col_opt(count,:)))*h_opt);
             
@@ -895,10 +907,10 @@ for k=1:N
             Actu_cost = Actu_cost + W.e_arm*B(j+1)*(f_casadi.J_arms_dof(e_a_opt(k,:)))*h_opt;
         end
         if nq.arms > 0
-            J_opt = J_opt + 1/(dist_trav_opt)*(W.slack_ctrl*B(j+1) *(f_casadi.J_arms_dof(qdotdot_col_opt(count,model_info.ExtFunIO.jointi.armsi)))*h_opt);
+            J_opt = J_opt + 1/(dist_trav_opt)*(W.slack_ctrl*B(j+1) *(f_casadi.J_arms_dof(qdotdot_col_opt_weighted(model_info.ExtFunIO.jointi.armsi)))*h_opt);
 
             QdotdotArm_cost = QdotdotArm_cost + W.slack_ctrl*B(j+1)*...
-                (f_casadi.J_arms_dof(qdotdot_col_opt(count,model_info.ExtFunIO.jointi.armsi)))*h_opt;
+                (f_casadi.J_arms_dof(qdotdot_col_opt_weighted(model_info.ExtFunIO.jointi.armsi)))*h_opt;
         end
 
         E_cost = E_cost + W.E*B(j+1)*...
@@ -906,9 +918,9 @@ for k=1:N
         A_cost = A_cost + W.a*B(j+1)*...
             (f_casadi.J_muscles(a_col_opt(count,:)))*h_opt;      
         Qdotdot_cost = Qdotdot_cost + W.q_dotdot*B(j+1)*...
-            (f_casadi.J_not_arms_dof(qdotdot_col_opt(count,model_info.ExtFunIO.jointi.noarmsi)))*h_opt;
+            (f_casadi.J_not_arms_dof(qdotdot_col_opt_weighted(model_info.ExtFunIO.jointi.noarmsi)))*h_opt;
         Pass_cost = Pass_cost + W.pass_torq*B(j+1)*...
-            (f_casadi.J_lim_torq(Tau_passkj))*h_opt;
+            (f_casadi.J_lim_torq(Tau_passkj_weighted))*h_opt;
         vA_cost = vA_cost + W.slack_ctrl*B(j+1)*...
             (f_casadi.J_muscles(vA_opt(k,:)))*h_opt;
         dFTtilde_cost = dFTtilde_cost + W.slack_ctrl*B(j+1)*...

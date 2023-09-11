@@ -87,7 +87,7 @@ S.post_process.make_plot = 1;
 % S.solver.N_threads      = 6;
 % S.solver.N_meshes       = 100;
 % S.solver.par_cluster_name = ;
-S.solver.CasADi_path    = 'C:\GBW_MyPrograms\casadi_3_5_5';
+% S.solver.CasADi_path    = 'C:\GBW_MyPrograms\casadi_3_5_5';
 
 
 % % S.subject

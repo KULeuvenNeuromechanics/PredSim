@@ -276,6 +276,12 @@ This code can automatically convert an OpenSim model to the external function us
 	- weight on muscle activations. Default is *2000* [double]
 - **S.weights.slack_ctrl**: 
 	- weight on slack controls. Default is *0.001* [double]
+- **S.weights.default_coordspecific_weights**:
+	- path to csv file with weights for accelerations and limit torques of each coordinate. Note that these weights are applied before squaring. Weights that are not specified in the file are set to 1. Default is *['Default_CoordSpecific_Weights.csv'](./DefaultSettings/Default_CoordSpecific_Weights.csv)* [char].
+- **S.weights.set_coordspecific_Qdotdots**:
+	- use name-value pairs to set weight of coordinate accelerations. Takes priority over S.weights.default_coordspecific_weights. Default is *[]* [cell erray].
+- **S.weights.set_coordspecific_PassTorq**:
+	- use name-value pairs to set weight of coordinate limit torques. Takes priority over S.weights.default_coordspecific_weights. Default is *[]* [cell erray].
 
 #### S.Cpp2Dll - These settings are only used during creation of the external function, and not during the OCP.
 
