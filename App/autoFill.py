@@ -2,6 +2,7 @@
 # based on https://github.com/jamesshah/GoogleForm-AutoFill
 # Bram VDB
 # 14/10/2022
+# last edit: 15 September 2023 - BVDB
 
 from requests import post
 from time import sleep
@@ -17,7 +18,7 @@ def send_response(url, data):
         except:
             print("Error Occured!")
 # URL to the form you want to fill. formResponse should be used instead of viewform
-url = 'https://docs.google.com/forms/d/1OdyJcOKBngdj8xOWg3s7w6065TfF6JeE4PiWuIrhLA0/formResponse'
+url = 'https://docs.google.com/forms/d/1o2gNEP-yFVzXBrTuQK677opRbpq9ADbLPeMZU0FdTaE/formResponse'
 
 # assign values based on arguments in command line
 groupname  = argv[1]
