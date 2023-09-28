@@ -2,25 +2,25 @@ function [] = OCP_formulation(S,model_info,f_casadi)
 % --------------------------------------------------------------------------
 % OCP_formulation
 %   This function formulates the OCP and calls the solver
-% 
+%
 % INPUT:
 %   - S -
 %   * setting structure S
 %
 %   - model_info -
 %   * structure with all the model information based on the OpenSim model
-% 
+%
 %   - f_casadi -
 %   * Struct containing all casadi functions.
 %
 % OUTPUT:
 %   - This function returns no outputs -
-% 
+%
 % Original author: Dhruv Gupta and Lars D'Hondt
 % Original date: Januari-May/2022
 %
-% Last edit by: 
-% Last edit date: 
+% Last edit by:
+% Last edit date:
 % --------------------------------------------------------------------------
 
 disp('Start formulating OCP...')
@@ -196,6 +196,10 @@ A_col = opti.variable(nq.all, d*N);
 opti.subject_to(bounds.Qdotdots.lower'*ones(1,d*N) < A_col < ...
     bounds.Qdotdots.upper'*ones(1,d*N));
 opti.set_initial(A_col, guess.Qdotdots_col');
+if S.OptAnkleFootExo
+    % Exoskeleton moment
+    Texo_opti = opti.variable(2, N);
+end
 
 %% OCP: collocation equations
 % Define CasADi variables for static parameters
@@ -213,6 +217,9 @@ Qskj        = [Qsk Qsj];
 Qdotsk      = MX.sym('Qdotsk',nq.all);
 Qdotsj      = MX.sym('Qdotsj',nq.all,d);
 Qdotskj     = [Qdotsk Qdotsj];
+if S.OptAnkleFootExo
+    Texo        = MX.sym('Texo',2);
+end
 if nq.torqAct > 0
     a_ak        = MX.sym('a_ak',nq.torqAct);
     a_aj        = MX.sym('a_akmesh',nq.torqAct,d);
@@ -248,11 +255,11 @@ for j=1:d
     dFTtildej_nsc = dFTtildej.*scaling.dFTtilde;
     Aj_nsc = Aj.*(scaling.Qdotdots'*ones(1,size(Aj,2)));
     vAk_nsc = vAk.*scaling.vA;
-    
+
     QsQdotskj_nsc = MX(nq.all*2, d+1);
     QsQdotskj_nsc(1:2:end,:) = Qskj_nsc;
     QsQdotskj_nsc(2:2:end,:) = Qdotskj_nsc;
-    
+
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Get muscle-tendon lengths, velocities, and moment arms
     qinj    = Qskj_nsc(:, j+1);
@@ -292,7 +299,7 @@ for j=1:d
     Tau_passj = f_casadi.AllPassiveTorques(Qskj_nsc(:,j+1),Qdotskj_nsc(:,j+1));
     % Get passive joint torques for cost function
     Tau_passj_cost = f_casadi.AllPassiveTorques_cost(Qskj_nsc(:,j+1),Qdotskj_nsc(:,j+1));
-    
+
     % Expression for the state derivatives at the collocation points
     Qsp_nsc      = Qskj_nsc*C(:,j+1);
     Qdotsp_nsc   = Qdotskj_nsc*C(:,j+1);
@@ -334,11 +341,11 @@ for j=1:d
         J = J + W.slack_ctrl * B(j+1) *(f_casadi.J_arms_dof(Aj(model_info.ExtFunIO.jointi.armsi,j)))*h;
     end
 
-    
+
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Call external function (run inverse dynamics)
     [Tj] = F([QsQdotskj_nsc(:,j+1);Aj_nsc(:,j)]);
-% 
+    %
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Add path constraints
     for i=1:nq.all
@@ -354,11 +361,11 @@ for j=1:d
             FTj_coord_i = FTj(mai(i).mus',1);
             % total muscle moment
             M_mus_i = f_casadi.(['musc_cross_' num2str(sumCross(i))])...
-            (MA_j.(model_info.ExtFunIO.coord_names.all{i}),FTj_coord_i);
+                (MA_j.(model_info.ExtFunIO.coord_names.all{i}),FTj_coord_i);
             % add to total moment
             Ti = Ti + M_mus_i;
         end
-        
+
         % torque actuator
         if nq.torqAct > 0 && ismember(i,model_info.ExtFunIO.jointi.torqueActuated)
             idx_act_i = find(model_info.ExtFunIO.jointi.torqueActuated(:)==i);
@@ -370,8 +377,17 @@ for j=1:d
         if ~ismember(i,model_info.ExtFunIO.jointi.floating_base)
             Ti = Ti + Tau_passj(i);
         end
-        
+
         % total coordinate torque equals inverse dynamics torque
+        if S.OptAnkleFootExo
+            if strcmp(model_info.ExtFunIO.coord_names.all{i},'ankle_angle_l')
+                Ti =  Ti + Texo(1)*S.OptAnkleFootExo_T0;
+            end
+            if strcmp(model_info.ExtFunIO.coord_names.all{i},'ankle_angle_r')
+                Ti =  Ti + Texo(2)*S.OptAnkleFootExo_T0;
+            end
+        end
+
         eq_constr{end+1} = Tj(i,1) - Ti;
 
     end
@@ -432,6 +448,9 @@ ineq_constr6 = vertcat(ineq_constr6{:});
 
 % Casadi function to get constraints and objective
 coll_input_vars_def = {tfk,ak,aj,FTtildek,FTtildej,Qsk,Qsj,Qdotsk,Qdotsj,vAk,dFTtildej,Aj};
+if S.OptAnkleFootExo
+    coll_input_vars_def = [coll_input_vars_def,{Texo}];
+end
 if nq.torqAct > 0
     coll_input_vars_def = [coll_input_vars_def,{a_ak,a_aj,e_ak}];
 end
@@ -445,6 +464,9 @@ f_coll_map = f_coll.map(N,S.solver.parallel_mode,S.solver.N_threads);
 % evaluate function with opti variables
 coll_input_vars_eval = {tf,a(:,1:end-1), a_col, FTtilde(:,1:end-1), FTtilde_col,...
     Qs(:,1:end-1), Qs_col, Qdots(:,1:end-1), Qdots_col, vA, dFTtilde_col, A_col};
+if S.OptAnkleFootExo
+    coll_input_vars_eval = [coll_input_vars_eval, {Texo_opti}];
+end
 if nq.torqAct > 0
     coll_input_vars_eval = [coll_input_vars_eval, {a_a(:,1:end-1), a_a_col, e_a}];
 end
@@ -611,7 +633,7 @@ if ~S.post_process.load_prev_opti_vars
     options.ipopt.constr_viol_tol       = 1*10^(-S.solver.tol_ipopt);
     opti.solver('ipopt', options);
     % timer
-    
+
     disp('Starting NLP solver...')
     disp(' ')
     t0s = tic;
@@ -620,7 +642,7 @@ if ~S.post_process.load_prev_opti_vars
     % Opti does not use bounds on variables but constraints. This function
     % adjusts for that.
     [w_opt,stats] = solve_NLPSOL(opti,options);
-    
+
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     disp(' ')
     disp(['...Exit NLP solver. Time elapsed ' num2str(toc(t0s),'%.2f') ' s'])
@@ -631,12 +653,12 @@ if ~S.post_process.load_prev_opti_vars
     setup.bounds = bounds;
     setup.scaling = scaling;
     setup.guess = guess;
-    
+
     Outname = fullfile(S.subject.save_folder,[S.post_process.result_filename '.mat']);
     save(Outname,'w_opt','stats','setup','model_info','S');
 
 else % S.post_process.load_prev_opti_vars = true
-    
+
     % Advanced feature, for debugging only: load w_opt and reconstruct R before rerunning the post-processing.
     Outname = fullfile(S.subject.save_folder,[S.post_process.result_filename '.mat']);
     disp(['Loading vector with optimization variables from previous solution: ' Outname])
@@ -692,8 +714,14 @@ dFTtilde_col_opt=reshape(w_opt(starti:starti+NMuscle*(d*N)-1),NMuscle,d*N)';
 starti = starti + NMuscle*(d*N);
 qdotdot_col_opt =reshape(w_opt(starti:starti+nq.all*(d*N)-1),nq.all,(d*N))';
 starti = starti + nq.all*(d*N);
-if starti - 1 ~= length(w_opt)
-    disp('error when extracting results')
+if S.OptAnkleFootExo
+    % extract exo results
+    Texo = reshape(w_opt(starti:starti+N*2-1),2,N)';
+    Texo = Texo*S.OptAnkleFootExo_T0;
+    starti = starti + (N*2);
+    if starti - 1 ~= length(w_opt)
+        disp('error when extracting results')
+    end
 end
 
 % Combine results at mesh and collocation points
@@ -861,19 +889,19 @@ for k=1:N
             FTtilde_col_opt_unsc(count,:)',...
             dFTtilde_col_opt_unsc(count,:)',full(lMTkj_opt_all),...
             full(vMTkj_opt_all));
-        
+
         % Bhargava et al. (2004)
         if strcmp(S.metabolicE.model,'Bhargava2004')
             [e_tot_all,~,~,~,~,~] = f_casadi.getMetabolicEnergySmooth2004all(...
-            a_col_opt_unsc(count,:)',a_col_opt_unsc(count,:)',...
-            full(lMtilde_opt_all),...
-            full(vM_opt_all),full(Fce_opt_all),full(Fpass_opt_all),...
-            MuscleMass',pctsts,full(Fiso_opt_all),model_info.mass,S.metabolicE.tanh_b);
+                a_col_opt_unsc(count,:)',a_col_opt_unsc(count,:)',...
+                full(lMtilde_opt_all),...
+                full(vM_opt_all),full(Fce_opt_all),full(Fpass_opt_all),...
+                MuscleMass',pctsts,full(Fiso_opt_all),model_info.mass,S.metabolicE.tanh_b);
         else
             error('No energy model selected');
         end
         e_tot_opt_all = full(e_tot_all)';
-        
+
         % passive moments
         Tau_passkj = full(f_casadi.AllPassiveTorques_cost(q_col_opt_unsc.rad(count,:),qdot_col_opt_unsc.rad(count,:)));
 
@@ -882,10 +910,10 @@ for k=1:N
             W.E*B(j+1)          *(f_casadi.J_muscles_exp(e_tot_opt_all,W.E_exp))/model_info.mass*h_opt + ...
             W.a*B(j+1)          *(f_casadi.J_muscles(a_col_opt(count,:)))*h_opt + ...
             W.q_dotdot*B(j+1)   *(f_casadi.J_not_arms_dof(qdotdot_col_opt(count,model_info.ExtFunIO.jointi.noarmsi)))*h_opt + ...
-            W.pass_torq*B(j+1)  *(f_casadi.J_lim_torq(Tau_passkj))*h_opt + ... 
+            W.pass_torq*B(j+1)  *(f_casadi.J_lim_torq(Tau_passkj))*h_opt + ...
             W.slack_ctrl*B(j+1) *(f_casadi.J_muscles(vA_opt(k,:)))*h_opt + ...
             W.slack_ctrl*B(j+1) *(f_casadi.J_muscles(dFTtilde_col_opt(count,:)))*h_opt);
-            
+
         if nq.torqAct > 0
             J_opt = J_opt + 1/(dist_trav_opt)*(W.e_arm*B(j+1)      *(f_casadi.J_torq_act(e_a_opt(k,:)))*h_opt);
 
@@ -901,7 +929,7 @@ for k=1:N
         E_cost = E_cost + W.E*B(j+1)*...
             (f_casadi.J_muscles_exp(e_tot_opt_all,W.E_exp))/model_info.mass*h_opt;
         A_cost = A_cost + W.a*B(j+1)*...
-            (f_casadi.J_muscles(a_col_opt(count,:)))*h_opt;      
+            (f_casadi.J_muscles(a_col_opt(count,:)))*h_opt;
         Qdotdot_cost = Qdotdot_cost + W.q_dotdot*B(j+1)*...
             (f_casadi.J_not_arms_dof(qdotdot_col_opt(count,model_info.ExtFunIO.jointi.noarmsi)))*h_opt;
         Pass_cost = Pass_cost + W.pass_torq*B(j+1)*...
@@ -956,10 +984,10 @@ end
 %     a_opt(1:end-1,:)', a_col_opt', FTtilde_opt(1:end-1,:)', FTtilde_col_opt', Qs_opt(1:end-1,:)', ...
 %     Qs_col_opt', Qdots_opt(1:end-1,:)', Qdots_col_opt', a_a_opt(1:end-1,:)', a_a_col_opt', ...
 %     vA_opt', e_a_opt', dFTtilde_col_opt', qdotdot_col_opt');
-% 
+%
 % Jall_sc_opt = full(sum(Jall_opt)/dist_trav_opt);
 % assertCost3 = abs(stats.iterations.obj(end) - Jall_sc_opt);
-% 
+%
 % if assertCost3 > 1*10^(-S.solver.tol_ipopt)
 %     disp('Issue when reconstructing optimal cost wrt stats')
 %     disp(['   Difference = ' num2str(assertCost3)])
@@ -1032,6 +1060,11 @@ if strcmp(S.misc.gaitmotion_type,'HalfGaitCycle')
 
     end
 
+    % exoskeleton support
+    if S.OptAnkleFootExo
+        Texo = [Texo; Texo];
+    end
+
 end
 
 % express slack controls on mesh points 1:N to be consistent
@@ -1068,6 +1101,9 @@ if nq.torqAct > 0
     a_a_GC = a_a_opt_unsc(idx_GC,:);
     e_a_GC = e_a_opt_unsc(idx_GC,:);
 end
+if S.OptAnkleFootExo
+    Texo_GC = Texo(idx_GC,:);
+end
 
 % adjust forward position to be continuous and start at 0
 Qs_GC(idx_GC_base_forward_offset,model_info.ExtFunIO.jointi.base_forward) = Qs_GC(idx_GC_base_forward_offset,model_info.ExtFunIO.jointi.base_forward) + dist_trav_opt;
@@ -1098,6 +1134,10 @@ R.muscles.a = Acts_GC;
 R.muscles.da = dActs_GC;
 R.muscles.FTtilde = FTtilde_GC;
 R.muscles.dFTtilde = dFTtilde_GC;
+if S.OptAnkleFootExo
+    R.exo.Texo = Texo;
+    R.exo.tExo_gc = Texo_GC;
+end
 if nq.torqAct > 0
     R.torque_actuators.a = a_a_GC;
     R.torque_actuators.e = e_a_GC;
