@@ -494,6 +494,9 @@ for k=1:N
     if nq.torqAct > 0
         a_akj = [a_a(:,k), a_a_col(:,(k-1)*d+1:k*d)];
     end
+    %%% Tom edit STAsym
+    Aj = A_col(:,(k-1)*d+1:k*d);
+    %%% Tom edit STAsym end
 
     % Add equality constraints (next interval starts with end values of
     % states from previous interval)
@@ -504,6 +507,36 @@ for k=1:N
     if nq.torqAct > 0
         opti.subject_to(a_a(:,k+1) == a_akj*D);
     end
+    
+    %%% Tom edit STAsym
+    if S.bounds.STAsym ~= 0
+        % Unscale variables
+        Qsj_nsc = Qskj(:,2:end).*(scaling.QsQdots(1:2:end)'*ones(1,size(Qskj,2)-1));
+        Qdotsj_nsc = Qdotskj(:,2:end).*(scaling.QsQdots(2:2:end)'*ones(1,size(Qdotskj,2)-1));
+        QsQdotsj_nsc = MX(nq.all*2, d);
+        QsQdotsj_nsc(1:2:end,:) = Qsj_nsc;
+        QsQdotsj_nsc(2:2:end,:) = Qdotsj_nsc;
+        Aj_nsc = Aj.*(scaling.Qdotdots'*ones(1,size(Aj,2)));
+        [ExtFuncGRF] = F([QsQdotsj_nsc(:,d);Aj_nsc(:,d)]);
+        threshold=200; %there is foot-ground contact above the threshold
+
+        % Left heel strike at 1st meshpoint
+        if k>80 && k<100
+            opti.subject_to(ExtFuncGRF(model_info.ExtFunIO.GRFs.left_foot(2))<threshold)
+        end
+        if k>0 && k<20
+            opti.subject_to(ExtFuncGRF(model_info.ExtFunIO.GRFs.left_foot(2))>threshold)
+        end
+
+        %Right heel strike at STAsym'th meshpoint
+        if k>S.bounds.STAsym-20 && k<S.bounds.STAsym
+            opti.subject_to(ExtFuncGRF(model_info.ExtFunIO.GRFs.right_foot(2))<threshold)
+        end
+        if k>S.bounds.STAsym-1 && k<S.bounds.STAsym+20
+            opti.subject_to(ExtFuncGRF(model_info.ExtFunIO.GRFs.right_foot(2))>threshold)
+        end
+    end
+    %%% Tom edit STAsym end
 
 end % End loop over mesh points
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

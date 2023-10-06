@@ -47,6 +47,49 @@ R.ground_reaction.idx_double_support = intersect(R.ground_reaction.idx_stance_r,
     R.ground_reaction.idx_stance_l);
 R.spatiotemp.double_support = length(R.ground_reaction.idx_double_support)/size(R.kinematics.Qs,1)*100;
 
+%%% Tom edit STAsym
+%Find right heelstrike
+dummy_sl_idx_R = find(diff(find(R.ground_reaction.GRF_r(:,2)>threshold))>1);
+if isempty(dummy_sl_idx_R)
+    temp_sl_idx_R = find(R.ground_reaction.GRF_r(:,2)>threshold,1,'first');
+elseif length(dummy_sl_idx_R)>1 % Fix for multiple foot ground-contacts
+    disp('Warning: Multiple ground-contacts!')
+    [~,HSRMax]=max(R.ground_reaction.GRF_r(dummy_sl_idx_R,2));
+    temp_sl_idx_R = find(R.ground_reaction.GRF_r(:,2)>threshold,dummy_sl_idx_R(HSRMax)+1);
+else
+    temp_sl_idx_R = find(R.ground_reaction.GRF_r(:,2)>threshold,dummy_sl_idx_R+1);
+end
+HSR = temp_sl_idx_R(end);
+
+%Find left heelstrike
+threshold=20;
+dummy_sl_idx_L = find(diff(find(R.ground_reaction.GRF_l(:,2)>threshold))>1);
+if isempty(dummy_sl_idx_L)
+    temp_sl_idx_L = find(R.ground_reaction.GRF_l(:,2)>threshold,1,'first');
+elseif length(dummy_sl_idx_L)>1 % Fix for multiple foot ground-contacts
+    disp('Warning: Multiple ground-contacts!')
+    [~,HSLMax]=max(R.ground_reaction.GRF_l(dummy_sl_idx_L,2));
+    temp_sl_idx_L = find(R.ground_reaction.GRF_l(:,2)>threshold,dummy_sl_idx_L(HSLMax)+1);
+else
+    temp_sl_idx_L = find(R.ground_reaction.GRF_l(:,2)>threshold,dummy_sl_idx_L+1);
+end
+HSL = temp_sl_idx_L(end);
+
+%Step time asymmetry based on heelstrike
+if HSL > HSR %Right step occurs first
+    R.spatiotemp.steptime_r = HSL-HSR;
+    R.spatiotemp.steptime_l = R.S.solver.N_meshes-R.spatiotemp.steptime_r;
+elseif HSR > HSL %Left step occurs first
+    HSL=1;
+    R.spatiotemp.steptime_l = HSR-HSL;
+    R.spatiotemp.steptime_r = R.S.solver.N_meshes-R.spatiotemp.steptime_l;
+end
+R.spatiotemp.steptime_asym = (R.spatiotemp.steptime_l - R.spatiotemp.steptime_r) / (R.spatiotemp.steptime_l + R.spatiotemp.steptime_r);
+R.spatiotemp.steptimesec_l = R.spatiotemp.steptime_l/100*R.time.mesh(end);
+R.spatiotemp.steptimesec_r = R.spatiotemp.steptime_r/100*R.time.mesh(end);
+R.spatiotemp.steptimesec_asym = (R.spatiotemp.steptimesec_l - R.spatiotemp.steptimesec_r) / (R.spatiotemp.steptimesec_l + R.spatiotemp.steptimesec_r);
+%%% Tom edit STAsym end
+
 % stride frequency
 R.spatiotemp.stride_freq = 1/R.time.mesh_GC(end);
 
