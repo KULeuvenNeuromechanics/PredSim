@@ -24,8 +24,27 @@ function [R] = PostProcess_spatio_temporal(model_info,f_casadi,R)
 % Last edit by: 
 % Last edit date: 
 % --------------------------------------------------------------------------
+%%% Tom edit SLAsym
+N = size(R.kinematics.Qs,1);
 
+import casadi.*
+[F] = load_external_function(R.S);
 
+QsQdots = zeros(N,2*model_info.ExtFunIO.jointi.nq.all);
+QsQdots(:,1:2:end) = R.kinematics.Qs_rad;
+QsQdots(:,2:2:end) = R.kinematics.Qdots_rad;
+
+Foutk_opt = zeros(N,F.nnz_out);
+
+for i = 1:N
+    % ID moments
+    [res] = F([QsQdots(i,:)';R.kinematics.Qddots_rad(i,:)']);
+    Foutk_opt(i,:) = full(res);
+end
+
+R.origin.calcn_l = Foutk_opt(:,model_info.ExtFunIO.origin.calcn_l);
+R.origin.calcn_r = Foutk_opt(:,model_info.ExtFunIO.origin.calcn_r);
+%%% Tom edit SLAsym end
 
 % step length
 if isfield(f_casadi,'f_getStepLength')
@@ -49,6 +68,7 @@ R.spatiotemp.double_support = length(R.ground_reaction.idx_double_support)/size(
 
 %%% Tom edit STAsym
 %Find right heelstrike
+threshold=20;
 dummy_sl_idx_R = find(diff(find(R.ground_reaction.GRF_r(:,2)>threshold))>1);
 if isempty(dummy_sl_idx_R)
     temp_sl_idx_R = find(R.ground_reaction.GRF_r(:,2)>threshold,1,'first');
@@ -89,6 +109,12 @@ R.spatiotemp.steptimesec_l = R.spatiotemp.steptime_l/100*R.time.mesh(end);
 R.spatiotemp.steptimesec_r = R.spatiotemp.steptime_r/100*R.time.mesh(end);
 R.spatiotemp.steptimesec_asym = (R.spatiotemp.steptimesec_l - R.spatiotemp.steptimesec_r) / (R.spatiotemp.steptimesec_l + R.spatiotemp.steptimesec_r);
 %%% Tom edit STAsym end
+
+%%% Tom edit SLAsym
+R.spatiotemp.steplength_l    = R.origin.calcn_l(HSL,1) - R.origin.calcn_r(HSL,1);
+R.spatiotemp.steplength_r    = R.origin.calcn_r(HSR,1) - R.origin.calcn_l(HSR,1);
+R.spatiotemp.steplength_asym = (R.spatiotemp.steplength_l - R.spatiotemp.steplength_r) / (R.spatiotemp.steplength_l + R.spatiotemp.steplength_r);
+%%% Tom edit SLAsym end
 
 % stride frequency
 R.spatiotemp.stride_freq = 1/R.time.mesh_GC(end);

@@ -235,6 +235,10 @@ ineq_constr3   = {}; % Initialize inequality constraint vector
 ineq_constr4   = {}; % Initialize inequality constraint vector
 ineq_constr5   = {}; % Initialize inequality constraint vector
 ineq_constr6   = {}; % Initialize inequality constraint vector
+%%% Tom edit SLAsym
+ineq_constr7   = {}; % Initialize inequality constraint vector
+ineq_constr8   = {}; % Initialize inequality constraint vector
+%%% Tom edit SLAsym end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Time step
 h = tfk/N;
@@ -418,6 +422,11 @@ for j=1:d
             Tj(model_info.ExtFunIO.origin.toes_l([1 3]),1));
         ineq_constr6{end+1} = Qconstr;
     end
+    %%% Tom edit SLAsym
+    % Constraint on step lengths
+    ineq_constr7{end+1} = Tj(model_info.ExtFunIO.origin.calcn_l(1),1) - Tj(model_info.ExtFunIO.origin.calcn_r(1),1); %Left step length
+    ineq_constr8{end+1} = Tj(model_info.ExtFunIO.origin.calcn_r(1),1) - Tj(model_info.ExtFunIO.origin.calcn_l(1),1); %Right step length
+    %%% Tom edit SLAsym end
 
 end % End loop over collocation points
 
@@ -428,7 +437,10 @@ ineq_constr3 = vertcat(ineq_constr3{:});
 ineq_constr4 = vertcat(ineq_constr4{:});
 ineq_constr5 = vertcat(ineq_constr5{:});
 ineq_constr6 = vertcat(ineq_constr6{:});
-
+%%% Tom edit SLAsym
+ineq_constr7 = vertcat(ineq_constr6{:});
+ineq_constr8 = vertcat(ineq_constr6{:});
+%%% Tom edit SLAsym end
 
 % Casadi function to get constraints and objective
 coll_input_vars_def = {tfk,ak,aj,FTtildek,FTtildej,Qsk,Qsj,Qdotsk,Qdotsj,vAk,dFTtildej,Aj};
@@ -437,7 +449,7 @@ if nq.torqAct > 0
 end
 f_coll = Function('f_coll',coll_input_vars_def,...
     {eq_constr,ineq_constr1,ineq_constr2,ineq_constr3,...
-    ineq_constr4,ineq_constr5,ineq_constr6,J});
+    ineq_constr4,ineq_constr5,ineq_constr6,ineq_constr7,ineq_constr8,J}); %%% Tom edit SLAsym
 
 % assign function to multiple cores
 f_coll_map = f_coll.map(N,S.solver.parallel_mode,S.solver.N_threads);
@@ -449,7 +461,7 @@ if nq.torqAct > 0
     coll_input_vars_eval = [coll_input_vars_eval, {a_a(:,1:end-1), a_a_col, e_a}];
 end
 [coll_eq_constr,coll_ineq_constr1,coll_ineq_constr2,coll_ineq_constr3,...
-    coll_ineq_constr4,coll_ineq_constr5,coll_ineq_constr6,Jall] = f_coll_map(coll_input_vars_eval{:});
+    coll_ineq_constr4,coll_ineq_constr5,coll_ineq_constr6,coll_ineq_constr7,coll_ineq_constr8,Jall] = f_coll_map(coll_input_vars_eval{:});
 
 % equality constraints
 opti.subject_to(coll_eq_constr == 0);
@@ -482,7 +494,6 @@ else
     disp('   Minimal distance between toes not constrained. To do so, please use "toes_r" and "toes_l" as body names in the OpenSim model.')
 end
 
-
 % Loop over mesh points
 for k=1:N
     % Variables within current mesh interval
@@ -510,6 +521,7 @@ for k=1:N
     
     %%% Tom edit STAsym
     if S.bounds.STAsym ~= 0
+        disp('STasym active')
         % Unscale variables
         Qsj_nsc = Qskj(:,2:end).*(scaling.QsQdots(1:2:end)'*ones(1,size(Qskj,2)-1));
         Qdotsj_nsc = Qdotskj(:,2:end).*(scaling.QsQdots(2:2:end)'*ones(1,size(Qdotskj,2)-1));
@@ -621,6 +633,17 @@ elseif strcmp(S.misc.gaitmotion_type,'FullGaitCycle')
         end
     end
 end
+
+%%% Tom edit SLAsym
+if S.bounds.SLLeft ~= 0
+    disp('SLLeft active')
+    opti.subject_to(coll_ineq_constr7(:)/dist_trav_tot < S.bounds.SLLeft); %Left step length percentage of distance traveled
+end
+if S.bounds.SLRight ~= 0
+    disp('SLRight active')
+    opti.subject_to(coll_ineq_constr8(:)/dist_trav_tot < S.bounds.SLRight); %Right step length percentage of distance traveled
+end
+%%% Tom edit SLAsym end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Scale cost function

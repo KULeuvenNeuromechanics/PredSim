@@ -59,8 +59,13 @@ S.solver.run_as_batch_job = 0;
 % S.bounds.t_final.lower      = ;
 S.bounds.coordinates        = {'pelvis_ty',0.55,1.1, 'pelvis_tilt',-2.9302,nan};
 
+%%% Tom edit SLAsym
+S.bounds.SLLeft = 0.40;
+S.bounds.SLRight = 0.60;
+%%% Tom edit SLAsym end
+
 %%% Tom edit STAsym
-S.bounds.STAsym = 55;
+S.bounds.STAsym = 0;
 %%% Tom edit STAsym end
 
 % % S.metabolicE - metabolic energy
@@ -83,7 +88,7 @@ S.post_process.make_plot = 1;
 % S.post_process.savename  = 'datetime';
 % S.post_process.load_prev_opti_vars = 1;
 % S.post_process.rerun   = 1;
-S.post_process.result_filename = 'DHondt_2023_2seg_v2_FGC_STAsym55';
+S.post_process.result_filename = 'DHondt_2023_2seg_v2_FGC_SLLeft040SLRight060';
 
 % % S.solver
 % S.solver.linear_solver  = '';
