@@ -438,8 +438,8 @@ ineq_constr4 = vertcat(ineq_constr4{:});
 ineq_constr5 = vertcat(ineq_constr5{:});
 ineq_constr6 = vertcat(ineq_constr6{:});
 %%% Tom edit SLAsym
-ineq_constr7 = vertcat(ineq_constr6{:});
-ineq_constr8 = vertcat(ineq_constr6{:});
+ineq_constr7 = vertcat(ineq_constr7{:});
+ineq_constr8 = vertcat(ineq_constr8{:});
 %%% Tom edit SLAsym end
 
 % Casadi function to get constraints and objective
