@@ -20,7 +20,7 @@ clc
 % which you want to appear on the plotted figures.
 results_folder = fullfile(pathRepoFolder,'PredSimResults');
 result_paths{1} = fullfile(pathRepo,'Tests','Falisse_et_al_2022_Results','Falisse_et_al_2022_v1.mat');
-% result_paths{2} = fullfile(results_folder,'Falisse_et_al_2022','Falisse_et_al_2022_job713.mat');
+result_paths{2} = fullfile(results_folder,'Falisse_et_al_2022','Falisse_et_al_2022_job713.mat');
 
 % Cell array with legend name for each result
 legend_names = {'Reference result', 'Your first simulation'};

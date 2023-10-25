@@ -83,38 +83,6 @@ S.bounds.distanceConstraints(5).direction = 'xz';
 S.bounds.distanceConstraints(5).lower_bound = 0.1;
 S.bounds.distanceConstraints(5).upper_bound = 2;
 
-min_step_width = 0.15;
-max_trunk_width = 0.01;
-
-S.bounds.distanceConstraints(end+1).point1 = 'calcn_r';
-S.bounds.distanceConstraints(end).point2 = 'ground';
-S.bounds.distanceConstraints(end).direction = 'z';
-S.bounds.distanceConstraints(end).lower_bound = min_step_width;
-S.bounds.distanceConstraints(end).upper_bound = 1;
-
-S.bounds.distanceConstraints(end+1).point1 = 'ground';
-S.bounds.distanceConstraints(end).point2 = 'calcn_l';
-S.bounds.distanceConstraints(end).direction = 'z';
-S.bounds.distanceConstraints(end).lower_bound = min_step_width;
-S.bounds.distanceConstraints(end).upper_bound = 1;
-
-S.bounds.distanceConstraints(end+1).point1 = 'toes_r';
-S.bounds.distanceConstraints(end).point2 = 'ground';
-S.bounds.distanceConstraints(end).direction = 'z';
-S.bounds.distanceConstraints(end).lower_bound = min_step_width;
-S.bounds.distanceConstraints(end).upper_bound = 1;
-
-S.bounds.distanceConstraints(end+1).point1 = 'ground';
-S.bounds.distanceConstraints(end).point2 = 'toes_l';
-S.bounds.distanceConstraints(end).direction = 'z';
-S.bounds.distanceConstraints(end).lower_bound = min_step_width;
-S.bounds.distanceConstraints(end).upper_bound = 1;
-
-S.bounds.distanceConstraints(end+1).point1 = 'torso';
-S.bounds.distanceConstraints(end).point2 = 'ground';
-S.bounds.distanceConstraints(end).direction = 'z';
-S.bounds.distanceConstraints(end).lower_bound = -max_trunk_width;
-S.bounds.distanceConstraints(end).upper_bound = max_trunk_width;
 
 % % S.metabolicE - metabolic energy
 % S.metabolicE.tanh_b = ;
@@ -135,7 +103,7 @@ S.post_process.make_plot = 1;
 % S.post_process.savename  = 'datetime';
 % S.post_process.load_prev_opti_vars = 1;
 % S.post_process.rerun   = 1;
-S.post_process.result_filename = 'Falisse_et_al_2022_v9_SW30_TrunkMax01_HGC';
+% S.post_process.result_filename = '';
 
 % % S.solver
 % S.solver.linear_solver  = '';
@@ -145,7 +113,7 @@ S.post_process.result_filename = 'Falisse_et_al_2022_v9_SW30_TrunkMax01_HGC';
 % S.solver.N_threads      = 6;
 % S.solver.N_meshes       = 100;
 % S.solver.par_cluster_name = ;
-S.solver.CasADi_path    = 'C:\Users\Buurke\OneDrive - KU Leuven\Documents\Projecten\SimStroke\MATLAB\casadi-windows-matlabR2016a-v3.5.5';
+S.solver.CasADi_path    = 'C:\GBW_MyPrograms\casadi_3_5_5';
 
 
 % % S.subject
