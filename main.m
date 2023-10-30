@@ -26,7 +26,8 @@ addpath(fullfile(S.misc.main_path,'VariousFunctions'))
 S.subject.name = 'Falisse_et_al_2022';
 
 % path to folder where you want to store the results of the OCP
-S.subject.save_folder  = fullfile(pathRepoFolder,'PredSimResults',S.subject.name); 
+% S.subject.save_folder  = fullfile(pathRepoFolder,'PredSimResults',S.subject.name); 
+S.subject.save_folder  = fullfile('C:\Users\u0141140\OneDrive - KU Leuven\Documents\Projecten\SimStroke\MATLAB\GitHub\NBG\PredSimResults',S.subject.name); 
 
 % either choose "quasi-random" or give the path to a .mot file you want to use as initial guess
 % S.subject.IG_selection = 'quasi-random';
@@ -116,6 +117,15 @@ S.bounds.distanceConstraints(end).direction = 'z';
 S.bounds.distanceConstraints(end).lower_bound = -max_trunk_width;
 S.bounds.distanceConstraints(end).upper_bound = max_trunk_width;
 
+S.bounds.points(end+1).body = 'torso';
+S.bounds.points(end).point_in_body = [0 0.6 0];
+S.bounds.points(end).name = 'head';
+S.bounds.distanceConstraints(end+1).point1 = 'head';
+S.bounds.distanceConstraints(end).point2 = 'ground';
+S.bounds.distanceConstraints(end).direction = 'z';
+S.bounds.distanceConstraints(end).lower_bound = -max_trunk_width;
+S.bounds.distanceConstraints(end).upper_bound = max_trunk_width;
+
 % % S.metabolicE - metabolic energy
 % S.metabolicE.tanh_b = ;
 % S.metabolicE.model  = '';
@@ -135,7 +145,7 @@ S.post_process.make_plot = 1;
 % S.post_process.savename  = 'datetime';
 % S.post_process.load_prev_opti_vars = 1;
 % S.post_process.rerun   = 1;
-S.post_process.result_filename = 'Falisse_et_al_2022_v9_SW30_TrunkMax01_HGC';
+S.post_process.result_filename = 'Falisse_et_al_2022_v9_SW30_TrunkHeadMax002_HGC';
 
 % % S.solver
 % S.solver.linear_solver  = '';
@@ -145,7 +155,7 @@ S.post_process.result_filename = 'Falisse_et_al_2022_v9_SW30_TrunkMax01_HGC';
 % S.solver.N_threads      = 6;
 % S.solver.N_meshes       = 100;
 % S.solver.par_cluster_name = ;
-S.solver.CasADi_path    = 'C:\Users\Buurke\OneDrive - KU Leuven\Documents\Projecten\SimStroke\MATLAB\casadi-windows-matlabR2016a-v3.5.5';
+S.solver.CasADi_path    = 'C:\Users\u0141140\OneDrive - KU Leuven\Documents\Projecten\SimStroke\MATLAB\casadi-windows-matlabR2016a-v3.5.5';
 
 
 % % S.subject

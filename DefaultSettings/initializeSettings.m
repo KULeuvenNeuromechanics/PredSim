@@ -34,6 +34,7 @@ S.bounds.SLL        = [];
 S.bounds.SLR        = [];
 S.bounds.dist_trav  = [];
 S.bounds.t_final    = [];
+S.bounds.points     = [];
 
 % polynomial order has .lower and .upper field
 S.misc.poly_order = [];
