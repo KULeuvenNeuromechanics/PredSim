@@ -26,7 +26,7 @@ addpath(fullfile(S.misc.main_path,'VariousFunctions'))
 S.subject.name = 'DHondt_2023_2seg';
 
 % path to folder where you want to store the results of the OCP
-S.subject.save_folder  = fullfile(pathRepoFolder,'PredSimResults',S.subject.name); 
+S.subject.save_folder  = fullfile('C:\Users\u0141140\OneDrive - KU Leuven\Documents\Projecten\SimStroke\MATLAB\GitHub\KULeuvenNeuromechanics\PredSimResults',S.subject.name); 
 
 % either choose "quasi-random" or give the path to a .mot file you want to use as initial guess
 S.subject.IG_selection = fullfile(S.misc.main_path,'OCP','IK_Guess_Full_GC.mot');
@@ -38,7 +38,7 @@ osim_path = fullfile(pathRepo,'Subjects',S.subject.name,[S.subject.name '.osim']
 
 % path to folder with program to create dll files from opensim model (will
 % be downloaded automatically if it is not there)
-S.Cpp2Dll.PathCpp2Dll_Exe = 'C:\Users\Buurke\Git\KULeuvenNeuromechanics\PredSim\Osim2Dll_exe';
+S.Cpp2Dll.PathCpp2Dll_Exe = 'C:\GBW_MyPrograms\GitHub\KULeuvenNeuromechanics\PredSim\Osim2Dll_exe';
 
 % Do you want to run the simulation as a batch job (parallel computing toolbox)
 S.solver.run_as_batch_job = 0;
@@ -60,12 +60,12 @@ S.solver.run_as_batch_job = 0;
 S.bounds.coordinates        = {'pelvis_ty',0.55,1.1, 'pelvis_tilt',-2.9302,nan};
 
 %%% Tom edit SLAsym
-S.bounds.SLLeft = 0.40;
-S.bounds.SLRight = 0.60;
+S.bounds.SLLeft = 0.50;
+S.bounds.SLRight = 0.50;
 %%% Tom edit SLAsym end
 
 %%% Tom edit STAsym
-S.bounds.STAsym = 0;
+S.bounds.STAsym = 51;
 %%% Tom edit STAsym end
 
 % % S.metabolicE - metabolic energy
@@ -87,8 +87,8 @@ S.misc.gaitmotion_type = 'FullGaitCycle';
 S.post_process.make_plot = 1;
 % S.post_process.savename  = 'datetime';
 % S.post_process.load_prev_opti_vars = 1;
-% S.post_process.rerun   = 1;
-S.post_process.result_filename = 'DHondt_2023_2seg_v2_FGC_SLLeft040SLRight060';
+S.post_process.rerun   = 1;
+S.post_process.result_filename = 'DHondt_2023_2seg_v2_FGC_SLLeft040SLRight060STAsym61';
 
 % % S.solver
 % S.solver.linear_solver  = '';
@@ -98,14 +98,14 @@ S.post_process.result_filename = 'DHondt_2023_2seg_v2_FGC_SLLeft040SLRight060';
 % S.solver.N_threads      = 6;
 S.solver.N_meshes       = 100;
 % S.solver.par_cluster_name = ;
-S.solver.CasADi_path    = 'C:\Users\Buurke\OneDrive - KU Leuven\Documents\Projecten\SimStroke\MATLAB\casadi-windows-matlabR2016a-v3.5.5';
+S.solver.CasADi_path    = 'C:\Users\u0141140\OneDrive - KU Leuven\Documents\Projecten\SimStroke\MATLAB\casadi-windows-matlabR2016a-v3.5.5';
 
 
 % % S.subject
 % S.subject.mass              = ;
 % S.subject.IG_pelvis_y       = ;
 % S.subject.adapt_IG_pelvis_y = ;
-S.subject.v_pelvis_x_trgt   = 1.33;
+S.subject.v_pelvis_x_trgt   = 1.25;
 % S.subject.IK_Bounds = ;
 % S.subject.muscle_strength   = ;
 S.subject.muscle_pass_stiff_shift = {{'soleus','_gas','per_','tib_','_dig_','_hal_'},0.9};

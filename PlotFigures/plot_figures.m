@@ -49,7 +49,10 @@ for i=1:length(result_paths)
             if strcmp(figure_settings(j).variables,'GRF')
                 % use "plot_figure_grf.m"
                 fig_hands{j} = plot_figure_grf(R,legend_names{i},colors(i,:),fig_hands{j});
-
+            
+            elseif strcmp(figure_settings(j).variables,'a')
+                fig_hands{j} = plot_figure_E_muscle_bar(R,legend_names{i},colors(i,:),fig_hands{j},model_info);
+                
             elseif strcmp(figure_settings(j).variables,'my_first_figure')
                 % call you custom figure function here
 
