@@ -12,9 +12,6 @@ function [varargout] = PredSim_wrapper_for_app(U,sf)
 %       U.Height        heigt of the model (in m)
 %       U.Mass          mass of the model (in kg)
 %       U.Speed         target speed, or -1 to maximise speed
-%
-%   - sf -
-%   * struct with scale factors
 % 
 %
 % OUTPUT:
@@ -33,6 +30,15 @@ function [varargout] = PredSim_wrapper_for_app(U,sf)
 [pathRepo,~,~] = fileparts(pathApp);
 cd(pathRepo);
 
+pathDefaultSettings = [pathRepo '\DefaultSettings'];
+addpath(pathDefaultSettings)
+
+[S] = initializeSettings();
+S.misc.main_path = pathRepo;
+
+addpath([S.misc.main_path '\VariousFunctions'])
+addpath([S.misc.main_path '\AdaptOpenSimModel'])
+
 %% scale model
 % Detect height in cm and convert to m
 if U.Height > 50
@@ -42,19 +48,12 @@ end
 % Assume constand BMI
 % U.Mass = 23.1481*U.Height^2;
 
-% Scale
+% % Scale
 scaleOsim(pathRepo, U, sf);
 
 
 %% Inputs
-pathDefaultSettings = [pathRepo '\DefaultSettings'];
-addpath(pathDefaultSettings)
 
-[S] = initializeSettings();
-S.misc.main_path = pathRepo;
-
-addpath([S.misc.main_path '\VariousFunctions'])
-addpath([S.misc.main_path '\AdaptOpenSimModel'])
 
 % name of the subject
 S.subject.name = U.ModelName;
@@ -90,6 +89,8 @@ S.subject.set_stiffness_coefficient_selected_dofs = {{'mtp_angle_l','mtp_angle_r
 S.subject.set_damping_coefficient_selected_dofs = {{'mtp_angle_l','mtp_angle_r'},2,...
     {'arm_flex_r','arm_flex_l','elbow_flex_r','elbow_flex_l'},0.5};
 
+% large K_pass 3 and 4 to replicate steel cable
+S.subject.set_limit_torque_coefficients_selected_dofs = {{'ankle_angle_r','ankle_angle_l'},[-2.03,38.11,50,-200],[U.plant_flex_lim, 0.52]};
 
 S.subject.adapt_IG_pelvis_y = 1;
 
