@@ -28,14 +28,11 @@ classdef Vitruvian_Man_NL_exported < matlab.apps.AppBase
         NaamEditField                 matlab.ui.control.EditField
         StartsimulatieButton          matlab.ui.control.Button
         Onderzoeksstage2023PHABLabel  matlab.ui.control.Label
-        MaaktekeningButton            matlab.ui.control.Button
         cmLabel                       matlab.ui.control.Label
         LichaamslengteEditField       matlab.ui.control.NumericEditField
         LichaamslengteEditFieldLabel  matlab.ui.control.Label
         GroepEditField                matlab.ui.control.EditField
         GroepEditFieldLabel           matlab.ui.control.Label
-        UIAxes2                       matlab.ui.control.UIAxes
-        UIAxes                        matlab.ui.control.UIAxes
     end
 
     
@@ -43,17 +40,6 @@ classdef Vitruvian_Man_NL_exported < matlab.apps.AppBase
         % Layout
         ink_colour = [139,69,19]/256; % RGB code for "ink" i.e. text and figures
         paper_colour = [235,222,173]/256; % RGB code for "paper" i.e. background
-
-        % Default values
-        default_height = 1.8; % [m]
-
-        % Allocate user input values
-        usr_height = 1.8;
-        usr_speed = 1.38;
-        usr_plant_flex_lim = -30;
-
-        % scale factors
-        scale_factors
 
         % storage
         path_repo
@@ -71,43 +57,6 @@ classdef Vitruvian_Man_NL_exported < matlab.apps.AppBase
     end
     
     methods (Access = private)
-
-        % user inputs with default values
-        function [] = updateUserInput(app)
-            app.usr_height = app.default_height;
-            app.usr_plant_flex_lim = app.default_plant_flex_lim;
-        end
-
-        % read user inputs
-        function [] = readUserInput(app)
-            app.usr_height = app.LichaamslengteEditField.Value;
-            app.usr_plant_flex_lim = app.PlantairflexielimitEditField.Value;
-        end
-        
-        % set default user inputs
-        function [] = writeDefaultUserInput(app)
-
-            app.PlantairflexielimitEditField.Value = round(app.usr_plant_flex_lim,1);
-        end
-        
-        % set limits on input
-        function updateInputLimits(app)
-            % BMI between 10 and 50
-            mlim = round([10,50]*((app.usr_height/100).^2));
-            m0 = app.MassaEditField.Value;
-            m0 = round(min([m0,mlim(2)]));
-            m0 = round(max([m0,mlim(1)]));
-            app.MassaEditField.Limits = [0,3000];
-            app.MassaEditField.Value = m0;
-            app.MassaEditField.Limits = mlim;
-
-        end
-
-        % calls updateDrawing
-        function updateDrawingWrapper(app)
-            % read user inputs
-            readUserInput(app)
-        end
         
         % load results and put them in table
         function loadResultsTable(app)
@@ -192,8 +141,6 @@ classdef Vitruvian_Man_NL_exported < matlab.apps.AppBase
 
         % Code that executes after component creation
         function startupFcn(app)
-            % make default drawing
-            updateDrawingWrapper(app);
 
             % path repo
             [pathApp,~,~] = fileparts(mfilename('fullpath'));
@@ -209,20 +156,15 @@ classdef Vitruvian_Man_NL_exported < matlab.apps.AppBase
 
             setPaths(app)
 
-            updateInputLimits(app)
-
         end
 
-        % Button pushed function: MaaktekeningButton
+        % Callback function
         function MaaktekeningButtonPushed(app, event)
-           updateDrawingWrapper(app);
 
         end
 
         % Button pushed function: StartsimulatieButton
         function StartsimulatieButtonPushed(app, event)
-            % update drawing and get scale factors
-            updateDrawingWrapper(app);
 
             if isempty(app.ModelName)
                 warning('Geef een naam.')
@@ -241,11 +183,11 @@ classdef Vitruvian_Man_NL_exported < matlab.apps.AppBase
             U.savefolder = app.path_savefolder;
             U.ModelName = app.ModelName;
             U.GroupName = app.GroupName;
-            U.Height = app.usr_height;
+            U.Height = app.LichaamslengteEditField.Value/100;
             U.Mass = app.MassaEditField.Value;
             U.Force_sf = app.SpierkrachtEditField.Value/100;
             U.plant_flex_lim = app.PlantairflexielimitEditField.Value/180*pi;
-            U.Speed = app.usr_speed;
+            U.Speed = app.SnelheidSlider.Value/3.6;
             U.PathCasadi = app.path_casadi;
 
             sf.foot = 1;
@@ -382,22 +324,12 @@ classdef Vitruvian_Man_NL_exported < matlab.apps.AppBase
 
         % Value changed function: SnelheidSlider
         function SnelheidSliderValueChanged(app, event)
-            v = app.SnelheidSlider.Value;
-            if v < app.SnelheidSlider.Limits(2)
-                app.usr_speed = round(app.SnelheidSlider.Value)/3.6;
-            else
-                app.usr_speed = -1;
-            end
-            
+
         end
 
         % Value changed function: LichaamslengteEditField
         function LichaamslengteEditFieldValueChanged(app, event)
-            readUserInput(app)
-            updateUserInput(app)
-            writeDefaultUserInput(app)
-            updateInputLimits(app)
-            
+
         end
     end
 
@@ -413,23 +345,6 @@ classdef Vitruvian_Man_NL_exported < matlab.apps.AppBase
             app.UIFigure.Color = [0.9216 0.8706 0.6706];
             app.UIFigure.Position = [1 41 1920 963];
             app.UIFigure.Name = 'MATLAB App';
-
-            % Create UIAxes
-            app.UIAxes = uiaxes(app.UIFigure);
-            app.UIAxes.DataAspectRatio = [1 1 1];
-            app.UIAxes.XColor = 'none';
-            app.UIAxes.YColor = 'none';
-            app.UIAxes.Color = 'none';
-            app.UIAxes.NextPlot = 'add';
-            app.UIAxes.Position = [564 157 846 627];
-
-            % Create UIAxes2
-            app.UIAxes2 = uiaxes(app.UIFigure);
-            title(app.UIAxes2, 'Title')
-            xlabel(app.UIAxes2, 'X')
-            ylabel(app.UIAxes2, 'Y')
-            zlabel(app.UIAxes2, 'Z')
-            app.UIAxes2.Position = [548 138 797 661];
 
             % Create GroepEditFieldLabel
             app.GroepEditFieldLabel = uilabel(app.UIFigure);
@@ -477,16 +392,6 @@ classdef Vitruvian_Man_NL_exported < matlab.apps.AppBase
             app.cmLabel.FontColor = [0.5412 0.2706 0.0706];
             app.cmLabel.Position = [487 688 46 37];
             app.cmLabel.Text = 'cm';
-
-            % Create MaaktekeningButton
-            app.MaaktekeningButton = uibutton(app.UIFigure, 'push');
-            app.MaaktekeningButton.ButtonPushedFcn = createCallbackFcn(app, @MaaktekeningButtonPushed, true);
-            app.MaaktekeningButton.BackgroundColor = [0.9216 0.8706 0.6706];
-            app.MaaktekeningButton.FontName = 'Bahnschrift';
-            app.MaaktekeningButton.FontSize = 30;
-            app.MaaktekeningButton.FontColor = [0.5412 0.2706 0.0706];
-            app.MaaktekeningButton.Position = [590 59 314 61];
-            app.MaaktekeningButton.Text = 'Maak tekening';
 
             % Create Onderzoeksstage2023PHABLabel
             app.Onderzoeksstage2023PHABLabel = uilabel(app.UIFigure);
