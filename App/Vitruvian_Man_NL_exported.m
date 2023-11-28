@@ -3,8 +3,15 @@ classdef Vitruvian_Man_NL_exported < matlab.apps.AppBase
     % Properties that correspond to app components
     properties (Access = public)
         UIFigure                      matlab.ui.Figure
-        Image2                        matlab.ui.control.Image
-        Image                         matlab.ui.control.Image
+        KlaarvoorsimulatieLamp        matlab.ui.control.Lamp
+        KlaarvoorsimulatieLampLabel   matlab.ui.control.Label
+        AanhetsimulerenLamp           matlab.ui.control.Lamp
+        AanhetsimulerenLampLabel      matlab.ui.control.Label
+        ErrorLamp                     matlab.ui.control.Lamp
+        ErrorLampLabel                matlab.ui.control.Label
+        PlantairflexielimitEditField  matlab.ui.control.NumericEditField
+        PlantairflexielimitEditFieldLabel  matlab.ui.control.Label
+        Label_2                       matlab.ui.control.Label
         kmuLabel                      matlab.ui.control.Label
         SnelheidSlider                matlab.ui.control.Slider
         SnelheidSliderLabel           matlab.ui.control.Label
@@ -20,31 +27,14 @@ classdef Vitruvian_Man_NL_exported < matlab.apps.AppBase
         kgLabel                       matlab.ui.control.Label
         NaamEditField                 matlab.ui.control.EditField
         StartsimulatieButton          matlab.ui.control.Button
-        DeManvanVitruviusLabel        matlab.ui.control.Label
+        Onderzoeksstage2023PHABLabel  matlab.ui.control.Label
         MaaktekeningButton            matlab.ui.control.Button
-        LengtevanvoetEditField        matlab.ui.control.NumericEditField
-        LengtevanvoetEditFieldLabel   matlab.ui.control.Label
-        cmLabel_9                     matlab.ui.control.Label
-        cmLabel_6                     matlab.ui.control.Label
-        cmLabel_5                     matlab.ui.control.Label
-        cmLabel_4                     matlab.ui.control.Label
-        cmLabel_3                     matlab.ui.control.Label
-        cmLabel_2                     matlab.ui.control.Label
         cmLabel                       matlab.ui.control.Label
-        AfstandtussenschoudersEditField  matlab.ui.control.NumericEditField
-        AfstandtussenschoudersEditFieldLabel  matlab.ui.control.Label
-        AfstandknietotgrondEditField  matlab.ui.control.NumericEditField
-        AfstandknietotgrondEditFieldLabel  matlab.ui.control.Label
-        AfstandheuptotknieEditField   matlab.ui.control.NumericEditField
-        AfstandheuptotknieEditFieldLabel  matlab.ui.control.Label
-        AfstandschoudertotelleboogEditField  matlab.ui.control.NumericEditField
-        AfstandschoudertotelleboogEditFieldLabel  matlab.ui.control.Label
-        AfstandelleboogtotvingertopEditField  matlab.ui.control.NumericEditField
-        AfstandvanvingertoptotelleboogLabel  matlab.ui.control.Label
         LichaamslengteEditField       matlab.ui.control.NumericEditField
         LichaamslengteEditFieldLabel  matlab.ui.control.Label
         GroepEditField                matlab.ui.control.EditField
         GroepEditFieldLabel           matlab.ui.control.Label
+        UIAxes2                       matlab.ui.control.UIAxes
         UIAxes                        matlab.ui.control.UIAxes
     end
 
@@ -56,23 +46,11 @@ classdef Vitruvian_Man_NL_exported < matlab.apps.AppBase
 
         % Default values
         default_height = 1.8; % [m]
-        default_ratio_fingertip_elbow = 1/4;
-        default_ratio_elbow_shoulder = 1/8;
-        default_ratio_shoulder_width = 1/4;
-        default_ratio_hip_knee = 1/4;
-        default_ratio_knee_ground = 1/4;
-        default_ratio_foot_length = 1/6;
 
         % Allocate user input values
         usr_height = 1.8;
-        usr_fingertip_elbow = 1/4*1.8;
-        usr_elbow_shoulder = 1/8*1.8;
-        usr_shoulder_width = 1/4*1.8;
-        usr_hip_knee = 1/4*1.8;
-        usr_knee_ground = 1/4*1.8;
-        usr_foot_length = 1/6*1.8;
-
         usr_speed = 1.38;
+        usr_plant_flex_lim = -30;
 
         % scale factors
         scale_factors
@@ -96,34 +74,20 @@ classdef Vitruvian_Man_NL_exported < matlab.apps.AppBase
 
         % user inputs with default values
         function [] = updateUserInput(app)
-%             app.usr_height = app.default_height;
-            app.usr_fingertip_elbow = app.default_ratio_fingertip_elbow*app.usr_height;
-            app.usr_elbow_shoulder = app.default_ratio_elbow_shoulder*app.usr_height;
-            app.usr_shoulder_width = app.default_ratio_shoulder_width*app.usr_height;
-            app.usr_hip_knee = app.default_ratio_hip_knee*app.usr_height;
-            app.usr_knee_ground = app.default_ratio_knee_ground*app.usr_height;
-            app.usr_foot_length = app.default_ratio_foot_length*app.usr_height;
+            app.usr_height = app.default_height;
+            app.usr_plant_flex_lim = app.default_plant_flex_lim;
         end
 
         % read user inputs
         function [] = readUserInput(app)
             app.usr_height = app.LichaamslengteEditField.Value;
-            app.usr_fingertip_elbow = app.AfstandelleboogtotvingertopEditField.Value;
-            app.usr_elbow_shoulder = app.AfstandschoudertotelleboogEditField.Value;
-            app.usr_shoulder_width = app.AfstandtussenschoudersEditField.Value;
-            app.usr_hip_knee = app.AfstandheuptotknieEditField.Value;
-            app.usr_knee_ground = app.AfstandknietotgrondEditField.Value;
-            app.usr_foot_length = app.LengtevanvoetEditField.Value;
+            app.usr_plant_flex_lim = app.PlantairflexielimitEditField.Value;
         end
         
         % set default user inputs
         function [] = writeDefaultUserInput(app)
-            app.AfstandelleboogtotvingertopEditField.Value = round(app.usr_fingertip_elbow,1);
-            app.AfstandschoudertotelleboogEditField.Value = round(app.usr_elbow_shoulder,1);
-            app.AfstandtussenschoudersEditField.Value = round(app.usr_shoulder_width,1);
-            app.AfstandheuptotknieEditField.Value = round(app.usr_hip_knee,1);
-            app.AfstandknietotgrondEditField.Value = round(app.usr_knee_ground,1);
-            app.LengtevanvoetEditField.Value = round(app.usr_foot_length,1);
+
+            app.PlantairflexielimitEditField.Value = round(app.usr_plant_flex_lim,1);
         end
         
         % set limits on input
@@ -136,14 +100,6 @@ classdef Vitruvian_Man_NL_exported < matlab.apps.AppBase
             app.MassaEditField.Limits = [0,3000];
             app.MassaEditField.Value = m0;
             app.MassaEditField.Limits = mlim;
-            
-            
-            app.AfstandelleboogtotvingertopEditField.Limits(2) = app.usr_height/2;
-            app.AfstandschoudertotelleboogEditField.Limits(2) = app.usr_height/2;
-            app.AfstandtussenschoudersEditField.Limits(2) = app.usr_height/2;
-            app.AfstandheuptotknieEditField.Limits(2) = app.usr_height/2;
-            app.AfstandknietotgrondEditField.Limits(2) = app.usr_height/2;
-            app.LengtevanvoetEditField.Limits(2) = app.usr_height/2;
 
         end
 
@@ -151,10 +107,6 @@ classdef Vitruvian_Man_NL_exported < matlab.apps.AppBase
         function updateDrawingWrapper(app)
             % read user inputs
             readUserInput(app)
-            % call function to update drawing
-            app.scale_factors = updateDrawing(app.usr_height,app.usr_fingertip_elbow,app.usr_elbow_shoulder,...
-            app.usr_shoulder_width,app.usr_hip_knee,app.usr_knee_ground,app.usr_foot_length,...
-            app.UIAxes,app.ink_colour,app.paper_colour);
         end
         
         % load results and put them in table
@@ -187,23 +139,6 @@ classdef Vitruvian_Man_NL_exported < matlab.apps.AppBase
                 app.NaamAfstandSnelheidListBox.ItemsData = app.tbldata(:,2);
             end
 
-%             % command for running .py file
-%             dist = num2str(distance_i*1e-3);
-%             vel = num2str(avg_v_i);
-%             llen       = num2str(app.LichaamslengteEditField.Value);
-%             mass       = num2str(app.MassaEditField.Value);
-%             shoulders  = num2str(app.AfstandtussenschoudersEditField.Value);
-%             arm_upper  = num2str(app.AfstandschoudertotelleboogEditField.Value);
-%             arm_lower  = num2str(app.AfstandelleboogtotvingertopEditField.Value);
-%             leg_upper  = num2str(app.AfstandheuptotknieEditField.Value);
-%             leg_lower  = num2str(app.AfstandknietotgrondEditField.Value);
-%             foot       = num2str(app.LengtevanvoetEditField.Value);
-%             strength   = num2str(app.SpierkrachtEditField.Value);
-%             cmd = ['autoFill.py ' app.GroepEditField.Value ' ' app.NaamEditField.Value ...
-%                 ' ' dist ' ' vel ' ' llen ' ' mass ' ' shoulders ' ' arm_upper...
-%                 ' ' arm_lower ' ' leg_upper ' ' leg_lower ' ' foot ' ' strength];
-%             pyrunfile(cmd);
-
         end
         
         function [total_distance, avg_vel] = calcDistance(app,savepath)
@@ -229,24 +164,6 @@ classdef Vitruvian_Man_NL_exported < matlab.apps.AppBase
 
         
         function setPaths(app)
-%             name = getenv('COMPUTERNAME');
-% 
-%             % fill these in based on your computer
-%             if strcmp(name,'GBW-L-W2122')
-%                 init_path_savefolder = 'C:\Users\u0150099\OneDrive - KU Leuven\Resultaten_KinderUniversiteit';
-%                 init_path_geom = 'C:\GBW_MyPrograms\OpenSim 4.3\Geometry';
-%                 init_path_casadi = 'C:\GBW_MyPrograms\casadi_3_5_5';
-%             elseif strcmp(name, 'GBW-L-W2075')
-%                 init_path_savefolder = 'C:\Users\u0138016\OneDrive - KU Leuven\Outreach\Kinderuniversiteit\2022\Resultaten';
-%                 init_path_geom = 'C:\GBW_MyPrograms\OpenSim 4.3\Geometry';
-%                 init_path_casadi = 'C:\GBW_MyPrograms\casadi_3_5_5';
-%             else
-%                 init_path_savefolder = 'C:\Users\u0138016\OneDrive - KU Leuven\Outreach\Kinderuniversiteit\2022\Resultaten';
-%                 init_path_geom = 'C:\GBW_MyPrograms\OpenSim 4.3\Geometry';
-%                 init_path_casadi = 'C:\GBW_MyPrograms\casadi_3_5_5';
-%             end
-
-
             [init_path_savefolder,init_path_geom,init_path_casadi] = getPaths();
             % test given paths
             if ~exist(init_path_savefolder,'dir')
@@ -316,10 +233,10 @@ classdef Vitruvian_Man_NL_exported < matlab.apps.AppBase
                 return
             end
 
-            app.Image.Enable = 'on';
-            app.Image.Visible = 'on';
-            app.Image2.Enable = 'on';
-            app.Image2.Visible = 'on';
+            app.ErrorLamp.Color = [1 1 1]; % white
+            app.AanhetsimulerenLamp.Color = [0.93,0.69,0.13]; % orange
+            app.KlaarvoorsimulatieLamp.Color = [1 1 1]; % white
+            pause(0.5); % pause added to allow for color update
 
             U.savefolder = app.path_savefolder;
             U.ModelName = app.ModelName;
@@ -327,36 +244,24 @@ classdef Vitruvian_Man_NL_exported < matlab.apps.AppBase
             U.Height = app.usr_height;
             U.Mass = app.MassaEditField.Value;
             U.Force_sf = app.SpierkrachtEditField.Value/100;
+            U.plant_flex_lim = app.PlantairflexielimitEditField.Value/180*pi;
             U.Speed = app.usr_speed;
             U.PathCasadi = app.path_casadi;
 
+            sf.foot = 1;
+            sf.low_leg = 1;
+            sf.upp_leg = 1;
+            sf.upp_arm = 1;
+            sf.low_arm = 1;
+            sf.shoulder = 1;
+            sf.torso = 1;
 
             % start simulation
-            resultpath = PredSim_wrapper_for_app(U,app.scale_factors);
+            resultpath = PredSim_wrapper_for_app(U,sf);
 
-            app.Image.Enable = 'off';
-            app.Image.Visible = 'off';
-            app.Image2.Enable = 'off';
-            app.Image2.Visible = 'off';
-
-
-            % command for running .py file
-            [distance_i,avg_v_i] = calcDistance(app,resultpath);
-            dist       = replace(num2str(distance_i*1e-3),'.',',');
-            vel        = replace(num2str(avg_v_i),'.',',');
-            llen       = replace(num2str(app.LichaamslengteEditField.Value),'.',',');
-            mass       = replace(num2str(app.MassaEditField.Value),'.',',');
-            shoulders  = replace(num2str(app.AfstandtussenschoudersEditField.Value),'.',',');
-            arm_upper  = replace(num2str(app.AfstandschoudertotelleboogEditField.Value),'.',',');
-            arm_lower  = replace(num2str(app.AfstandelleboogtotvingertopEditField.Value),'.',',');
-            leg_upper  = replace(num2str(app.AfstandheuptotknieEditField.Value),'.',',');
-            leg_lower  = replace(num2str(app.AfstandknietotgrondEditField.Value),'.',',');
-            foot       = replace(num2str(app.LengtevanvoetEditField.Value),'.',',');
-            strength   = replace(num2str(app.SpierkrachtEditField.Value),'.',',');
-            cmd = ['autoFill.py ' app.GroupName ' ' app.ModelName ...
-                ' ' dist ' ' vel ' ' llen ' ' mass ' ' shoulders ' ' arm_upper...
-                ' ' arm_lower ' ' leg_upper ' ' leg_lower ' ' foot ' ' strength];
-            pyrunfile(cmd);
+            app.ErrorLamp.Color = [1 1 1]; % white
+            app.AanhetsimulerenLamp.Color = [1 1 1]; % white
+            app.KlaarvoorsimulatieLamp.Color = [0 1 0]; % green
 
             % add result to table
             loadResultsTable(app)
@@ -518,30 +423,38 @@ classdef Vitruvian_Man_NL_exported < matlab.apps.AppBase
             app.UIAxes.NextPlot = 'add';
             app.UIAxes.Position = [564 157 846 627];
 
+            % Create UIAxes2
+            app.UIAxes2 = uiaxes(app.UIFigure);
+            title(app.UIAxes2, 'Title')
+            xlabel(app.UIAxes2, 'X')
+            ylabel(app.UIAxes2, 'Y')
+            zlabel(app.UIAxes2, 'Z')
+            app.UIAxes2.Position = [548 138 797 661];
+
             % Create GroepEditFieldLabel
             app.GroepEditFieldLabel = uilabel(app.UIFigure);
-            app.GroepEditFieldLabel.FontName = 'Blackadder ITC';
+            app.GroepEditFieldLabel.FontName = 'Bahnschrift';
             app.GroepEditFieldLabel.FontSize = 30;
             app.GroepEditFieldLabel.FontColor = [0.5412 0.2706 0.0706];
-            app.GroepEditFieldLabel.Position = [88 798 83 42];
+            app.GroepEditFieldLabel.Position = [88 798 86 42];
             app.GroepEditFieldLabel.Text = 'Groep';
 
             % Create GroepEditField
             app.GroepEditField = uieditfield(app.UIFigure, 'text');
             app.GroepEditField.ValueChangedFcn = createCallbackFcn(app, @GroepEditFieldValueChanged, true);
-            app.GroepEditField.FontName = 'Blackadder ITC';
-            app.GroepEditField.FontSize = 30;
+            app.GroepEditField.FontName = 'Bahnschrift';
+            app.GroepEditField.FontSize = 22;
             app.GroepEditField.FontColor = [0.5412 0.2706 0.0706];
             app.GroepEditField.BackgroundColor = [1 0.9725 0.8627];
             app.GroepEditField.Placeholder = '(Geef de naam van jouw groepje)';
-            app.GroepEditField.Position = [172 796 344 44];
+            app.GroepEditField.Position = [173 802 344 31];
 
             % Create LichaamslengteEditFieldLabel
             app.LichaamslengteEditFieldLabel = uilabel(app.UIFigure);
-            app.LichaamslengteEditFieldLabel.FontName = 'Blackadder ITC';
+            app.LichaamslengteEditFieldLabel.FontName = 'Bahnschrift';
             app.LichaamslengteEditFieldLabel.FontSize = 30;
             app.LichaamslengteEditFieldLabel.FontColor = [0.5412 0.2706 0.0706];
-            app.LichaamslengteEditFieldLabel.Position = [88 683 159 42];
+            app.LichaamslengteEditFieldLabel.Position = [88 688 220 37];
             app.LichaamslengteEditFieldLabel.Text = 'Lichaamslengte';
 
             % Create LichaamslengteEditField
@@ -550,213 +463,45 @@ classdef Vitruvian_Man_NL_exported < matlab.apps.AppBase
             app.LichaamslengteEditField.ValueDisplayFormat = '%111g';
             app.LichaamslengteEditField.ValueChangedFcn = createCallbackFcn(app, @LichaamslengteEditFieldValueChanged, true);
             app.LichaamslengteEditField.HorizontalAlignment = 'center';
-            app.LichaamslengteEditField.FontName = 'Blackadder ITC';
+            app.LichaamslengteEditField.FontName = 'Bahnschrift';
             app.LichaamslengteEditField.FontSize = 30;
             app.LichaamslengteEditField.FontColor = [0.5412 0.2706 0.0706];
             app.LichaamslengteEditField.BackgroundColor = [1 0.9725 0.8627];
-            app.LichaamslengteEditField.Position = [388 684 74 41];
+            app.LichaamslengteEditField.Position = [388 687 74 38];
             app.LichaamslengteEditField.Value = 180;
-
-            % Create AfstandvanvingertoptotelleboogLabel
-            app.AfstandvanvingertoptotelleboogLabel = uilabel(app.UIFigure);
-            app.AfstandvanvingertoptotelleboogLabel.FontName = 'Blackadder ITC';
-            app.AfstandvanvingertoptotelleboogLabel.FontSize = 30;
-            app.AfstandvanvingertoptotelleboogLabel.FontColor = [0.5412 0.2706 0.0706];
-            app.AfstandvanvingertoptotelleboogLabel.Position = [88 423 303 42];
-            app.AfstandvanvingertoptotelleboogLabel.Text = 'Afstand elleboog tot vingertop';
-
-            % Create AfstandelleboogtotvingertopEditField
-            app.AfstandelleboogtotvingertopEditField = uieditfield(app.UIFigure, 'numeric');
-            app.AfstandelleboogtotvingertopEditField.Limits = [10 100];
-            app.AfstandelleboogtotvingertopEditField.ValueDisplayFormat = '%111g';
-            app.AfstandelleboogtotvingertopEditField.HorizontalAlignment = 'center';
-            app.AfstandelleboogtotvingertopEditField.FontName = 'Blackadder ITC';
-            app.AfstandelleboogtotvingertopEditField.FontSize = 30;
-            app.AfstandelleboogtotvingertopEditField.FontColor = [0.5412 0.2706 0.0706];
-            app.AfstandelleboogtotvingertopEditField.BackgroundColor = [1 0.9725 0.8627];
-            app.AfstandelleboogtotvingertopEditField.Position = [388 424 74 41];
-            app.AfstandelleboogtotvingertopEditField.Value = 45;
-
-            % Create AfstandschoudertotelleboogEditFieldLabel
-            app.AfstandschoudertotelleboogEditFieldLabel = uilabel(app.UIFigure);
-            app.AfstandschoudertotelleboogEditFieldLabel.FontName = 'Blackadder ITC';
-            app.AfstandschoudertotelleboogEditFieldLabel.FontSize = 30;
-            app.AfstandschoudertotelleboogEditFieldLabel.FontColor = [0.5412 0.2706 0.0706];
-            app.AfstandschoudertotelleboogEditFieldLabel.Position = [88 488 297 42];
-            app.AfstandschoudertotelleboogEditFieldLabel.Text = 'Afstand schouder tot elleboog';
-
-            % Create AfstandschoudertotelleboogEditField
-            app.AfstandschoudertotelleboogEditField = uieditfield(app.UIFigure, 'numeric');
-            app.AfstandschoudertotelleboogEditField.Limits = [5 100];
-            app.AfstandschoudertotelleboogEditField.ValueDisplayFormat = '%111g';
-            app.AfstandschoudertotelleboogEditField.HorizontalAlignment = 'center';
-            app.AfstandschoudertotelleboogEditField.FontName = 'Blackadder ITC';
-            app.AfstandschoudertotelleboogEditField.FontSize = 30;
-            app.AfstandschoudertotelleboogEditField.FontColor = [0.5412 0.2706 0.0706];
-            app.AfstandschoudertotelleboogEditField.BackgroundColor = [1 0.9725 0.8627];
-            app.AfstandschoudertotelleboogEditField.Position = [388 489 74 41];
-            app.AfstandschoudertotelleboogEditField.Value = 22.5;
-
-            % Create AfstandheuptotknieEditFieldLabel
-            app.AfstandheuptotknieEditFieldLabel = uilabel(app.UIFigure);
-            app.AfstandheuptotknieEditFieldLabel.FontName = 'Blackadder ITC';
-            app.AfstandheuptotknieEditFieldLabel.FontSize = 30;
-            app.AfstandheuptotknieEditFieldLabel.FontColor = [0.5412 0.2706 0.0706];
-            app.AfstandheuptotknieEditFieldLabel.Position = [88 358 224 42];
-            app.AfstandheuptotknieEditFieldLabel.Text = 'Afstand heup tot knie';
-
-            % Create AfstandheuptotknieEditField
-            app.AfstandheuptotknieEditField = uieditfield(app.UIFigure, 'numeric');
-            app.AfstandheuptotknieEditField.Limits = [10 100];
-            app.AfstandheuptotknieEditField.ValueDisplayFormat = '%111g';
-            app.AfstandheuptotknieEditField.HorizontalAlignment = 'center';
-            app.AfstandheuptotknieEditField.FontName = 'Blackadder ITC';
-            app.AfstandheuptotknieEditField.FontSize = 30;
-            app.AfstandheuptotknieEditField.FontColor = [0.5412 0.2706 0.0706];
-            app.AfstandheuptotknieEditField.BackgroundColor = [1 0.9725 0.8627];
-            app.AfstandheuptotknieEditField.Position = [388 359 74 41];
-            app.AfstandheuptotknieEditField.Value = 45;
-
-            % Create AfstandknietotgrondEditFieldLabel
-            app.AfstandknietotgrondEditFieldLabel = uilabel(app.UIFigure);
-            app.AfstandknietotgrondEditFieldLabel.FontName = 'Blackadder ITC';
-            app.AfstandknietotgrondEditFieldLabel.FontSize = 30;
-            app.AfstandknietotgrondEditFieldLabel.FontColor = [0.5412 0.2706 0.0706];
-            app.AfstandknietotgrondEditFieldLabel.Position = [88 294 231 42];
-            app.AfstandknietotgrondEditFieldLabel.Text = 'Afstand knie tot grond';
-
-            % Create AfstandknietotgrondEditField
-            app.AfstandknietotgrondEditField = uieditfield(app.UIFigure, 'numeric');
-            app.AfstandknietotgrondEditField.Limits = [10 100];
-            app.AfstandknietotgrondEditField.ValueDisplayFormat = '%111g';
-            app.AfstandknietotgrondEditField.HorizontalAlignment = 'center';
-            app.AfstandknietotgrondEditField.FontName = 'Blackadder ITC';
-            app.AfstandknietotgrondEditField.FontSize = 30;
-            app.AfstandknietotgrondEditField.FontColor = [0.5412 0.2706 0.0706];
-            app.AfstandknietotgrondEditField.BackgroundColor = [1 0.9725 0.8627];
-            app.AfstandknietotgrondEditField.Position = [388 295 74 41];
-            app.AfstandknietotgrondEditField.Value = 45;
-
-            % Create AfstandtussenschoudersEditFieldLabel
-            app.AfstandtussenschoudersEditFieldLabel = uilabel(app.UIFigure);
-            app.AfstandtussenschoudersEditFieldLabel.FontName = 'Blackadder ITC';
-            app.AfstandtussenschoudersEditFieldLabel.FontSize = 30;
-            app.AfstandtussenschoudersEditFieldLabel.FontColor = [0.5412 0.2706 0.0706];
-            app.AfstandtussenschoudersEditFieldLabel.Position = [88 554 262 42];
-            app.AfstandtussenschoudersEditFieldLabel.Text = 'Afstand tussen schouders';
-
-            % Create AfstandtussenschoudersEditField
-            app.AfstandtussenschoudersEditField = uieditfield(app.UIFigure, 'numeric');
-            app.AfstandtussenschoudersEditField.Limits = [10 100];
-            app.AfstandtussenschoudersEditField.ValueDisplayFormat = '%111g';
-            app.AfstandtussenschoudersEditField.HorizontalAlignment = 'center';
-            app.AfstandtussenschoudersEditField.FontName = 'Blackadder ITC';
-            app.AfstandtussenschoudersEditField.FontSize = 30;
-            app.AfstandtussenschoudersEditField.FontColor = [0.5412 0.2706 0.0706];
-            app.AfstandtussenschoudersEditField.BackgroundColor = [1 0.9725 0.8627];
-            app.AfstandtussenschoudersEditField.Position = [388 555 74 41];
-            app.AfstandtussenschoudersEditField.Value = 45;
 
             % Create cmLabel
             app.cmLabel = uilabel(app.UIFigure);
-            app.cmLabel.FontName = 'Blackadder ITC';
+            app.cmLabel.FontName = 'Bahnschrift';
             app.cmLabel.FontSize = 30;
             app.cmLabel.FontColor = [0.5412 0.2706 0.0706];
-            app.cmLabel.Position = [487 683 31 42];
+            app.cmLabel.Position = [487 688 46 37];
             app.cmLabel.Text = 'cm';
-
-            % Create cmLabel_2
-            app.cmLabel_2 = uilabel(app.UIFigure);
-            app.cmLabel_2.FontName = 'Blackadder ITC';
-            app.cmLabel_2.FontSize = 30;
-            app.cmLabel_2.FontColor = [0.5412 0.2706 0.0706];
-            app.cmLabel_2.Position = [487 554 31 42];
-            app.cmLabel_2.Text = 'cm';
-
-            % Create cmLabel_3
-            app.cmLabel_3 = uilabel(app.UIFigure);
-            app.cmLabel_3.FontName = 'Blackadder ITC';
-            app.cmLabel_3.FontSize = 30;
-            app.cmLabel_3.FontColor = [0.5412 0.2706 0.0706];
-            app.cmLabel_3.Position = [487 488 31 42];
-            app.cmLabel_3.Text = 'cm';
-
-            % Create cmLabel_4
-            app.cmLabel_4 = uilabel(app.UIFigure);
-            app.cmLabel_4.FontName = 'Blackadder ITC';
-            app.cmLabel_4.FontSize = 30;
-            app.cmLabel_4.FontColor = [0.5412 0.2706 0.0706];
-            app.cmLabel_4.Position = [487 423 31 42];
-            app.cmLabel_4.Text = 'cm';
-
-            % Create cmLabel_5
-            app.cmLabel_5 = uilabel(app.UIFigure);
-            app.cmLabel_5.FontName = 'Blackadder ITC';
-            app.cmLabel_5.FontSize = 30;
-            app.cmLabel_5.FontColor = [0.5412 0.2706 0.0706];
-            app.cmLabel_5.Position = [487 358 31 42];
-            app.cmLabel_5.Text = 'cm';
-
-            % Create cmLabel_6
-            app.cmLabel_6 = uilabel(app.UIFigure);
-            app.cmLabel_6.FontName = 'Blackadder ITC';
-            app.cmLabel_6.FontSize = 30;
-            app.cmLabel_6.FontColor = [0.5412 0.2706 0.0706];
-            app.cmLabel_6.Position = [487 294 31 42];
-            app.cmLabel_6.Text = 'cm';
-
-            % Create cmLabel_9
-            app.cmLabel_9 = uilabel(app.UIFigure);
-            app.cmLabel_9.FontName = 'Blackadder ITC';
-            app.cmLabel_9.FontSize = 30;
-            app.cmLabel_9.FontColor = [0.5412 0.2706 0.0706];
-            app.cmLabel_9.Position = [487 230 31 42];
-            app.cmLabel_9.Text = 'cm';
-
-            % Create LengtevanvoetEditFieldLabel
-            app.LengtevanvoetEditFieldLabel = uilabel(app.UIFigure);
-            app.LengtevanvoetEditFieldLabel.FontName = 'Blackadder ITC';
-            app.LengtevanvoetEditFieldLabel.FontSize = 30;
-            app.LengtevanvoetEditFieldLabel.FontColor = [0.5412 0.2706 0.0706];
-            app.LengtevanvoetEditFieldLabel.Position = [88 229 159 42];
-            app.LengtevanvoetEditFieldLabel.Text = 'Lengte van voet';
-
-            % Create LengtevanvoetEditField
-            app.LengtevanvoetEditField = uieditfield(app.UIFigure, 'numeric');
-            app.LengtevanvoetEditField.Limits = [10 100];
-            app.LengtevanvoetEditField.ValueDisplayFormat = '%111g';
-            app.LengtevanvoetEditField.HorizontalAlignment = 'center';
-            app.LengtevanvoetEditField.FontName = 'Blackadder ITC';
-            app.LengtevanvoetEditField.FontSize = 30;
-            app.LengtevanvoetEditField.FontColor = [0.5412 0.2706 0.0706];
-            app.LengtevanvoetEditField.BackgroundColor = [1 0.9725 0.8627];
-            app.LengtevanvoetEditField.Position = [388 230 74 41];
-            app.LengtevanvoetEditField.Value = 30;
 
             % Create MaaktekeningButton
             app.MaaktekeningButton = uibutton(app.UIFigure, 'push');
             app.MaaktekeningButton.ButtonPushedFcn = createCallbackFcn(app, @MaaktekeningButtonPushed, true);
             app.MaaktekeningButton.BackgroundColor = [0.9216 0.8706 0.6706];
-            app.MaaktekeningButton.FontName = 'Blackadder ITC';
+            app.MaaktekeningButton.FontName = 'Bahnschrift';
             app.MaaktekeningButton.FontSize = 30;
             app.MaaktekeningButton.FontColor = [0.5412 0.2706 0.0706];
             app.MaaktekeningButton.Position = [590 59 314 61];
             app.MaaktekeningButton.Text = 'Maak tekening';
 
-            % Create DeManvanVitruviusLabel
-            app.DeManvanVitruviusLabel = uilabel(app.UIFigure);
-            app.DeManvanVitruviusLabel.HorizontalAlignment = 'center';
-            app.DeManvanVitruviusLabel.FontName = 'Blackadder ITC';
-            app.DeManvanVitruviusLabel.FontSize = 80;
-            app.DeManvanVitruviusLabel.FontColor = [0.5412 0.2706 0.0706];
-            app.DeManvanVitruviusLabel.Position = [335 832 1295 111];
-            app.DeManvanVitruviusLabel.Text = 'De Man van Vitruvius';
+            % Create Onderzoeksstage2023PHABLabel
+            app.Onderzoeksstage2023PHABLabel = uilabel(app.UIFigure);
+            app.Onderzoeksstage2023PHABLabel.HorizontalAlignment = 'center';
+            app.Onderzoeksstage2023PHABLabel.FontName = 'Bahnschrift';
+            app.Onderzoeksstage2023PHABLabel.FontSize = 80;
+            app.Onderzoeksstage2023PHABLabel.FontColor = [0.5412 0.2706 0.0706];
+            app.Onderzoeksstage2023PHABLabel.Position = [335 832 1295 111];
+            app.Onderzoeksstage2023PHABLabel.Text = 'Onderzoeksstage 2023 PH AB';
 
             % Create StartsimulatieButton
             app.StartsimulatieButton = uibutton(app.UIFigure, 'push');
             app.StartsimulatieButton.ButtonPushedFcn = createCallbackFcn(app, @StartsimulatieButtonPushed, true);
             app.StartsimulatieButton.BackgroundColor = [0.9216 0.8706 0.6706];
-            app.StartsimulatieButton.FontName = 'Blackadder ITC';
+            app.StartsimulatieButton.FontName = 'Bahnschrift';
             app.StartsimulatieButton.FontSize = 30;
             app.StartsimulatieButton.FontColor = [0.5412 0.2706 0.0706];
             app.StartsimulatieButton.Position = [1022 59 314 61];
@@ -766,24 +511,24 @@ classdef Vitruvian_Man_NL_exported < matlab.apps.AppBase
             app.NaamEditField = uieditfield(app.UIFigure, 'text');
             app.NaamEditField.ValueChangedFcn = createCallbackFcn(app, @NaamEditFieldValueChanged, true);
             app.NaamEditField.HorizontalAlignment = 'center';
-            app.NaamEditField.FontName = 'Blackadder ITC';
+            app.NaamEditField.FontName = 'Bahnschrift';
             app.NaamEditField.FontSize = 30;
             app.NaamEditField.FontColor = [0.5412 0.2706 0.0706];
             app.NaamEditField.BackgroundColor = [1 0.9725 0.8627];
             app.NaamEditField.Placeholder = '(Jouw naam)';
-            app.NaamEditField.Position = [857 796 244 44];
+            app.NaamEditField.Position = [145 743 244 41];
 
             % Create kgLabel
             app.kgLabel = uilabel(app.UIFigure);
-            app.kgLabel.FontName = 'Blackadder ITC';
+            app.kgLabel.FontName = 'Bahnschrift';
             app.kgLabel.FontSize = 30;
             app.kgLabel.FontColor = [0.5412 0.2706 0.0706];
-            app.kgLabel.Position = [487 618 28 42];
+            app.kgLabel.Position = [487 623 38 37];
             app.kgLabel.Text = 'kg';
 
             % Create MassaEditFieldLabel
             app.MassaEditFieldLabel = uilabel(app.UIFigure);
-            app.MassaEditFieldLabel.FontName = 'Blackadder ITC';
+            app.MassaEditFieldLabel.FontName = 'Bahnschrift';
             app.MassaEditFieldLabel.FontSize = 30;
             app.MassaEditFieldLabel.FontColor = [0.5412 0.2706 0.0706];
             app.MassaEditFieldLabel.Position = [88 618 124 42];
@@ -794,27 +539,27 @@ classdef Vitruvian_Man_NL_exported < matlab.apps.AppBase
             app.MassaEditField.Limits = [20 300];
             app.MassaEditField.ValueDisplayFormat = '%111g';
             app.MassaEditField.HorizontalAlignment = 'center';
-            app.MassaEditField.FontName = 'Blackadder ITC';
+            app.MassaEditField.FontName = 'Bahnschrift';
             app.MassaEditField.FontSize = 30;
             app.MassaEditField.FontColor = [0.5412 0.2706 0.0706];
             app.MassaEditField.BackgroundColor = [1 0.9725 0.8627];
-            app.MassaEditField.Position = [388 619 74 41];
+            app.MassaEditField.Position = [388 622 74 38];
             app.MassaEditField.Value = 75;
 
             % Create Label
             app.Label = uilabel(app.UIFigure);
-            app.Label.FontName = 'Blackadder ITC';
+            app.Label.FontName = 'Bahnschrift';
             app.Label.FontSize = 30;
             app.Label.FontColor = [0.5412 0.2706 0.0706];
-            app.Label.Position = [487 163 25 42];
+            app.Label.Position = [487 548 26 37];
             app.Label.Text = '%';
 
             % Create SpierkrachtEditFieldLabel
             app.SpierkrachtEditFieldLabel = uilabel(app.UIFigure);
-            app.SpierkrachtEditFieldLabel.FontName = 'Blackadder ITC';
+            app.SpierkrachtEditFieldLabel.FontName = 'Bahnschrift';
             app.SpierkrachtEditFieldLabel.FontSize = 30;
             app.SpierkrachtEditFieldLabel.FontColor = [0.5412 0.2706 0.0706];
-            app.SpierkrachtEditFieldLabel.Position = [88 163 127 42];
+            app.SpierkrachtEditFieldLabel.Position = [88 548 163 37];
             app.SpierkrachtEditFieldLabel.Text = 'Spierkracht';
 
             % Create SpierkrachtEditField
@@ -822,18 +567,18 @@ classdef Vitruvian_Man_NL_exported < matlab.apps.AppBase
             app.SpierkrachtEditField.Limits = [20 500];
             app.SpierkrachtEditField.ValueDisplayFormat = '%111g';
             app.SpierkrachtEditField.HorizontalAlignment = 'center';
-            app.SpierkrachtEditField.FontName = 'Blackadder ITC';
+            app.SpierkrachtEditField.FontName = 'Bahnschrift';
             app.SpierkrachtEditField.FontSize = 30;
             app.SpierkrachtEditField.FontColor = [0.5412 0.2706 0.0706];
             app.SpierkrachtEditField.BackgroundColor = [1 0.9725 0.8627];
-            app.SpierkrachtEditField.Position = [388 164 74 41];
+            app.SpierkrachtEditField.Position = [388 547 74 38];
             app.SpierkrachtEditField.Value = 100;
 
             % Create SpeelvideoButton
             app.SpeelvideoButton = uibutton(app.UIFigure, 'push');
             app.SpeelvideoButton.ButtonPushedFcn = createCallbackFcn(app, @SpeelvideoButtonPushed, true);
             app.SpeelvideoButton.BackgroundColor = [0.9216 0.8706 0.6706];
-            app.SpeelvideoButton.FontName = 'Blackadder ITC';
+            app.SpeelvideoButton.FontName = 'Bahnschrift';
             app.SpeelvideoButton.FontSize = 30;
             app.SpeelvideoButton.FontColor = [0.5412 0.2706 0.0706];
             app.SpeelvideoButton.Position = [1481 59 314 61];
@@ -843,7 +588,7 @@ classdef Vitruvian_Man_NL_exported < matlab.apps.AppBase
             app.SluitvideoButton = uibutton(app.UIFigure, 'push');
             app.SluitvideoButton.ButtonPushedFcn = createCallbackFcn(app, @SluitvideoButtonPushed, true);
             app.SluitvideoButton.BackgroundColor = [0.9216 0.8706 0.6706];
-            app.SluitvideoButton.FontName = 'Blackadder ITC';
+            app.SluitvideoButton.FontName = 'Bahnschrift';
             app.SluitvideoButton.FontSize = 30;
             app.SluitvideoButton.FontColor = [0.5412 0.2706 0.0706];
             app.SluitvideoButton.Enable = 'off';
@@ -854,11 +599,11 @@ classdef Vitruvian_Man_NL_exported < matlab.apps.AppBase
             % Create NaamAfstandLabel
             app.NaamAfstandLabel = uilabel(app.UIFigure);
             app.NaamAfstandLabel.BackgroundColor = [0.9216 0.8706 0.6706];
-            app.NaamAfstandLabel.FontName = 'Blackadder ITC';
-            app.NaamAfstandLabel.FontSize = 30;
+            app.NaamAfstandLabel.FontName = 'Bahnschrift';
+            app.NaamAfstandLabel.FontSize = 22;
             app.NaamAfstandLabel.FontColor = [0.5412 0.2706 0.0706];
-            app.NaamAfstandLabel.Position = [1430 798 384 42];
-            app.NaamAfstandLabel.Text = 'Naam              Afstand         Snelheid';
+            app.NaamAfstandLabel.Position = [1430 798 499 42];
+            app.NaamAfstandLabel.Text = 'Naam              Afstand              Snelheid';
 
             % Create NaamAfstandSnelheidListBox
             app.NaamAfstandSnelheidListBox = uilistbox(app.UIFigure);
@@ -873,7 +618,7 @@ classdef Vitruvian_Man_NL_exported < matlab.apps.AppBase
 
             % Create SnelheidSliderLabel
             app.SnelheidSliderLabel = uilabel(app.UIFigure);
-            app.SnelheidSliderLabel.FontName = 'Blackadder ITC';
+            app.SnelheidSliderLabel.FontName = 'Bahnschrift';
             app.SnelheidSliderLabel.FontSize = 25;
             app.SnelheidSliderLabel.FontColor = [0.5412 0.2706 0.0706];
             app.SnelheidSliderLabel.Position = [88 88 123 42];
@@ -881,12 +626,12 @@ classdef Vitruvian_Man_NL_exported < matlab.apps.AppBase
 
             % Create SnelheidSlider
             app.SnelheidSlider = uislider(app.UIFigure);
-            app.SnelheidSlider.Limits = [1 20];
+            app.SnelheidSlider.Limits = [1 10];
             app.SnelheidSlider.MajorTicks = [1 5 10 15 20];
             app.SnelheidSlider.MajorTickLabels = {'1', '5', '10', '15', 'max'};
             app.SnelheidSlider.ValueChangedFcn = createCallbackFcn(app, @SnelheidSliderValueChanged, true);
             app.SnelheidSlider.MinorTicks = [1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20];
-            app.SnelheidSlider.FontName = 'Blackadder ITC';
+            app.SnelheidSlider.FontName = 'Bahnschrift';
             app.SnelheidSlider.FontSize = 25;
             app.SnelheidSlider.FontColor = [0.5412 0.2706 0.0706];
             app.SnelheidSlider.Position = [226 119 224 3];
@@ -894,25 +639,77 @@ classdef Vitruvian_Man_NL_exported < matlab.apps.AppBase
 
             % Create kmuLabel
             app.kmuLabel = uilabel(app.UIFigure);
-            app.kmuLabel.FontName = 'Blackadder ITC';
+            app.kmuLabel.FontName = 'Bahnschrift';
             app.kmuLabel.FontSize = 30;
             app.kmuLabel.FontColor = [0.5412 0.2706 0.0706];
-            app.kmuLabel.Position = [474 86 58 42];
+            app.kmuLabel.Position = [474 91 75 37];
             app.kmuLabel.Text = 'km/u';
 
-            % Create Image
-            app.Image = uiimage(app.UIFigure);
-            app.Image.Enable = 'off';
-            app.Image.Visible = 'off';
-            app.Image.Position = [1082 687 254 210];
-            app.Image.ImageSource = 'balloon.png';
+            % Create Label_2
+            app.Label_2 = uilabel(app.UIFigure);
+            app.Label_2.FontName = 'Bahnschrift';
+            app.Label_2.FontSize = 30;
+            app.Label_2.FontColor = [0.5412 0.2706 0.0706];
+            app.Label_2.Position = [487 480 25 37];
+            app.Label_2.Text = '°';
 
-            % Create Image2
-            app.Image2 = uiimage(app.UIFigure);
-            app.Image2.Enable = 'off';
-            app.Image2.Visible = 'off';
-            app.Image2.Position = [1140 744 138 100];
-            app.Image2.ImageSource = 'allgifs.gif';
+            % Create PlantairflexielimitEditFieldLabel
+            app.PlantairflexielimitEditFieldLabel = uilabel(app.UIFigure);
+            app.PlantairflexielimitEditFieldLabel.FontName = 'Bahnschrift';
+            app.PlantairflexielimitEditFieldLabel.FontSize = 30;
+            app.PlantairflexielimitEditFieldLabel.FontColor = [0.5412 0.2706 0.0706];
+            app.PlantairflexielimitEditFieldLabel.Position = [88 480 263 37];
+            app.PlantairflexielimitEditFieldLabel.Text = 'Plantair flexie limit';
+
+            % Create PlantairflexielimitEditField
+            app.PlantairflexielimitEditField = uieditfield(app.UIFigure, 'numeric');
+            app.PlantairflexielimitEditField.Limits = [-35 35];
+            app.PlantairflexielimitEditField.ValueDisplayFormat = '%111g';
+            app.PlantairflexielimitEditField.HorizontalAlignment = 'center';
+            app.PlantairflexielimitEditField.FontName = 'Bahnschrift';
+            app.PlantairflexielimitEditField.FontSize = 30;
+            app.PlantairflexielimitEditField.FontColor = [0.5412 0.2706 0.0706];
+            app.PlantairflexielimitEditField.BackgroundColor = [1 0.9725 0.8627];
+            app.PlantairflexielimitEditField.Position = [388 479 74 38];
+            app.PlantairflexielimitEditField.Value = -30;
+
+            % Create ErrorLampLabel
+            app.ErrorLampLabel = uilabel(app.UIFigure);
+            app.ErrorLampLabel.FontName = 'Bahnschrift';
+            app.ErrorLampLabel.FontSize = 30;
+            app.ErrorLampLabel.FontColor = [0.5412 0.2706 0.0706];
+            app.ErrorLampLabel.Position = [92 403 78 37];
+            app.ErrorLampLabel.Text = 'Error';
+
+            % Create ErrorLamp
+            app.ErrorLamp = uilamp(app.UIFigure);
+            app.ErrorLamp.Position = [408 403 42 42];
+            app.ErrorLamp.Color = [1 1 1];
+
+            % Create AanhetsimulerenLampLabel
+            app.AanhetsimulerenLampLabel = uilabel(app.UIFigure);
+            app.AanhetsimulerenLampLabel.FontName = 'Bahnschrift';
+            app.AanhetsimulerenLampLabel.FontSize = 30;
+            app.AanhetsimulerenLampLabel.FontColor = [0.5412 0.2706 0.0706];
+            app.AanhetsimulerenLampLabel.Position = [92 353 254 37];
+            app.AanhetsimulerenLampLabel.Text = 'Aan het simuleren';
+
+            % Create AanhetsimulerenLamp
+            app.AanhetsimulerenLamp = uilamp(app.UIFigure);
+            app.AanhetsimulerenLamp.Position = [408 353 42 42];
+            app.AanhetsimulerenLamp.Color = [1 1 1];
+
+            % Create KlaarvoorsimulatieLampLabel
+            app.KlaarvoorsimulatieLampLabel = uilabel(app.UIFigure);
+            app.KlaarvoorsimulatieLampLabel.FontName = 'Bahnschrift';
+            app.KlaarvoorsimulatieLampLabel.FontSize = 30;
+            app.KlaarvoorsimulatieLampLabel.FontColor = [0.5412 0.2706 0.0706];
+            app.KlaarvoorsimulatieLampLabel.Position = [92 306 281 37];
+            app.KlaarvoorsimulatieLampLabel.Text = 'Klaar voor simulatie';
+
+            % Create KlaarvoorsimulatieLamp
+            app.KlaarvoorsimulatieLamp = uilamp(app.UIFigure);
+            app.KlaarvoorsimulatieLamp.Position = [408 306 42 42];
 
             % Show the figure after all components are created
             app.UIFigure.Visible = 'on';
