@@ -39,6 +39,21 @@ coordinate_names = model_info.ExtFunIO.coord_names.all;
 %%
 
 Qs_guess = getIK(S.subject.IG_selection,model_info);
+
+% change the Qs of ankle to avoid high constraint violation when limiting
+% plantar flexion
+
+for i = 1:length(Qs_guess.allfilt)
+    if Qs_guess.allfilt(i,7) < S.subject.plant_flex_lim
+        Qs_guess.allfilt(i,7) = S.subject.plant_flex_lim;
+    end
+    if Qs_guess.allfilt(i,11) < S.subject.plant_flex_lim
+        Qs_guess.allfilt(i,11) = S.subject.plant_flex_lim;
+    end
+end
+
+
+
 if strcmp(S.misc.gaitmotion_type,'FullGaitCycle')
     endIdx = round(size(Qs_guess.allfilt,1)*100/S.subject.IG_selection_gaitCyclePercent);
 elseif strcmp(S.misc.gaitmotion_type,'HalfGaitCycle')
