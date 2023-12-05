@@ -92,6 +92,7 @@ S.subject.set_damping_coefficient_selected_dofs = {{'mtp_angle_l','mtp_angle_r'}
 % large K_pass 3 and 4 to replicate steel cable
 S.subject.set_limit_torque_coefficients_selected_dofs = {{'ankle_angle_r','ankle_angle_l'},[-2.03,38.11,50,-200],[U.plant_flex_lim, 0.52]};
 S.subject.plant_flex_lim = U.plant_flex_lim;
+S.subject.plant_flex_lim_deg = S.subject.plant_flex_lim*180/pi;
 
 S.subject.adapt_IG_pelvis_y = 1;
 

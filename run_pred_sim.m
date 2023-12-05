@@ -34,7 +34,7 @@ elseif isempty(S.post_process.result_filename)
             cond = 1;
             ct = 1;
             while cond
-                result_filename = [S.subject.name '_v' num2str(ct)];
+                result_filename = [S.subject.name '_pfl_' num2str(S.subject.plant_flex_lim_deg) '_v' num2str(ct)];
                 if ~isfile(fullfile(OutFolder,[result_filename '.mat']))
                     cond = 0;
                 end
