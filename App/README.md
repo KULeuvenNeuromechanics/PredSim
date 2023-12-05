@@ -1,5 +1,5 @@
 
-App developed for Kinderuniversiteit Leuven - Gasthuisberg 2022
+App developed for Kinderuniversiteit Leuven - Gasthuisberg 2022 and updated for a research internship.
 =================
 
 # Installation
@@ -15,3 +15,9 @@ Specifics for the app:
 After changing the .mlap file, you can export the app to a .m file; that is easier to use. 
 
 Run the exported .m file and see if it works.
+
+# Simulating
+
+Specifics using the GUI
+- Groep: give your group name, this will be the subfolder where results will be stored
+- Modelnaam: this name should be unique for each model. I.e. if changeing model length or model mass you should give a new name.

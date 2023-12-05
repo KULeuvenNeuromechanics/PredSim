@@ -3,18 +3,17 @@ classdef Vitruvian_Man_NL_exported < matlab.apps.AppBase
     % Properties that correspond to app components
     properties (Access = public)
         UIFigure                      matlab.ui.Figure
+        msLabel                       matlab.ui.control.Label
+        SnelheidSpinner               matlab.ui.control.Spinner
+        SnelheidSpinnerLabel          matlab.ui.control.Label
+        GroepEditFieldLabel_2         matlab.ui.control.Label
         KlaarvoorsimulatieLamp        matlab.ui.control.Lamp
         KlaarvoorsimulatieLampLabel   matlab.ui.control.Label
         AanhetsimulerenLamp           matlab.ui.control.Lamp
         AanhetsimulerenLampLabel      matlab.ui.control.Label
-        ErrorLamp                     matlab.ui.control.Lamp
-        ErrorLampLabel                matlab.ui.control.Label
         PlantairflexielimitEditField  matlab.ui.control.NumericEditField
         PlantairflexielimitEditFieldLabel  matlab.ui.control.Label
         Label_2                       matlab.ui.control.Label
-        kmuLabel                      matlab.ui.control.Label
-        SnelheidSlider                matlab.ui.control.Slider
-        SnelheidSliderLabel           matlab.ui.control.Label
         NaamAfstandSnelheidListBox    matlab.ui.control.ListBox
         NaamAfstandLabel              matlab.ui.control.Label
         SluitvideoButton              matlab.ui.control.Button
@@ -175,7 +174,7 @@ classdef Vitruvian_Man_NL_exported < matlab.apps.AppBase
                 return
             end
 
-            app.ErrorLamp.Color = [1 1 1]; % white
+            app.StartsimulatieButton.Enable = 'off';
             app.AanhetsimulerenLamp.Color = [0.93,0.69,0.13]; % orange
             app.KlaarvoorsimulatieLamp.Color = [1 1 1]; % white
             pause(0.5); % pause added to allow for color update
@@ -187,7 +186,7 @@ classdef Vitruvian_Man_NL_exported < matlab.apps.AppBase
             U.Mass = app.MassaEditField.Value;
             U.Force_sf = app.SpierkrachtEditField.Value/100;
             U.plant_flex_lim = app.PlantairflexielimitEditField.Value/180*pi;
-            U.Speed = app.SnelheidSlider.Value/3.6;
+            U.Speed = app.SnelheidSpinner.Value;
             U.PathCasadi = app.path_casadi;
 
             sf.foot = 1;
@@ -199,14 +198,15 @@ classdef Vitruvian_Man_NL_exported < matlab.apps.AppBase
             sf.torso = 1;
 
             % start simulation
-            resultpath = PredSim_wrapper_for_app(U,sf);
+            PredSim_wrapper_for_app(U,sf);
 
-            app.ErrorLamp.Color = [1 1 1]; % white
             app.AanhetsimulerenLamp.Color = [1 1 1]; % white
             app.KlaarvoorsimulatieLamp.Color = [0 1 0]; % green
 
             % add result to table
             loadResultsTable(app)
+
+            app.StartsimulatieButton.Enable = 'on';
 
         end
 
@@ -322,14 +322,16 @@ classdef Vitruvian_Man_NL_exported < matlab.apps.AppBase
 
         end
 
-        % Value changed function: SnelheidSlider
-        function SnelheidSliderValueChanged(app, event)
-
-        end
-
         % Value changed function: LichaamslengteEditField
         function LichaamslengteEditFieldValueChanged(app, event)
+            app.NaamEditField.Value = '';    
+            app.NaamEditField.Placeholder = '(geef nieuwe naam)';
+        end
 
+        % Value changed function: MassaEditField
+        function MassaEditFieldValueChanged(app, event)
+            app.NaamEditField.Value = '';    
+            app.NaamEditField.Placeholder = '(geef nieuwe naam)';
         end
     end
 
@@ -351,25 +353,26 @@ classdef Vitruvian_Man_NL_exported < matlab.apps.AppBase
             app.GroepEditFieldLabel.FontName = 'Bahnschrift';
             app.GroepEditFieldLabel.FontSize = 30;
             app.GroepEditFieldLabel.FontColor = [0.5412 0.2706 0.0706];
-            app.GroepEditFieldLabel.Position = [88 798 86 42];
+            app.GroepEditFieldLabel.Position = [88 762 86 42];
             app.GroepEditFieldLabel.Text = 'Groep';
 
             % Create GroepEditField
             app.GroepEditField = uieditfield(app.UIFigure, 'text');
             app.GroepEditField.ValueChangedFcn = createCallbackFcn(app, @GroepEditFieldValueChanged, true);
+            app.GroepEditField.HorizontalAlignment = 'center';
             app.GroepEditField.FontName = 'Bahnschrift';
             app.GroepEditField.FontSize = 22;
             app.GroepEditField.FontColor = [0.5412 0.2706 0.0706];
             app.GroepEditField.BackgroundColor = [1 0.9725 0.8627];
-            app.GroepEditField.Placeholder = '(Geef de naam van jouw groepje)';
-            app.GroepEditField.Position = [173 802 344 31];
+            app.GroepEditField.Placeholder = '(Naam groep)';
+            app.GroepEditField.Position = [206 766 306 31];
 
             % Create LichaamslengteEditFieldLabel
             app.LichaamslengteEditFieldLabel = uilabel(app.UIFigure);
             app.LichaamslengteEditFieldLabel.FontName = 'Bahnschrift';
             app.LichaamslengteEditFieldLabel.FontSize = 30;
             app.LichaamslengteEditFieldLabel.FontColor = [0.5412 0.2706 0.0706];
-            app.LichaamslengteEditFieldLabel.Position = [88 688 220 37];
+            app.LichaamslengteEditFieldLabel.Position = [88 622 220 37];
             app.LichaamslengteEditFieldLabel.Text = 'Lichaamslengte';
 
             % Create LichaamslengteEditField
@@ -382,7 +385,7 @@ classdef Vitruvian_Man_NL_exported < matlab.apps.AppBase
             app.LichaamslengteEditField.FontSize = 30;
             app.LichaamslengteEditField.FontColor = [0.5412 0.2706 0.0706];
             app.LichaamslengteEditField.BackgroundColor = [1 0.9725 0.8627];
-            app.LichaamslengteEditField.Position = [388 687 74 38];
+            app.LichaamslengteEditField.Position = [388 621 74 38];
             app.LichaamslengteEditField.Value = 180;
 
             % Create cmLabel
@@ -390,7 +393,7 @@ classdef Vitruvian_Man_NL_exported < matlab.apps.AppBase
             app.cmLabel.FontName = 'Bahnschrift';
             app.cmLabel.FontSize = 30;
             app.cmLabel.FontColor = [0.5412 0.2706 0.0706];
-            app.cmLabel.Position = [487 688 46 37];
+            app.cmLabel.Position = [487 622 46 37];
             app.cmLabel.Text = 'cm';
 
             % Create Onderzoeksstage2023PHABLabel
@@ -409,7 +412,7 @@ classdef Vitruvian_Man_NL_exported < matlab.apps.AppBase
             app.StartsimulatieButton.FontName = 'Bahnschrift';
             app.StartsimulatieButton.FontSize = 30;
             app.StartsimulatieButton.FontColor = [0.5412 0.2706 0.0706];
-            app.StartsimulatieButton.Position = [1022 59 314 61];
+            app.StartsimulatieButton.Position = [118 70 314 61];
             app.StartsimulatieButton.Text = 'Start simulatie';
 
             % Create NaamEditField
@@ -417,18 +420,18 @@ classdef Vitruvian_Man_NL_exported < matlab.apps.AppBase
             app.NaamEditField.ValueChangedFcn = createCallbackFcn(app, @NaamEditFieldValueChanged, true);
             app.NaamEditField.HorizontalAlignment = 'center';
             app.NaamEditField.FontName = 'Bahnschrift';
-            app.NaamEditField.FontSize = 30;
+            app.NaamEditField.FontSize = 22;
             app.NaamEditField.FontColor = [0.5412 0.2706 0.0706];
             app.NaamEditField.BackgroundColor = [1 0.9725 0.8627];
-            app.NaamEditField.Placeholder = '(Jouw naam)';
-            app.NaamEditField.Position = [145 743 244 41];
+            app.NaamEditField.Placeholder = '(Modelnaam)';
+            app.NaamEditField.Position = [269 722 244 31];
 
             % Create kgLabel
             app.kgLabel = uilabel(app.UIFigure);
             app.kgLabel.FontName = 'Bahnschrift';
             app.kgLabel.FontSize = 30;
             app.kgLabel.FontColor = [0.5412 0.2706 0.0706];
-            app.kgLabel.Position = [487 623 38 37];
+            app.kgLabel.Position = [487 557 38 37];
             app.kgLabel.Text = 'kg';
 
             % Create MassaEditFieldLabel
@@ -436,19 +439,20 @@ classdef Vitruvian_Man_NL_exported < matlab.apps.AppBase
             app.MassaEditFieldLabel.FontName = 'Bahnschrift';
             app.MassaEditFieldLabel.FontSize = 30;
             app.MassaEditFieldLabel.FontColor = [0.5412 0.2706 0.0706];
-            app.MassaEditFieldLabel.Position = [88 618 124 42];
+            app.MassaEditFieldLabel.Position = [88 552 124 42];
             app.MassaEditFieldLabel.Text = 'Massa';
 
             % Create MassaEditField
             app.MassaEditField = uieditfield(app.UIFigure, 'numeric');
             app.MassaEditField.Limits = [20 300];
             app.MassaEditField.ValueDisplayFormat = '%111g';
+            app.MassaEditField.ValueChangedFcn = createCallbackFcn(app, @MassaEditFieldValueChanged, true);
             app.MassaEditField.HorizontalAlignment = 'center';
             app.MassaEditField.FontName = 'Bahnschrift';
             app.MassaEditField.FontSize = 30;
             app.MassaEditField.FontColor = [0.5412 0.2706 0.0706];
             app.MassaEditField.BackgroundColor = [1 0.9725 0.8627];
-            app.MassaEditField.Position = [388 622 74 38];
+            app.MassaEditField.Position = [388 556 74 38];
             app.MassaEditField.Value = 75;
 
             % Create Label
@@ -456,7 +460,7 @@ classdef Vitruvian_Man_NL_exported < matlab.apps.AppBase
             app.Label.FontName = 'Bahnschrift';
             app.Label.FontSize = 30;
             app.Label.FontColor = [0.5412 0.2706 0.0706];
-            app.Label.Position = [487 548 26 37];
+            app.Label.Position = [487 482 26 37];
             app.Label.Text = '%';
 
             % Create SpierkrachtEditFieldLabel
@@ -464,7 +468,7 @@ classdef Vitruvian_Man_NL_exported < matlab.apps.AppBase
             app.SpierkrachtEditFieldLabel.FontName = 'Bahnschrift';
             app.SpierkrachtEditFieldLabel.FontSize = 30;
             app.SpierkrachtEditFieldLabel.FontColor = [0.5412 0.2706 0.0706];
-            app.SpierkrachtEditFieldLabel.Position = [88 548 163 37];
+            app.SpierkrachtEditFieldLabel.Position = [88 482 163 37];
             app.SpierkrachtEditFieldLabel.Text = 'Spierkracht';
 
             % Create SpierkrachtEditField
@@ -476,7 +480,7 @@ classdef Vitruvian_Man_NL_exported < matlab.apps.AppBase
             app.SpierkrachtEditField.FontSize = 30;
             app.SpierkrachtEditField.FontColor = [0.5412 0.2706 0.0706];
             app.SpierkrachtEditField.BackgroundColor = [1 0.9725 0.8627];
-            app.SpierkrachtEditField.Position = [388 547 74 38];
+            app.SpierkrachtEditField.Position = [388 481 74 38];
             app.SpierkrachtEditField.Value = 100;
 
             % Create SpeelvideoButton
@@ -514,48 +518,19 @@ classdef Vitruvian_Man_NL_exported < matlab.apps.AppBase
             app.NaamAfstandSnelheidListBox = uilistbox(app.UIFigure);
             app.NaamAfstandSnelheidListBox.Items = {};
             app.NaamAfstandSnelheidListBox.ValueChangedFcn = createCallbackFcn(app, @NaamAfstandSnelheidListBoxValueChanged, true);
-            app.NaamAfstandSnelheidListBox.FontName = 'Blackadder ITC';
+            app.NaamAfstandSnelheidListBox.FontName = 'Bahnschrift';
             app.NaamAfstandSnelheidListBox.FontSize = 30;
             app.NaamAfstandSnelheidListBox.FontColor = [0.5412 0.2706 0.0706];
             app.NaamAfstandSnelheidListBox.BackgroundColor = [0.9216 0.8706 0.6706];
             app.NaamAfstandSnelheidListBox.Position = [1430 157 384 644];
             app.NaamAfstandSnelheidListBox.Value = {};
 
-            % Create SnelheidSliderLabel
-            app.SnelheidSliderLabel = uilabel(app.UIFigure);
-            app.SnelheidSliderLabel.FontName = 'Bahnschrift';
-            app.SnelheidSliderLabel.FontSize = 25;
-            app.SnelheidSliderLabel.FontColor = [0.5412 0.2706 0.0706];
-            app.SnelheidSliderLabel.Position = [88 88 123 42];
-            app.SnelheidSliderLabel.Text = 'Snelheid';
-
-            % Create SnelheidSlider
-            app.SnelheidSlider = uislider(app.UIFigure);
-            app.SnelheidSlider.Limits = [1 10];
-            app.SnelheidSlider.MajorTicks = [1 5 10 15 20];
-            app.SnelheidSlider.MajorTickLabels = {'1', '5', '10', '15', 'max'};
-            app.SnelheidSlider.ValueChangedFcn = createCallbackFcn(app, @SnelheidSliderValueChanged, true);
-            app.SnelheidSlider.MinorTicks = [1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20];
-            app.SnelheidSlider.FontName = 'Bahnschrift';
-            app.SnelheidSlider.FontSize = 25;
-            app.SnelheidSlider.FontColor = [0.5412 0.2706 0.0706];
-            app.SnelheidSlider.Position = [226 119 224 3];
-            app.SnelheidSlider.Value = 5;
-
-            % Create kmuLabel
-            app.kmuLabel = uilabel(app.UIFigure);
-            app.kmuLabel.FontName = 'Bahnschrift';
-            app.kmuLabel.FontSize = 30;
-            app.kmuLabel.FontColor = [0.5412 0.2706 0.0706];
-            app.kmuLabel.Position = [474 91 75 37];
-            app.kmuLabel.Text = 'km/u';
-
             % Create Label_2
             app.Label_2 = uilabel(app.UIFigure);
             app.Label_2.FontName = 'Bahnschrift';
             app.Label_2.FontSize = 30;
             app.Label_2.FontColor = [0.5412 0.2706 0.0706];
-            app.Label_2.Position = [487 480 25 37];
+            app.Label_2.Position = [487 414 25 37];
             app.Label_2.Text = '°';
 
             % Create PlantairflexielimitEditFieldLabel
@@ -563,7 +538,7 @@ classdef Vitruvian_Man_NL_exported < matlab.apps.AppBase
             app.PlantairflexielimitEditFieldLabel.FontName = 'Bahnschrift';
             app.PlantairflexielimitEditFieldLabel.FontSize = 30;
             app.PlantairflexielimitEditFieldLabel.FontColor = [0.5412 0.2706 0.0706];
-            app.PlantairflexielimitEditFieldLabel.Position = [88 480 263 37];
+            app.PlantairflexielimitEditFieldLabel.Position = [88 414 263 37];
             app.PlantairflexielimitEditFieldLabel.Text = 'Plantair flexie limit';
 
             % Create PlantairflexielimitEditField
@@ -575,33 +550,20 @@ classdef Vitruvian_Man_NL_exported < matlab.apps.AppBase
             app.PlantairflexielimitEditField.FontSize = 30;
             app.PlantairflexielimitEditField.FontColor = [0.5412 0.2706 0.0706];
             app.PlantairflexielimitEditField.BackgroundColor = [1 0.9725 0.8627];
-            app.PlantairflexielimitEditField.Position = [388 479 74 38];
+            app.PlantairflexielimitEditField.Position = [388 413 74 38];
             app.PlantairflexielimitEditField.Value = -30;
-
-            % Create ErrorLampLabel
-            app.ErrorLampLabel = uilabel(app.UIFigure);
-            app.ErrorLampLabel.FontName = 'Bahnschrift';
-            app.ErrorLampLabel.FontSize = 30;
-            app.ErrorLampLabel.FontColor = [0.5412 0.2706 0.0706];
-            app.ErrorLampLabel.Position = [92 403 78 37];
-            app.ErrorLampLabel.Text = 'Error';
-
-            % Create ErrorLamp
-            app.ErrorLamp = uilamp(app.UIFigure);
-            app.ErrorLamp.Position = [408 403 42 42];
-            app.ErrorLamp.Color = [1 1 1];
 
             % Create AanhetsimulerenLampLabel
             app.AanhetsimulerenLampLabel = uilabel(app.UIFigure);
             app.AanhetsimulerenLampLabel.FontName = 'Bahnschrift';
             app.AanhetsimulerenLampLabel.FontSize = 30;
             app.AanhetsimulerenLampLabel.FontColor = [0.5412 0.2706 0.0706];
-            app.AanhetsimulerenLampLabel.Position = [92 353 254 37];
+            app.AanhetsimulerenLampLabel.Position = [104 252 254 37];
             app.AanhetsimulerenLampLabel.Text = 'Aan het simuleren';
 
             % Create AanhetsimulerenLamp
             app.AanhetsimulerenLamp = uilamp(app.UIFigure);
-            app.AanhetsimulerenLamp.Position = [408 353 42 42];
+            app.AanhetsimulerenLamp.Position = [420 252 42 42];
             app.AanhetsimulerenLamp.Color = [1 1 1];
 
             % Create KlaarvoorsimulatieLampLabel
@@ -609,12 +571,46 @@ classdef Vitruvian_Man_NL_exported < matlab.apps.AppBase
             app.KlaarvoorsimulatieLampLabel.FontName = 'Bahnschrift';
             app.KlaarvoorsimulatieLampLabel.FontSize = 30;
             app.KlaarvoorsimulatieLampLabel.FontColor = [0.5412 0.2706 0.0706];
-            app.KlaarvoorsimulatieLampLabel.Position = [92 306 281 37];
+            app.KlaarvoorsimulatieLampLabel.Position = [104 205 281 37];
             app.KlaarvoorsimulatieLampLabel.Text = 'Klaar voor simulatie';
 
             % Create KlaarvoorsimulatieLamp
             app.KlaarvoorsimulatieLamp = uilamp(app.UIFigure);
-            app.KlaarvoorsimulatieLamp.Position = [408 306 42 42];
+            app.KlaarvoorsimulatieLamp.Position = [420 205 42 42];
+
+            % Create GroepEditFieldLabel_2
+            app.GroepEditFieldLabel_2 = uilabel(app.UIFigure);
+            app.GroepEditFieldLabel_2.FontName = 'Bahnschrift';
+            app.GroepEditFieldLabel_2.FontSize = 30;
+            app.GroepEditFieldLabel_2.FontColor = [0.5412 0.2706 0.0706];
+            app.GroepEditFieldLabel_2.Position = [92 712 160 42];
+            app.GroepEditFieldLabel_2.Text = 'Modelnaam';
+
+            % Create SnelheidSpinnerLabel
+            app.SnelheidSpinnerLabel = uilabel(app.UIFigure);
+            app.SnelheidSpinnerLabel.FontName = 'Bahnschrift';
+            app.SnelheidSpinnerLabel.FontSize = 30;
+            app.SnelheidSpinnerLabel.FontColor = [0.5412 0.2706 0.0706];
+            app.SnelheidSpinnerLabel.Position = [88 349 122 37];
+            app.SnelheidSpinnerLabel.Text = 'Snelheid';
+
+            % Create SnelheidSpinner
+            app.SnelheidSpinner = uispinner(app.UIFigure);
+            app.SnelheidSpinner.Step = 0.01;
+            app.SnelheidSpinner.FontName = 'Bahnschrift';
+            app.SnelheidSpinner.FontSize = 30;
+            app.SnelheidSpinner.FontColor = [0.5412 0.2706 0.0706];
+            app.SnelheidSpinner.BackgroundColor = [1 0.9686 0.8588];
+            app.SnelheidSpinner.Position = [388 348 100 38];
+            app.SnelheidSpinner.Value = 1.33;
+
+            % Create msLabel
+            app.msLabel = uilabel(app.UIFigure);
+            app.msLabel.FontName = 'Bahnschrift';
+            app.msLabel.FontSize = 30;
+            app.msLabel.FontColor = [0.5412 0.2706 0.0706];
+            app.msLabel.Position = [503 352 58 37];
+            app.msLabel.Text = 'm/s';
 
             % Show the figure after all components are created
             app.UIFigure.Visible = 'on';
