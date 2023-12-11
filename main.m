@@ -16,7 +16,7 @@ clc
 pathDefaultSettings = fullfile(pathRepo,'DefaultSettings');
 addpath(pathDefaultSettings)
 
-[S] = initializeSettings();
+[S] = initializeSettings('DHondt_2023_3seg');
 S.misc.main_path = pathRepo;
 
 addpath(fullfile(S.misc.main_path,'VariousFunctions'))
@@ -57,10 +57,10 @@ S.solver.run_as_batch_job = 0;
 % S.bounds.dist_trav.lower    = ;
 % S.bounds.t_final.upper      = ;
 % S.bounds.t_final.lower      = ;
-S.bounds.coordinates        = {'pelvis_ty',0.55,1.1, 'pelvis_tilt',-2.9302,nan};
+% S.bounds.coordinates        = {'pelvis_ty',0.55,1.1, 'pelvis_tilt',-2.9302,nan};
 
 % % S.metabolicE - metabolic energy
-S.metabolicE.tanh_b = 100;
+% S.metabolicE.tanh_b = 100;
 % S.metabolicE.model  = '';
 
 % % S.misc - miscellanious
@@ -84,10 +84,10 @@ S.post_process.make_plot = 0;
 % % S.solver
 % S.solver.linear_solver  = '';
 % S.solver.tol_ipopt      = ;
-S.solver.max_iter       = 5;
+% S.solver.max_iter       = 5;
 % S.solver.parallel_mode  = '';
 % S.solver.N_threads      = 6;
-S.solver.N_meshes       = 100;
+% S.solver.N_meshes       = 100;
 % S.solver.par_cluster_name = ;
 % S.solver.CasADi_path    = 'C:\GBW_MyPrograms\casadi_3_5_5';
 
@@ -99,9 +99,9 @@ S.solver.N_meshes       = 100;
 S.subject.v_pelvis_x_trgt   = 1.33;
 % S.subject.IK_Bounds = ;
 % S.subject.muscle_strength   = ;
-S.subject.muscle_pass_stiff_shift = {{'soleus','_gas','per_','tib_','_dig_','_hal_','FDB'},0.9}; %,'FDB'
+% S.subject.muscle_pass_stiff_shift = {{'soleus','_gas','per_','tib_','_dig_','_hal_','FDB'},0.9}; %,'FDB'
 % S.subject.muscle_pass_stiff_scale = ;
-S.subject.tendon_stiff_scale      = {{'soleus','_gas'},0.5};
+% S.subject.tendon_stiff_scale      = {{'soleus','_gas'},0.5};
 % S.subject.scale_MT_params = {{'soleus_l'},'FMo',0.9,{'soleus_l'},'alphao',1.1};
 % S.subject.spasticity        = ;
 % S.subject.muscle_coordination = ;
