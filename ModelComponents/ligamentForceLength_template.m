@@ -13,13 +13,13 @@ function [force] = ligamentForceLength_template(cross_section_area,slack_length,
 % 
 % INPUT:
 %   - cross_section_area -
-%   * cross section area of the plantar fascia, in mm^2
+%   * cross section area of the ligament, in mm^2
 %
 %   - slack_length -
-%   * plantar fascia length at zero force, in m
+%   * ligament length at zero force, in m
 %
 %   - PF_length -
-%   * plantar fascia length, in m
+%   * ligament length, in m
 %
 %
 % OUTPUT:
@@ -29,15 +29,20 @@ function [force] = ligamentForceLength_template(cross_section_area,slack_length,
 % 
 % Original author: (First name Last name)
 % Original date: (Using "30/May/2022" format avoids confusion)
-%
-% Last edit by: 
-% Last edit date: 
 % --------------------------------------------------------------------------
 
+Youngs_modulus = 500; % [MPa] (= [N/mm^2])
 
-elongation = lig_length - slack_length;
+strain = (lig_length - slack_length)/slack_length; % [-]
 
-force = cross_section_area*elongation*0;
+stress = Youngs_modulus*strain; % [MPa]
+
+F = cross_section_area*stress; % [N]
     
+% make sure there is no force at negative elongation
+% e.g.  strain < 0: force = 0
+%       strain > 2%: force = F
+force = F.*smoothIf(strain, 0.02, 0); % [N]
+
 
 end
