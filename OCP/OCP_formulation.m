@@ -338,7 +338,10 @@ for j=1:d
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Call external function (run inverse dynamics)
     [Tj] = F([QsQdotskj_nsc(:,j+1);Aj_nsc(:,j)]);
-% 
+
+    % Evaluate ligament moment
+    M_lig_j = f_casadi.ligamentMoment(Qskj_nsc(:,j+1));
+
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Add path constraints
     for i=1:nq.all
@@ -366,6 +369,9 @@ for j=1:d
             Ti = Ti + T_act_i;
         end
 
+        % ligament moment
+        Ti = Ti + M_lig_j(i);
+        
         % passive moment
         if ~ismember(i,model_info.ExtFunIO.jointi.floating_base)
             Ti = Ti + Tau_passj(i);

@@ -1,7 +1,7 @@
-function [muscle_spanning_joint_info,varargout] = get_muscle_spanning_joint_info(S,osim_path,model_info)
+function [muscle_spanning_joint_info,varargout] = get_muscle_spanning_joint_info(S,osim_path,model_info,varargin)
 % --------------------------------------------------------------------------
 % get_muscle_spanning_joint_info
-%   Find out which muscles span wich joint, thus interacts with its
+%   Find out which muscles span which joint, thus interacts with its
 %   associated coordinates.
 % 
 % INPUT:
@@ -26,6 +26,10 @@ function [muscle_spanning_joint_info,varargout] = get_muscle_spanning_joint_info
 %   * table with a column for each coordinate and a row for each muscle. 1
 %   means this muscle and coordinate interact, 0 means they don't
 %
+%   - analyse_ligaments (Optional input)-
+%   * Pass argument 'ligaments' to analyse ligaments instead of
+%   muscle-tendon paths
+%
 % Original author: Lars D'Hondt
 % Original date: 05/April/2022
 %
@@ -44,8 +48,17 @@ n_muscle = model_info.muscle_info.NMuscle;
 n_coord = length(coord_names);
 n_data_points = 6;
 
+if contains(varargin,'ligaments')
+    muscle_names = model_info.ligament_info.ligament_names;
+    n_muscle = model_info.ligament_info.NLigament;
+    ligaments_bool = 1;
+else
+    ligaments_bool = 0;
+end
+
 % get dummy motion
 Qs = generate_dummy_motion(S,model_info,n_data_points);
+
 
 %% Initialise model
 import org.opensim.modeling.*;
@@ -54,7 +67,11 @@ s = model.initSystem;
 % Get state vector
 state_vars = model.getStateVariableValues(s);
 % Get set of muscles
-muscles = model.getMuscles();
+if ligaments_bool
+    force_set = model.getForceSet();
+else
+    force_set = model.getMuscles();
+end
 
 %% Find combinations
 % Set state vector to 0
@@ -77,7 +94,10 @@ for j=1:n_data_points
 
     % Loop over muscles
     for m=1:n_muscle
-        muscle_m = muscles.get(muscle_names{m});
+        muscle_m = force_set.get(muscle_names{m});
+        if ligaments_bool
+            muscle_m = Ligament.safeDownCast(muscle_m);
+        end
 
         % Get moment arm for each joint
         for i=1:n_coord
@@ -99,7 +119,10 @@ state_vars.setToZero();
 model.setStateVariableValues(s,state_vars);
 model.realizePosition(s);
 for m=1:n_muscle
-    muscle_m = muscles.get(muscle_names{m});
+    muscle_m = force_set.get(muscle_names{m});
+    if ligaments_bool
+        muscle_m = Ligament.safeDownCast(muscle_m);
+    end
     lMT0(m) = muscle_m.getLength(s);          
 end
 
@@ -114,7 +137,10 @@ for j=1:n_data_points
     
         % Loop over muscles
         for m=1:n_muscle
-            muscle_m = muscles.get(muscle_names{m});
+            muscle_m = force_set.get(muscle_names{m});
+            if ligaments_bool
+                muscle_m = Ligament.safeDownCast(muscle_m);
+            end
     
             lMT(j,m,i) = muscle_m.getLength(s);
                 

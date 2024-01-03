@@ -111,6 +111,7 @@ disp(' ')
 
 %% Creating casadi functions
 addpath([S.misc.main_path '\CasadiFunctions'])
+addpath([S.misc.main_path '\ModelComponents'])
 disp('Start creating CasADi functions...')
 disp(' ')
 t0 = tic;

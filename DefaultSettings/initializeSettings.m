@@ -1,11 +1,13 @@
-function [S] = initializeSettings()
+function [S] = initializeSettings(varargin)
 % --------------------------------------------------------------------------
 %initializeSettings
 %   This function creates the empty settings struct S up to the field 
 %   above the field containing data. 
 % 
 % INPUT:
-%   * no input arguments
+%   - reference_name - (optional input)
+%   * pass the name of a reference model to initialise the settings
+%   according to the relevant publication. 
 % 
 % OUTPUT:
 %   - S -
@@ -47,6 +49,26 @@ S.misc.poly_order = [];
 
 % initiate for warning
 S.subject.adapt_IG_pelvis_y = 0;
+
+
+%%
+if ~isempty(varargin)
+
+    [pathDefaultSettings,~,~] = fileparts(mfilename('fullpath'));
+    [pathRepo,~,~] = fileparts(pathDefaultSettings);
+
+    reference_path = fullfile(pathRepo,'Subjects',varargin{1},['settings_',varargin{1},'.m']);
+
+    if isfile(reference_path)
+        disp(['Initialising settings from "',reference_path,'".'])
+        run(reference_path);
+    else
+        warning(['Could not initialise from "',reference_path,'". ',...
+            'Ignoring input argument "',varargin{1},'".']);
+    end
+
+
+end
 
 
 end

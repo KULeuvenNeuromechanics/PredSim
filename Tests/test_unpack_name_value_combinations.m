@@ -29,6 +29,10 @@ test_input = {{'name1','name4'},[],0.5,'name2',1.3,[]};
 [values1,values2] = unpack_name_value_combinations(test_input,names_all,[1,1]);
 
 
+%% example with char
+test_input = {{'name1','name4'},'test','name2','test2'};
+[values1] = unpack_name_value_combinations(test_input,names_all,[1]);
+
 
 
 
