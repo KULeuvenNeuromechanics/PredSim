@@ -48,6 +48,7 @@ To run this code you need to have the following softwares on your machine:
 - [CasADi](https://web.casadi.org/get/). The code has been tested on CasADi 3.5.5.
 - [Microsoft Visual Studio](https://visualstudio.microsoft.com/). In Visual Studio Installer, [select to include Desktop development with C++](/FiguresForDocumentation/fig_MSVS.png). The code has been tested on MSVS Community 2015, 2017, 2019, and 2022.
 - [CMake](https://cmake.org/download/). The code has been tested on CMake 3.22.0.
+- [Git](https://git-scm.com/download/win). The code has been tested on Git 2.40.0.windows.1. Add Git to your system Path.
 
 
 ## How to setup the code
@@ -151,16 +152,30 @@ This code can automatically convert an OpenSim model to the external function us
 	- minimal order of polynomial function. Default is *3* [double]
 - **S.misc.poly_order.upper**: 
 	- maximal order of polynomial function. Default is *9* [double]
+- **S.misc.default_msk_geom_bound**:
+	- file with default values for upper and lower bounds for approximating musculoskeletal geometry. Rotations are assumed in degrees, translations in meters. Default is *'default_msk_geom_bounds.csv'* [char].
+	The provided file should be compatible with [`readtable`](https://mathworks.com/help/matlab/ref/readtable.html). The table should contain a column with coordinate names (header: name), a column with lower bounds, in degrees and meters (header: lower), and a column with upper bounds, in degrees and meters (header: upper). To set only the upper or lower bound of a coordinate, set the other one to `nan`;
 - **S.misc.msk_geom_bounds**: 
-	- Cell array where 1st entry is dof name(s) , 2nd entry is its lower bounds, and 3rd entry is its upper bounds. Insert nan to lower bounds to only overwrite upper bounds. For another bound, add 3 more entries. For example, {{'knee_angle_r','knee_angle_l'},-120,10,'pelvis_tilt',nan,30} implements limit of -120 and 10 on knee angles, and default lower bund with 30 upper bound for pelvis_tilt. Defaults values are defined in the function [get_default_bounds_dummy_motion.m file](./PreProcessing/get_default_bounds_dummy_motion.m).
+	- Cell array where 1st entry is dof name(s) , 2nd entry is its lower bounds, and 3rd entry is its upper bounds. Insert nan to lower bounds to only overwrite upper bounds. For another bound, add 3 more entries. For example, {{'knee_angle_r','knee_angle_l'},-120,10,'lumbar_extension',nan,30} implements limit of -120° and 10° on knee angles, and default lower bound with 30° upper bound for lumbar_extension.
+	> Order of priority for bounds:
+	> 1. Individual bounds from settings (S.misc.msk_geom_bounds)
+	> 2. Default bounds from table (S.misc.default_msk_geom_bound)
+	> 3. Read from model file. Qs: min and max coordinate values
 - **S.misc.msk_geom_n_samples**:
 	- Number of samples for the dummy motion that is used to fit the approximated musculoskeletal geometry. Default is *5000* [double]
+
 - **S.misc.visualize_bounds**: 
 	- specify if bounds and initial guess are visualized (0 or 1). Default is *0* [double]
 - **S.misc.dampingCoefficient**: 
 	- damping coefficient of muscles. Default is *0.01* [double]. Used as damping value that is multiplied by the normalized muscle velocity, in the muscle velocity dependent term in calculation of normalized contractile element force of the muscle.
 - **S.misc.constant_pennation_angle**: 
 	- specify if pennation angle of the muscles is supposed to stay constant (0 or 1). Default is *0* [double]
+- **S.misc.git.local_hash**: 
+	- hash of the local instance [char]. This is the identifier of the version of the code on your machine. You cannot change this setting.
+- **S.misc.git.branch_name**: 
+	- current branch of the local instance [char]. You cannot change this setting.
+- **S.misc.git.remote_hash**: 
+	- hash of the last commit on the remote [char]. This is the identifier of the latest version on the remote, i.e. GitHub. You cannot change this setting.
 
 #### S.post_process
 

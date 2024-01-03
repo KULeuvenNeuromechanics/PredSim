@@ -113,6 +113,7 @@ symQs.MusInvB = orderMusInv;
 
 model_info.ExtFunIO.symQs = symQs;
 
-
+% add osim_path so it will be included in saved results
+model_info.osim_path = osim_path;
 
 
