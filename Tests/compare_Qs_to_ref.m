@@ -7,8 +7,8 @@ clc
 %% reference result
 [pathHere,~,~] = fileparts(mfilename('fullpath'));
 [pathRepo,~,~] = fileparts(pathHere);
-ResultsRepo = [pathRepo '\test_results'];
-ref_file = fullfile([ResultsRepo '\Fal_s1\Fal_s1_v2.mat']);
+ResultsRepo = fullfile(pathRepo,'Tests','ReferenceResults');
+ref_file = fullfile(ResultsRepo,'Falisse_et_al_2022','Falisse_et_al_2022_paper.mat');
 load(ref_file,'R','model_info');
 R_ref = R;
 model_info_ref = model_info;

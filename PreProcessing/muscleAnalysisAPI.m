@@ -47,27 +47,18 @@ n_muscle = model_info.muscle_info.NMuscle;
 % get senseble muscle-coordinate combinations to evaluate
 muscle_spanning_joint_info = model_info.muscle_info.muscle_spanning_joint_info;
 
-if contains(varargin,'ligaments')
+if contains(varargin(isa(varargin,'char') | isa(varargin,'string')),'ligaments')
     muscle_names = model_info.ligament_info.ligament_names;
     n_muscle = model_info.ligament_info.NLigament;
     muscle_spanning_joint_info = model_info.ligament_info.ligament_spanning_joint_info;
     ligaments_bool = 1;
+    varargin = varargin(2:end);
 else
     ligaments_bool = 0;
 end
 
-% dummy motion
-if ~isempty(varargin)
-    varargin2 = varargin(~contains(varargin{1},'ligaments'));
-else
-    varargin2 = varargin;
-end
-if length(varargin2)>=1
-    if contains(varargin{1},'ligaments')
-        argin3 = varargin{2};
-    else
-        argin3 = varargin{1};
-    end
+if length(varargin)>=1
+    argin3 = varargin{1};
 
     if size(argin3,1) == 1 && size(argin3,2) == 1
         % if it's 1 element, it's the number of data points

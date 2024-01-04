@@ -19,14 +19,18 @@ clc
 [pathRepo,~,~] = fileparts(pathTests);
 addpath([pathRepo '\PreProcessing'])
 addpath([pathRepo '\VariousFunctions'])
+addpath([pathRepo '\DefaultSettings'])
 
+load(fullfile(pathRepo,'Tests','ReferenceResults','Falisse_et_al_2022',['Falisse_et_al_2022','_paper.mat']),'R','model_info');
+S = R.S;
+osim_path = replace(model_info.osim_path, S.misc.main_path, pathRepo);
+model_info.osim_path = osim_path;
+S.subject.IG_selection = replace(S.subject.IG_selection, S.misc.main_path, pathRepo);
+S.subject.IK_Bounds = replace(S.subject.IK_Bounds, S.misc.main_path, pathRepo);
 S.misc.main_path = pathRepo;
+S.misc.msk_geom_n_samples = 10;
 
-S.subject.name = 'test_1'; 
-S.subject.save_folder = fullfile(pathRepo,'test_1');
-osim_path = fullfile(pathRepo,'Subjects','test_1','test_1.osim');
-S.misc.subject_path = fullfile(S.misc.main_path,'Subjects',S.subject.name);
-model_info = get_model_info(S,osim_path);
+[S] = getDefaultSettings(S,osim_path);
 
 %% compare results of API-based muscle analysis with analysis ran from xml file
 
@@ -67,11 +71,19 @@ diff_dM = muscle_data_xml.dM - muscle_data_API.dM;
 diff_lMT_v = reshape(diff_lMT,size(diff_lMT,1)*size(diff_lMT,2),1);
 diff_dM_v = reshape(diff_dM,size(diff_dM,1)*size(diff_dM,2)*size(diff_dM,3),1);
 
-cond_lMT = norm(diff_lMT_v,"inf");
-cond_dM = norm(diff_dM_v,"inf");
+cond_lMT = max(abs(diff_lMT_v),[],'all');
+cond_dM = max(abs(diff_dM_v),[],'all');
 
-
-
+if cond_lMT > S.misc.threshold_lMT_fit
+    fprintf('muscle-tendon lengths not ok\n')
+else
+    fprintf('muscle-tendon lengths ok\n')
+end
+if cond_dM > S.misc.threshold_dM_fit
+    fprintf('muscle moment arms not ok\n')
+else
+    fprintf('muscle moment arms ok\n')
+end
 
 
 

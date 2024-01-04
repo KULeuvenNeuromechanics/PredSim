@@ -3,9 +3,13 @@ clear
 close all
 clc
 
-addpath('../OCP')
+[pathTests,~,~] = fileparts(mfilename('fullpath'));
+[pathRepo,~,~] = fileparts(pathTests);
 
-load('.\Falisse_et_al_2022_Results\Falisse_et_al_2022_v1.mat','R','model_info');
+addpath(fullfile(pathRepo,'OCP'))
+
+load(fullfile(pathRepo,'Tests','ReferenceResults','Falisse_et_al_2022',['Falisse_et_al_2022','_paper.mat']),'R','model_info');
+
 
 N = size(R.ground_reaction.GRF_r,1);
 
