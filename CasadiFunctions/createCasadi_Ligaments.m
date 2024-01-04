@@ -165,6 +165,10 @@ if model_info.ligament_info.NLigament > 0
     
     v_lig_pp_MX = jtimes(L_lig_pp_MX,Qs_MX,Qdots_MX);
 
+else
+    L_lig_pp_MX = MX(1,1);
+    v_lig_pp_MX = MX(1,1);
+    F_lig_pp_MX = MX(1,1);
 end
 
 % total
@@ -175,7 +179,7 @@ f_ligamentMoment_single = Function('f_ligamentMoment_single',{Qs_MX},{M_lig_sing
     {'Qs'},{'M_lig'});
 f_ligamentMoment_multi = Function('f_ligamentMoment_multi',{Qs_MX},{M_lig_multi_MX},...
     {'Qs'},{'M_lig'});
-f_ligamentLengthForce = Function('f_ligamentLengtForce',{Qs_MX,Qdots_MX},{L_lig_pp_MX,...
+f_ligamentLengthForce = Function('f_ligamentLengthForce',{Qs_MX,Qdots_MX},{L_lig_pp_MX,...
     v_lig_pp_MX F_lig_pp_MX},{'Qs','Qdots'},{'length','velocity','force'});
 
 
