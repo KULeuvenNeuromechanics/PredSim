@@ -45,7 +45,7 @@ if ~isempty(S.subject.set_stiffness_coefficient_selected_dofs)
         stiffness_coeff = unpack_name_value_combinations(S.subject.set_stiffness_coefficient_selected_dofs,...
             coord_names,1);
      catch errmsg
-        error(['Unable to set stiffness coefficient because: ', errmsg]);
+        error(['Unable to set stiffness coefficient because: ', errmsg.message]);
     end
 end
 
@@ -58,7 +58,7 @@ if ~isempty(S.subject.set_limit_torque_coefficients_selected_dofs)
         K_pass = K_pass';
         theta_pass = theta_pass';
      catch errmsg
-        error(['Unable to set limit torque coefficients because: ', errmsg]);
+        error(['Unable to set limit torque coefficients because: ', errmsg.message]);
     end
 end
 

@@ -52,7 +52,7 @@ guess.tf = all_tf(idx_speed);
 guess.Qs = zeros(N,nq.all);
 guess.Qs(:,model_info.ExtFunIO.jointi.base_forward) = linspace(0,guess.tf*S.subject.v_pelvis_x_trgt,N);
 % The model is standing on the ground
-guess.Qs(:,coordi.pelvis_ty) = model_info.IG_pelvis_y;
+guess.Qs(:,model_info.ExtFunIO.jointi.base_vertical) = model_info.IG_pelvis_y;
 
 %% Qdots
 guess.Qdots = zeros(N,nq.all);

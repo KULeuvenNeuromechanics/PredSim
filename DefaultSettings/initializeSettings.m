@@ -28,15 +28,11 @@ S.post_process = [];
 S.solver       = [];
 S.subject      = [];
 S.weights      = [];
-S.Cpp2Dll      = [];
 S.orthosis     = [];
+S.OpenSimADOptions  = [];
 
 % bounds have an .upper and .lower field
 S.bounds.a          = [];
-S.bounds.calcn_dist = [];
-S.bounds.femur_hand_dist = [];
-S.bounds.toes_dist  = [];
-S.bounds.tibia_dist = [];
 S.bounds.SLL        = [];
 S.bounds.SLR        = [];
 S.bounds.dist_trav  = [];

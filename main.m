@@ -29,16 +29,13 @@ S.subject.name = 'Falisse_et_al_2022';
 S.subject.save_folder  = fullfile(pathRepoFolder,'PredSimResults',S.subject.name); 
 
 % either choose "quasi-random" or give the path to a .mot file you want to use as initial guess
+% S.subject.IG_selection = 'quasi-random';
 S.subject.IG_selection = fullfile(S.misc.main_path,'OCP','IK_Guess_Full_GC.mot');
 S.subject.IG_selection_gaitCyclePercent = 100;
 % S.subject.IG_selection = 'quasi-random';
 
 % give the path to the osim model of your subject
 osim_path = fullfile(pathRepo,'Subjects',S.subject.name,[S.subject.name '.osim']);
-
-% path to folder with program to create dll files from opensim model (will
-% be downloaded automatically if it is not there)
-S.Cpp2Dll.PathCpp2Dll_Exe = 'C:\GBW_MyPrograms\Osim2Dll_exe';
 
 % Do you want to run the simulation as a batch job (parallel computing toolbox)
 S.solver.run_as_batch_job = 0;
@@ -49,15 +46,44 @@ S.solver.run_as_batch_job = 0;
 
 % % S.bounds
 % S.bounds.a.lower            = ;
-% S.bounds.calcn_dist.lower   = ;
-% S.bounds.toes_dist.lower    = ;
-% S.bounds.tibia_dist.lower   = ;
 % S.bounds.SLL.upper          = ;
 % S.bounds.SLR.upper          = ;
 % S.bounds.dist_trav.lower    = ;
 % S.bounds.t_final.upper      = ;
 % S.bounds.t_final.lower      = ;
-% S.bounds.coordinates        = {'pelvis_ty',0.55,1.1, 'pelvis_tilt',-2.9302,nan};
+% S.bounds.coordinates        = {{'knee_angle_r'},-1.70,3.055,{'mtp_angle_'},-1.05,0.5};
+
+% to prevent body segments from clipping into eachother
+S.bounds.distanceConstraints(1).point1 = 'calcn_r';
+S.bounds.distanceConstraints(1).point2 = 'calcn_l';
+S.bounds.distanceConstraints(1).direction = 'xz';
+S.bounds.distanceConstraints(1).lower_bound = 0.09;
+S.bounds.distanceConstraints(1).upper_bound = 2;
+
+S.bounds.distanceConstraints(2).point1 = 'hand_r';
+S.bounds.distanceConstraints(2).point2 = 'femur_r';
+S.bounds.distanceConstraints(2).direction = 'xz';
+S.bounds.distanceConstraints(2).lower_bound = 0.18;
+S.bounds.distanceConstraints(2).upper_bound = 2;
+
+S.bounds.distanceConstraints(3).point1 = 'hand_l';
+S.bounds.distanceConstraints(3).point2 = 'femur_l';
+S.bounds.distanceConstraints(3).direction = 'xz';
+S.bounds.distanceConstraints(3).lower_bound = 0.18;
+S.bounds.distanceConstraints(3).upper_bound = 2;
+
+S.bounds.distanceConstraints(4).point1 = 'tibia_r';
+S.bounds.distanceConstraints(4).point2 = 'tibia_l';
+S.bounds.distanceConstraints(4).direction = 'xz';
+S.bounds.distanceConstraints(4).lower_bound = 0.11;
+S.bounds.distanceConstraints(4).upper_bound = 2;
+
+S.bounds.distanceConstraints(5).point1 = 'toes_r';
+S.bounds.distanceConstraints(5).point2 = 'toes_l';
+S.bounds.distanceConstraints(5).direction = 'xz';
+S.bounds.distanceConstraints(5).lower_bound = 0.1;
+S.bounds.distanceConstraints(5).upper_bound = 2;
+
 
 % % S.metabolicE - metabolic energy
 % S.metabolicE.tanh_b = 100;
@@ -70,8 +96,7 @@ S.solver.run_as_batch_job = 0;
 % S.misc.msk_geom_eq         = '';
 % S.misc.poly_order.lower    = ;
 % S.misc.poly_order.upper    = ;
-% S.misc.default_msk_geom_bound = ;
-% S.misc.msk_geom_bounds      = {{'knee_angle_r','knee_angle_l'},-120,10,'lumbar_extension',nan,30};
+% S.misc.msk_geom_bounds      = {{'knee_angle_r'},0,90,{'mtp_angle_'},-50,20};
 % S.misc.gaitmotion_type = 'FullGaitCycle';
 
 % % S.post_process
@@ -95,7 +120,7 @@ S.post_process.make_plot = 1;
 % % S.subject
 % S.subject.mass              = ;
 % S.subject.IG_pelvis_y       = ;
-% S.subject.adapt_IG_pelvis_y = ;
+S.subject.adapt_IG_pelvis_y = 1;
 S.subject.v_pelvis_x_trgt   = 1.33;
 % S.subject.IK_Bounds = ;
 % S.subject.muscle_strength   = ;
@@ -112,18 +137,14 @@ S.subject.v_pelvis_x_trgt   = 1.33;
 % S.subject.set_limit_torque_coefficients_selected_dofs = {{'mtj_angle_l','mtj_angle_r'},[0,0,0,0],[0,0]};
 
 % % S.weights
-% S.weights.E         = ;
+% S.weights.E         = 0;
 % S.weights.E_exp     = ;
-% S.weights.q_dotdot  = ;
-% S.weights.e_arm     = ;
-% S.weights.pass_torq = ;
-% S.weights.a         = ;
+% S.weights.q_dotdot  = 0;
+% S.weights.e_arm     = 10;
+% S.weights.pass_torq = 1;
+% S.weights.a         = 10*18;
 % S.weights.slack_ctrl = ;
 
-% %S.Cpp2Dll: required inputs to convert .osim to .dll
-% S.Cpp2Dll.compiler = 'Visual Studio 17 2022';
-% S.Cpp2Dll.export3DSegmentOrigins = ;
-S.Cpp2Dll.verbose_mode = 0; % 0 for no outputs from cmake
 
 % % S.orthosis
 % example: add AFO_passive as defind in
@@ -139,9 +160,13 @@ S.orthosis.settings{1} = ortho1;
 ortho1.left_right = 'l';
 S.orthosis.settings{2} = ortho1;
 
+
+% %S.OpenSimADOptions: required inputs to convert .osim to .dll
+% S.OpenSimADOptions.compiler = 'Visual Studio 17 2022';
+S.OpenSimADOptions.verbose_mode = 0; % 0 for no outputs from cmake
+
+        
 %% Run predictive simulations
-% Check for updates in osim2dll
-S.Cpp2Dll.PathCpp2Dll_Exe = InstallOsim2Dll_Exe(S.Cpp2Dll.PathCpp2Dll_Exe);
 
 % warning wrt pelvis heigt for IG
 if S.subject.adapt_IG_pelvis_y == 0 && S.subject.IG_selection ~= "quasi-random"
