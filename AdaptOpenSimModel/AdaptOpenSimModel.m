@@ -2,10 +2,26 @@
 % AdaptOpenSimModel
 %   This framework uses an OpenSim model file as input. Commonly used models 
 %   do not contain all information needed to formulate the simulation. This
-%   script adapts a given .osim file to include:
-%   1) Ideal torque actuators
-%   2) Contact elements
-% 
+%   script adapts a given .osim file.
+%
+%   Settings:
+%   - add_actuators_bool -
+%   * Adds ideal torque actuators to the model.
+%   See example below on how to specify actuator properties as a struct torq_act.
+%
+%   - add_contact_bool -
+%   * Adds contact spheres that interact with the ground.
+%   See example below on how to specify contact spheres properties as a
+%   struct contact_spheres.
+%
+%   - use_reference_contacts_bool -
+%   * Creates a struct contact_spheres based on the contact properties of a
+%   reference model.
+%
+%   - scale_contact_location_bool -
+%   * OpenSim scale tool does not adapt contact sphere locations. Use this
+%   setting to scale contact sphere locations with respect to a reference
+%   model.
 % 
 % Original author: Lars D'Hondt
 % Original date: 27/May/2022
@@ -25,8 +41,14 @@ path_osim_in = fullfile(pathHere,'Falisse_et_al_2022.osim');
 % adapted .osim file
 path_osim_out = fullfile(pathHere,'Falisse_et_al_2022.osim');
 
+% reference model for contact
+path_reference_model = fullfile(pathHere,'Falisse_et_al_2022.osim');
+
+% select what to do
 add_actuators_bool = 1;
 add_contact_bool = 0;
+use_reference_contacts_bool = 1;
+scale_contact_location_bool = 1;
 
 %% Define contact spheres
 
@@ -140,10 +162,18 @@ model.print(path_osim_out);
 
 
 %%
+SimmSpline_joint_to_polynomial(path_osim_out);
+
+if use_reference_contacts_bool
+    contact_spheres = get_contact_spheres(path_reference_model);
+end
 if add_actuators_bool
     add_actuators(path_osim_out,torq_act);
 end
 if add_contact_bool
-    add_contact_spheres(path_osim_out,contact_spheres)
+    add_contact_spheres(path_osim_out,contact_spheres);
+end
+if scale_contact_location_bool
+    fixContactSpherePositionAfterScaling(path_reference_model,path_osim_out);
 end
 

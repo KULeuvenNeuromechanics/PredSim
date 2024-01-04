@@ -1,4 +1,4 @@
-function [S] = getDefaultSettings(S)
+function [S] = getDefaultSettings(S,osim_path)
 % --------------------------------------------------------------------------
 % getDefaultSettings 
 %   This functions sets default settings when the user didn't specify the
@@ -7,6 +7,9 @@ function [S] = getDefaultSettings(S)
 % INPUT:
 %   - S -
 %   * setting structure S
+%   
+%   - osim_path -
+%   * path to the osim model
 %
 % 
 % OUTPUT:
@@ -17,7 +20,7 @@ function [S] = getDefaultSettings(S)
 % Original date: 30/11/2021
 %
 % Last edit by: Bram Van Den Bosch
-% Last edit date: 17/01/2022
+% Last edit date: 05/05/2023
 % --------------------------------------------------------------------------
 
 %% bounds
@@ -34,7 +37,7 @@ end
 
 % minimal distance between femur and hand orginins, in meters
 if ~isfield(S.bounds.femur_hand_dist,'lower')
-    S.bounds.femur_hand_dist.lower = sqrt(0.00324);
+    S.bounds.femur_hand_dist.lower = sqrt(0.0324);
 end
 
 % minimal distance between origins toes, in meters
@@ -121,15 +124,27 @@ if ~isfield(S.misc.poly_order,'upper')
 end
 
 % name to save musculoskeletal geometry CasADi function
-S.misc.msk_geom_name = 'f_lMT_vMT_dM';
+[~, model_name, ~] = fileparts(osim_path);
+model_name = char(strrep(model_name, ' ', '_'));
+S.misc.msk_geom_name = [model_name '_f_lMT_vMT_dM'];
 if strcmp(S.misc.msk_geom_eq,'polynomials') 
     S.misc.msk_geom_name = [S.misc.msk_geom_name '_poly_',...
         num2str(S.misc.poly_order.lower) '_' num2str(S.misc.poly_order.upper)];
 end
 
+% default coordinate bounds used to approximate musculoskeletal geometry
+if ~isfield(S.misc,'default_msk_geom_bounds')
+    S.misc.default_msk_geom_bounds = 'default_msk_geom_bounds.csv';
+end
+
 % manually overwrite coordinate bounds used to approximate musculoskeletal geometry
 if ~isfield(S.misc,'msk_geom_bounds')
     S.misc.msk_geom_bounds = [];
+end
+
+% number of data points to sample musculoskeletal geometry
+if ~isfield(S.misc,'msk_geom_n_samples')
+    S.misc.msk_geom_n_samples = 5000;
 end
 
 % rmse threshold for muscle-tendon length approximation
@@ -170,18 +185,26 @@ if ~isfield(S.post_process,'savename')
     S.post_process.savename = 'structured';
 end
 
-% rerun post-processing without solving OCP
-if ~isfield(S.post_process,'rerun')
-    S.post_process.rerun = 0;
-end
-
 % filename of the result to post-process
 if ~isfield(S.post_process,'result_filename')
     S.post_process.result_filename = [];
 end
 
+% rerun post-processing without solving OCP
+if ~isfield(S.post_process,'rerun')
+    S.post_process.rerun = 0;
+end
 if S.post_process.rerun && isempty(S.post_process.result_filename)
     error('Please provide the name of the result to post-process. (S.post_process.result_filename)')
+end
+
+% load w_opt and reconstruct R before rerunning the post-processing
+% Advanced feature, for debugging only, you should not need this.
+if ~isfield(S.post_process,'load_prev_opti_vars')
+    S.post_process.load_prev_opti_vars = 0;
+end
+if S.post_process.load_prev_opti_vars && isempty(S.post_process.result_filename)
+    error('Please provide the name of the result from which to load the optimization variables. (S.post_process.result_filename)')
 end
 
 %% solver
@@ -256,11 +279,6 @@ end
 % height of the pelvis for the initial guess, in meters
 if ~isfield(S.subject,'IG_pelvis_y')
    S.subject.IG_pelvis_y = [];
-end
-
-% adapt pelvis height of the data-informed initial guess based on IG_pelvis_y
-if ~isfield(S.subject,'adapt_IG_pelvis_y')
-   S.subject.adapt_IG_pelvis_y = 0;
 end
 
 % average velocity you want the model to have, in meters per second
@@ -371,6 +389,16 @@ if ~isfield(S.subject,'set_limit_torque_coefficients_selected_dofs')
     S.subject.set_limit_torque_coefficients_selected_dofs = []; 
 end
 
+% ligament stiffness for all ligaments
+if ~isfield(S.subject,'stiffness_all_ligaments')
+    S.subject.stiffness_all_ligaments = 'ligamentGefen2002'; 
+end
+
+% ligament stiffness for selected ligaments
+if ~isfield(S.subject,'set_stiffness_selected_ligaments')
+    S.subject.set_stiffness_selected_ligaments = {'PlantarFascia','plantarFasciaNatali2010'};
+end
+
 %% weights
 
 % weight on metabolic energy rate
@@ -425,8 +453,10 @@ end
 % select compiler for cpp projects 
 %   Visual studio 2015: 'Visual Studio 14 2015 Win64'
 %   Visual studio 2017: 'Visual Studio 15 2017 Win64'
+%   Visual studio 2017: 'Visual Studio 16 2019'
+%   Visual studio 2017: 'Visual Studio 17 2022'
 if ~isfield(S.Cpp2Dll,'compiler')
-    S.Cpp2Dll.compiler = 'Visual Studio 15 2017 Win64';
+    S.Cpp2Dll.compiler = findVisualStudioInstallation;
 end
 
 % Path with exectuables to create .cpp file. You can use the function 

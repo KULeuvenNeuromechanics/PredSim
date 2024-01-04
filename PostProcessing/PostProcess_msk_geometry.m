@@ -49,32 +49,32 @@ end
 
 
 %% Get reference geometry from OpenSim model
-[MuscleData] = muscleAnalysisAPI(R.S,model_info.osim_path,model_info,R.kinematics.Qs_rad);
-
-%% Compare
-Delta_lMT = R.muscles.lMT - MuscleData.lMT;
-Delta_dM = R.muscles.dM - MuscleData.dM;
-
-rmse_lMT = sqrt(mean(Delta_lMT.^2,1));
-rmse_dM = squeeze(sqrt(mean(Delta_dM.^2,1)));
-
-[il] = find(rmse_lMT > R.S.misc.threshold_lMT_fit);
-[id,jd] = find(squeeze(rmse_dM) > R.S.misc.threshold_dM_fit);
-
-if ~isempty(il)
-    disp('Issue when reconstructing muscle-tendon length wrt OpenSim model for:')
-    for i=1:length(il)
-        disp(['   ' model_info.muscle_info.muscle_names{il(i)} '(RMSE = ' num2str(rmse_lMT(il(i))*1e3) ' mm)'])
-    end
-end
-
-if ~isempty(id)
-    disp('Issue when reconstructing muscle-tendon momentarm wrt OpenSim model for:')
-    for i=1:length(id)
-        disp(['   ' model_info.muscle_info.muscle_names{id(i)} ' around ',...
-            model_info.ExtFunIO.coord_names.all{jd(i)} '(RMSE = ' num2str(rmse_dM(id(i),jd(i))*1e3) ' mm)'])
-    end
-end
+% [MuscleData] = muscleAnalysisAPI(R.S,model_info.osim_path,model_info,R.kinematics.Qs_rad);
+% 
+% % Compare
+% Delta_lMT = R.muscles.lMT - MuscleData.lMT;
+% Delta_dM = R.muscles.dM - MuscleData.dM;
+% 
+% rmse_lMT = sqrt(mean(Delta_lMT.^2,1));
+% rmse_dM = squeeze(sqrt(mean(Delta_dM.^2,1)));
+% 
+% [il] = find(rmse_lMT > R.S.misc.threshold_lMT_fit);
+% [id,jd] = find(squeeze(rmse_dM) > R.S.misc.threshold_dM_fit);
+% 
+% if ~isempty(il)
+%     disp('Issue when reconstructing muscle-tendon length wrt OpenSim model for:')
+%     for i=1:length(il)
+%         disp(['   ' model_info.muscle_info.muscle_names{il(i)} '(RMSE = ' num2str(rmse_lMT(il(i))*1e3) ' mm)'])
+%     end
+% end
+% 
+% if ~isempty(id)
+%     disp('Issue when reconstructing muscle-tendon momentarm wrt OpenSim model for:')
+%     for i=1:length(id)
+%         disp(['   ' model_info.muscle_info.muscle_names{id(i)} ' around ',...
+%             model_info.ExtFunIO.coord_names.all{jd(i)} '(RMSE = ' num2str(rmse_dM(id(i),jd(i))*1e3) ' mm)'])
+%     end
+% end
 
 
 

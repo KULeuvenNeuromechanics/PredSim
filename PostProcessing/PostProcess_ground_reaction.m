@@ -49,6 +49,7 @@ R.ground_reaction.GRF_r = Foutk_opt(:,model_info.ExtFunIO.GRFs.right_foot);
 R.ground_reaction.GRF_l = Foutk_opt(:,model_info.ExtFunIO.GRFs.left_foot);
 R.colheaders.GRF = {'fore_aft','vertical','lateral'};
 
+
 % Ground Reaction Moments
 R.ground_reaction.GRM_r = Foutk_opt(:,model_info.ExtFunIO.GRMs.right_total);
 R.ground_reaction.GRM_l = Foutk_opt(:,model_info.ExtFunIO.GRMs.left_total);
@@ -57,10 +58,8 @@ R.ground_reaction.GRM_l = Foutk_opt(:,model_info.ExtFunIO.GRMs.left_total);
 COP_r = zeros(size(R.ground_reaction.GRF_r));
 COP_l = COP_r;
 
-idx = find(R.ground_reaction.GRF_r(:,2) < 20,1,'first');
-idx_stance_r = (1:idx-1)';
-trh = min(R.ground_reaction.GRF_r(idx_stance_r,2));
-idx_stance_l = find(R.ground_reaction.GRF_l(:,2) > trh);
+idx_stance_r = find(R.ground_reaction.GRF_r(:,2) > R.ground_reaction.threshold);
+idx_stance_l = find(R.ground_reaction.GRF_l(:,2) > R.ground_reaction.threshold);
 
 COP_r(idx_stance_r,1) = R.ground_reaction.GRM_r(idx_stance_r,3)...
     ./R.ground_reaction.GRF_r(idx_stance_r,2);

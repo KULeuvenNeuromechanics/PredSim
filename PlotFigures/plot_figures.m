@@ -41,6 +41,10 @@ for i=1:length(result_paths)
     % load selected result
     load(result_paths{i},'R','model_info');
 
+    if length(legend_names)<i
+        legend_names{i} = replace(R.S.post_process.result_filename,'_',' ');
+    end
+    
     % loop over figures
     for j=1:length(figure_settings)
         % check figure type
@@ -64,6 +68,17 @@ for i=1:length(result_paths)
             % replace "all_coords" by all coordinate names
             if strcmp(figure_settings(j).dofs,'all_coords')
                 figure_settings(j).dofs = R.colheaders.coordinates;
+            end
+            % replace "muscles_r" by all muscle names of right side
+            if strcmp(figure_settings(j).dofs,'muscles_r')
+                muscle_names = R.colheaders.muscles;
+                idx_r = zeros(length(muscle_names),1);
+                for im = 1:length(muscle_names)
+                    idx_r(im) = im*strcmp(muscle_names{im}(end-1:end),'_r');
+                end
+                idx_r = idx_r(idx_r~=0);
+                muscle_names_r = muscle_names(idx_r);
+                figure_settings(j).dofs = muscle_names_r;
             end
             % call function to plot generic figures
             fig_hands{j} = plot_figure_generic(R,model_info,figure_settings(j).dofs,...

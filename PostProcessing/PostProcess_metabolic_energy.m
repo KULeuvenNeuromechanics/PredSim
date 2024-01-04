@@ -43,7 +43,7 @@ R.metabolics.Bhargava2004.Adot = zeros(N,NMuscle);
 R.metabolics.Bhargava2004.Mdot = zeros(N,NMuscle);
 R.metabolics.Bhargava2004.Sdot = zeros(N,NMuscle);
 R.metabolics.Bhargava2004.Wdot = zeros(N,NMuscle);
-R.metabolics.Bhargava2004.Edot_incl_basal = zeros(N,NMuscle);
+R.metabolics.Bhargava2004.Edot_incl_basal = zeros(N,1);
 
 for i=1:N
     [Edot_tot_i,Adot_i,Mdot_i,Sdot_i,Wdot_i,Edot_b_i] = f_casadi.getMetabolicEnergySmooth2004all(...
@@ -56,13 +56,12 @@ for i=1:N
     R.metabolics.Bhargava2004.Mdot(i,:) = full(Mdot_i)';
     R.metabolics.Bhargava2004.Sdot(i,:) = full(Sdot_i)';
     R.metabolics.Bhargava2004.Wdot(i,:) = full(Wdot_i)';
-    R.metabolics.Bhargava2004.Edot_incl_basal(i,:) = full(Edot_b_i)';
+    R.metabolics.Bhargava2004.Edot_incl_basal(i) = full(Edot_b_i)';
 
 end
 
 % cost of transport
-Edot_sum_GC = sum(R.metabolics.Bhargava2004.Edot_gait,2);
-E_sum_GC = trapz(R.time.mesh_GC(1:end-1),Edot_sum_GC);
+E_sum_GC = trapz(R.time.mesh_GC(1:end-1),R.metabolics.Bhargava2004.Edot_incl_basal);
 R.metabolics.Bhargava2004.COT = E_sum_GC/R.misc.body_mass/R.spatiotemp.dist_trav;
 
 %% ...
