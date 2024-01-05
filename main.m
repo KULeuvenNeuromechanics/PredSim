@@ -150,7 +150,7 @@ S.subject.v_pelvis_x_trgt   = 1.33;
 % example: add AFO_passive as defind in
 % /Orthosis/passiveOrthosisDescriptions.m to right and left foot
 ortho1.type = 'passive'; % type is required
-ortho1.name = 'AFO_passive_BWC'; %
+ortho1.function_name = 'parametricAFO'; %
 ortho1.ankle_stiffness = 5;
 ortho1.mtp_stiffness = 1;
 ortho1.lower_threshold = 10;

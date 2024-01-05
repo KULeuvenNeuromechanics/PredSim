@@ -53,5 +53,6 @@ if ~isempty(S.bounds.SLL.upper) || ~isempty(S.bounds.SLR.upper)
     [f_casadi.f_getCalcnOriginInWorldFrame,f_casadi.f_getStepLength] = createCasadi_StepLength(S,model_info);
 end
 
-
+%% Create Casadi functions for orthoses
+[f_casadi.f_orthosis_mesh_k, f_casadi.f_orthosis_mesh_all] = createCasadi_orthosis(S,model_info);
 end

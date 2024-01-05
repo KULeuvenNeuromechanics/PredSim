@@ -24,6 +24,7 @@ function [varargout] = run_pred_sim(S,osim_path)
 % --------------------------------------------------------------------------
 
 addpath([S.misc.main_path '\VariousFunctions'])
+addpath([S.misc.main_path '\Orthosis'])
 
 % Settings that are not specified get thier default value
 S = getDefaultSettings(S,osim_path);
@@ -111,7 +112,6 @@ disp(' ')
 
 %% Creating casadi functions
 addpath([S.misc.main_path '\CasadiFunctions'])
-addpath([S.misc.main_path '\Orthosis'])
 addpath([S.misc.main_path '\ModelComponents'])
 
 disp('Start creating CasADi functions...')

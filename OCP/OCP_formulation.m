@@ -344,7 +344,7 @@ for j=1:d
     [Tj] = F(F_ext_input);
 
     % Extract ground reaction forces
-    GRFj = Tj([model_info.ExtFunIO.GRFs.left_foot, model_info.ExtFunIO.GRFs.right_foot]);
+    GRFj = Tj([model_info.ExtFunIO.GRFs.left_total, model_info.ExtFunIO.GRFs.right_total]);
     
     % Evaluate orthosis torques
     To_j = f_casadi.f_orthosis(Qskj_nsc(:,j+1),Qdotskj_nsc(:,j+1),GRFj);
