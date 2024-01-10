@@ -41,6 +41,9 @@ S.bounds.t_final    = [];
 % polynomial order has .lower and .upper field
 S.misc.poly_order = [];
 
+% empty array of orthoses
+S.orthosis.settings = {};
+
 % save the git hash
 [S.misc.git.local_hash,S.misc.git.branch_name, S.misc.git.remote_hash] = get_git_hash;
 

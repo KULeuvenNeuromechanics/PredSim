@@ -197,6 +197,31 @@ opti.subject_to(bounds.Qdotdots.lower'*ones(1,d*N) < A_col < ...
     bounds.Qdotdots.upper'*ones(1,d*N));
 opti.set_initial(A_col, guess.Qdotdots_col');
 
+%% Helper function for orthoses
+% variables
+a_MX = MX.sym('a',NMuscle,N);
+Qs_MX = MX.sym('Qs',nq.all,N);
+Qdots_MX = MX.sym('Qdots',nq.all,N);
+Qddots_MX = MX.sym('Qddots',nq.all,N);
+
+% unscale variables
+Qs_MX_nsc = Qs_MX.*(scaling.Qs'*ones(1,size(Qs_MX,2)));
+Qdots_MX_nsc = Qdots_MX.*(scaling.Qdots'*ones(1,size(Qdots_MX,2)));
+Qddots_MX_nsc = Qddots_MX.*(scaling.Qdotdots'*ones(1,size(Qddots_MX,2)));
+
+% evaluate orthosis function
+[M_ort_coord_MX, M_ort_body_MX] = f_casadi.f_orthosis_mesh_all(Qs_MX_nsc, Qdots_MX_nsc,...
+    Qddots_MX_nsc, a_MX);
+
+% create function
+f_orthosis_mesh_all = Function('f_orthosis_mesh_all',{Qs_MX, Qdots_MX,...
+    Qddots_MX, a_MX},{M_ort_coord_MX, M_ort_body_MX});
+
+% evaluate helper function
+[M_ort_coord_opti, M_ort_body_opti] = f_orthosis_mesh_all(Qs(:,1:N), Qdots(:,1:N),...
+    A_col(:,1:3:3*N), a(:,1:N)); 
+    % note: A is at 1st collocation point of mesh interval instead of at 1st mesh point
+
 %% OCP: collocation equations
 % Define CasADi variables for static parameters
 tfk         = MX.sym('tfk'); % MX variable for final time
@@ -227,6 +252,11 @@ end
 % Define CasADi variables for "slack" controls
 dFTtildej   = MX.sym('dFTtildej',NMuscle,d);
 Aj          = MX.sym('Aj',nq.all,d);
+
+% Define CasADi variables for orthosis moments (or forces)
+M_ort_coordk = MX.sym('M_ort_coord',nq.all,1); % moments on coordinates
+M_ort_bodyk = MX.sym('M_ort_body',model_info.ExtFunIO.input.nInputs,1); % moments on bodies
+
 J           = 0; % Initialize cost function
 eq_constr   = {}; % Initialize equality constraint vector
 ineq_constr_deact = {}; % Initialize inequality constraint vector
@@ -286,6 +316,7 @@ for j=1:d
     % Get passive joint torques for cost function
     Tau_passj_cost = f_casadi.AllPassiveTorques_cost(Qskj_nsc(:,j+1),Qdotskj_nsc(:,j+1));
     
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Expression for the state derivatives at the collocation points
     Qsp_nsc      = Qskj_nsc*C(:,j+1);
     Qdotsp_nsc   = Qdotskj_nsc*C(:,j+1);
@@ -310,6 +341,17 @@ for j=1:d
         da_adtj = f_casadi.ActuatorActivationDynamics(e_ak,a_akj(:,j+1));
         eq_constr{end+1} = (h*da_adtj - a_ap)./scaling.a_a;
     end
+
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    % Orthosis moments on collocation point
+    [M_ort_coordj, M_ort_bodyj] = f_casadi.f_orthosis_mesh_k(Qskj_nsc(:,j+1),...
+        Qdotskj_nsc(:,j+1), Aj_nsc(:,j), akj(:,j+1));
+
+    % add orthosis moments from input variables
+    M_ort_coord_totj = M_ort_coordk + M_ort_coordj;
+    M_ort_body_totj = M_ort_bodyk + M_ort_bodyj;
+
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
     % Add contribution to the cost function
     J = J + ...
@@ -338,16 +380,10 @@ for j=1:d
     % Assign Qdotdots (A)
     F_ext_input(model_info.ExtFunIO.input.Qdotdots.all,1) = Aj_nsc(:,j);
     % Assign forces and moments 
-    % (not used yet)
+    F_ext_input = F_ext_input + M_ort_body_totj; % body forces and body moments from orthoses
 
     % Evaluate external function
     [Tj] = F(F_ext_input);
-
-    % Extract ground reaction forces
-    GRFj = Tj([model_info.ExtFunIO.GRFs.left_total, model_info.ExtFunIO.GRFs.right_total]);
-    
-    % Evaluate orthosis torques
-    To_j = f_casadi.f_orthosis(Qskj_nsc(:,j+1),Qdotskj_nsc(:,j+1),GRFj);
 
     % Evaluate ligament moment
     M_lig_j = f_casadi.ligamentMoment(Qskj_nsc(:,j+1));
@@ -389,7 +425,7 @@ for j=1:d
         end
         
         % orthosis
-        Ti = Ti + To_j(i);
+        Ti = Ti + M_ort_coord_totj(i);
 
         % total coordinate torque equals inverse dynamics torque
         eq_constr{end+1} = Tj(i,1) - Ti;
@@ -459,7 +495,7 @@ end
 
 
 % Casadi function to get constraints and objective
-coll_input_vars_def = {tfk,ak,aj,FTtildek,FTtildej,Qsk,Qsj,Qdotsk,Qdotsj,vAk,dFTtildej,Aj};
+coll_input_vars_def = {tfk,ak,aj,FTtildek,FTtildej,Qsk,Qsj,Qdotsk,Qdotsj,vAk,dFTtildej,Aj,M_ort_coordk,M_ort_bodyk};
 if nq.torqAct > 0
     coll_input_vars_def = [coll_input_vars_def,{a_ak,a_aj,e_ak}];
 end
@@ -471,7 +507,8 @@ f_coll_map = f_coll.map(N,S.solver.parallel_mode,S.solver.N_threads);
 
 % evaluate function with opti variables
 coll_input_vars_eval = {tf,a(:,1:end-1), a_col, FTtilde(:,1:end-1), FTtilde_col,...
-    Qs(:,1:end-1), Qs_col, Qdots(:,1:end-1), Qdots_col, vA, dFTtilde_col, A_col};
+    Qs(:,1:end-1), Qs_col, Qdots(:,1:end-1), Qdots_col, vA, dFTtilde_col, A_col,...
+    M_ort_coord_opti, M_ort_body_opti};
 if nq.torqAct > 0
     coll_input_vars_eval = [coll_input_vars_eval, {a_a(:,1:end-1), a_a_col, e_a}];
 end

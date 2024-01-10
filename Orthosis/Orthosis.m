@@ -21,10 +21,10 @@ classdef Orthosis < handle
         
         % properties of OpenSim model that is to be used with orthosis
         osimPath = []; % path to model file
-        osimCoords = {}; % coordinate names
-        osimBodies = {}; % body names
-        osimContacts = {}; % contact sphere names
-        osimMuscles = {}; % muscle names
+        osimCoords = {}; % coordinate names used by orthosis
+        osimBodies = {}; % body names used by orthosis
+        osimContacts = {}; % contact sphere names used by orthosis
+        osimMuscles = {}; % muscle names used by orthosis
     end
 
     methods
@@ -39,10 +39,13 @@ classdef Orthosis < handle
             
             self.name = name;
 
-            if isempty(init)
-                self.Nmesh = 1;
-            else
-                self.Nmesh = init.Nmesh;
+            if ~isempty(init)
+                if isfield(init,'Nmesh')
+                    self.Nmesh = init.Nmesh;
+                end
+                if isfield(init,'osimPath')
+                    self.osimPath = init.osimPath;
+                end
             end
 
             if ~isTimeVarying
@@ -127,7 +130,7 @@ classdef Orthosis < handle
             if nargin == 4
                 pos_vel = 'pos';
             end
-            var_name = ['point_',point_name,'_',pos_vel_acc];
+            var_name = ['point_',point_name,'_',pos_vel];
             point = casadi.SX.sym(var_name,3,self.Nmesh);
             self.arg{end+1} = point;
             self.names_arg{end+1} = var_name;
@@ -148,18 +151,29 @@ classdef Orthosis < handle
         end
 
         % ground reaction force
-        function GRF = var_GRF(self,GRF_name)
+        function GRF = var_GRF(self,GRF_name,F_d)
             % GRF_name can be "left_total", "right_total", or the name of a
             % contact sphere
             arguments
                 self Orthosis
                 GRF_name char
+                F_d char = 'F';
             end
-            var_name = ['GRF_',GRF_name];
-            GRF = casadi.SX.sym(var_name,3,self.Nmesh);
-            self.arg{end+1} = GRF;
-            self.names_arg{end+1} = var_name;
-            self.osimContacts{end+1} = GRF_name;
+            var_name = ['GRF_',GRF_name,'_',F_d];
+            switch F_d
+                case 'F'
+                    GRF = casadi.SX.sym(var_name,3,self.Nmesh);
+                    self.arg{end+1} = GRF;
+                    self.names_arg{end+1} = var_name;
+                    self.osimContacts{end+1} = GRF_name;
+
+                case 'd'
+                    GRF = getContactIndentation(self,GRF_name);
+
+                otherwise
+                    error(['"',F_d,'" is not a valid input.',...
+                        'Possible values are: "F" (force), "d" (indentation).'])
+            end
         end
 
         % muscle activity
@@ -304,7 +318,6 @@ classdef Orthosis < handle
                 self.names_res{end+1} = F_name;
 
                 self.BodyMoments(end+1).body = osim_body_name;
-                self.BodyMoments(end).point_in_body = location_in_body;
                 self.BodyMoments(end).name = force_name;
                 self.BodyMoments(end).reference_frame = reference_frame;
 
@@ -413,7 +426,7 @@ classdef Orthosis < handle
                     continue
                 end
                 try
-                    model.getForceSet().get(name_osim);
+                    model.getContactGeometrySet().get(name_osim);
                 catch
                     errstr_contacts = [errstr_contacts,', ',char(name_osim)];
                 end
@@ -428,11 +441,11 @@ classdef Orthosis < handle
             end
         end
 
-
     end % end of methods
 
     methods(Access=private)
 
+        % get only unique entrise of a cell array
         function cell_array = getUnique(self,cell_array)
 
             isUnique = true(size(cell_array));
@@ -448,6 +461,58 @@ classdef Orthosis < handle
     
             cell_array(~isUnique) = [];
         end
-    end
+
+        % get a variable representing the indentation of a contact sphere
+        function indentation = getContactIndentation(self,contact_name)
+
+            % open model
+            if isempty(self.osimPath)
+                error('Please use %s.setOsimPath to set the path to an OpenSim model file.',inputname(1));
+            end
+            import org.opensim.modeling.*;
+            model = Model(self.osimPath);
+            model.finalizeConnections();
+            model.initSystem();
+            
+            % get contact sphere info
+            csp1 = model.getContactGeometrySet().get(contact_name);
+            csp1 = ContactSphere.safeDownCast(csp1);
+
+            csp1_loc = csp1.getLocation().getAsMat;
+            csp1_body = char(csp1.getBody.getName());
+            
+            csp1_r = csp1.getRadius();
+
+            % get transformation matrix between ground and contact plane
+            fl = model.getContactGeometrySet().get('floor');
+            fl_tr = fl.getTransform();
+            fl_T = sparsify(casadi.DM(fl_tr.T().getAsMat));
+            fl_R = fl_tr.R();
+            
+            fl_rot = casadi.DM(4,4);
+            for ii=1:3
+                for jj=1:3
+                    R_ij = fl_R.get(ii-1,jj-1);
+                    if abs(R_ij) > eps
+                        fl_rot(ii,jj) = R_ij;
+                    end
+                end
+            end 
+            fl_rot(4,1:3) = fl_T;
+            fl_rot = sparsify(fl_rot);
+
+            % add input variable for position of contact sphere centre
+            pointPos = var_point(self,contact_name,csp1_body,csp1_loc,'pos');
+
+            % express contact sphere centre relative to contact plane
+            point = [pointPos; 1];
+            point_inFl = fl_rot*point;
+            
+            % calculate indentation (negative means no contact)
+            indentation = -(point_inFl(1,:) - csp1_r);
+            
+        end
+
+    end % end of private methods
 
 end % end of classdef
