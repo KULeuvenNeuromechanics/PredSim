@@ -1,5 +1,4 @@
-function [model_info] = get_musculoskeletal_geometry_approximation(S,...
-    osim_path,model_info)
+function [model_info] = get_musculoskeletal_geometry_approximation(S,osim_path,model_info)
 % --------------------------------------------------------------------------
 % get_musculoskeletal_geometry_approximation
 %   Analyzes the muscle-tendon lengths, velocities, and moment arms in
@@ -27,6 +26,7 @@ function [model_info] = get_musculoskeletal_geometry_approximation(S,...
 % Last edit date: 
 % --------------------------------------------------------------------------
 
+%% muscle
 % Find out which muscles span which joint, thus interacts with its associated coordinates.
 model_info.muscle_info.muscle_spanning_joint_info = get_muscle_spanning_joint_info(S,osim_path,model_info);
 
@@ -41,12 +41,12 @@ if strcmp(S.misc.msk_geom_eq,'polynomials')
     if ~isfile(fullfile(S.misc.subject_path,S.misc.msk_geom_name)) || ~isempty(S.misc.msk_geom_bounds)
         % Analyze the muscle-tendon lengths, velocities, and moment arms in function of coordinate values
         t0 = tic;
-        muscle_data = muscleAnalysisAPI(S,osim_path,model_info); % faster version
+        muscle_data = muscleAnalysisAPI(S,osim_path,model_info);
         disp(['   analysing MSK geometry: ' num2str(toc(t0),'%.2f') ' s'])
 
         % fit polynomial to approximate the results
         t1 = tic;
-        [model_info] = PolynomialFit(S,muscle_data,model_info);
+        model_info.muscle_info.polyFit.MuscleInfo = PolynomialFit(S,muscle_data,model_info.muscle_info.muscle_spanning_joint_info);
         disp(['   approximating MSK geometry: ' num2str(toc(t1),'%.2f') ' s'])
 %         disp(['   (total duration: ' num2str(toc(t0)) ' s)'])
     else
@@ -59,5 +59,46 @@ else
         S.misc.msk_geom_eq, '" not implemented.'])
 end
 
+%% ligaments
+if model_info.ligament_info.NLigament > 0
+    % Find out which ligaments span which joint, thus interacts with its associated coordinates.
+    model_info.ligament_info.ligament_spanning_joint_info = get_muscle_spanning_joint_info(S,osim_path,model_info,'ligaments');
+    
+    % Separate out ligaments that only cross 1 coordinate
+    n_coordinates_crossed = sum(model_info.ligament_info.ligament_spanning_joint_info,2);
+    model_info.ligament_info.ligament_spanning_single_coord = model_info.ligament_info.ligament_spanning_joint_info;
+    model_info.ligament_info.ligament_spanning_single_coord(n_coordinates_crossed(:)>1,:) = 0;
+    model_info.ligament_info.ligament_spanning_multi_coord = model_info.ligament_info.ligament_spanning_joint_info;
+    model_info.ligament_info.ligament_spanning_multi_coord(n_coordinates_crossed(:)==1,:) = 0;
+    
+    
+    
+    % Use polynomial approximatrion
+    if strcmp(S.misc.msk_geom_eq,'polynomials') 
+        
+        % Analyze the muscle-tendon lengths, velocities, and moment arms in function of coordinate values
+        t0 = tic;
+        ligament_data = muscleAnalysisAPI(S,osim_path,model_info,'ligaments');
+        disp(['   analysing ligament geometry: ' num2str(toc(t0),'%.2f') ' s'])
+    
+        model_info.ligament_info.polyFit.DummySamples = ligament_data;
+
+        % fit polynomial to approximate the results
+        if sum(model_info.ligament_info.ligament_spanning_multi_coord,'all') > 0
+            t1 = tic;
+            model_info.ligament_info.polyFit.LigamentInfo = PolynomialFit(S,ligament_data,model_info.ligament_info.ligament_spanning_multi_coord);
+            
+            disp(['   approximating ligament geometry: ' num2str(toc(t1),'%.2f') ' s'])
+        end
+    
+    else
+        % Other fitting methods are not (yet) implemented
+        warning(['Selected method to approximate musculoskeletal geometry: "',...
+            S.misc.msk_geom_eq, '" not implemented.'])
+    end
+
+end
 
 
+
+end % end of function

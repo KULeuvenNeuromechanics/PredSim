@@ -162,6 +162,8 @@ model.print(path_osim_out);
 
 
 %%
+SimmSpline_joint_to_polynomial(path_osim_out);
+
 if use_reference_contacts_bool
     contact_spheres = get_contact_spheres(path_reference_model);
 end

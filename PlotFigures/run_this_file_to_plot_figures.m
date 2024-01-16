@@ -19,17 +19,21 @@ clc
 % Construct a cell array with full paths to files with saved results for
 % which you want to appear on the plotted figures.
 results_folder = fullfile(pathRepoFolder,'PredSimResults');
-result_paths{1} = fullfile(pathRepo,'Tests','Falisse_et_al_2022_Results','Falisse_et_al_2022_v1.mat');
-result_paths{2} = fullfile(results_folder,'Falisse_et_al_2022','Falisse_et_al_2022_job713.mat');
+% result_paths{1} = fullfile(pathRepo,'Tests','Falisse_et_al_2022_Results','Falisse_et_al_2022_v1.mat');
+result_paths{1} = fullfile(results_folder,'DHondt_2023_3seg\DHondt_2023_3seg_ref.mat');
+result_paths{end+1} = fullfile(results_folder,'DHondt_2023_3seg\DHondt_2023_3seg_job667.mat');
+result_paths{end+1} = fullfile(results_folder,'DHondt_2023_3seg\DHondt_2023_3seg_job669.mat');
+
 
 % Cell array with legend name for each result
-legend_names = {'Reference result', 'Your first simulation'};
+legend_names = {'N = 100, quasi-random IG (reference)', 'N = 50, data-informed IG (PredSim)',...
+    'N = 100, quasi-random IG (PredSim)'};
 
 % Path to the folder where figures are saved
-figure_folder = results_folder;
+figure_folder = fullfile(results_folder,'DHondt_2023_3seg');
 
 % Common part of the filename for all saved figures
-figure_savename = 'MyFirstPredictiveSimulationFigure';
+figure_savename = '3-segment_foot_model';
 
 %% Settings for each figure to be made
 % "figure_settings" is a cell array where each cell contains a struct with
@@ -69,7 +73,7 @@ figure_settings(fig_count).name = 'all_angles';
 figure_settings(fig_count).dofs = {'all_coords'};
 figure_settings(fig_count).variables = {'Qs'};
 figure_settings(fig_count).savepath = fullfile(figure_folder,[figure_savename '_' figure_settings(fig_count).name]);
-figure_settings(fig_count).filetype = {};
+figure_settings(fig_count).filetype = {'png'};
 fig_count = fig_count+1;
 
 % figure_settings(fig_count).name = 'all_angles';
@@ -90,7 +94,7 @@ figure_settings(fig_count).name = 'all_activations';
 figure_settings(fig_count).dofs = {'muscles_r'};
 figure_settings(fig_count).variables = {'a'};
 figure_settings(fig_count).savepath = fullfile(figure_folder,[figure_savename '_' figure_settings(fig_count).name]);
-figure_settings(fig_count).filetype = {};
+figure_settings(fig_count).filetype = {'png'};
 fig_count = fig_count+1;
 
 % figure_settings(fig_count).name = 'selected_angles';
@@ -105,15 +109,15 @@ figure_settings(fig_count).name = 'torques';
 figure_settings(fig_count).dofs = {'all_coords'};
 figure_settings(fig_count).variables = {'T_ID'};
 figure_settings(fig_count).savepath = fullfile(figure_folder,[figure_savename '_' figure_settings(fig_count).name]);
-figure_settings(fig_count).filetype = {};
+figure_settings(fig_count).filetype = {'png'};
 fig_count = fig_count+1;
 
-% figure_settings(fig_count).name = 'ankle_muscles';
-% figure_settings(fig_count).dofs = {'soleus_r','med_gas_r','lat_gas_r','tib_ant_r'};
-% figure_settings(fig_count).variables = {'a','FT','lMtilde','Wdot','Edot_gait'};
-% figure_settings(fig_count).savepath = fullfile(figure_folder,[figure_savename '_' figure_settings(fig_count).name]);
-% figure_settings(fig_count).filetype = {};
-% fig_count = fig_count+1;
+figure_settings(fig_count).name = 'ankle_muscles';
+figure_settings(fig_count).dofs = {'soleus_r','med_gas_r','lat_gas_r','tib_ant_r'};
+figure_settings(fig_count).variables = {'a','FT','lMtilde','Wdot','Edot_gait'};
+figure_settings(fig_count).savepath = fullfile(figure_folder,[figure_savename '_' figure_settings(fig_count).name]);
+figure_settings(fig_count).filetype = {};
+fig_count = fig_count+1;
 
 % figure_settings(fig_count).name = 'grfs';
 % figure_settings(fig_count).dofs = {'custom'};

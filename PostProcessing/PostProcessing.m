@@ -66,6 +66,9 @@ R.misc.body_weight = model_info.mass*9.81;
 % Reconstruct all force- and length components of muscle fiber and tendon.
 [R] = PostProcess_muscletendon_dynamics(model_info,f_casadi,R);
 
+% Evaluate ligament lengths, forces, powers
+[R] = PostProcessing_ligaments(model_info,f_casadi,R);
+
 % Calculate all terms of the passive coordinate moments.
 [R] = PostProcess_passive_moments(model_info,f_casadi,R);
 
@@ -83,7 +86,7 @@ R.misc.body_weight = model_info.mass*9.81;
 
 %%
 Outname = fullfile(S.subject.save_folder,[S.post_process.result_filename '.mat']);
-load(Outname,'w_opt','stats','setup','model_info');
-save(Outname,'w_opt','stats','setup','R','model_info');
+% load(Outname,'w_opt','stats','setup','model_info');
+save(Outname,'R','-append');
 
 

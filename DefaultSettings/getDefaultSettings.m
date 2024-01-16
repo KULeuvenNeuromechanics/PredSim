@@ -1,4 +1,4 @@
-function [S] = getDefaultSettings(S)
+function [S] = getDefaultSettings(S,osim_path)
 % --------------------------------------------------------------------------
 % getDefaultSettings 
 %   This functions sets default settings when the user didn't specify the
@@ -7,6 +7,9 @@ function [S] = getDefaultSettings(S)
 % INPUT:
 %   - S -
 %   * setting structure S
+%   
+%   - osim_path -
+%   * path to the osim model
 %
 % 
 % OUTPUT:
@@ -17,7 +20,7 @@ function [S] = getDefaultSettings(S)
 % Original date: 30/11/2021
 %
 % Last edit by: Bram Van Den Bosch
-% Last edit date: 13/April/2023
+% Last edit date: 05/05/2023
 % --------------------------------------------------------------------------
 
 %% bounds
@@ -109,15 +112,27 @@ if ~isfield(S.misc.poly_order,'upper')
 end
 
 % name to save musculoskeletal geometry CasADi function
-S.misc.msk_geom_name = 'f_lMT_vMT_dM';
+[~, model_name, ~] = fileparts(osim_path);
+model_name = char(strrep(model_name, ' ', '_'));
+S.misc.msk_geom_name = [model_name '_f_lMT_vMT_dM'];
 if strcmp(S.misc.msk_geom_eq,'polynomials') 
     S.misc.msk_geom_name = [S.misc.msk_geom_name '_poly_',...
         num2str(S.misc.poly_order.lower) '_' num2str(S.misc.poly_order.upper)];
 end
 
+% default coordinate bounds used to approximate musculoskeletal geometry
+if ~isfield(S.misc,'default_msk_geom_bounds')
+    S.misc.default_msk_geom_bounds = 'default_msk_geom_bounds.csv';
+end
+
 % manually overwrite coordinate bounds used to approximate musculoskeletal geometry
 if ~isfield(S.misc,'msk_geom_bounds')
     S.misc.msk_geom_bounds = [];
+end
+
+% number of data points to sample musculoskeletal geometry
+if ~isfield(S.misc,'msk_geom_n_samples')
+    S.misc.msk_geom_n_samples = 5000;
 end
 
 % rmse threshold for muscle-tendon length approximation
@@ -370,6 +385,14 @@ end
 % joints that are considered base of an arm
 if ~isfield(S.subject,'base_joints_arms')
     S.subject.base_joints_arms = 'acromial';
+% ligament stiffness for all ligaments
+if ~isfield(S.subject,'stiffness_all_ligaments')
+    S.subject.stiffness_all_ligaments = 'ligamentGefen2002'; 
+end
+
+% ligament stiffness for selected ligaments
+if ~isfield(S.subject,'set_stiffness_selected_ligaments')
+    S.subject.set_stiffness_selected_ligaments = {'PlantarFascia','plantarFasciaNatali2010'};
 end
 
 %% weights

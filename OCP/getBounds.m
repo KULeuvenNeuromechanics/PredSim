@@ -59,6 +59,7 @@ end
 
 % prepare index arrays for later use
 idx_mtp = [];
+idx_mtj = [];
 idx_arms = [model_info.ExtFunIO.jointi.arm_r,model_info.ExtFunIO.jointi.arm_l];
 idx_shoulder_flex = [];
 idx_shoulder_add = [];
@@ -81,6 +82,9 @@ for i = 1:NCoord
     % save indices for later use
     if contains(coordinate,'mtp')
         idx_mtp(end+1) = coord_idx;
+    end
+    if contains(coordinate,'mtj')
+        idx_mtj(end+1) = coord_idx;
     end
     if find(idx_arms(:)==coord_idx)
         if contains(coordinate,'elbow')
@@ -160,6 +164,13 @@ bounds.Qdots.upper(idx_mtp) = 13;
 bounds.Qdots.lower(idx_mtp) = -13;
 bounds.Qdotdots.upper(idx_mtp) = 500;
 bounds.Qdotdots.lower(idx_mtp) = -500;
+% Midtarsal
+bounds.Qs.upper(idx_mtj) = 30*pi/180;
+bounds.Qs.lower(idx_mtj) = -30*pi/180;
+bounds.Qdots.upper(idx_mtj) = 13;
+bounds.Qdots.lower(idx_mtj) = -13;
+bounds.Qdotdots.upper(idx_mtj) = 500;
+bounds.Qdotdots.lower(idx_mtj) = -500;
 
 % Pelvis tilt
 bounds.Qs.lower(model_info.ExtFunIO.jointi.floating_base(1)) = -20*pi/180;
