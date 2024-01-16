@@ -45,11 +45,14 @@ M_lig_single_MX = MX(model_info.ExtFunIO.jointi.nq.all,1);
 % ligaments that cross multiple degrees of freedom
 M_lig_multi_MX = MX(model_info.ExtFunIO.jointi.nq.all,1);
 
+% initialise ligament length, lenghtening velocity, and force
+L_lig_pp_MX = MX(model_info.ligament_info.NLigament,1);
+v_lig_pp_MX = MX(model_info.ligament_info.NLigament,1);
+F_lig_pp_MX = MX(model_info.ligament_info.NLigament,1);
+
 if model_info.ligament_info.NLigament > 0
 
-    L_lig_pp_MX = MX(model_info.ligament_info.NLigament,1);
-    F_lig_pp_MX = MX(model_info.ligament_info.NLigament,1);
-
+    
     %% Ligaments that cross a single coordinate
     % These are grouped as a lumped angle-torque
 
