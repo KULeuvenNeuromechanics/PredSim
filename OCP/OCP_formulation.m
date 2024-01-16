@@ -1165,7 +1165,7 @@ else
 end
 R.ground_reaction.threshold = HS_threshold;
 R.ground_reaction.initial_contact_side = HS1;
-
+R.ground_reaction.idx_GC = idx_GC;
 
 % save results
 Outname = fullfile(S.subject.save_folder,[S.post_process.result_filename '.mat']);

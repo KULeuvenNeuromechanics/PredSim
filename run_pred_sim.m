@@ -24,7 +24,7 @@ function [varargout] = run_pred_sim(S,osim_path)
 % --------------------------------------------------------------------------
 
 addpath([S.misc.main_path '\VariousFunctions'])
-addpath([S.misc.main_path '\Orthosis'])
+addpath([S.misc.main_path '\WearableDevices'])
 
 % Settings that are not specified get thier default value
 S = getDefaultSettings(S,osim_path);
@@ -46,8 +46,8 @@ if S.post_process.load_prev_opti_vars
     load(Outname,'R','model_info');
     S = R.S;
     S.post_process.load_prev_opti_vars = 1;
-    S = getDefaultSettings(S); % to fill in any missing settings
     osim_path = model_info.osim_path;
+    S = getDefaultSettings(S, osim_path); % to fill in any missing settings
     R.S = S;
 
 elseif S.post_process.rerun
@@ -56,8 +56,9 @@ elseif S.post_process.rerun
     load(Outname,'R','model_info');
     S = R.S;
     S.post_process.rerun = 1;
-    S = getDefaultSettings(S); % to fill in any missing settings
     osim_path = model_info.osim_path;
+    S = getDefaultSettings(S, osim_path); % to fill in any missing settings
+    
     R.S = S;
 
 elseif isempty(S.post_process.result_filename)

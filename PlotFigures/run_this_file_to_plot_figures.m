@@ -21,10 +21,15 @@ clc
 results_folder = fullfile(pathRepoFolder,'PredSimResults');
 result_paths{1} = fullfile(pathRepo,'Tests','Falisse_et_al_2022_Results','Falisse_et_al_2022_v1.mat');
 result_paths{2} = fullfile(results_folder,'Falisse_et_al_2022','Falisse_et_al_2022_job839.mat');
+% result_paths{3} = fullfile(results_folder,'Falisse_et_al_2022','Falisse_et_al_2022_job841.mat');
+result_paths{end+1} = fullfile(results_folder,'Falisse_et_al_2022','Falisse_et_al_2022_job842.mat');
+result_paths{end+1} = fullfile(results_folder,'Falisse_et_al_2022','Falisse_et_al_2022_job843.mat');
+result_paths{end+1} = fullfile(results_folder,'Falisse_et_al_2022','Falisse_et_al_2022_job844.mat');
 
 % Cell array with legend name for each result
 legend_names = {'Reference result', 'Your first simulation'};
-legend_names = {'Baseline', 'ankle exo'};
+legend_names = {'Baseline (i.e. Falisse et al 2022)', 'w/ exo params 1 (ig: IK)',...
+    'w/ exo params 2 (ig: baseline)', 'w/ exo params 1 (ig: baseline)', 'w/ exo params 2 (ig: IK)'};
 
 % Path to the folder where figures are saved
 figure_folder = results_folder;
@@ -102,19 +107,19 @@ fig_count = fig_count+1;
 % figure_settings(fig_count).filetype = {'jpeg'};
 % fig_count = fig_count+1;
 
-% figure_settings(fig_count).name = 'torques';
-% figure_settings(fig_count).dofs = {'all_coords'};
-% figure_settings(fig_count).variables = {'T_ID'};
-% figure_settings(fig_count).savepath = fullfile(figure_folder,[figure_savename '_' figure_settings(fig_count).name]);
-% figure_settings(fig_count).filetype = {'png'};
-% fig_count = fig_count+1;
+figure_settings(fig_count).name = 'torques';
+figure_settings(fig_count).dofs = {'all_coords'};
+figure_settings(fig_count).variables = {'T_ID'};
+figure_settings(fig_count).savepath = fullfile(figure_folder,[figure_savename '_' figure_settings(fig_count).name]);
+figure_settings(fig_count).filetype = {};
+fig_count = fig_count+1;
 
-% figure_settings(fig_count).name = 'ankle_muscles';
-% figure_settings(fig_count).dofs = {'soleus_r','med_gas_r','lat_gas_r','tib_ant_r'};
-% figure_settings(fig_count).variables = {'a','FT','lMtilde','Wdot','Edot_gait'};
-% figure_settings(fig_count).savepath = fullfile(figure_folder,[figure_savename '_' figure_settings(fig_count).name]);
-% figure_settings(fig_count).filetype = {};
-% fig_count = fig_count+1;
+figure_settings(fig_count).name = 'ankle_muscles';
+figure_settings(fig_count).dofs = {'soleus_r','med_gas_r','lat_gas_r','tib_ant_r'};
+figure_settings(fig_count).variables = {'a','FT','lMtilde','Wdot','Edot_gait'};
+figure_settings(fig_count).savepath = fullfile(figure_folder,[figure_savename '_' figure_settings(fig_count).name]);
+figure_settings(fig_count).filetype = {};
+fig_count = fig_count+1;
 
 figure_settings(fig_count).name = 'grfs';
 figure_settings(fig_count).dofs = {'custom'};

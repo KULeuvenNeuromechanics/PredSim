@@ -27,13 +27,14 @@ init.osimPath = osim_path;
 for i=1:length(S.orthosis.settings)
 
     orthosis_settings_i = S.orthosis.settings{i};
+
     % get Orthosis object
     fun = str2func(orthosis_settings_i.function_name);
     orthosis = fun(init, orthosis_settings_i);
 
     % run testing methods
-    orthosis.setOsimPath(osim_path);
-    orthosis.testOsimModel();
+%     orthosis.setOsimPath(osim_path);
+%     orthosis.testOsimModel();
 
     % Add OpenSimAD options required for orthosis
     PointPositions = orthosis.getPointPositions();

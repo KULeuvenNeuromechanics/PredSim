@@ -1,11 +1,23 @@
 classdef Orthosis < handle
+% --------------------------------------------------------------------------
+% Orthosis
+%   Interface to define custom orthosis or exoskeleton devices to be used
+%   in predictive simulations. For examples on how to use this, see
+%   parametricAFO, ankleExoZhang2017.
+%
+%   See also parametricAFO, ankleExoZhang2017 
+% 
+% Original author: Lars D'Hondt
+% Original date: January 2024
+% --------------------------------------------------------------------------
+
     properties(Access = private)
         % general properties
         name = []; % name of the orthosis
         Nmesh = 1; % number of meshpoints used to describe the time-varying 
             % behaviour of the orthosis. Set to 1 if time-independent.
 
-        % properties of function describing orthosis mechanics
+        % properties of CasADi Function describing orthosis mechanics
         arg = {}; % input arguments
         res = {}; % output arguments
         names_arg = {}; % names of input arguments
@@ -21,10 +33,18 @@ classdef Orthosis < handle
         
         % properties of OpenSim model that is to be used with orthosis
         osimPath = []; % path to model file
-        osimCoords = {}; % coordinate names used by orthosis
-        osimBodies = {}; % body names used by orthosis
-        osimContacts = {}; % contact sphere names used by orthosis
-        osimMuscles = {}; % muscle names used by orthosis
+
+        warningOsimPathNotSet = false; % only warn once that osimPath was not set.
+
+        osimCoordsAll = {}; % coordinate names
+        osimBodiesAll = {}; % body names
+        osimContactsAll = {}; % contact sphere names
+        osimMusclesAll = {}; % muscle names
+
+        osimCoordsUsed = {}; % coordinate names used by orthosis
+        osimBodiesUsed = {}; % body names used by orthosis
+        osimContactsUsed = {}; % contact sphere names used by orthosis
+        osimMusclesUsed = {}; % muscle names used by orthosis
     end
 
     methods
@@ -36,6 +56,29 @@ classdef Orthosis < handle
                 init struct = [];
                 isTimeVarying (1,1) logical = false;
             end
+            % Create a new Orthosis.
+            %   Constructor should be used inside a function.
+            %   
+            %   See also parametricAFO, ankleExoZhang2017 
+            %
+            % INPUT:
+            %   - name - [char]
+            %   * User-defined name. 
+            % 
+            %   - init - [struct]
+            %   * Information used to initialise the Orthosis. 
+            %   This is be the 1st input to the function where the orthosis 
+            %   is defined, and should be passed to the constructor.
+            %
+            %   - isTimeVarying - [boolean] (optional) Default: false
+            %   * Boolean indicating whether the expression that determines
+            %   the generalised forces is time-varying. E.g. a predefined
+            %   torque profile.
+            %
+            %
+            % OUTPUT:
+            %   - self - [Orthosis]
+            %   * brief description of output_1
             
             self.name = name;
 
@@ -45,6 +88,7 @@ classdef Orthosis < handle
                 end
                 if isfield(init,'osimPath')
                     self.osimPath = init.osimPath;
+                    updatePropertiesFromOsimModel(self);
                 end
             end
 
@@ -93,6 +137,7 @@ classdef Orthosis < handle
 
         function [] = setOsimPath(self,osimPath)
             self.osimPath = osimPath;
+            updatePropertiesFromOsimModel(self);
         end
 
     % create a variable 
@@ -100,22 +145,14 @@ classdef Orthosis < handle
         function coord = var_coord(self,osim_coord_name,pos_vel_acc)
             arguments
                 self Orthosis
-                osim_coord_name char
-                pos_vel_acc char = 'pos';
-            end
-            if nargin == 2
-                pos_vel_acc = 'pos';
-            end
-            if ~strcmp(pos_vel_acc,'pos') && ~strcmp(pos_vel_acc,'vel')...
-                    && ~strcmp(pos_vel_acc,'acc')
-                error(['"',pos_vel_acc,'" is not a valid input.',...
-                    'Possible values are: "pos", "vel", "acc"'])
+                osim_coord_name char {inputExistsInOsimModel(self,osim_coord_name,'osim_coord_name')}
+                pos_vel_acc char {mustBeMember(pos_vel_acc,{'pos','vel','acc'})} = 'pos';
             end
             var_name = ['coord_',osim_coord_name,'_',pos_vel_acc];
             coord = casadi.SX.sym(var_name,1,self.Nmesh);
             self.arg{end+1} = coord;
             self.names_arg{end+1} = var_name;
-            self.osimCoords{end+1} = osim_coord_name;
+            self.osimCoordsUsed{end+1} = osim_coord_name;
         end
 
         % point position or velocity
@@ -123,18 +160,15 @@ classdef Orthosis < handle
             arguments
                 self Orthosis
                 point_name char
-                osim_body_name char
+                osim_body_name char {inputExistsInOsimModel(self,osim_body_name,'body')}
                 location_in_body (1,3) double = [0, 0, 0];
-                pos_vel char = 'pos';
-            end
-            if nargin == 4
-                pos_vel = 'pos';
+                pos_vel char {mustBeMember(pos_vel,{'pos','vel'})} = 'pos';
             end
             var_name = ['point_',point_name,'_',pos_vel];
             point = casadi.SX.sym(var_name,3,self.Nmesh);
             self.arg{end+1} = point;
             self.names_arg{end+1} = var_name;
-            self.osimBodies{end+1} = osim_body_name;
+            self.osimBodiesUsed{end+1} = osim_body_name;
             switch pos_vel
                 case 'pos'
                     self.PointPositions(end+1).body = osim_body_name;
@@ -144,35 +178,27 @@ classdef Orthosis < handle
                     self.PointVelocities(end+1).body = osim_body_name;
                     self.PointVelocities(end).point_in_body = location_in_body;
                     self.PointVelocities(end).name = point_name;
-                otherwise
-                    error(['"',pos_vel,'" is not a valid input.',...
-                        'Possible values are: "pos", "vel"'])
             end
         end
 
         % ground reaction force
-        function GRF = var_GRF(self,GRF_name,F_d)
+        function GRF = var_GRF(self,osim_contact_name,F_d)
             % GRF_name can be "left_total", "right_total", or the name of a
             % contact sphere
             arguments
                 self Orthosis
-                GRF_name char
-                F_d char = 'F';
+                osim_contact_name char {inputExistsInOsimModel(self,osim_contact_name,'contact')}
+                F_d char {mustBeMember(F_d,{'Force','indentation'})} = 'Force';
             end
-            var_name = ['GRF_',GRF_name,'_',F_d];
+            var_name = ['GRF_',osim_contact_name,'_',F_d];
             switch F_d
-                case 'F'
+                case 'Force'
                     GRF = casadi.SX.sym(var_name,3,self.Nmesh);
                     self.arg{end+1} = GRF;
                     self.names_arg{end+1} = var_name;
-                    self.osimContacts{end+1} = GRF_name;
-
-                case 'd'
-                    GRF = getContactIndentation(self,GRF_name);
-
-                otherwise
-                    error(['"',F_d,'" is not a valid input.',...
-                        'Possible values are: "F" (force), "d" (indentation).'])
+                    self.osimContactsUsed{end+1} = osim_contact_name;
+                case 'indentation'
+                    GRF = getContactIndentation(self,osim_contact_name);
             end
         end
 
@@ -180,55 +206,37 @@ classdef Orthosis < handle
         function act = var_act(self,osim_muscle_name)
             arguments
                 self Orthosis
-                osim_muscle_name char
+                osim_muscle_name char {inputExistsInOsimModel(self,osim_muscle_name,'muscle')}
             end
             var_name = ['muscle_',osim_muscle_name,'_act'];
             act = casadi.SX.sym(var_name,1,self.Nmesh);
             self.arg{end+1} = GRF;
             self.names_arg{end+1} = var_name;
-            self.osimMuscles{end+1} = osim_muscle_name;
+            self.osimMusclesUsed{end+1} = osim_muscle_name;
         end
 
         % any variable
         function var = var(self,varargin)
 
-            n_in = length(varargin);
+            try
+                if ismember(varargin{1},self.osimCoordsAll)
+                    var = var_coord(varargin{:});
+                elseif ismember(varargin{2},self.osimBodiesAll)
+                    var = var_point(varargin{:});
+                elseif ismember(varargin{1},self.osimContactsAll)
+                    var = var_GRF(varargin{:});
+                elseif ismember(varargin{1},self.osimMusclesAll)
+                    var = var_muscle(varargin{:});
+                else
+                    error('')
+                end
 
-            idx = find(cellfun(@(x)(ischar(x)||isstring(x))&&contains(x,'coord'), varargin));
-            if ~isempty(idx)
-                var = var_coord(self,varargin{setdiff(1:n_in,idx)});
-                return
-            end
+            catch
+                error(['Unable to use %s.var with the provided arguments.',...
+                    ' Try using %s.var_coord, %s.var_point, %s.var_GRF, or %s.var_mus'],...
+                    inputname(1),inputname(1),inputname(1),inputname(1),inputname(1));
 
-            idx = find(cellfun(@(x)(ischar(x)||isstring(x))&&contains(x,'point'), varargin));
-            if ~isempty(idx)
-                var = var_point(self,varargin{setdiff(1:n_in,idx)});
-                return
             end
-
-            idx = find(cellfun(@(x)(ischar(x)||isstring(x))&&contains(x,'GRF'), varargin));
-            if ~isempty(idx)
-                var = var_GRF(self,varargin{setdiff(1:n_in,idx)});
-                return
-            end
-
-            idx = find(cellfun(@(x)(ischar(x)||isstring(x))&&contains(x,'act'), varargin));
-            if ~isempty(idx)
-                var = var_act(self,varargin{setdiff(1:n_in,idx)});
-                return
-            end
-            
-            if n_in == 1 || n_in == 2
-                var = var_coord(self,varargin);
-                return
-            end
-
-            if n_in == 3 || n_in == 4
-                var = var_point(self,varargin);
-                return
-            end
-
-            error('Unable to create an orthosis variable from these input arguments');
         end
 
 
@@ -238,7 +246,7 @@ classdef Orthosis < handle
             arguments
                 self Orthosis
                 value (1,:)
-                osim_coord_name char
+                osim_coord_name char {inputExistsInOsimModel(self,osim_coord_name,'coord')}
             end
             % value should be a row vector with Nmesh elements
             if size(value,1)~=1 || size(value,2)~=self.Nmesh
@@ -252,7 +260,7 @@ classdef Orthosis < handle
             if isempty(idx)
                 self.res{end+1} = value;
                 self.names_res{end+1} = F_name;
-                self.osimCoords{end+1} = osim_coord_name;
+                self.osimCoordsUsed{end+1} = osim_coord_name;
             else
                 self.res{idx} = self.res{idx} + value;
             end
@@ -265,9 +273,9 @@ classdef Orthosis < handle
                 self Orthosis
                 value (3,:)
                 force_name char
-                osim_body_name char
+                osim_body_name char {inputExistsInOsimModel(self,osim_body_name,'body')}
                 location_in_body (1,3) double = [0, 0, 0];
-                reference_frame char = osim_body_name;
+                reference_frame char {inputExistsInOsimModel(self,reference_frame,'frame')} = osim_body_name;
             end
             % value should be a 3xNmesh matrix
             if size(value,1)~=3 || size(value,2)~=self.Nmesh
@@ -287,8 +295,8 @@ classdef Orthosis < handle
                 self.BodyForces(end).name = force_name;
                 self.BodyForces(end).reference_frame = reference_frame;
 
-                self.osimBodies{end+1} = osim_body_name;
-                self.osimBodies{end+1} = reference_frame;
+                self.osimBodiesUsed{end+1} = osim_body_name;
+                self.osimBodiesUsed{end+1} = reference_frame;
             else
                 self.res{idx} = self.res{idx} + value;
             end
@@ -301,8 +309,8 @@ classdef Orthosis < handle
                 self Orthosis
                 value (3,:)
                 force_name char
-                osim_body_name char
-                reference_frame char = osim_body_name;
+                osim_body_name char {inputExistsInOsimModel(self,osim_body_name,'body')}
+                reference_frame char {inputExistsInOsimModel(self,reference_frame,'frame')} = osim_body_name;
             end
             % value should be a 3xNmesh matrix
             if size(value,1)~=3 || size(value,2)~=self.Nmesh
@@ -321,7 +329,7 @@ classdef Orthosis < handle
                 self.BodyMoments(end).name = force_name;
                 self.BodyMoments(end).reference_frame = reference_frame;
 
-                self.osimBodies{end+1} = osim_body_name;
+                self.osimBodiesUsed{end+1} = osim_body_name;
             else
                 self.res{idx} = self.res{idx} + value;
             end
@@ -374,7 +382,7 @@ classdef Orthosis < handle
             errstr = [];
 
             % coordinates
-            osim_coords = getUnique(self,self.osimCoords);
+            osim_coords = getUnique(self,self.osimCoordsUsed);
             errstr_coords = [];
             for name_osim = string(osim_coords)
                 try
@@ -388,7 +396,7 @@ classdef Orthosis < handle
             end
 
             % bodies
-            osim_bodies = getUnique(self,self.osimBodies);
+            osim_bodies = getUnique(self,self.osimBodiesUsed);
             errstr_bodies = [];
             for name_osim = string(osim_bodies)
                 if strcmpi(name_osim,'ground')
@@ -405,7 +413,7 @@ classdef Orthosis < handle
             end
 
             % muscles
-            osim_muscles = getUnique(self,self.osimMuscles);
+            osim_muscles = getUnique(self,self.osimMusclesUsed);
             errstr_muscles = [];
             for name_osim = string(osim_muscles)
                 try
@@ -419,7 +427,7 @@ classdef Orthosis < handle
             end
 
             % contact spheres
-            osim_contacts = getUnique(self,self.osimContacts);
+            osim_contacts = getUnique(self,self.osimContactsUsed);
             errstr_contacts = [];
             for name_osim = string(osim_contacts)
                 if strcmpi(name_osim,'left_total') || strcmpi(name_osim,'right_total')
@@ -439,6 +447,54 @@ classdef Orthosis < handle
                 error([sprintf(['Unable to resolve all OpenSim references for Orthosis %s',...
                 ' based on the OpenSim model file "%s"\n'],inputname(1),self.osimPath),errstr]);
             end
+        end
+
+        function [] = updatePropertiesFromOsimModel(self)
+            if isempty(self.osimPath)
+                error('Please use %s.setOsimPath to set the path to an OpenSim model file.',inputname(1));
+            end
+
+            import org.opensim.modeling.*;
+            model = Model(self.osimPath);
+
+
+            % coordinates
+            n_coord = model.getCoordinateSet().getSize();
+            osim_coords = cell(1,n_coord);
+            for i=1:n_coord
+                osim_coords{1,i} = char(model.getCoordinateSet().get(i-1).getName());
+            end
+            self.osimCoordsAll = osim_coords;
+
+            % bodies
+            n_bodies = model.getBodySet().getSize();
+            osim_bodies = cell(1,n_bodies);
+            for i=1:n_bodies
+                osim_bodies{1,i} = char(model.getBodySet().get(i-1).getName());
+            end
+            self.osimBodiesAll = osim_bodies;
+
+            % muscles
+            n_mus = model.getMuscles().getSize();
+            osim_muscles = cell(1,n_mus);
+            for i=1:n_mus
+                osim_muscles{1,i} = char(model.getMuscles().get(i-1).getName());
+            end
+            self.osimMusclesAll = osim_muscles;
+
+            % contact spheres
+            n_contact = model.getContactGeometrySet().getSize();
+            osim_contacts = {};
+            for i=1:n_contact
+                contact_geom_i = model.getContactGeometrySet().get(i-1);
+                if strcmp(contact_geom_i.getConcreteClassName(),'ContactSphere')
+                    osim_contacts{1,end+1} = char(contact_geom_i.getName());
+                end
+            end
+            osim_contacts{1,end+1} = 'left_total';
+            osim_contacts{1,end+1} = 'right_total';
+            self.osimContactsAll = osim_contacts;
+
         end
 
     end % end of methods
@@ -467,7 +523,7 @@ classdef Orthosis < handle
 
             % open model
             if isempty(self.osimPath)
-                error('Please use %s.setOsimPath to set the path to an OpenSim model file.',inputname(1));
+                error('Please use %s.setOsimPath to set the path to an OpenSim model file.',self.name);
             end
             import org.opensim.modeling.*;
             model = Model(self.osimPath);
@@ -511,6 +567,40 @@ classdef Orthosis < handle
             % calculate indentation (negative means no contact)
             indentation = -(point_inFl(1,:) - csp1_r);
             
+        end
+
+        function inputExistsInOsimModel(self,input,type)
+
+%             disp(inputname(1))
+
+            switch type
+                case 'coord'
+                    osimComponents = self.osimCoordsAll;
+                case 'body'
+                    osimComponents = self.osimBodiesAll;
+                case 'contact'
+                    osimComponents = self.osimContactsAll;
+                case 'muscle'
+                    osimComponents = self.osimMusclesAll;
+                case 'frame'
+                    osimComponents = self.osimBodiesAll;
+                    osimComponents{1,end+1} = 'ground';
+                otherwise
+                    osimComponents = {};
+            end
+
+            if ~isempty(osimComponents)
+                try
+                    mustBeMember(input,osimComponents)
+                catch ex
+                    throwAsCaller(ex);
+                end
+            elseif ~self.warningOsimPathNotSet
+                self.warningOsimPathNotSet = true;
+                warning(['Please use %s.setOsimPath to set ',...
+                    'the path to an OpenSim model file to enable full',...
+                    'input validation'],self.name);
+            end
         end
 
     end % end of private methods

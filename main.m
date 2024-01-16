@@ -5,7 +5,7 @@
 % if left empty, will be taken from getDefaultSettings.m.
 
 clear
-close all
+% close all
 clc
 % path to the repository folder
 [pathRepo,~,~] = fileparts(mfilename('fullpath'));
@@ -38,7 +38,7 @@ S.subject.IG_selection_gaitCyclePercent = 100;
 osim_path = fullfile(pathRepo,'Subjects',S.subject.name,[S.subject.name '.osim']);
 
 % Do you want to run the simulation as a batch job (parallel computing toolbox)
-S.solver.run_as_batch_job = 1;
+S.solver.run_as_batch_job = 0;
 
 %% Optional inputs
 % see README.md in the main folder for information about these optional
@@ -104,7 +104,7 @@ S.post_process.make_plot = 0;
 % S.post_process.savename  = 'datetime';
 % S.post_process.load_prev_opti_vars = 1;
 % S.post_process.rerun   = 1;
-% S.post_process.result_filename = '';
+% S.post_process.result_filename = 'Falisse_et_al_2022_job839';
 
 % % S.solver
 % S.solver.linear_solver  = '';
@@ -148,24 +148,25 @@ S.subject.v_pelvis_x_trgt   = 1.33;
 
 
 % % S.orthosis
-ortho1.function_name = 'parametricAFO';
-ortho1.ankle_stiffness = 5; % Nm/rad
-ortho1.mtp_stiffness = 1; % Nms/rad
+% ortho1.function_name = 'parametricAFO';
+% ortho1.function_name = 'debugAFO';
+% ortho1.ankle_stiffness = 5; % Nm/rad
+% ortho1.mtp_stiffness = 1; % Nms/rad
 
 % ortho1.function_name = 'ankleExoZhang2017';
 % ortho1.dependencies_path = 'C:\Users\u0150099\OneDrive - KU Leuven\PhD\literature\assistive devices\aal5054_zhang_sm_data_s2';
 % ortho1.peak_torque = 0.54*65;
-% ortho1.peak_timing = 52.9;
+% ortho1.peak_timing = 50; %52.9; % 50
 % ortho1.rise_time = 26.2;
-% ortho1.drop_time = 9.8;
+% ortho1.drop_time = 5; %9.8; % 5
 % ortho1.plotAssistanceProfile = figure();
 
-% add orthosis on right side
-ortho1.left_right = 'r';
-S.orthosis.settings{1} = ortho1;
-% add the same orthosis on left side
-ortho1.left_right = 'l';
-S.orthosis.settings{2} = ortho1;
+% % add orthosis on right side
+% ortho1.left_right = 'r';
+% S.orthosis.settings{1} = ortho1;
+% % add the same orthosis on left side
+% ortho1.left_right = 'l';
+% S.orthosis.settings{2} = ortho1;
 
 
 % %S.OpenSimADOptions: required inputs to convert .osim to .dll
