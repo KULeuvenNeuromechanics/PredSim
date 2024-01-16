@@ -133,17 +133,14 @@ S.subject.v_pelvis_x_trgt   = 1.33;
 % S.subject.scale_MT_params = {{'soleus_l'},'FMo',0.9,{'soleus_l'},'alphao',1.1};
 % S.subject.spasticity        = ;
 % S.subject.muscle_coordination = ;
-S.subject.set_stiffness_coefficient_selected_dofs = {{'mtp_angle_l','mtp_angle_r'},25};
-S.subject.set_damping_coefficient_selected_dofs = {{'mtp_angle_l','mtp_angle_r'},2};
+% S.subject.set_stiffness_coefficient_selected_dofs = {{'mtp_angle_l','mtp_angle_r'},25};
+% S.subject.set_damping_coefficient_selected_dofs = {{'mtp_angle_l','mtp_angle_r'},2};
 % S.subject.set_limit_torque_coefficients_selected_dofs = ...
 %     {{'knee_angle_r','knee_angle_l'},-[11.03 -11.33 -6.09 33.94]',-[0.13 -2.4]',...
 %     {'mtp_angle_r','mtp_angle_l'},-[0.18 -70.08 -0.9 14.87]',-[65/180*pi 0]'};
 % S.subject.base_joints_legs = 'hip';
 % S.subject.base_joints_arms = [];
 % S.subject.mtp_type          = '2022paper';
-% S.subject.set_stiffness_coefficient_selected_dofs = {'mtp_angle',1};
-% S.subject.set_damping_coefficient_selected_dofs = {'mtp_angle',2};
-% S.subject.set_limit_torque_coefficients_selected_dofs = {{'mtj_angle_l','mtj_angle_r'},[0,0,0,0],[0,0]};
 
 % % S.weights
 % S.weights.E         = 0;

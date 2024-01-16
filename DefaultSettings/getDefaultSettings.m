@@ -385,6 +385,8 @@ end
 % joints that are considered base of an arm
 if ~isfield(S.subject,'base_joints_arms')
     S.subject.base_joints_arms = 'acromial';
+end
+
 % ligament stiffness for all ligaments
 if ~isfield(S.subject,'stiffness_all_ligaments')
     S.subject.stiffness_all_ligaments = 'ligamentGefen2002'; 
