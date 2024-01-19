@@ -46,6 +46,9 @@ S.misc.poly_order = [];
 % initiate for warning
 S.subject.adapt_IG_pelvis_y = 0;
 
+% save computername
+S.misc.computername = getenv('COMPUTERNAME');
+
 
 %%
 if ~isempty(varargin)
