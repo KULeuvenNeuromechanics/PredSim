@@ -26,8 +26,8 @@
 % Original author: Lars D'Hondt
 % Original date: 27/May/2022
 %
-% Last edit by: 
-% Last edit date: 
+% Last edit by: Bram Van Den Bosch  
+% Last edit date: 25/January/2024
 % --------------------------------------------------------------------------
 
 
@@ -48,6 +48,7 @@ path_reference_model = fullfile(pathHere,'Falisse_et_al_2022.osim');
 add_actuators_bool = 1;
 add_contact_bool = 0;
 use_reference_contacts_bool = 1;
+scale_contact_spheres = 1;
 scale_contact_location_bool = 1;
 
 %% Define contact spheres
@@ -150,6 +151,10 @@ for i=1:length(torq_act)
     ita = ita+1;
 end
 
+%% Define scaling factors for contact spheres
+
+scale.stiffness = 1;
+scale.dissipation = 1;
 
 %%
 
@@ -170,6 +175,9 @@ if add_actuators_bool
 end
 if add_contact_bool
     add_contact_spheres(path_osim_out,contact_spheres);
+end
+if scale_contact_spheres
+    scaleContactSpheres(path_reference_model,path_osim_out,path_osim_out,scale)
 end
 if scale_contact_location_bool
     fixContactSpherePositionAfterScaling(path_reference_model,path_osim_out);
