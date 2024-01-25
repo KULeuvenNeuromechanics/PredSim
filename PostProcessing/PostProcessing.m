@@ -48,7 +48,7 @@ R.misc.body_weight = model_info.mass*9.81;
 % OpenSim GUI.
 [R] = PostProcess_write_motion_file(model_info,f_casadi,R);
 
-% Get Inverse Dynamic torque (or force) for each cordinate.
+% Get Inverse Dynamic torque (or force) for each coordinate.
 [R] = PostProcess_get_ID(model_info,f_casadi,R);
 
 % Compute variables related to foot-ground contact.
@@ -78,6 +78,9 @@ R.misc.body_weight = model_info.mass*9.81;
 % Evaluate the metabolic energetics for all implemented metabolic energy
 % models.
 [R] = PostProcess_metabolic_energy(model_info,f_casadi,R);
+
+% Calculate orthosis forces
+[R] = PostProcessing_orthosis(model_info,f_casadi,R);
 
 % Please implement additional post-processing steps as functions following
 % the template, and call them from here.

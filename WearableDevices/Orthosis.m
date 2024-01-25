@@ -22,6 +22,8 @@ classdef Orthosis < handle
         res = {}; % output arguments
         names_arg = {}; % names of input arguments
         names_res = {}; % names of output arguments
+        meta_arg = []; % metadata of input arguments
+        meta_res = []; % metadata of output arguments
         fun = []; % handle of CasADi Function
 
         % properties of interface with OpenSimAD. 
@@ -49,7 +51,7 @@ classdef Orthosis < handle
 
     methods
 
-    % constructor
+    %% constructor
         function self = Orthosis(name,init,isTimeVarying)
             arguments
                 name char
@@ -75,10 +77,9 @@ classdef Orthosis < handle
             %   the generalised forces is time-varying. E.g. a predefined
             %   torque profile.
             %
-            %
             % OUTPUT:
             %   - self - [Orthosis]
-            %   * brief description of output_1
+            %   * new Orthosis
             
             self.name = name;
 
@@ -97,13 +98,7 @@ classdef Orthosis < handle
             end
         end
 
-    % create CasADi Function
-        function [] = createCasadiFunction(self)
-            self.fun = casadi.Function(['f_ortosis_',self.name],...
-                self.arg, self.res, self.names_arg, self.names_res);
-        end
-
-    % getters and setters
+    %% getters and setters
         function name = getName(self)
             name = self.name;
         end
@@ -140,22 +135,32 @@ classdef Orthosis < handle
             updatePropertiesFromOsimModel(self);
         end
 
-    % create a variable 
-        % coordinate position, velocity or acceleration
+    %% create a variable 
         function coord = var_coord(self,osim_coord_name,pos_vel_acc)
             arguments
                 self Orthosis
-                osim_coord_name char {inputExistsInOsimModel(self,osim_coord_name,'osim_coord_name')}
+                osim_coord_name char {inputExistsInOsimModel(self,osim_coord_name,'coord')}
                 pos_vel_acc char {mustBeMember(pos_vel_acc,{'pos','vel','acc'})} = 'pos';
             end
+            % Create a variable for a coordinate position, velocity or acceleration
+
             var_name = ['coord_',osim_coord_name,'_',pos_vel_acc];
             coord = casadi.SX.sym(var_name,1,self.Nmesh);
             self.arg{end+1} = coord;
             self.names_arg{end+1} = var_name;
             self.osimCoordsUsed{end+1} = osim_coord_name;
-        end
+            self.meta_arg(end+1).name = osim_coord_name;
+            self.meta_arg(end).type = 'coordi';
+            switch pos_vel_acc
+                case 'pos'
+                    self.meta_arg(end).subtype = 'q';
+                case 'vel'
+                    self.meta_arg(end).subtype = 'qdot';
+                case 'acc'
+                    self.meta_arg(end).subtype = 'qddot';
+            end
+        end % end of var_coord
 
-        % point position or velocity
         function point = var_point(self,point_name,osim_body_name,location_in_body,pos_vel)
             arguments
                 self Orthosis
@@ -164,32 +169,37 @@ classdef Orthosis < handle
                 location_in_body (1,3) double = [0, 0, 0];
                 pos_vel char {mustBeMember(pos_vel,{'pos','vel'})} = 'pos';
             end
+            % Create a variable for a point position or velocity
+
             var_name = ['point_',point_name,'_',pos_vel];
             point = casadi.SX.sym(var_name,3,self.Nmesh);
             self.arg{end+1} = point;
             self.names_arg{end+1} = var_name;
             self.osimBodiesUsed{end+1} = osim_body_name;
+            self.meta_arg(end+1).name = point_name;
+            self.meta_arg(end).subtype = 'fromExtFun';
             switch pos_vel
                 case 'pos'
                     self.PointPositions(end+1).body = osim_body_name;
                     self.PointPositions(end).point_in_body = location_in_body;
                     self.PointPositions(end).name = point_name;
+                    self.meta_arg(end).type = 'position';
                 case 'vel'
                     self.PointVelocities(end+1).body = osim_body_name;
                     self.PointVelocities(end).point_in_body = location_in_body;
                     self.PointVelocities(end).name = point_name;
+                    self.meta_arg(end).type = 'velocity';
             end
-        end
+        end % end of var_point
 
-        % ground reaction force
         function GRF = var_GRF(self,osim_contact_name,F_d)
-            % GRF_name can be "left_total", "right_total", or the name of a
-            % contact sphere
             arguments
                 self Orthosis
                 osim_contact_name char {inputExistsInOsimModel(self,osim_contact_name,'contact')}
                 F_d char {mustBeMember(F_d,{'Force','indentation'})} = 'Force';
             end
+            % Create a variable for a ground reaction force or contact indentation
+
             var_name = ['GRF_',osim_contact_name,'_',F_d];
             switch F_d
                 case 'Force'
@@ -197,26 +207,36 @@ classdef Orthosis < handle
                     self.arg{end+1} = GRF;
                     self.names_arg{end+1} = var_name;
                     self.osimContactsUsed{end+1} = osim_contact_name;
+                    self.meta_arg(end+1).name = contact_name;
+                    self.meta_arg(end).subtype = 'fromExtFun';
+                    self.meta_arg(end).type = 'GRFs';
                 case 'indentation'
                     GRF = getContactIndentation(self,osim_contact_name);
+                    % Metadata for contact indentation is added when
+                    % creating the point position variable.
             end
-        end
+        end % end of var_GRF
 
-        % muscle activity
-        function act = var_act(self,osim_muscle_name)
+        function act = var_muscle(self,osim_muscle_name)
             arguments
                 self Orthosis
                 osim_muscle_name char {inputExistsInOsimModel(self,osim_muscle_name,'muscle')}
             end
+            % Create a variable for a muscle activation
+
             var_name = ['muscle_',osim_muscle_name,'_act'];
             act = casadi.SX.sym(var_name,1,self.Nmesh);
-            self.arg{end+1} = GRF;
+            self.arg{end+1} = act;
             self.names_arg{end+1} = var_name;
             self.osimMusclesUsed{end+1} = osim_muscle_name;
-        end
+            self.meta_arg(end+1).name = osim_muscle_name;
+            self.meta_arg(end).type = 'muscle';
+            self.meta_arg(end).subtype = 'act';
+        end % end of var_muscle
 
-        % any variable
         function var = var(self,varargin)
+            % Create a variable. 
+            % See also var_coord, var_point, var_GRF, var_muscle
 
             try
                 if ismember(varargin{1},self.osimCoordsAll)
@@ -235,19 +255,19 @@ classdef Orthosis < handle
                 error(['Unable to use %s.var with the provided arguments.',...
                     ' Try using %s.var_coord, %s.var_point, %s.var_GRF, or %s.var_mus'],...
                     inputname(1),inputname(1),inputname(1),inputname(1),inputname(1));
-
             end
-        end
+        end % end of var
 
 
-    % add a force/moment
-        % coordinate force or moment
+    %% add a force/moment
         function [] = addCoordForce(self,value,osim_coord_name)
             arguments
                 self Orthosis
                 value (1,:)
                 osim_coord_name char {inputExistsInOsimModel(self,osim_coord_name,'coord')}
             end
+            % Add a force or moment acting on a coordinate.
+
             % value should be a row vector with Nmesh elements
             if size(value,1)~=1 || size(value,2)~=self.Nmesh
                 error('Expected "%s" to have size %ix%i, but the size is %ix%i.',...
@@ -261,12 +281,14 @@ classdef Orthosis < handle
                 self.res{end+1} = value;
                 self.names_res{end+1} = F_name;
                 self.osimCoordsUsed{end+1} = osim_coord_name;
+                self.meta_res(end+1).name = osim_coord_name;
+                self.meta_res(end).type = 'coordi';
+                self.meta_res(end).subtype = 'Mcoord';
             else
                 self.res{idx} = self.res{idx} + value;
             end
-        end
+        end % end of addCoordForce
 
-        % body force
         function [] = addBodyForce(self,value,force_name,osim_body_name,...
                 location_in_body,reference_frame)
             arguments
@@ -277,6 +299,8 @@ classdef Orthosis < handle
                 location_in_body (1,3) double = [0, 0, 0];
                 reference_frame char {inputExistsInOsimModel(self,reference_frame,'frame')} = osim_body_name;
             end
+            % Add a force vector acting on a body.
+
             % value should be a 3xNmesh matrix
             if size(value,1)~=3 || size(value,2)~=self.Nmesh
                 error('Expected "%s" to have size %ix%i, but the size is %ix%i.',...
@@ -297,12 +321,16 @@ classdef Orthosis < handle
 
                 self.osimBodiesUsed{end+1} = osim_body_name;
                 self.osimBodiesUsed{end+1} = reference_frame;
+
+                self.meta_res(end+1).name = force_name;
+                self.meta_res(end).type = 'Forces';
+                self.meta_res(end).subtype = 'toExtFun';
+
             else
                 self.res{idx} = self.res{idx} + value;
             end
-        end
+        end % end of addBodyForce
 
-        % body moment
         function [] = addBodyMoment(self,value,force_name,osim_body_name,...
                 reference_frame)
             arguments
@@ -312,6 +340,8 @@ classdef Orthosis < handle
                 osim_body_name char {inputExistsInOsimModel(self,osim_body_name,'body')}
                 reference_frame char {inputExistsInOsimModel(self,reference_frame,'frame')} = osim_body_name;
             end
+            % Add a moment vector acting on a body.
+
             % value should be a 3xNmesh matrix
             if size(value,1)~=3 || size(value,2)~=self.Nmesh
                 error('Expected "%s" to have size %ix%i, but the size is %ix%i.',...
@@ -330,133 +360,26 @@ classdef Orthosis < handle
                 self.BodyMoments(end).reference_frame = reference_frame;
 
                 self.osimBodiesUsed{end+1} = osim_body_name;
+                self.osimBodiesUsed{end+1} = reference_frame;
+
+                self.meta_res(end+1).name = force_name;
+                self.meta_res(end).type = 'Moments';
+                self.meta_res(end).subtype = 'toExtFun';
             else
                 self.res{idx} = self.res{idx} + value;
             end
-        end
+        end % end of addBodyMoment
 
-        % any force
-        function [] = addForce(self,varargin)
-
-            n_in = length(varargin);
-
-            idx = find(cellfun(@(x)(ischar(x)||isstring(x))&&contains(x,'CoordForce'), varargin));
-            if ~isempty(idx)
-                addCoordForce(self,varargin{setdiff(1:n_in,idx)});
-                return
-            end
-
-            idx = find(cellfun(@(x)(ischar(x)||isstring(x))&&contains(x,'BodyForce'), varargin));
-            if ~isempty(idx)
-                addBodyForce(self,varargin{setdiff(1:n_in,idx)});
-                return
-            end
-
-            idx = find(cellfun(@(x)(ischar(x)||isstring(x))&&contains(x,'BodyMoment'), varargin));
-            if ~isempty(idx)
-                addBodyMoment(self,varargin{setdiff(1:n_in,idx)});
-                return
-            end
-
-            switch n_in
-                case 3
-                    addCoordForce(self,varargin{:});
-                case 6
-                    addBodyForce(self,varargin{:});
-                case 5
-                    addBodyMoment(self,varargin{:});
-                otherwise
-                    error('Unable to add an orthosis force based on these input arguments');
-            end
-        end
-
-        % test that all references to components of the OpenSim model are valid
-        function [] = testOsimModel(self)
-            if isempty(self.osimPath)
-                error('Please use %s.setOsimPath to set the path to an OpenSim model file.',inputname(1));
-            end
-
-            import org.opensim.modeling.*;
-            model = Model(self.osimPath);
-
-            errstr = [];
-
-            % coordinates
-            osim_coords = getUnique(self,self.osimCoordsUsed);
-            errstr_coords = [];
-            for name_osim = string(osim_coords)
-                try
-                    model.getCoordinateSet().get(name_osim);
-                catch
-                    errstr_coords = [errstr_coords,', ',char(name_osim)];
-                end
-            end
-            if ~isempty(errstr_coords)
-                errstr = [errstr, sprintf('\t Could not resolve coordinate names: %s\n',errstr_coords)];
-            end
-
-            % bodies
-            osim_bodies = getUnique(self,self.osimBodiesUsed);
-            errstr_bodies = [];
-            for name_osim = string(osim_bodies)
-                if strcmpi(name_osim,'ground')
-                    continue
-                end
-                try
-                    model.getBodySet().get(name_osim);
-                catch
-                    errstr_bodies = [errstr_bodies,', ',char(name_osim)];
-                end
-            end
-            if ~isempty(errstr_bodies)
-                errstr = [errstr, sprintf('\t Could not resolve body names: %s\n',errstr_bodies)];
-            end
-
-            % muscles
-            osim_muscles = getUnique(self,self.osimMusclesUsed);
-            errstr_muscles = [];
-            for name_osim = string(osim_muscles)
-                try
-                    model.getMuscleSet().get(name_osim);
-                catch
-                    errstr_muscles = [errstr_muscles,', ',char(name_osim)];
-                end
-            end
-            if ~isempty(errstr_muscles)
-                errstr = [errstr, sprintf('\t Could not resolve muscle names: %s\n',errstr_muscles)];
-            end
-
-            % contact spheres
-            osim_contacts = getUnique(self,self.osimContactsUsed);
-            errstr_contacts = [];
-            for name_osim = string(osim_contacts)
-                if strcmpi(name_osim,'left_total') || strcmpi(name_osim,'right_total')
-                    continue
-                end
-                try
-                    model.getContactGeometrySet().get(name_osim);
-                catch
-                    errstr_contacts = [errstr_contacts,', ',char(name_osim)];
-                end
-            end
-            if ~isempty(errstr_contacts)
-                errstr = [errstr, sprintf('\t Could not resolve contact sphere names: %s\n',errstr_contacts)];
-            end
-
-            if ~isempty(errstr)
-                error([sprintf(['Unable to resolve all OpenSim references for Orthosis %s',...
-                ' based on the OpenSim model file "%s"\n'],inputname(1),self.osimPath),errstr]);
-            end
-        end
-
+    %% OpenSim
         function [] = updatePropertiesFromOsimModel(self)
+            % Read properties from OpenSim model and update the stored info
+
             if isempty(self.osimPath)
                 error('Please use %s.setOsimPath to set the path to an OpenSim model file.',inputname(1));
             end
 
             import org.opensim.modeling.*;
             model = Model(self.osimPath);
-
 
             % coordinates
             n_coord = model.getCoordinateSet().getSize();
@@ -495,31 +418,98 @@ classdef Orthosis < handle
             osim_contacts{1,end+1} = 'right_total';
             self.osimContactsAll = osim_contacts;
 
+        end % end of updatePropertiesFromOsimModel
+
+    %% CasADi
+        function [] = createCasadiFunction(self)
+            % create CasADi Function
+            self.fun = casadi.Function(['f_orthosis_',self.name],...
+                self.arg, self.res, self.names_arg, self.names_res);
         end
+
+        function [wrap_fun] = wrapCasadiFunction(self,ExtFunIO,muscleNames)
+            arguments
+                self
+                ExtFunIO
+                muscleNames
+            end
+            % Wrap the casadi function of the orthosis for easy integration with PredSim
+
+            import casadi.*
+
+            if isempty(self.fun)
+                self.createCasadiFunction();
+            end
+
+            % all inputs for wrapper function
+            arg_SX.q = SX.sym('q',ExtFunIO.jointi.nq.all,self.Nmesh);
+            arg_SX.qdot = SX.sym('qdot',ExtFunIO.jointi.nq.all,self.Nmesh);
+            arg_SX.qddot = SX.sym('qddot',ExtFunIO.jointi.nq.all,self.Nmesh);
+            arg_SX.act = SX.sym('a',length(muscleNames),self.Nmesh);
+            arg_SX.fromExtFun = SX.sym('fromExtFun',ExtFunIO.nOutputs,self.Nmesh); % GRFs, point kinematics
+
+            % all outputs for wrapper function
+            res_SX.Mcoord = SX(ExtFunIO.jointi.nq.all,self.Nmesh);
+            res_SX.toExtFun = SX(ExtFunIO.input.nInputs,self.Nmesh); % bodyforces, bodymoments
+
+            % create inputs for function from inputs of wrapper function
+            arg_fun = cell(1,self.fun.n_in);
+            res_fun = cell(1,self.fun.n_out);
+            for j=1:length(arg_fun)
+                if strcmp(self.meta_arg(j).type,'muscle')
+                    idx = find(strcmp(muscleNames,self.meta_arg(j).name));
+                else
+                    idx = ExtFunIO.(self.meta_arg(j).type).(self.meta_arg(j).name);
+                end
+                arg_fun{j} = arg_SX.(self.meta_arg(j).subtype)(idx,:);
+            end
+
+            % evaluate function
+            if isempty(arg_fun)
+                [res_0] = self.fun();
+                for j=1:length(res_fun)
+                    res_fun{j} = res_0.(self.fun.name_out(j-1));
+                end
+            else
+                [res_fun{:}] = self.fun(arg_fun{:});
+            end
+
+            % assign outputs from function to outputs of wrapper function
+            for j=1:length(res_fun)
+                if strcmp(self.meta_res(j).type,'coordi')
+                    idx = ExtFunIO.(self.meta_res(j).type).(self.meta_res(j).name);
+                else
+                    idx = ExtFunIO.input.(self.meta_res(j).type).(self.meta_res(j).name);
+                end
+                res_SX.(self.meta_res(j).subtype)(idx,:) = res_fun{j};
+            end
+
+            % input arguments for wrapper function
+            arg_names = fieldnames(arg_SX);
+            for i=1:length(arg_names)
+                wrap_arg{i} = arg_SX.(arg_names{i});
+            end
+
+            % output arguments for wrapper function
+            res_names = fieldnames(res_SX);
+            for i=1:length(res_names)
+                wrap_res{i} = res_SX.(res_names{i});
+            end
+
+            % create wrapper function
+            wrap_fun = Function(['f_orthosis_',self.name,'_wrapped'],...
+                wrap_arg, wrap_res, arg_names, res_names);
+            
+        end
+
 
     end % end of methods
 
-    methods(Access=private)
+%%
+    methods(Access=private) % private — Access by class methods only (not from subclasses)
 
-        % get only unique entrise of a cell array
-        function cell_array = getUnique(self,cell_array)
-
-            isUnique = true(size(cell_array));
-
-            for ii = 1:length(cell_array)-1
-                for jj = ii+1:length(cell_array)
-                    if isequal(cell_array(ii),cell_array(jj))
-                        isUnique(jj) = false;
-                        break;
-                    end
-                end
-            end
-    
-            cell_array(~isUnique) = [];
-        end
-
-        % get a variable representing the indentation of a contact sphere
         function indentation = getContactIndentation(self,contact_name)
+            % get a variable representing the indentation of a contact sphere
 
             % open model
             if isempty(self.osimPath)
@@ -567,11 +557,14 @@ classdef Orthosis < handle
             % calculate indentation (negative means no contact)
             indentation = -(point_inFl(1,:) - csp1_r);
             
-        end
+        end % end of getContactIndentation
 
+    end % end of private mathods
+
+    methods(Access=protected) % protected — Access from methods in class or subclasses
+        
         function inputExistsInOsimModel(self,input,type)
-
-%             disp(inputname(1))
+            % Assert that the input argument is valid for the OpenSim model
 
             switch type
                 case 'coord'
@@ -598,11 +591,11 @@ classdef Orthosis < handle
             elseif ~self.warningOsimPathNotSet
                 self.warningOsimPathNotSet = true;
                 warning(['Please use %s.setOsimPath to set ',...
-                    'the path to an OpenSim model file to enable full',...
+                    'the path to an OpenSim model file to enable full ',...
                     'input validation'],self.name);
             end
-        end
+        end % end of inputExistsInOsimModel
 
-    end % end of private methods
+    end % end of protected methods
 
 end % end of classdef

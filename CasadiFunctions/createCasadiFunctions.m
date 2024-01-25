@@ -58,5 +58,7 @@ if ~isempty(S.bounds.SLL.upper) || ~isempty(S.bounds.SLR.upper)
 end
 
 %% Create Casadi functions for orthoses
-[f_casadi.f_orthosis_mesh_k, f_casadi.f_orthosis_mesh_all] = createCasadi_orthosis(S,model_info);
+[f_casadi.f_orthosis_mesh_k, f_casadi.f_orthosis_mesh_all, f_casadi.separate_orthoses] =...
+    createCasadi_orthosis(S,model_info);
+
 end

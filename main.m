@@ -5,7 +5,7 @@
 % if left empty, will be taken from getDefaultSettings.m.
 
 clear
-% close all
+close all
 clc
 % path to the repository folder
 [pathRepo,~,~] = fileparts(mfilename('fullpath'));
@@ -16,14 +16,14 @@ clc
 pathDefaultSettings = fullfile(pathRepo,'DefaultSettings');
 addpath(pathDefaultSettings)
 
-[S] = initializeSettings('Falisse_et_al_2022');
+[S] = initializeSettings('DHondt_2023_2seg');
 S.misc.main_path = pathRepo;
 
 addpath(fullfile(S.misc.main_path,'VariousFunctions'))
 
 %% Required inputs
 % name of the subject
-S.subject.name = 'Falisse_et_al_2022';
+S.subject.name = 'DHondt_2023_2seg';
 
 % path to folder where you want to store the results of the OCP
 S.subject.save_folder  = fullfile(pathRepoFolder,'PredSimResults',S.subject.name); 
@@ -53,38 +53,6 @@ S.solver.run_as_batch_job = 0;
 % S.bounds.t_final.lower      = ;
 % S.bounds.coordinates        = {{'knee_angle_r'},-1.70,3.055,{'mtp_angle_'},-1.05,0.5};
 
-% to prevent body segments from clipping into eachother
-S.bounds.distanceConstraints(1).point1 = 'calcn_r';
-S.bounds.distanceConstraints(1).point2 = 'calcn_l';
-S.bounds.distanceConstraints(1).direction = 'xz';
-S.bounds.distanceConstraints(1).lower_bound = 0.09;
-S.bounds.distanceConstraints(1).upper_bound = 2;
-
-S.bounds.distanceConstraints(2).point1 = 'hand_r';
-S.bounds.distanceConstraints(2).point2 = 'femur_r';
-S.bounds.distanceConstraints(2).direction = 'xz';
-S.bounds.distanceConstraints(2).lower_bound = 0.18;
-S.bounds.distanceConstraints(2).upper_bound = 2;
-
-S.bounds.distanceConstraints(3).point1 = 'hand_l';
-S.bounds.distanceConstraints(3).point2 = 'femur_l';
-S.bounds.distanceConstraints(3).direction = 'xz';
-S.bounds.distanceConstraints(3).lower_bound = 0.18;
-S.bounds.distanceConstraints(3).upper_bound = 2;
-
-S.bounds.distanceConstraints(4).point1 = 'tibia_r';
-S.bounds.distanceConstraints(4).point2 = 'tibia_l';
-S.bounds.distanceConstraints(4).direction = 'xz';
-S.bounds.distanceConstraints(4).lower_bound = 0.11;
-S.bounds.distanceConstraints(4).upper_bound = 2;
-
-S.bounds.distanceConstraints(5).point1 = 'toes_r';
-S.bounds.distanceConstraints(5).point2 = 'toes_l';
-S.bounds.distanceConstraints(5).direction = 'xz';
-S.bounds.distanceConstraints(5).lower_bound = 0.1;
-S.bounds.distanceConstraints(5).upper_bound = 2;
-
-
 % % S.metabolicE - metabolic energy
 % S.metabolicE.tanh_b = 100;
 % S.metabolicE.model  = '';
@@ -104,15 +72,15 @@ S.post_process.make_plot = 0;
 % S.post_process.savename  = 'datetime';
 % S.post_process.load_prev_opti_vars = 1;
 % S.post_process.rerun   = 1;
-% S.post_process.result_filename = 'Falisse_et_al_2022_job839';
+% S.post_process.result_filename = 'DHondt_2023_2seg_job847';
 
 % % S.solver
 % S.solver.linear_solver  = '';
 % S.solver.tol_ipopt      = ;
-% S.solver.max_iter       = 5;
+S.solver.max_iter       = 5;
 % S.solver.parallel_mode  = '';
 % S.solver.N_threads      = 6;
-% S.solver.N_meshes       = 100;
+S.solver.N_meshes       = 50;
 % S.solver.par_cluster_name = ;
 % S.solver.CasADi_path    = 'C:\GBW_MyPrograms\casadi_3_5_5';
 S.solver.CasADi_path = casadi.GlobalOptions.getCasadiPath(); % ask casadi
@@ -121,7 +89,7 @@ S.solver.CasADi_path = casadi.GlobalOptions.getCasadiPath(); % ask casadi
 % % S.subject
 % S.subject.mass              = ;
 % S.subject.IG_pelvis_y       = ;
-S.subject.adapt_IG_pelvis_y = 1;
+% S.subject.adapt_IG_pelvis_y = 1;
 S.subject.v_pelvis_x_trgt   = 1.33;
 % S.subject.IK_Bounds = ;
 % S.subject.muscle_strength   = ;
@@ -148,10 +116,10 @@ S.subject.v_pelvis_x_trgt   = 1.33;
 
 
 % % S.orthosis
-% ortho1.function_name = 'parametricAFO';
-% ortho1.function_name = 'debugAFO';
-% ortho1.ankle_stiffness = 5; % Nm/rad
-% ortho1.mtp_stiffness = 1; % Nms/rad
+% ortho1.function_name = 'ankleExoNuckols2020';
+ortho1.function_name = 'exo_emulator_draft';
+% ortho1.ankle_stiffness = 250; % Nm/rad
+% ortho1.mtp_stiffness = 0; % Nms/rad
 
 % ortho1.function_name = 'ankleExoZhang2017';
 % ortho1.dependencies_path = 'C:\Users\u0150099\OneDrive - KU Leuven\PhD\literature\assistive devices\aal5054_zhang_sm_data_s2';
@@ -161,12 +129,15 @@ S.subject.v_pelvis_x_trgt   = 1.33;
 % ortho1.drop_time = 5; %9.8; % 5
 % ortho1.plotAssistanceProfile = figure();
 
-% % add orthosis on right side
-% ortho1.left_right = 'r';
-% S.orthosis.settings{1} = ortho1;
-% % add the same orthosis on left side
-% ortho1.left_right = 'l';
-% S.orthosis.settings{2} = ortho1;
+% ortho1.function_name = 'ankleExoEmgProportional';
+% ortho1.gain = 40; % Nm at max soleus activation
+
+% add orthosis on right side
+ortho1.left_right = 'r';
+S.orthosis.settings{1} = ortho1;
+% add the same orthosis on left side
+ortho1.left_right = 'l';
+S.orthosis.settings{2} = ortho1;
 
 
 % %S.OpenSimADOptions: required inputs to convert .osim to .dll
@@ -178,7 +149,7 @@ S.OpenSimADOptions.verbose_mode = 0; % 0 for no outputs from cmake
 
 % warning wrt pelvis heigt for IG
 if S.subject.adapt_IG_pelvis_y == 0 && S.subject.IG_selection ~= "quasi-random"
-    uiwait(msgbox(["Pelvis height of the IG will not be changed.";"Set S.subject.adapt_IG_pelvis_y to 1 if you want to use the model's pelvis height."],"Warning","warn"));
+%     uiwait(msgbox(["Pelvis height of the IG will not be changed.";"Set S.subject.adapt_IG_pelvis_y to 1 if you want to use the model's pelvis height."],"Warning","warn"));
 end
 
 % Start simulation
