@@ -48,7 +48,7 @@ path_reference_model = fullfile(pathHere,'Falisse_et_al_2022.osim');
 add_actuators_bool = 1;
 add_contact_bool = 0;
 use_reference_contacts_bool = 1;
-scale_contact_spheres = 1;
+scale_contact_spheres_bool = 1;
 scale_contact_location_bool = 1;
 
 %% Define contact spheres
@@ -176,7 +176,7 @@ end
 if add_contact_bool
     add_contact_spheres(path_osim_out,contact_spheres);
 end
-if scale_contact_spheres
+if scale_contact_spheres_bool
     scaleContactSpheres(path_reference_model,path_osim_out,path_osim_out,scale)
 end
 if scale_contact_location_bool
