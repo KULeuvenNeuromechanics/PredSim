@@ -79,8 +79,7 @@ model_info.ExtFunIO.symQs.QsFullGC = setdiff(1:Ncoords,model_info.ExtFunIO.joint
 %% Pelvis height used for initial guess
 model_info = get_IG_pelvis_y(S,osim_path,model_info);
 
-% add osim_path so it will be included in saved results
-model_info.osim_path = osim_path;
+
 
 
 

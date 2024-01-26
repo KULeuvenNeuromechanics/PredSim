@@ -54,7 +54,8 @@ theta.lumbar_bending = [-0.3490658503988659 0.3490658503988659];
 K.lumbar_rotation = [-0.25 20.36 0.25 -20.36];
 theta.lumbar_rotation = [-0.3490658503988659 0.3490658503988659];
 
-
+K.mtj_angle = [-50 15 60 -30]';
+theta.mtj_angle = [-0.4 0.5]';
 
 
 

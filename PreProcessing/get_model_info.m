@@ -20,8 +20,11 @@ function [model_info] = get_model_info(S,osim_path)
 % Original author: Lars D'Hondt
 % Original date: 11/April/2022
 %
-% Last edit by: 
-% Last edit date: 
+% update:
+%   read out ligament names
+%
+% Last edit by: Lars D'Hondt
+% Last edit date: 5/April/2023
 % --------------------------------------------------------------------------
 
 
@@ -74,10 +77,18 @@ muscle_names = cell(1,model.getMuscles().getSize());
 for i=1:model.getMuscles().getSize()
     muscle_names{i} = char(model.getMuscles().get(i-1).getName());
 end
-
 model_info.muscle_info.muscle_names = muscle_names;
-
 model_info.muscle_info.NMuscle = length(muscle_names);
+
+ligament_names = {};
+for i=1:model.getForceSet().getSize()
+    force_i = model.getForceSet().get(i-1).getConcreteClassName();
+    if strcmp(force_i,'Ligament')
+        ligament_names{1,end+1} = char(model.getForceSet().get(i-1).getName());
+    end
+end
+model_info.ligament_info.ligament_names = ligament_names;
+model_info.ligament_info.NLigament = length(ligament_names);
 
 %% OpenSim API
 % indices of coordinates in the OpenSim API state vector
@@ -105,7 +116,8 @@ symQs.MusInvB = orderMusInv;
 
 model_info.ExtFunIO.symQs = symQs;
 
-
+% add osim_path so it will be included in saved results
+model_info.osim_path = osim_path;
 
 
 end
