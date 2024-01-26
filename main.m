@@ -16,7 +16,7 @@ clc
 pathDefaultSettings = fullfile(pathRepo,'DefaultSettings');
 addpath(pathDefaultSettings)
 
-[S] = initializeSettings();
+[S] = initializeSettings('Falisse_et_al_2022');
 S.misc.main_path = pathRepo;
 
 addpath(fullfile(S.misc.main_path,'VariousFunctions'))
@@ -31,6 +31,7 @@ S.subject.save_folder  = fullfile(pathRepoFolder,'PredSimResults',S.subject.name
 % either choose "quasi-random" or give the path to a .mot file you want to use as initial guess
 S.subject.IG_selection = fullfile(S.misc.main_path,'OCP','IK_Guess_Full_GC.mot');
 S.subject.IG_selection_gaitCyclePercent = 100;
+% S.subject.IG_selection = 'quasi-random';
 
 % give the path to the osim model of your subject
 osim_path = fullfile(pathRepo,'Subjects',S.subject.name,[S.subject.name '.osim']);
@@ -59,7 +60,7 @@ S.solver.run_as_batch_job = 0;
 % S.bounds.Qs                 = {'pelvis_tilt',-30,30,'pelvis_list',-30,30};
 
 % % S.metabolicE - metabolic energy
-% S.metabolicE.tanh_b = ;
+% S.metabolicE.tanh_b = 100;
 % S.metabolicE.model  = '';
 
 % % S.misc - miscellanious
@@ -69,7 +70,8 @@ S.solver.run_as_batch_job = 0;
 % S.misc.msk_geom_eq         = '';
 % S.misc.poly_order.lower    = ;
 % S.misc.poly_order.upper    = ;
-% S.misc.msk_geom_bounds      = {{'knee_angle_r','knee_angle_l'},-120,10};
+% S.misc.default_msk_geom_bound = ;
+% S.misc.msk_geom_bounds      = {{'knee_angle_r','knee_angle_l'},-120,10,'lumbar_extension',nan,30};
 % S.misc.gaitmotion_type = 'FullGaitCycle';
 
 % % S.post_process
@@ -87,7 +89,7 @@ S.post_process.make_plot = 1;
 % S.solver.N_threads      = 6;
 % S.solver.N_meshes       = 100;
 % S.solver.par_cluster_name = ;
-S.solver.CasADi_path    = 'C:\GBW_MyPrograms\casadi_3_5_5';
+% S.solver.CasADi_path    = 'C:\GBW_MyPrograms\casadi_3_5_5';
 
 
 % % S.subject
@@ -96,16 +98,16 @@ S.solver.CasADi_path    = 'C:\GBW_MyPrograms\casadi_3_5_5';
 % S.subject.adapt_IG_pelvis_y = ;
 S.subject.v_pelvis_x_trgt   = 1.33;
 % S.subject.muscle_strength   = ;
-% S.subject.muscle_pass_stiff_shift = {{'soleus_l','soleus_r'},0.9,{'tib_ant_l'},1.1};
+% S.subject.muscle_pass_stiff_shift = {{'soleus','_gas','per_','tib_','_dig_','_hal_','FDB'},0.9}; %,'FDB'
 % S.subject.muscle_pass_stiff_scale = ;
-% S.subject.tendon_stiff_scale      = ;
-S.subject.mtp_type          = '2022paper';
-% S.subject.scale_MT_params         = {{'soleus_l'},'FMo',0.9,{'soleus_l'},'alphao',1.1};
+% S.subject.tendon_stiff_scale      = {{'soleus','_gas'},0.5};
+% S.subject.scale_MT_params = {{'soleus_l'},'FMo',0.9,{'soleus_l'},'alphao',1.1};
 % S.subject.spasticity        = ;
 % S.subject.muscle_coordination = ;
-S.subject.set_stiffness_coefficient_selected_dofs = {{'mtp_angle_l','mtp_angle_r'},25};
-S.subject.set_damping_coefficient_selected_dofs = {{'mtp_angle_l','mtp_angle_r'},2};
-% S.subject.set_limit_torque_coefficients_selected_dofs = {{'mtp_angle_l','mtp_angle_r'},[0,0,0,0],[0,0]};
+% S.subject.mtp_type          = '2022paper';
+% S.subject.set_stiffness_coefficient_selected_dofs = {'mtp_angle',1};
+% S.subject.set_damping_coefficient_selected_dofs = {'mtp_angle',2};
+% S.subject.set_limit_torque_coefficients_selected_dofs = {{'mtj_angle_l','mtj_angle_r'},[0,0,0,0],[0,0]};
 
 % % S.weights
 % S.weights.E         = ;

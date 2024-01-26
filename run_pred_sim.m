@@ -45,7 +45,7 @@ if S.post_process.load_prev_opti_vars
     load(Outname,'R','model_info');
     S = R.S;
     S.post_process.load_prev_opti_vars = 1;
-    S = getDefaultSettings(S); % to fill in any missing settings
+    S = getDefaultSettings(S,osim_path); % to fill in any missing settings
     osim_path = model_info.osim_path;
     R.S = S;
 
@@ -55,7 +55,7 @@ elseif S.post_process.rerun
     load(Outname,'R','model_info');
     S = R.S;
     S.post_process.rerun = 1;
-    S = getDefaultSettings(S); % to fill in any missing settings
+    S = getDefaultSettings(S,osim_path); % to fill in any missing settings
     osim_path = model_info.osim_path;
     R.S = S;
 
@@ -111,6 +111,7 @@ disp(' ')
 
 %% Creating casadi functions
 addpath([S.misc.main_path '\CasadiFunctions'])
+addpath([S.misc.main_path '\ModelComponents'])
 disp('Start creating CasADi functions...')
 disp(' ')
 t0 = tic;
