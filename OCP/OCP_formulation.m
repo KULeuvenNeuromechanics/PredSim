@@ -92,9 +92,6 @@ else
     guess = getGuess_DI_opti(S,model_info,scaling,d);
 end
 
-% adapt guess so that it fits within the bounds
-[guess,bounds] = AdaptGuess_UserInput(S,guess,bounds);
-
 
 if (S.misc.visualize_bounds)
     visualizebounds
