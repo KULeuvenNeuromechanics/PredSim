@@ -38,7 +38,7 @@ S.subject.IG_selection_gaitCyclePercent = 100;
 osim_path = fullfile(pathRepo,'Subjects',S.subject.name,[S.subject.name '.osim']);
 
 % Do you want to run the simulation as a batch job (parallel computing toolbox)
-S.solver.run_as_batch_job = 0;
+S.solver.run_as_batch_job = 1;
 
 %% Optional inputs
 % see README.md in the main folder for information about these optional
@@ -77,7 +77,7 @@ S.post_process.make_plot = 0;
 % % S.solver
 % S.solver.linear_solver  = '';
 % S.solver.tol_ipopt      = ;
-S.solver.max_iter       = 5;
+% S.solver.max_iter       = 5;
 % S.solver.parallel_mode  = '';
 % S.solver.N_threads      = 6;
 S.solver.N_meshes       = 50;
@@ -132,12 +132,12 @@ ortho1.function_name = 'exo_emulator_draft';
 % ortho1.function_name = 'ankleExoEmgProportional';
 % ortho1.gain = 40; % Nm at max soleus activation
 
-% add orthosis on right side
-ortho1.left_right = 'r';
-S.orthosis.settings{1} = ortho1;
-% add the same orthosis on left side
-ortho1.left_right = 'l';
-S.orthosis.settings{2} = ortho1;
+% % add orthosis on right side
+% ortho1.left_right = 'r';
+% S.orthosis.settings{1} = ortho1;
+% % add the same orthosis on left side
+% ortho1.left_right = 'l';
+% S.orthosis.settings{2} = ortho1;
 
 
 % %S.OpenSimADOptions: required inputs to convert .osim to .dll

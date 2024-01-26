@@ -502,7 +502,6 @@ classdef Orthosis < handle
             
         end
 
-
     end % end of methods
 
 %%
@@ -559,7 +558,7 @@ classdef Orthosis < handle
             
         end % end of getContactIndentation
 
-    end % end of private mathods
+    end % end of private methods
 
     methods(Access=protected) % protected — Access from methods in class or subclasses
         
