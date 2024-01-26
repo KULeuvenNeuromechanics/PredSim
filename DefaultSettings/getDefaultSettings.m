@@ -399,6 +399,16 @@ if ~isfield(S.subject,'set_stiffness_selected_ligaments')
     S.subject.set_stiffness_selected_ligaments = {'PlantarFascia','plantarFasciaNatali2010'};
 end
 
+% joints that are considered base of a leg
+if ~isfield(S.subject,'base_joints_legs')
+    S.subject.base_joints_legs = 'hip';
+end
+
+% joints that are considered base of an arm
+if ~isfield(S.subject,'base_joints_arms')
+    S.subject.base_joints_arms = 'acromial';
+end
+
 %% weights
 
 % weight on metabolic energy rate
