@@ -106,8 +106,10 @@ This code can automatically convert an OpenSim model to the external function us
 
 #### S.bounds
 
-- **S.bounds.a.lower**: 
+- **S.bounds.activation_all_muscles.lower**: 
 	- minimal muscle activation. Provide a number between 0 and 1. Default is *0.05* [double]
+- **S.bounds.activation_all_muscles.upper**: 
+	- maximal muscle activation. Provide a number between 0 and 1. Default is *1* [double]
 - **S.bounds.activation_selected_muscles**:
 	- Cell array where 1st entry is muscle name(s) , 2nd entry is its lower bound, and 3rd entry is its upper bound. Insert 'nan' or [] to lower bounds to only overwrite upper bounds, or vice versa. For another bound, add 3 more entries.
 - **S.bounds.calcn_dist.lower**: 

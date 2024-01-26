@@ -118,6 +118,11 @@ if ~isfield(S.bounds.activation_all_muscles,'lower')
     S.bounds.activation_all_muscles.lower = 0.05;
 end
 
+% maximal muscle activation, a number between 0 and 1
+if ~isfield(S.bounds.activation_all_muscles,'upper')
+    S.bounds.activation_all_muscles.upper = 1;
+end
+
 % activation of selected muscles
 if ~isfield(S.bounds,'activation_selected_muscles')
     S.bounds.activation_selected_muscles = [];

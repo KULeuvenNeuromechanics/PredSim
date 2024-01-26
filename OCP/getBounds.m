@@ -138,7 +138,7 @@ bounds_nsc.Qs_0.upper(model_info.ExtFunIO.jointi.base_forward) = 0;
 
 %% Muscle activations
 bounds_nsc.a.lower = S.bounds.activation_all_muscles.lower*ones(1,NMuscle);
-bounds_nsc.a.upper = ones(1,NMuscle);
+bounds_nsc.a.upper = S.bounds.activation_all_muscles.upper*ones(1,NMuscle);
 
 if ~isempty(S.bounds.activation_selected_muscles)
     [new_lb,new_ub] = unpack_name_value_combinations(S.bounds.activation_selected_muscles,...
