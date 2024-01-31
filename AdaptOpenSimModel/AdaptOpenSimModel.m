@@ -20,7 +20,7 @@
 %
 %   - scale_contact_spheres_bool -
 %   * Scales the contact spheres' radii based on foot length
-%   * Scaled the contact spheres' stiffness and dissipation based on provided struct (see example below) 
+%   * Scales the contact spheres' stiffness and dissipation based on provided struct (see example below) 
 %
 %   - scale_contact_location_bool -
 %   * OpenSim scale tool does not adapt contact sphere locations. Use this
