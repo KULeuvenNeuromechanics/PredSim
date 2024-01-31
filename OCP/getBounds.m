@@ -59,6 +59,7 @@ end
 
 % prepare index arrays for later use
 idx_mtp = [];
+idx_mtj = [];
 idx_arms = [model_info.ExtFunIO.jointi.arm_r,model_info.ExtFunIO.jointi.arm_l];
 idx_shoulder_flex = [];
 idx_shoulder_add = [];
@@ -81,6 +82,9 @@ for i = 1:NCoord
     % save indices for later use
     if contains(coordinate,'mtp')
         idx_mtp(end+1) = coord_idx;
+    end
+    if contains(coordinate,'mtj')
+        idx_mtj(end+1) = coord_idx;
     end
     if find(idx_arms(:)==coord_idx)
         if contains(coordinate,'elbow')
@@ -143,14 +147,14 @@ bounds.Qdotdots.upper = bounds.Qdotdots.upper + 3*Qdotdots_range;
 %% manual adjustment
 % For several joints, we manually adjust the bounds
 % floating base tx
-bounds.Qs.upper(model_info.ExtFunIO.jointi.floating_base(4)) = 4;  
-bounds.Qs.lower(model_info.ExtFunIO.jointi.floating_base(4)) = 0;
+bounds.Qs.upper(model_info.ExtFunIO.jointi.base_forward) = 4;  
+bounds.Qs.lower(model_info.ExtFunIO.jointi.base_forward) = 0;
 % Pelvis_ty
-bounds.Qs.upper(model_info.ExtFunIO.jointi.floating_base(5)) = model_info.IG_pelvis_y*1.2;
-bounds.Qs.lower(model_info.ExtFunIO.jointi.floating_base(5)) = model_info.IG_pelvis_y*0.5;
+bounds.Qs.upper(model_info.ExtFunIO.jointi.base_vertical) = model_info.IG_pelvis_y*1.2;
+bounds.Qs.lower(model_info.ExtFunIO.jointi.base_vertical) = model_info.IG_pelvis_y*0.5;
 % Pelvis_tz
-bounds.Qs.upper(model_info.ExtFunIO.jointi.floating_base(6)) = 0.1;
-bounds.Qs.lower(model_info.ExtFunIO.jointi.floating_base(6)) = -0.1;
+bounds.Qs.upper(model_info.ExtFunIO.jointi.base_lateral) = 0.1;
+bounds.Qs.lower(model_info.ExtFunIO.jointi.base_lateral) = -0.1;
 % Elbow
 bounds.Qs.lower(idx_elbow) = 0;
 % Mtp
@@ -160,6 +164,13 @@ bounds.Qdots.upper(idx_mtp) = 13;
 bounds.Qdots.lower(idx_mtp) = -13;
 bounds.Qdotdots.upper(idx_mtp) = 500;
 bounds.Qdotdots.lower(idx_mtp) = -500;
+% Midtarsal
+bounds.Qs.upper(idx_mtj) = 30*pi/180;
+bounds.Qs.lower(idx_mtj) = -30*pi/180;
+bounds.Qdots.upper(idx_mtj) = 13;
+bounds.Qdots.lower(idx_mtj) = -13;
+bounds.Qdotdots.upper(idx_mtj) = 500;
+bounds.Qdotdots.lower(idx_mtj) = -500;
 
 % Pelvis tilt
 bounds.Qs.lower(model_info.ExtFunIO.jointi.floating_base(1)) = -20*pi/180;
@@ -170,12 +181,12 @@ if S.subject.v_pelvis_x_trgt > 1.33
     % Shoulder flexion
     bounds.Qs.lower(idx_shoulder_flex) = -50*pi/180;
     % Pelvis tx
-    bounds.Qdots.upper(model_info.ExtFunIO.jointi.floating_base(4)) = 8;
+    bounds.Qdots.upper(model_info.ExtFunIO.jointi.base_forward) = 8;
 end
 
 if strcmp(S.misc.gaitmotion_type,'HalfGaitCycle')
-    bounds.Qs.upper(model_info.ExtFunIO.jointi.floating_base(4)) = ...
-        bounds.Qs.upper(model_info.ExtFunIO.jointi.floating_base(4))/2;
+    bounds.Qs.upper(model_info.ExtFunIO.jointi.base_forward) = ...
+        bounds.Qs.upper(model_info.ExtFunIO.jointi.base_forward)/2;
 end
 
 %% Adjust bounds based on settings

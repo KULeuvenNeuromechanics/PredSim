@@ -20,8 +20,11 @@ function [model_info] = get_model_info(S,osim_path)
 % Original author: Lars D'Hondt
 % Original date: 11/April/2022
 %
-% Last edit by: 
-% Last edit date: 
+% update:
+%   read out ligament names
+%
+% Last edit by: Lars D'Hondt
+% Last edit date: 5/April/2023
 % --------------------------------------------------------------------------
 
 
@@ -74,34 +77,47 @@ muscle_names = cell(1,model.getMuscles().getSize());
 for i=1:model.getMuscles().getSize()
     muscle_names{i} = char(model.getMuscles().get(i-1).getName());
 end
-
 model_info.muscle_info.muscle_names = muscle_names;
-
 model_info.muscle_info.NMuscle = length(muscle_names);
+
+ligament_names = {};
+for i=1:model.getForceSet().getSize()
+    force_i = model.getForceSet().get(i-1).getConcreteClassName();
+    if strcmp(force_i,'Ligament')
+        ligament_names{1,end+1} = char(model.getForceSet().get(i-1).getName());
+    end
+end
+model_info.ligament_info.ligament_names = ligament_names;
+model_info.ligament_info.NLigament = length(ligament_names);
 
 %% OpenSim API
 % indices of coordinates in the OpenSim API state vector
 model_info = getCoordinateIndexForStateVectorOpenSimAPI(S,osim_path,model_info);
 
 %% Symmetry
-symQs = getCoordinateSymmetry(S,osim_path,model_info);
+% symQs = getCoordinateSymmetry(S,osim_path,model_info);
+[symQs, model_info.ExtFunIO.jointi] = identify_kinematic_chains(S,osim_path,model_info);
 
 orderMus = 1:length(model_info.muscle_info.muscle_names);
 orderMusInv = zeros(1,length(model_info.muscle_info.muscle_names));
 for i=1:length(model_info.muscle_info.muscle_names)
-    if strcmp(model_info.muscle_info.muscle_names{i}(end-1:end),'_r')
-        orderMusInv(i) = find(strcmp(model_info.muscle_info.muscle_names,...
-            [model_info.muscle_info.muscle_names{i}(1:end-2) '_l']));
-    elseif strcmp(model_info.muscle_info.muscle_names{i}(end-1:end),'_l')
-        orderMusInv(i) = find(strcmp(model_info.muscle_info.muscle_names,...
-            [model_info.muscle_info.muscle_names{i}(1:end-2) '_r']));
-    end
+%     if strcmp(model_info.muscle_info.muscle_names{i}(end-1:end),'_r')
+%         orderMusInv(i) = find(strcmp(model_info.muscle_info.muscle_names,...
+%             [model_info.muscle_info.muscle_names{i}(1:end-2) '_l']));
+%     elseif strcmp(model_info.muscle_info.muscle_names{i}(end-1:end),'_l')
+%         orderMusInv(i) = find(strcmp(model_info.muscle_info.muscle_names,...
+%             [model_info.muscle_info.muscle_names{i}(1:end-2) '_r']));
+%     end
+    orderMusInv(i) = find(strcmp(model_info.muscle_info.muscle_names,...
+        mirrorName(model_info.muscle_info.muscle_names{i})));
 end
 symQs.MusInvA = orderMus;
 symQs.MusInvB = orderMusInv;
 
 model_info.ExtFunIO.symQs = symQs;
 
+% add osim_path so it will be included in saved results
+model_info.osim_path = osim_path;
 
 
-
+end
