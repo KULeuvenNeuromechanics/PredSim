@@ -2,7 +2,7 @@ function scaleContactSpheres(genericModelPath,modelpath_in,modelout_path,scale)
 % This code scales:
 % 1. the radius of the contact spheres based on the scaling factor of the
 % foot. 
-% 2. the stiffness of the contactsphere
+% 2. the stiffness of the contact sphere
 % 3. the dissipation of the contact sphere
 % 
 % INPUT:
@@ -22,8 +22,8 @@ function scaleContactSpheres(genericModelPath,modelpath_in,modelout_path,scale)
 % Original author: Bram Van Den Bosch
 % Original date: 27/March/2023
 %
-% Last edit by: 
-% Last edit date: 
+% Last edit by: Bram Van Den Bosch
+% Last edit date: 31/January/2024
 % --------------------------------------------------------------------------
 
 %% 1. get contact spheres

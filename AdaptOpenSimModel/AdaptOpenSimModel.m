@@ -18,6 +18,10 @@
 %   * Creates a struct contact_spheres based on the contact properties of a
 %   reference model.
 %
+%   - scale_contact_spheres_bool -
+%   * Scales the contact spheres' radii based on foot length
+%   * Scaled the contact spheres' stiffness and dissipation based on provided struct (see example below) 
+%
 %   - scale_contact_location_bool -
 %   * OpenSim scale tool does not adapt contact sphere locations. Use this
 %   setting to scale contact sphere locations with respect to a reference
@@ -27,7 +31,7 @@
 % Original date: 27/May/2022
 %
 % Last edit by: Bram Van Den Bosch  
-% Last edit date: 25/January/2024
+% Last edit date: 31/January/2024
 % --------------------------------------------------------------------------
 
 
