@@ -17,7 +17,7 @@ function [S] = initializeSettings(varargin)
 % Original date: 01/12/2021
 %
 % Last edit by: Bram Van Den Bosch
-% Last edit date: 26/May/2023
+% Last edit date: 01/February/2023
 % --------------------------------------------------------------------------
 
 S = struct;
@@ -29,6 +29,7 @@ S.solver       = [];
 S.subject      = [];
 S.weights      = [];
 S.Cpp2Dll      = [];
+S.personalization = [];
 
 % bounds have an .upper and .lower field
 S.bounds.a          = [];
@@ -52,26 +53,6 @@ S.subject.adapt_IG_pelvis_y = 0;
 
 % save computername
 S.misc.computername = getenv('COMPUTERNAME');
-
-
-%%
-if ~isempty(varargin)
-
-    [pathDefaultSettings,~,~] = fileparts(mfilename('fullpath'));
-    [pathRepo,~,~] = fileparts(pathDefaultSettings);
-
-    reference_path = fullfile(pathRepo,'Subjects',varargin{1},['settings_',varargin{1},'.m']);
-
-    if isfile(reference_path)
-        disp(['Initialising settings from "',reference_path,'".'])
-        run(reference_path);
-    else
-        warning(['Could not initialise from "',reference_path,'". ',...
-            'Ignoring input argument "',varargin{1},'".']);
-    end
-
-
-end
 
 
 end

@@ -20,7 +20,7 @@ function [S] = getDefaultSettings(S,osim_path)
 % Original date: 30/11/2021
 %
 % Last edit by: Bram Van Den Bosch
-% Last edit date: 05/05/2023
+% Last edit date: 01/February/2024
 % --------------------------------------------------------------------------
 
 %% bounds
@@ -524,7 +524,21 @@ if ~isfield(S.Cpp2Dll,'verbose_mode')
     S.Cpp2Dll.verbose_mode = true;
 end 
 
+%% model personalization
 
+% joint parameters 
+if ~isfield(S.personalization,'jointparams')
+    S.personalization.jointparams = '';
+end
 
+% strength scaling 
+if ~isfield(S.personalization,'strength')
+    S.personalization.strength = '';
+end
+
+% Muscle-tendon parameters
+if ~isfield(S.personalization,'MTparams')
+    S.personalization.MTparams = '';
+end
 
 end

@@ -126,7 +126,11 @@ S.subject.v_pelvis_x_trgt   = 1.33;
 S.Cpp2Dll.verbose_mode = 0; % 0 for no outputs from cmake
 % S.Cpp2Dll.jointsOrder = ;
 % S.Cpp2Dll.coordinatesOrder = ;
-        
+
+%% update model personalizatoin setting 
+S = settings_Falisse_et_al_2022(S);
+
+
 %% Run predictive simulations
 % Check for updates in osim2dll
 S.Cpp2Dll.PathCpp2Dll_Exe = InstallOsim2Dll_Exe(S.Cpp2Dll.PathCpp2Dll_Exe);
