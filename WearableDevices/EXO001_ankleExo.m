@@ -1,4 +1,4 @@
-function [exo] = ankleExoNuckols2020(init, settings_orthosis)
+function [exo] = EXO001_ankleExo(init, settings_orthosis)
 % --------------------------------------------------------------------------
 % parametricAFO
 %   Defines an ankle-foot orthosis as a rotational spring on the ankle angle
@@ -28,27 +28,26 @@ function [exo] = ankleExoNuckols2020(init, settings_orthosis)
 % --------------------------------------------------------------------------
 
 % create Orthosis object
-exo = Orthosis('exo',init);
+exo = EXO001('exo',43,init);
 
 % read settings that were passed from main.m
 k_ankle = settings_orthosis.ankle_stiffness; % ankle stiffness in Nm/rad
 side = settings_orthosis.left_right; % 'l' for left or 'r' for right
 
+% exo.setFootForceBody('calcn_r');
+
+% set side
+exo.setSide(side);
+
 % get joint angles
-q_ankle = exo.var_coord(['ankle_angle_',side]); % ankle angle in rad;
+q_enc = exo.var_encoder("pos"); % plantarflexion is positive
 
-% % calculate moments
-% T_ankle = k_ankle*(q_ankle+0.1).*smoothIf(q_ankle+0.1,0.05,0);
-% T_ankle = [0;0; T_ankle];
-% 
-% % apply exo torque on tibia and calcn
-% exo.addBodyMoment(T_ankle, ['T_exo_shank_',side],['tibia_',side]);
-% exo.addBodyMoment(-T_ankle, ['T_exo_foot_',side],['calcn_',side],['tibia_',side]);
+% calculate moments
+% Deltaq = q_enc -5*pi/180;
+Deltaq = q_enc;
+T_ankle = -k_ankle*Deltaq;
 
-Deltaq = q_ankle +5*pi/180;
-Deltaq_pos = getSmoothingHuberCon(Deltaq,0,Deltaq,5,1);
-T_ankle = -k_ankle*Deltaq_pos;
-
-exo.addCoordForce(T_ankle,['ankle_angle_',side]);
+% set moment
+exo.setPlantarFlexionMoment(T_ankle);
 
 end

@@ -16,14 +16,14 @@ clc
 pathDefaultSettings = fullfile(pathRepo,'DefaultSettings');
 addpath(pathDefaultSettings)
 
-[S] = initializeSettings('DHondt_2023_2seg');
+[S] = initializeSettings('DHondt_et_al_2024_3seg'); % 'DHondt_2023_2seg' 'DHondt_et_al_2024_3seg'
 S.misc.main_path = pathRepo;
 
 addpath(fullfile(S.misc.main_path,'VariousFunctions'))
 
 %% Required inputs
 % name of the subject
-S.subject.name = 'DHondt_2023_2seg';
+S.subject.name = 'DHondt_et_al_2024_3seg';
 
 % path to folder where you want to store the results of the OCP
 S.subject.save_folder  = fullfile(pathRepoFolder,'PredSimResults',S.subject.name); 
@@ -33,6 +33,9 @@ S.subject.save_folder  = fullfile(pathRepoFolder,'PredSimResults',S.subject.name
 S.subject.IG_selection = fullfile(S.misc.main_path,'OCP','IK_Guess_Full_GC.mot');
 S.subject.IG_selection_gaitCyclePercent = 100;
 % S.subject.IG_selection = 'quasi-random';
+S.subject.IG_selection = fullfile('C:\GBW_MyPrograms\PredSimResults',...
+    'DHondt_et_al_2024_3seg', 'DHondt_et_al_2024_3seg_job889.mot');
+S.subject.IG_selection_gaitCyclePercent = 200;
 
 % give the path to the osim model of your subject
 osim_path = fullfile(pathRepo,'Subjects',S.subject.name,[S.subject.name '.osim']);
@@ -72,7 +75,7 @@ S.post_process.make_plot = 0;
 % S.post_process.savename  = 'datetime';
 % S.post_process.load_prev_opti_vars = 1;
 % S.post_process.rerun   = 1;
-% S.post_process.result_filename = 'DHondt_2023_2seg_job847';
+% S.post_process.result_filename = '2D_gait_moco_v37';
 
 % % S.solver
 % S.solver.linear_solver  = '';
@@ -104,6 +107,7 @@ S.subject.v_pelvis_x_trgt   = 1.33;
 % S.subject.set_stiffness_coefficient_selected_dofs = {'mtp_angle',1};
 % S.subject.set_damping_coefficient_selected_dofs = {'mtp_angle',2};
 % S.subject.set_limit_torque_coefficients_selected_dofs = {{'mtj_angle_l','mtj_angle_r'},[0,0,0,0],[0,0]};
+% S.subject.base_joints_arms = [];
 
 % % S.weights
 % S.weights.E         = 0;
@@ -116,28 +120,28 @@ S.subject.v_pelvis_x_trgt   = 1.33;
 
 
 % % S.orthosis
-% ortho1.function_name = 'ankleExoNuckols2020';
-ortho1.function_name = 'exo_emulator_draft';
-% ortho1.ankle_stiffness = 250; % Nm/rad
+ortho1.function_name = 'EXO001_ankleExo'; % EXO001_ankleExoNuckols2020
+% ortho1.function_name = 'ankleExoTorques';
+ortho1.ankle_stiffness = 20; % Nm/rad
 % ortho1.mtp_stiffness = 0; % Nms/rad
 
 % ortho1.function_name = 'ankleExoZhang2017';
 % ortho1.dependencies_path = 'C:\Users\u0150099\OneDrive - KU Leuven\PhD\literature\assistive devices\aal5054_zhang_sm_data_s2';
-% ortho1.peak_torque = 0.54*65;
-% ortho1.peak_timing = 50; %52.9; % 50
+% ortho1.peak_torque = 20;
+% ortho1.peak_timing = 52.9; % 50
 % ortho1.rise_time = 26.2;
-% ortho1.drop_time = 5; %9.8; % 5
+% ortho1.drop_time = 9.8; % 5
 % ortho1.plotAssistanceProfile = figure();
 
 % ortho1.function_name = 'ankleExoEmgProportional';
 % ortho1.gain = 40; % Nm at max soleus activation
 
 % % add orthosis on right side
-% ortho1.left_right = 'r';
-% S.orthosis.settings{1} = ortho1;
-% % add the same orthosis on left side
-% ortho1.left_right = 'l';
-% S.orthosis.settings{2} = ortho1;
+ortho1.left_right = 'r';
+S.orthosis.settings{1} = ortho1;
+% add the same orthosis on left side
+ortho1.left_right = 'l';
+S.orthosis.settings{2} = ortho1;
 
 
 % %S.OpenSimADOptions: required inputs to convert .osim to .dll

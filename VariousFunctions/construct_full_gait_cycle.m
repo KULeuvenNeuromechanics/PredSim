@@ -47,7 +47,10 @@ for field = string(fieldnames(res)')
             idxOpp = model_info.ExtFunIO.symQs.ActOpp;
 
         otherwise
-            error("No symmetry defined for '%s'",field)
+            idxInvA = [];
+            idxInvB = [];
+            idxOpp = [];
+
     end
 
 
@@ -55,9 +58,9 @@ for field = string(fieldnames(res)')
     var1stHalfGC = res.(field);
 
     % 50-100%
-    var2ndHalfGC = var1stHalfGC;
-    var2ndHalfGC(idxInvA,:) = var2ndHalfGC(idxInvB,:);
-    var2ndHalfGC(idxOpp,:) = -var2ndHalfGC(idxOpp,:);
+    var2ndHalfGC = nan(size(var1stHalfGC));
+    var2ndHalfGC(idxInvA,:) = var1stHalfGC(idxInvB,:);
+    var2ndHalfGC(idxOpp,:) = -var1stHalfGC(idxOpp,:);
 
     if strcmp(field,'q') % offset forward position
         var2ndHalfGC(model_info.ExtFunIO.jointi.base_forward,:) = ...

@@ -70,10 +70,12 @@ if ~isempty(S.orthosis)
         if Nmesh==N
 
             % Get casadi Function of this orthosis
-            f_orthosis_i = orthosis_i.wrapCasadiFunction(model_info.ExtFunIO,model_info.muscle_info.muscle_names);
+            [f_orthosis_i, f_orthosis_pp_i] =...
+                orthosis_i.wrapCasadiFunction(model_info.ExtFunIO,model_info.muscle_info.muscle_names);
 
             % Add to struct for post-processing
-            separate_orthoses{i} = f_orthosis_i;
+            separate_orthoses(i).wrap = f_orthosis_i;
+            separate_orthoses(i).wrap_pp = f_orthosis_pp_i;
 
             % evaluate function
             [Mcoordk_i, toExtFun_i] = f_orthosis_i(q_SX,qdot_SX,qddot_SX,act_SX,fromExtFun_SX);

@@ -32,6 +32,7 @@ for i=1:length(S.orthosis.settings)
     fun = str2func(orthosis_settings_i.function_name);
     orthosis = fun(init, orthosis_settings_i);
 
+    orthosis.createCasadiFunction();
     % run testing methods
 %     orthosis.setOsimPath(osim_path);
 %     orthosis.testOsimModel();

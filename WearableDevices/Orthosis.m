@@ -11,7 +11,7 @@ classdef Orthosis < handle
 % Original date: January 2024
 % --------------------------------------------------------------------------
 
-    properties(Access = private)
+    properties(Access = protected)
         % general properties
         name = []; % name of the orthosis
         Nmesh = 1; % number of meshpoints used to describe the time-varying 
@@ -20,8 +20,10 @@ classdef Orthosis < handle
         % properties of CasADi Function describing orthosis mechanics
         arg = {}; % input arguments
         res = {}; % output arguments
+        res_pp = {}; % output arguments for post-processing function
         names_arg = {}; % names of input arguments
         names_res = {}; % names of output arguments
+        names_res_pp = {}; % names of pp output arguments
         meta_arg = []; % metadata of input arguments
         meta_res = []; % metadata of output arguments
         fun = []; % handle of CasADi Function
@@ -370,6 +372,20 @@ classdef Orthosis < handle
             end
         end % end of addBodyMoment
 
+    %% analysis
+        function [] = addVarToPostProcessing(self,var,label)
+            arguments
+                self Orthosis
+                var
+                label char
+            end
+            % Add internal variable to be evaluated in post-processing
+
+            self.res_pp{end+1} = var;
+            self.names_res_pp{end+1} = label;
+        end % end of addVarToPostProcessing
+
+
     %% OpenSim
         function [] = updatePropertiesFromOsimModel(self)
             % Read properties from OpenSim model and update the stored info
@@ -424,10 +440,11 @@ classdef Orthosis < handle
         function [] = createCasadiFunction(self)
             % create CasADi Function
             self.fun = casadi.Function(['f_orthosis_',self.name],...
-                self.arg, self.res, self.names_arg, self.names_res);
+                self.arg, [self.res, self.res_pp],...
+                self.names_arg, [self.names_res, self.names_res_pp]);
         end
 
-        function [wrap_fun] = wrapCasadiFunction(self,ExtFunIO,muscleNames)
+        function [wrap_fun, wrap_fun_pp] = wrapCasadiFunction(self,ExtFunIO,muscleNames)
             arguments
                 self
                 ExtFunIO
@@ -475,7 +492,7 @@ classdef Orthosis < handle
             end
 
             % assign outputs from function to outputs of wrapper function
-            for j=1:length(res_fun)
+            for j=1:length(self.meta_res)
                 if strcmp(self.meta_res(j).type,'coordi')
                     idx = ExtFunIO.(self.meta_res(j).type).(self.meta_res(j).name);
                 else
@@ -483,6 +500,9 @@ classdef Orthosis < handle
                 end
                 res_SX.(self.meta_res(j).subtype)(idx,:) = res_fun{j};
             end
+
+            % collect outputs for post-processing function
+            wrap_res_pp = res_fun(length(self.meta_res)+1:end);
 
             % input arguments for wrapper function
             arg_names = fieldnames(arg_SX);
@@ -499,6 +519,9 @@ classdef Orthosis < handle
             % create wrapper function
             wrap_fun = Function(['f_orthosis_',self.name,'_wrapped'],...
                 wrap_arg, wrap_res, arg_names, res_names);
+
+            wrap_fun_pp = Function(['f_orthosis_',self.name,'_wrapped_postprocessing'],...
+                wrap_arg, wrap_res_pp, arg_names, self.names_res_pp);
             
         end
 
