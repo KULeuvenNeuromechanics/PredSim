@@ -124,6 +124,8 @@ end
 if strcmp(S.misc.gaitmotion_type,'HalfGaitCycle')
     bounds_nsc.Qs.upper(model_info.ExtFunIO.jointi.base_forward) = ...
         bounds_nsc.Qs.upper(model_info.ExtFunIO.jointi.base_forward)/2;
+
+    S.bounds.t_final.upper = S.bounds.t_final.upper/2;
 end
 
 %% Hard bounds

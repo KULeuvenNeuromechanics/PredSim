@@ -83,11 +83,7 @@ if ~isfield(S.bounds,'t_final')
     S.bounds.t_final    = [];
 end
 if ~isfield(S.bounds.t_final,'upper')
-    if strcmp(S.misc.gaitmotion_type,'HalfGaitCycle')
-        S.bounds.t_final.upper = 1;
-    else
-        S.bounds.t_final.upper = 2;
-    end
+    S.bounds.t_final.upper = 2;
 end
 if ~isfield(S.bounds.t_final,'lower')
     S.bounds.t_final.lower = 0.1;
