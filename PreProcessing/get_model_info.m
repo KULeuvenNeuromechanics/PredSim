@@ -95,18 +95,21 @@ model_info.ligament_info.NLigament = length(ligament_names);
 model_info = getCoordinateIndexForStateVectorOpenSimAPI(S,osim_path,model_info);
 
 %% Symmetry
-symQs = getCoordinateSymmetry(S,osim_path,model_info);
+% symQs = getCoordinateSymmetry(S,osim_path,model_info);
+[symQs, model_info.ExtFunIO.jointi] = identify_kinematic_chains(S,osim_path,model_info);
 
 orderMus = 1:length(model_info.muscle_info.muscle_names);
 orderMusInv = zeros(1,length(model_info.muscle_info.muscle_names));
 for i=1:length(model_info.muscle_info.muscle_names)
-    if strcmp(model_info.muscle_info.muscle_names{i}(end-1:end),'_r')
-        orderMusInv(i) = find(strcmp(model_info.muscle_info.muscle_names,...
-            [model_info.muscle_info.muscle_names{i}(1:end-2) '_l']));
-    elseif strcmp(model_info.muscle_info.muscle_names{i}(end-1:end),'_l')
-        orderMusInv(i) = find(strcmp(model_info.muscle_info.muscle_names,...
-            [model_info.muscle_info.muscle_names{i}(1:end-2) '_r']));
-    end
+%     if strcmp(model_info.muscle_info.muscle_names{i}(end-1:end),'_r')
+%         orderMusInv(i) = find(strcmp(model_info.muscle_info.muscle_names,...
+%             [model_info.muscle_info.muscle_names{i}(1:end-2) '_l']));
+%     elseif strcmp(model_info.muscle_info.muscle_names{i}(end-1:end),'_l')
+%         orderMusInv(i) = find(strcmp(model_info.muscle_info.muscle_names,...
+%             [model_info.muscle_info.muscle_names{i}(1:end-2) '_r']));
+%     end
+    orderMusInv(i) = find(strcmp(model_info.muscle_info.muscle_names,...
+        mirrorName(model_info.muscle_info.muscle_names{i})));
 end
 symQs.MusInvA = orderMus;
 symQs.MusInvB = orderMusInv;
@@ -117,3 +120,4 @@ model_info.ExtFunIO.symQs = symQs;
 model_info.osim_path = osim_path;
 
 
+end

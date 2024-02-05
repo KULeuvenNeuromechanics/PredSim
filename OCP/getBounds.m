@@ -82,9 +82,7 @@ for j=1:NCoord
         bounds_nsc.Qdotdots.upper(j) = range_j*S.bounds.Qdotdots_factor_RoM;
     end
 
-
 end
-
 
 %% Adjust bounds based on settings
 for i=coords
