@@ -33,7 +33,8 @@ exo = EXO001('exo',43,init);
 % read settings that were passed from main.m
 k_ankle = settings_orthosis.ankle_stiffness; % ankle stiffness in Nm/rad
 side = settings_orthosis.left_right; % 'l' for left or 'r' for right
-
+pf_offset = settings_orthosis.pf_offset; % neutral angle of spring in °
+smooth_b = settings_orthosis.smooth_b; 
 % exo.setFootForceBody('calcn_r');
 
 % set side
@@ -43,9 +44,8 @@ exo.setSide(side);
 q_enc = exo.var_encoder("pos"); % plantarflexion is positive
 
 % calculate moments
-% Deltaq = q_enc -5*pi/180;
-Deltaq = q_enc;
-Deltaq_pos = getSmoothingHuberCon(Deltaq,Deltaq,0,5,-1);
+Deltaq = q_enc - pf_offset*pi/180;
+Deltaq_pos = getSmoothingHuberCon(Deltaq,Deltaq,0,smooth_b,-1);
 T_ankle = -k_ankle*Deltaq_pos;
 
 % set moment

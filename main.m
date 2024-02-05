@@ -16,14 +16,14 @@ clc
 pathDefaultSettings = fullfile(pathRepo,'DefaultSettings');
 addpath(pathDefaultSettings)
 
-[S] = initializeSettings('DHondt_et_al_2024_3seg'); % 'DHondt_2023_2seg' 'DHondt_et_al_2024_3seg'
+[S] = initializeSettings('DHondt_2023_2seg'); % 'DHondt_2023_2seg' 'DHondt_et_al_2024_3seg'
 S.misc.main_path = pathRepo;
 
 addpath(fullfile(S.misc.main_path,'VariousFunctions'))
 
 %% Required inputs
 % name of the subject
-S.subject.name = 'DHondt_et_al_2024_3seg';
+S.subject.name = 'DHondt_2023_2seg';
 
 % path to folder where you want to store the results of the OCP
 S.subject.save_folder  = fullfile(pathRepoFolder,'PredSimResults',S.subject.name); 
@@ -33,15 +33,15 @@ S.subject.save_folder  = fullfile(pathRepoFolder,'PredSimResults',S.subject.name
 S.subject.IG_selection = fullfile(S.misc.main_path,'OCP','IK_Guess_Full_GC.mot');
 S.subject.IG_selection_gaitCyclePercent = 100;
 % S.subject.IG_selection = 'quasi-random';
-S.subject.IG_selection = fullfile('C:\GBW_MyPrograms\PredSimResults',...
-    'DHondt_et_al_2024_3seg', 'DHondt_et_al_2024_3seg_job889.mot');
-S.subject.IG_selection_gaitCyclePercent = 200;
+% S.subject.IG_selection = fullfile('C:\GBW_MyPrograms\PredSimResults',...
+%     'DHondt_et_al_2024_3seg', 'DHondt_et_al_2024_3seg_job889.mot');
+% S.subject.IG_selection_gaitCyclePercent = 200;
 
 % give the path to the osim model of your subject
 osim_path = fullfile(pathRepo,'Subjects',S.subject.name,[S.subject.name '.osim']);
 
 % Do you want to run the simulation as a batch job (parallel computing toolbox)
-S.solver.run_as_batch_job = 1;
+S.solver.run_as_batch_job = 0;
 
 %% Optional inputs
 % see README.md in the main folder for information about these optional
@@ -74,8 +74,8 @@ S.solver.run_as_batch_job = 1;
 S.post_process.make_plot = 0;
 % S.post_process.savename  = 'datetime';
 % S.post_process.load_prev_opti_vars = 1;
-% S.post_process.rerun   = 1;
-% S.post_process.result_filename = '2D_gait_moco_v37';
+S.post_process.rerun   = 1;
+S.post_process.result_filename = 'DHondt_2023_2seg_job915';
 
 % % S.solver
 % S.solver.linear_solver  = '';
@@ -99,7 +99,7 @@ S.subject.v_pelvis_x_trgt   = 1.33;
 % S.subject.muscle_pass_stiff_shift = {{'soleus','_gas','per_','tib_','_dig_','_hal_','FDB'},0.9}; %,'FDB'
 % S.subject.muscle_pass_stiff_scale = ;
 
-% S.subject.tendon_stiff_scale      = {{'soleus','_gas'},0.5};
+% S.subject.tendon_stiff_scale      = {{'soleus','_gas'},2};
 % S.subject.scale_MT_params = {{'soleus_l'},'FMo',0.9,{'soleus_l'},'alphao',1.1};
 % S.subject.spasticity        = ;
 % S.subject.muscle_coordination = ;
@@ -120,10 +120,11 @@ S.subject.v_pelvis_x_trgt   = 1.33;
 
 
 % % S.orthosis
-ortho1.function_name = 'EXO001_ankleExo'; % EXO001_ankleExoNuckols2020
-% ortho1.function_name = 'ankleExoTorques';
-ortho1.ankle_stiffness = 20; % Nm/rad
-% ortho1.mtp_stiffness = 0; % Nms/rad
+% ortho1.function_name = 'EXO001_ankleExo'; % EXO001_ankleExoNuckols2020
+% % ortho1.function_name = 'ankleExoTorques';
+% ortho1.ankle_stiffness = 100; % Nm/rad
+% ortho1.pf_offset = 0;
+% ortho1.smooth_b = 10;
 
 % ortho1.function_name = 'ankleExoZhang2017';
 % ortho1.dependencies_path = 'C:\Users\u0150099\OneDrive - KU Leuven\PhD\literature\assistive devices\aal5054_zhang_sm_data_s2';
@@ -133,8 +134,8 @@ ortho1.ankle_stiffness = 20; % Nm/rad
 % ortho1.drop_time = 9.8; % 5
 % ortho1.plotAssistanceProfile = figure();
 
-% ortho1.function_name = 'ankleExoEmgProportional';
-% ortho1.gain = 40; % Nm at max soleus activation
+ortho1.function_name = 'ankleExoEmgProportional';
+ortho1.gain = 40; % Nm at max soleus activation
 
 % % add orthosis on right side
 ortho1.left_right = 'r';

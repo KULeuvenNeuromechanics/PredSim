@@ -19,7 +19,7 @@ classdef EXO001 < Orthosis
         L_shank = 0.3; % length ankle-shank strap
         H_ff; % heigth ankle-mtp
         L_ff; % length ankle-mtp
-        r_pos_ff_force = 0.3; % distance to ankle relative to ankle-mtp distance
+        r_pos_ff_force = 1; % distance to ankle relative to ankle-mtp distance
         D_toe_force;
 
         % reference points in OpenSim model
@@ -363,7 +363,9 @@ classdef EXO001 < Orthosis
 
              self.encoder_offset = enc_offset;
 
-             self.D_toe_force = abs(vec_foot(2));
+             self.D_toe_force = norm(vec_foot);
+             self.H_ff = abs(vec_foot(2));
+             self.L_ff = abs(vec_foot(1));
 
         end % end of zeroEncoder
 
@@ -446,14 +448,20 @@ classdef EXO001 < Orthosis
 %             F_heel_force = F_ff_force*cos(phi)/cos(theta);
             
 
-            F_F = ( F_S*(cos(q_encoder) - sin(q_encoder)*tan(theta_0)) +...
-                M/self.D_toe_force ) /...
-                (cos(phi_0)*tan(theta_0) + D_ff_force/self.D_toe_force - sin(phi_0));
+%             F_F = ( F_S*(cos(q_encoder) - sin(q_encoder)*tan(theta_0)) +...
+%                 M/self.D_toe_force ) /...
+%                 (cos(phi_0)*tan(theta_0) + D_ff_force/self.D_toe_force - sin(phi_0));
+% 
+%             F_T = (F_F*D_ff_force - M)/self.D_toe_force;
+% 
+%             F_H = (F_S*sin(q_encoder) + F_F*cos(phi_0))/cos(theta_0);
 
-            F_T = (F_F*D_ff_force - M)/self.D_toe_force;
 
-            F_H = (F_S*sin(q_encoder) + F_F*cos(phi_0))/cos(theta_0);
+            F_F = M/D_ff_force;
 
+            F_H = (F_F + F_S*sin(phi_0+q_encoder))/cos(theta_0-phi_0);
+
+            F_T = F_H*sin(theta_0-phi_0) - F_S*cos(phi_0+q_encoder);
 
             % assuming origin of talus is ankle joint, and exo hinge is aligned with
             % ankle joint centre
@@ -491,7 +499,7 @@ classdef EXO001 < Orthosis
             
             F_foot = [-sin(phi); -cos(phi); 0]*F_F;
 
-            F_toe = [cos(q_encoder); -sin(q_encoder); 0]*F_T;
+            F_toe = [-cos(phi); sin(phi); 0]*F_T;
             
             
             f_geometry = Function('f_geometry',{q_encoder,M},...

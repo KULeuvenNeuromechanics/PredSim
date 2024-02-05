@@ -90,10 +90,10 @@ for i=1:length(f_casadi.separate_orthoses)
         res_pp_GC = res_pp.x(:,R.ground_reaction.idx_GC)';
 
         name_ij = f_pp_i.name_out(j-1);
-        R_sep_i.(name_ij) = res_pp_GC;
+        R.orthosis.separate{i}.(name_ij) = res_pp_GC;
     end
 
-    R.orthosis.separate{i} = R_sep_i;
+%     R.orthosis.separate{i} = R_sep_i;
 end
 
 

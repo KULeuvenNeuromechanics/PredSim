@@ -34,7 +34,7 @@ exo = EXO001('exo',43,init);
 k_ankle = settings_orthosis.ankle_stiffness; % ankle stiffness in Nm/rad
 side = settings_orthosis.left_right; % 'l' for left or 'r' for right
 
-% exo.setFootForceBody('calcn_r');
+exo.setFootForceBody('calcn_r');
 
 % set side
 exo.setSide(side);

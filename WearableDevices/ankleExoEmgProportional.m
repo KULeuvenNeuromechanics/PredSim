@@ -47,11 +47,13 @@ side = settings_orthosis.left_right; % 'l' for left or 'r' for right
 
 emg = exo.var_muscle(['soleus_',side]);
 
-T_ankle = [0;0; (emg-0.05)*gain];
+% T_ankle = [0;0; (emg-0.05)*gain];
 
-% apply exo torque on tibia and calcn
-exo.addBodyMoment(T_ankle, ['T_exo_shank_',side],['tibia_',side]);
-exo.addBodyMoment(-T_ankle, ['T_exo_foot_',side],['calcn_',side],['tibia_',side]);
+% % apply exo torque on tibia and calcn
+% exo.addBodyMoment(T_ankle, ['T_exo_shank_',side],['tibia_',side]);
+% exo.addBodyMoment(-T_ankle, ['T_exo_foot_',side],['calcn_',side],['tibia_',side]);
 
+T_ankle = (emg-0.05)*gain;
+exo.addCoordForce(T_ankle,['ankle_angle_',side]);
 
 end
