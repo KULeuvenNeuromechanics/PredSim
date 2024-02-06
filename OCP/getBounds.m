@@ -111,12 +111,12 @@ end
 
 %% Vertical position of floating base
 if ~isempty(S.bounds.factor_IG_pelvis_ty.lower)
-    bounds_nsc.Qs.lower(model_info.ExtFunIO.jointi.floating_base(5)) = model_info.IG_pelvis_y...
-        *S.bounds.factor_IG_pelvis_ty.lower;
+    bounds_nsc.Qs.lower(model_info.ExtFunIO.jointi.base_vertical) =...
+        model_info.IG_pelvis_y *S.bounds.factor_IG_pelvis_ty.lower;
 end
 if ~isempty(S.bounds.factor_IG_pelvis_ty.upper)
-    bounds_nsc.Qs.upper(model_info.ExtFunIO.jointi.floating_base(5)) = model_info.IG_pelvis_y...
-        *S.bounds.factor_IG_pelvis_ty.upper;
+    bounds_nsc.Qs.upper(model_info.ExtFunIO.jointi.base_vertical) =...
+        model_info.IG_pelvis_y *S.bounds.factor_IG_pelvis_ty.upper;
 end
 
 
