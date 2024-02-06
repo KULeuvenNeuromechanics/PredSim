@@ -15,8 +15,6 @@ addpath([pathRepo '/VariousFunctions'])
 
 
 % load model info
-% load(fullfile(pathRepo,'Subjects/Hamner_modified/F_Hamner_modified_IO.mat'))
-% model_info.ExtFunIO = IO;
 load(fullfile(pathRepo,'Tests','ReferenceResults','Falisse_et_al_2022',['Falisse_et_al_2022','_paper.mat']),'model_info');
 
 
@@ -43,7 +41,7 @@ fprintf('coordinate name\t\tmax difference\n')
 for i=1:length(coordinate_names)
     coord_name_i = coordinate_names{i};
     res = q_in.data(:,strcmp(q_in.labels,coord_name_i)) - Qs.all(:,strcmp(Qs.colheaders,coord_name_i));
-    fprintf('%s\t\t\t%d\n',coord_name_i,max(abs(res)))
+    fprintf('%s\t\t\t%d rad\n',coord_name_i,max(abs(res)))
 end
 
 

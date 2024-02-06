@@ -9,7 +9,8 @@ import casadi.*
 
 % add repository to workspace
 [pathHere,~,~] = fileparts(mfilename('fullpath'));
-[pathRepo,~,~] = fileparts(pathHere);
+[pathTests,~,~] = fileparts(pathHere);
+[pathRepo,~,~] = fileparts(pathTests);
 addpath([pathRepo '/PreProcessing'])
 
 % load 1st 

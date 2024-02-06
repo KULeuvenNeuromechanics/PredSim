@@ -6,24 +6,26 @@ clc
 
 %% reference result
 [pathHere,~,~] = fileparts(mfilename('fullpath'));
-[pathRepo,~,~] = fileparts(pathHere);
-ResultsRepo = fullfile(pathRepo,'Tests','ReferenceResults');
-ref_file = fullfile(ResultsRepo,'Falisse_et_al_2022','Falisse_et_al_2022_paper.mat');
+[pathTests,~,~] = fileparts(pathHere);
+[pathRepo,~,~] = fileparts(pathTests);
+
+ref_file = fullfile(pathRepo,'Tests','ReferenceResults','Falisse_et_al_2022',...
+    'Falisse_et_al_2022_paper.mat');
 load(ref_file,'R','model_info');
 R_ref = R;
 model_info_ref = model_info;
 
-x = 1:(100-1)/(size(R_ref.Qs,1)-1):100;
+x = 1:(100-1)/(size(R_ref.kinematics.Qs,1)-1):100;
 
 
-test_file = fullfile([ResultsRepo '\Fal_s1\Fal_s1_v2.mat']); % change this to path of result you want to test
+test_file = fullfile(); % change this to path of result you want to test
 load(test_file,'R','model_info')
 
 figure
 for i=1:31
     subplot(4,8,i)
     hold on
-    plot(x,R_ref.Qs(:,i),'DisplayName','ref')
+    plot(x,R_ref.kinematics.Qs(:,i),'DisplayName','ref')
     title(model_info_ref.ExtFunIO.coord_names.all{i},'Interpreter','none')
 end
 
@@ -46,7 +48,7 @@ end
 for i=1:length(idx_r)
     subplot(7,7,i)
     hold on
-    plot(x,R_ref.a(:,idx_r(i)),'DisplayName','ref')
+    plot(x,R_ref.muscles.a(:,idx_r(i)),'DisplayName','ref')
     title(model_info_ref.muscle_info.muscle_names{idx_r(i)},'Interpreter','none')
 end
 
@@ -62,7 +64,7 @@ for i=1:length(idx_r2)
 %     idx = find(idx_r(:)==idx0);
     subplot(7,7,i)
     hold on
-    plot(x,R.a(:,idx_r2(idx0)),'--','DisplayName','test')
+    plot(x,R.muscles.a(:,idx_r2(idx0)),'--','DisplayName','test')
 end
 
 legend

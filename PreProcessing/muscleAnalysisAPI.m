@@ -47,12 +47,13 @@ n_muscle = model_info.muscle_info.NMuscle;
 % get senseble muscle-coordinate combinations to evaluate
 muscle_spanning_joint_info = model_info.muscle_info.muscle_spanning_joint_info;
 
-if contains(varargin(isa(varargin,'char') | isa(varargin,'string')),'ligaments')
+idx_argin_lig = contains(varargin(cellfun(@(st)(isa(st,'char')||isa(st,'string')),varargin)),'ligament');
+if any(idx_argin_lig)
     muscle_names = model_info.ligament_info.ligament_names;
     n_muscle = model_info.ligament_info.NLigament;
     muscle_spanning_joint_info = model_info.ligament_info.ligament_spanning_joint_info;
     ligaments_bool = 1;
-    varargin = varargin(2:end);
+    varargin = varargin(~idx_argin_lig);
 else
     ligaments_bool = 0;
 end
