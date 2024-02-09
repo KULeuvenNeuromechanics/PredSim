@@ -22,7 +22,7 @@ function [] = scaleLigaments(osim_path_scaled, bodymass_generic)
 % Original date: 9 February 2024
 % --------------------------------------------------------------------------
 
-
+% get mass of generic model
 if isnumeric(bodymass_generic) && numel(bodymass_generic)==1
     mass_generic = bodymass_generic;
 else
@@ -30,14 +30,16 @@ else
     mass_generic = getModelMass(osim_path_generic);
 end
 
+% get mass of scaled model
 mass_scaled = getModelMass(osim_path_scaled);
 
-
+% scale factor
 scale_factor = (mass_scaled/mass_generic)^(2/3);
 
 import org.opensim.modeling.*;
 model = Model(osim_path_scaled);
 
+% apply scaling
 for i=1:model.getForceSet().getSize()
     force_i = model.getForceSet().get(i-1);
     if strcmp(force_i.getConcreteClassName(),'Ligament')
@@ -49,8 +51,9 @@ for i=1:model.getForceSet().getSize()
     end
 end
 
+% save model
 model.initSystem();
 model.print(osim_path_scaled);
 
 
-end
+end % end of function
