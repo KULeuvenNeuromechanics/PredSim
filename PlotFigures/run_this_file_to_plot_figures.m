@@ -87,12 +87,12 @@ figure_settings(fig_count).savepath = fullfile(figure_folder,[figure_savename '_
 figure_settings(fig_count).filetype = {};
 fig_count = fig_count+1;
 
-% figure_settings(fig_count).name = 'all_activations';
-% figure_settings(fig_count).dofs = {'muscles_r'};
-% figure_settings(fig_count).variables = {'a'};
-% figure_settings(fig_count).savepath = fullfile(figure_folder,[figure_savename '_' figure_settings(fig_count).name]);
-% figure_settings(fig_count).filetype = {};
-% fig_count = fig_count+1;
+figure_settings(fig_count).name = 'all_activations';
+figure_settings(fig_count).dofs = {'muscles_r'};
+figure_settings(fig_count).variables = {'a'};
+figure_settings(fig_count).savepath = fullfile(figure_folder,[figure_savename '_' figure_settings(fig_count).name]);
+figure_settings(fig_count).filetype = {};
+fig_count = fig_count+1;
 
 % figure_settings(fig_count).name = 'selected_angles';
 % figure_settings(fig_count).dofs = {'hip_flexion_r','hip_adduction_r','hip_rotation_r','knee_angle_r',...
@@ -129,6 +129,13 @@ figure_settings(fig_count).variables = {'a'};
 figure_settings(fig_count).savepath = fullfile(figure_folder,[figure_savename '_' figure_settings(fig_count).name]);
 figure_settings(fig_count).filetype = {};
 fig_count = fig_count+1;
+% 
+% figure_settings(fig_count).name = 'muscle_power';
+% figure_settings(fig_count).dofs = {'custom'};
+% figure_settings(fig_count).variables = {'power'};
+% figure_settings(fig_count).savepath = fullfile(figure_folder,[figure_savename '_' figure_settings(fig_count).name]);
+% figure_settings(fig_count).filetype = {};
+% fig_count = fig_count+1;
 
 % figure_settings(fig_count).name = 'template';
 % figure_settings(fig_count).dofs = {'custom'};
