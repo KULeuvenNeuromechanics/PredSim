@@ -31,7 +31,7 @@ S.weights      = [];
 S.Cpp2Dll      = [];
 
 % bounds have an .upper and .lower field
-S.bounds.a          = [];
+S.bounds.activation_all_muscles = [];
 S.bounds.calcn_dist = [];
 S.bounds.femur_hand_dist = [];
 S.bounds.toes_dist  = [];

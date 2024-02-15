@@ -18,44 +18,57 @@ function [S] = getDefaultSettings(S,osim_path)
 % 
 % Original author: Bram Van Den Bosch
 % Original date: 30/11/2021
-%
-% Last edit by: Bram Van Den Bosch
-% Last edit date: 05/05/2023
 % --------------------------------------------------------------------------
 
 %% bounds
-
-% minimal muscle activation, a number between 0 and 1
-if ~isfield(S.bounds.a,'lower')
-    S.bounds.a.lower = 0.05;
+if ~isfield(S,'bounds')
+    S.bounds = [];
 end
 
-% minimal distance between orginins calcanei, in meters
+% distance between orginins calcanei, in meters
+if ~isfield(S.bounds,'calcn_dist')
+    S.bounds.calcn_dist = [];
+end
 if ~isfield(S.bounds.calcn_dist,'lower')
     S.bounds.calcn_dist.lower = 0.09;
 end
 
-% minimal distance between femur and hand orginins, in meters
+% distance between femur and hand orginins, in meters
+if ~isfield(S.bounds,'femur_hand_dist')
+    S.bounds.femur_hand_dist = [];
+end
 if ~isfield(S.bounds.femur_hand_dist,'lower')
     S.bounds.femur_hand_dist.lower = sqrt(0.0324);
 end
 
-% minimal distance between origins toes, in meters
+% distance between origins toes, in meters
+if ~isfield(S.bounds,'toes_dist')
+    S.bounds.toes_dist  = [];
+end
 if ~isfield(S.bounds.toes_dist,'lower')
     S.bounds.toes_dist.lower = 0.10;
 end
 
-% minimal distance between origins tibiae, in meters
+% distance between origins tibiae, in meters
+if ~isfield(S.bounds,'tibia_dist')
+    S.bounds.tibia_dist = [];
+end
 if ~isfield(S.bounds.tibia_dist,'lower')
     S.bounds.tibia_dist.lower = 0.11;
 end
 
 % upper bound on left step length, in meters
+if ~isfield(S.bounds,'SLL')
+    S.bounds.SLL        = [];
+end
 if ~isfield(S.bounds.SLL,'upper')
     S.bounds.SLL.upper = [];
 end
 
 % upper bound on right step length, in meters
+if ~isfield(S.bounds,'SLR')
+    S.bounds.SLR        = [];
+end
 if ~isfield(S.bounds.SLR,'upper')
     S.bounds.SLR.upper = [];
 end
@@ -65,22 +78,76 @@ if ~isfield(S.bounds.dist_trav,'lower')
     S.bounds.dist_trav.lower = [];
 end
 
-% upper bound on final time, in seconds
+% bound on final time, in seconds
+if ~isfield(S.bounds,'t_final')
+    S.bounds.t_final    = [];
+end
 if ~isfield(S.bounds.t_final,'upper')
     S.bounds.t_final.upper = 2;
 end
-
-% lower bound on final time, in seconds
 if ~isfield(S.bounds.t_final,'lower')
     S.bounds.t_final.lower = 0.1;
 end
 
+if ~isfield(S.bounds,'activation_all_muscles')
+    S.bounds.activation_all_muscles = [];
+end
+
+% default coordinate bounds
+if ~isfield(S.bounds,'default_coordinate_bounds')
+    S.bounds.default_coordinate_bounds = 'Default_Coordinate_Bounds.csv';
+end
+
 % manually overwrite coordinate bounds
-if ~isfield(S.bounds,'coordinates')
-    S.bounds.coordinates = [];
+if ~isfield(S.bounds,'Qs')
+    S.bounds.Qs = [];
+end
+if ~isfield(S.bounds,'Qdots')
+    S.bounds.Qdots = [];
+end
+if ~isfield(S.bounds,'Qdotdots')
+    S.bounds.Qdotdots = [];
+end
+
+% minimal muscle activation, a number between 0 and 1
+if ~isfield(S.bounds.activation_all_muscles,'lower')
+    S.bounds.activation_all_muscles.lower = 0.05;
+end
+
+% maximal muscle activation, a number between 0 and 1
+if ~isfield(S.bounds.activation_all_muscles,'upper')
+    S.bounds.activation_all_muscles.upper = 1;
+end
+
+% activation of selected muscles
+if ~isfield(S.bounds,'activation_selected_muscles')
+    S.bounds.activation_selected_muscles = [];
+end
+
+% when determining bounds based on range set in opensim model, qdot and
+% qdotdot bounds are proportional to range of motion
+if ~isfield(S.bounds,'Qdots_factor_RoM')
+    S.bounds.Qdots_factor_RoM = 10;
+end
+if ~isfield(S.bounds,'Qdotdots_factor_RoM')
+    S.bounds.Qdotdots_factor_RoM = 155;
+end
+
+% set pelvis ty bounds based on IG_pelvis_ty
+if ~isfield(S.bounds,'factor_IG_pelvis_ty')
+    S.bounds.factor_IG_pelvis_ty = [];
+end
+if ~isfield(S.bounds.factor_IG_pelvis_ty,'lower')
+    S.bounds.factor_IG_pelvis_ty.lower = 0.5;
+end
+if ~isfield(S.bounds.factor_IG_pelvis_ty,'upper')
+    S.bounds.factor_IG_pelvis_ty.upper = 1.2;
 end
 
 %% metabolicE
+if ~isfield(S,'metabolicE')
+    S.metabolicE = [];
+end
 
 % hyperbolic tangent smoothing factor (used in metabolic cost)
 if ~isfield(S.metabolicE,'tanh_b')
@@ -93,6 +160,9 @@ if ~isfield(S.metabolicE,'model')
 end
 
 %% misc
+if ~isfield(S,'misc')
+    S.misc = [];
+end
 
 % subject folder to save intermediate data
 S.misc.subject_path = fullfile(S.misc.main_path,'Subjects',S.subject.name);
@@ -172,8 +242,29 @@ if ~isfield(S.misc,'constant_pennation_angle')
     S.misc.constant_pennation_angle = 0;
 end
 
+% default scale factors for variables and constraints
+if ~isfield(S.misc,'default_scaling_NLP')
+    S.misc.default_scaling_NLP = [];
+end
+
+% manually set scale factors
+if ~isfield(S.misc,'scaling_Qs')
+    S.misc.scaling_Qs = [];
+end
+if ~isfield(S.misc,'scaling_Qdots')
+    S.misc.scaling_Qdots = [];
+end
+if ~isfield(S.misc,'scaling_Qdotdots')
+    S.misc.scaling_Qdotdots = [];
+end
+if ~isfield(S.misc,'scaling_Moments')
+    S.misc.scaling_Moments = [];
+end
 
 %% post_process
+if ~isfield(S,'post_process')
+    S.post_process = [];
+end
 
 % boolean to plot post processing results
 if ~isfield(S.post_process,'make_plot')
@@ -208,6 +299,9 @@ if S.post_process.load_prev_opti_vars && isempty(S.post_process.result_filename)
 end
 
 %% solver
+if ~isfield(S,'solver')
+    S.solver = [];
+end
 
 % solver algorithm used in the OCP
 if ~isfield(S.solver,'linear_solver')
@@ -258,6 +352,9 @@ if isempty(S.solver.CasADi_path) && S.solver.run_as_batch_job
 end
 
 %% subject
+if ~isfield(S,'subject')
+    S.subject = [];
+end
 
 % folder path to store the subject specific results
 if ~isfield(S.subject,'save_folder')
@@ -332,14 +429,6 @@ else
     end
 end
 
-% initial guess bounds
-if ~isfield(S.subject,'IK_Bounds')
-    S.subject.IK_Bounds = fullfile(S.misc.main_path,'OCP','IK_Bounds_Default.mot');
-elseif ~isfile(S.subject.IK_Bounds)
-    error('The motion file you specified in S.subject.IK_Bounds does not exist.')
-end
-disp([char(S.subject.IK_Bounds), ' will be used to determine bounds.'])
-
 % type of mtp joint used in the model
 if ~isfield(S.subject,'mtp_type')
     S.subject.mtp_type = ''; 
@@ -410,6 +499,9 @@ if ~isfield(S.subject,'base_joints_arms')
 end
 
 %% weights
+if ~isfield(S,'weights')
+    S.weights = [];
+end
 
 % weight on metabolic energy rate
 if ~isfield(S.weights,'E')
@@ -453,7 +545,6 @@ if ~isfield(S.weights,'slack_ctrl')
 end
 
 %% .osim 2 dll
-
 % settings for functions to conver .osim model to expression graph (.dll)
 % file to solve inverse dynamics
 if ~isfield(S,'Cpp2Dll')

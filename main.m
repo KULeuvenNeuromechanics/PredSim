@@ -57,7 +57,7 @@ S.solver.run_as_batch_job = 0;
 % S.bounds.dist_trav.lower    = ;
 % S.bounds.t_final.upper      = ;
 % S.bounds.t_final.lower      = ;
-% S.bounds.coordinates        = {'pelvis_ty',0.55,1.1, 'pelvis_tilt',-2.9302,nan};
+% S.bounds.Qs                 = {'pelvis_tilt',-30,30,'pelvis_list',-30,30};
 
 % % S.metabolicE - metabolic energy
 % S.metabolicE.tanh_b = 100;
@@ -97,7 +97,6 @@ S.post_process.make_plot = 1;
 % S.subject.IG_pelvis_y       = ;
 % S.subject.adapt_IG_pelvis_y = ;
 S.subject.v_pelvis_x_trgt   = 1.33;
-% S.subject.IK_Bounds = ;
 % S.subject.muscle_strength   = ;
 % S.subject.muscle_pass_stiff_shift = {{'soleus','_gas','per_','tib_','_dig_','_hal_','FDB'},0.9}; %,'FDB'
 % S.subject.muscle_pass_stiff_scale = ;
