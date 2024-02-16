@@ -27,6 +27,11 @@
 %   setting to scale contact sphere locations with respect to a reference
 %   model.
 % 
+%   - scale_ligaments_bool -
+%   * OpenSim scale tool does not adapt ligament pcsa. Use this setting to 
+%   scale ligament pcsa_force with respect to a reference model.
+%
+%
 % Original author: Lars D'Hondt
 % Original date: 27/May/2022
 %
@@ -54,6 +59,7 @@ add_contact_bool = 0;
 use_reference_contacts_bool = 1;
 scale_contact_spheres_bool = 1;
 scale_contact_location_bool = 1;
+scale_ligaments_bool = 1;
 
 %% Define contact spheres
 
@@ -188,4 +194,6 @@ end
 if scale_contact_location_bool
     fixContactSpherePositionAfterScaling(path_reference_model,path_osim_out);
 end
-
+if scale_ligaments_bool
+    scaleLigaments(path_osim_out, path_reference_model);
+end
