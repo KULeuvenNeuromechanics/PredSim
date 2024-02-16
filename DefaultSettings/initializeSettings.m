@@ -31,7 +31,7 @@ S.weights      = [];
 S.OpenSimADOptions  = [];
 
 % bounds have an .upper and .lower field
-S.bounds.a          = [];
+S.bounds.activation_all_muscles = [];
 S.bounds.SLL        = [];
 S.bounds.SLR        = [];
 S.bounds.dist_trav  = [];
