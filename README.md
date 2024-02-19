@@ -126,7 +126,7 @@ This code can automatically convert an OpenSim model to the external function us
 	- Cell array of structs where each cell defines a constraint on the distance between two points. Each struct has the following fields:
 		- point1: name of a point. If this is the name of a body in the OpenSim model, and no point with this name is defined, the origin of this body will be used [char]
 		- point2: name of a point. If this is the name of a body in the OpenSim model, and no point with this name is defined, the origin of this body will be used [char]
-		- direction: direction in which the distance  is constrained. Accepted inputs are: 1) any combination `x`, `y`, and `z`; and 2) `sagittal`, `coronal`, `frontal`, or `transverse` [char]. Note that for distances in one dimension (`point1 - point2`) the sign is kept 
+		- direction: direction in which the distance  is constrained. Accepted inputs are: 1) any combination `x`, `y`, and `z`; and 2) `sagittal`, `coronal`, `frontal`, or `transverse`. Default is *`xyz`* [char]. Note that for distances in one dimension (`point1 - point2`) the sign is kept.
 		- lower_bound: lower bound on the distance, in m [double]. Default is no lower bound applied.
 		- upper_bound: upper bound on the distance, in m [double]. Default is no upper bound applied.
 - **S.bounds.Qs**: 
