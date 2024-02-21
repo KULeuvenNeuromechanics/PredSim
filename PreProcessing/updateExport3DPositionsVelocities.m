@@ -26,10 +26,10 @@ import org.opensim.modeling.*
 
 %% Add calcn origins for step length constraints
 if ~isempty(S.bounds.SLL.upper)
-    S.bounds.points(end+1).name = 'calcn_l';
+    S.bounds.points(end+1).body = 'calcn_l';
 end
 if ~isempty(S.bounds.SLR.upper)
-    S.bounds.points(end+1).name = 'calcn_r';
+    S.bounds.points(end+1).body = 'calcn_r';
 end
 
 %% Fill in blank inputs in points definitions
@@ -131,6 +131,11 @@ S.OpenSimADOptions.export3DPositions =...
 
 
 %% Test that the bodies exist in the osim model
+% Note: 'ground' is a valid name for a body in which we want te define a
+% point, but since OpenSim models do not consider the ground as a body, it
+% will get removed. The points in ground will not be added to the positions
+% we want to be exported from OpenSimAD. We already know the position wrt
+% ground of a point attached to ground.
 
 model = Model(osim_path);
 bodyset = model.getBodySet();
@@ -177,6 +182,12 @@ for j=["export3DPositions","export3DVelocities"]
 end
 
 %% Remove constraints that rely on undefined points
+% The list of defined points consists of the points in
+% S.OpenSimADOptions.export3DPositions, since those are the points that
+% are defined in an existing body. 
+% As explained above, points in ground will also be excluded. So we scan
+% through S.bounds.points, and add any point defined in ground to the list
+% of defined points.
 
 validConstraints = true(length(S.bounds.distanceConstraints),1);
 pointNames = [];
@@ -189,6 +200,7 @@ for i=1:length(S.bounds.points)
         pointNames{end+1} = S.bounds.points(i).name;
     end
 end
+
 for i=1:length(S.bounds.distanceConstraints)
 
     if ~any(strcmp(pointNames,S.bounds.distanceConstraints(i).point1))
