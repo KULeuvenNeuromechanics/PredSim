@@ -127,7 +127,7 @@ S.bounds.points = segments;
 %% Add points for constraints to export3DPositions
 
 S.OpenSimADOptions.export3DPositions =...
-    [S.OpenSimADOptions.export3DPositions(:), S.bounds.points(:)];
+    [S.OpenSimADOptions.export3DPositions(:); S.bounds.points(:)];
 
 
 %% Test that the bodies exist in the osim model
