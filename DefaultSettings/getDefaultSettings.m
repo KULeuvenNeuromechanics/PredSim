@@ -25,38 +25,6 @@ if ~isfield(S,'bounds')
     S.bounds = [];
 end
 
-% distance between orginins calcanei, in meters
-if ~isfield(S.bounds,'calcn_dist')
-    S.bounds.calcn_dist = [];
-end
-if ~isfield(S.bounds.calcn_dist,'lower')
-    S.bounds.calcn_dist.lower = 0.09;
-end
-
-% distance between femur and hand orginins, in meters
-if ~isfield(S.bounds,'femur_hand_dist')
-    S.bounds.femur_hand_dist = [];
-end
-if ~isfield(S.bounds.femur_hand_dist,'lower')
-    S.bounds.femur_hand_dist.lower = sqrt(0.0324);
-end
-
-% distance between origins toes, in meters
-if ~isfield(S.bounds,'toes_dist')
-    S.bounds.toes_dist  = [];
-end
-if ~isfield(S.bounds.toes_dist,'lower')
-    S.bounds.toes_dist.lower = 0.10;
-end
-
-% distance between origins tibiae, in meters
-if ~isfield(S.bounds,'tibia_dist')
-    S.bounds.tibia_dist = [];
-end
-if ~isfield(S.bounds.tibia_dist,'lower')
-    S.bounds.tibia_dist.lower = 0.11;
-end
-
 % upper bound on left step length, in meters
 if ~isfield(S.bounds,'SLL')
     S.bounds.SLL        = [];
@@ -142,6 +110,14 @@ if ~isfield(S.bounds.factor_IG_pelvis_ty,'lower')
 end
 if ~isfield(S.bounds.factor_IG_pelvis_ty,'upper')
     S.bounds.factor_IG_pelvis_ty.upper = 1.2;
+end
+
+% constraints on distance between points
+if ~isfield(S.bounds,'points')
+    S.bounds.points = [];
+end
+if ~isfield(S.bounds,'distanceConstraints')
+    S.bounds.distanceConstraints = [];
 end
 
 %% metabolicE
@@ -544,11 +520,13 @@ if ~isfield(S.weights,'slack_ctrl')
     S.weights.slack_ctrl = 0.001; 
 end
 
-%% .osim 2 dll
-% settings for functions to conver .osim model to expression graph (.dll)
-% file to solve inverse dynamics
-if ~isfield(S,'Cpp2Dll')
-    S.Cpp2Dll = [];
+
+%% OpenSimADOptions
+
+% settings for functions to convert .osim model to expression graph 
+% file (.dll) to solve inverse dynamics
+if ~isfield(S,'OpenSimADOptions')
+    S.OpenSimADOptions = [];
 end
 
 % select compiler for cpp projects 
@@ -556,66 +534,67 @@ end
 %   Visual studio 2017: 'Visual Studio 15 2017 Win64'
 %   Visual studio 2017: 'Visual Studio 16 2019'
 %   Visual studio 2017: 'Visual Studio 17 2022'
-if ~isfield(S.Cpp2Dll,'compiler')
-    S.Cpp2Dll.compiler = findVisualStudioInstallation;
+if ~isfield(S.OpenSimADOptions,'compiler')
+    S.OpenSimADOptions.compiler = findVisualStudioInstallation;
 end
 
-% Path with exectuables to create .cpp file. You can use the function 
-% S.Cpp2Dll.PathCpp2Dll_Exe = InstallOsim2Dll_Exe(ExeDir) to download 
-% this exectuable with the input 'ExeDir' to folder in which you want to
-% install the executable. The output argument of this function gives
-% you the path to the folder with the exectutable
-if ~isfield(S.Cpp2Dll,'PathCpp2Dll_Exe')
-    S.Cpp2Dll.PathCpp2Dll_Exe = [];
+% Input forces acting on bodies
+if ~isfield(S.OpenSimADOptions,'input3DBodyForces')
+    S.OpenSimADOptions.input3DBodyForces = [];
 end
 
-% Export 3D segment origins.
-if ~isfield(S.Cpp2Dll,'export3DSegmentOrigins')
-    S.Cpp2Dll.export3DSegmentOrigins = {'calcn_r', 'calcn_l', 'femur_r', 'femur_l',...
-        'hand_r','hand_l', 'tibia_r', 'tibia_l', 'toes_r', 'toes_l'};
+% Input forces acting on bodies
+if ~isfield(S.OpenSimADOptions,'input3DBodyMoments')
+    S.OpenSimADOptions.input3DBodyMoments = [];
+end
+
+% Export positions of points w.r.t. ground frame
+if ~isfield(S.OpenSimADOptions,'export3DPositions')
+    S.OpenSimADOptions.export3DPositions = [];
+end
+
+% Export velocities of points w.r.t. ground frame
+if ~isfield(S.OpenSimADOptions,'export3DVelocities')
+    S.OpenSimADOptions.export3DVelocities = [];
 end
 
 % If you want to choose the order of the joints and coordinate outputs
-if ~isfield(S.Cpp2Dll,'jointsOrder')
-    S.Cpp2Dll.jointsOrder = [];
+if ~isfield(S.OpenSimADOptions,'jointsOrder')
+    S.OpenSimADOptions.jointsOrder = [];
 end
-if ~isfield(S.Cpp2Dll,'coordinatesOrder')
-    S.Cpp2Dll.coordinatesOrder = [];
-end
-
-% Export total GRFs; If True, right and left 3D GRFs (in this order) are exported.
-% % Set False or do not pass as argument to not export those variables.
-if ~isfield(S.Cpp2Dll,'exportGRFs')
-    S.Cpp2Dll.exportGRFs = true;
+if ~isfield(S.OpenSimADOptions,'coordinatesOrder')
+    S.OpenSimADOptions.coordinatesOrder = [];
 end
 
-% Export separate GRFs. If True, right and left 3D GRFs (in this order) 
-% are exported for each of the contact spheres.Set False or do not pass
-% as argument to not export those variables.
-if ~isfield(S.Cpp2Dll,'exportSeparateGRFs')
-    S.Cpp2Dll.exportSeparateGRFs = true;
+% Export total GRFs
+if ~isfield(S.OpenSimADOptions,'exportGRFs')
+    S.OpenSimADOptions.exportGRFs = true;
 end
 
-% # Export GRMs. If True, right and left 3D GRMs (in this order) are exported.
-%  Set False or do not pass as argument to not export those variables.
-if ~isfield(S.Cpp2Dll,'exportGRMs')
-    S.Cpp2Dll.exportGRMs = true;
+% Export separate GRFs of each contact element
+if ~isfield(S.OpenSimADOptions,'exportSeparateGRFs')
+    S.OpenSimADOptions.exportSeparateGRFs = true;
 end
 
-% Export contact sphere vertical deformation power. If True, right and left
-% vertical deformation power of all contact spheres are exported.Set False
-% or do not pass as argument to not export those variables.
-if ~isfield(S.Cpp2Dll,'exportContactPowers')
-    S.Cpp2Dll.exportContactPowers = true;
+% Export GRMs.
+if ~isfield(S.OpenSimADOptions,'exportGRMs')
+    S.OpenSimADOptions.exportGRMs = true;
 end
 
-% 0: only warnings and errors
-% 1: all information on building .dll file
-if ~isfield(S.Cpp2Dll,'verbose_mode')
-    S.Cpp2Dll.verbose_mode = true;
+% Export contact sphere vertical deformation power.
+if ~isfield(S.OpenSimADOptions,'exportContactPowers')
+    S.OpenSimADOptions.exportContactPowers = true;
+end
+
+% Print outputs from compiler
+if ~isfield(S.OpenSimADOptions,'verbose_mode')
+    S.OpenSimADOptions.verbose_mode = true;
 end 
 
-
+% Test external function versus ID Tool
+if ~isfield(S.OpenSimADOptions,'verify_ID')
+    S.OpenSimADOptions.verify_ID = false;
+end 
 
 
 end
