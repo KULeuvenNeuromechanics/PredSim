@@ -82,7 +82,7 @@ else
 
 end
 
-S.subject.tendon_stiff_scale      = {{'soleus_l','soleus_r','gastroc_r','gastroc_l'},0.7};
+S.subject.tendon_stiff_scale      = {{'soleus_l','soleus_r','gastroc_r','gastroc_l'},U.pf_stiff_scale};
 
 S.subject.set_stiffness_coefficient_selected_dofs = {{'mtp_angle_l','mtp_angle_r'},25};
 

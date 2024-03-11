@@ -3,6 +3,9 @@ classdef Vitruvian_Man_NL_exported < matlab.apps.AppBase
     % Properties that correspond to app components
     properties (Access = public)
         UIFigure                      matlab.ui.Figure
+        PeesstijfheidEditField        matlab.ui.control.NumericEditField
+        PeesstijfheidEditFieldLabel   matlab.ui.control.Label
+        Label_3                       matlab.ui.control.Label
         msLabel                       matlab.ui.control.Label
         SnelheidSpinner               matlab.ui.control.Spinner
         SnelheidSpinnerLabel          matlab.ui.control.Label
@@ -187,6 +190,7 @@ classdef Vitruvian_Man_NL_exported < matlab.apps.AppBase
             U.Force_sf = app.SpierkrachtEditField.Value/100;
             U.plant_flex_lim = app.PlantairflexielimitEditField.Value/180*pi;
             U.Speed = app.SnelheidSpinner.Value;
+            U.pf_stiff_scale = app.PeesstijfheidEditField.Value/100;
             U.PathCasadi = app.path_casadi;
 
             sf.foot = 1;
@@ -558,12 +562,12 @@ classdef Vitruvian_Man_NL_exported < matlab.apps.AppBase
             app.AanhetsimulerenLampLabel.FontName = 'Bahnschrift';
             app.AanhetsimulerenLampLabel.FontSize = 30;
             app.AanhetsimulerenLampLabel.FontColor = [0.5412 0.2706 0.0706];
-            app.AanhetsimulerenLampLabel.Position = [104 252 254 37];
+            app.AanhetsimulerenLampLabel.Position = [104 211 254 37];
             app.AanhetsimulerenLampLabel.Text = 'Aan het simuleren';
 
             % Create AanhetsimulerenLamp
             app.AanhetsimulerenLamp = uilamp(app.UIFigure);
-            app.AanhetsimulerenLamp.Position = [420 252 42 42];
+            app.AanhetsimulerenLamp.Position = [420 211 42 42];
             app.AanhetsimulerenLamp.Color = [1 1 1];
 
             % Create KlaarvoorsimulatieLampLabel
@@ -571,12 +575,12 @@ classdef Vitruvian_Man_NL_exported < matlab.apps.AppBase
             app.KlaarvoorsimulatieLampLabel.FontName = 'Bahnschrift';
             app.KlaarvoorsimulatieLampLabel.FontSize = 30;
             app.KlaarvoorsimulatieLampLabel.FontColor = [0.5412 0.2706 0.0706];
-            app.KlaarvoorsimulatieLampLabel.Position = [104 205 281 37];
+            app.KlaarvoorsimulatieLampLabel.Position = [104 164 281 37];
             app.KlaarvoorsimulatieLampLabel.Text = 'Klaar voor simulatie';
 
             % Create KlaarvoorsimulatieLamp
             app.KlaarvoorsimulatieLamp = uilamp(app.UIFigure);
-            app.KlaarvoorsimulatieLamp.Position = [420 205 42 42];
+            app.KlaarvoorsimulatieLamp.Position = [420 164 42 42];
 
             % Create GroepEditFieldLabel_2
             app.GroepEditFieldLabel_2 = uilabel(app.UIFigure);
@@ -611,6 +615,34 @@ classdef Vitruvian_Man_NL_exported < matlab.apps.AppBase
             app.msLabel.FontColor = [0.5412 0.2706 0.0706];
             app.msLabel.Position = [503 352 58 37];
             app.msLabel.Text = 'm/s';
+
+            % Create Label_3
+            app.Label_3 = uilabel(app.UIFigure);
+            app.Label_3.FontName = 'Bahnschrift';
+            app.Label_3.FontSize = 30;
+            app.Label_3.FontColor = [0.5412 0.2706 0.0706];
+            app.Label_3.Position = [487 281 26 37];
+            app.Label_3.Text = '%';
+
+            % Create PeesstijfheidEditFieldLabel
+            app.PeesstijfheidEditFieldLabel = uilabel(app.UIFigure);
+            app.PeesstijfheidEditFieldLabel.FontName = 'Bahnschrift';
+            app.PeesstijfheidEditFieldLabel.FontSize = 30;
+            app.PeesstijfheidEditFieldLabel.FontColor = [0.5412 0.2706 0.0706];
+            app.PeesstijfheidEditFieldLabel.Position = [88 281 178 37];
+            app.PeesstijfheidEditFieldLabel.Text = 'Peesstijfheid';
+
+            % Create PeesstijfheidEditField
+            app.PeesstijfheidEditField = uieditfield(app.UIFigure, 'numeric');
+            app.PeesstijfheidEditField.Limits = [20 500];
+            app.PeesstijfheidEditField.ValueDisplayFormat = '%111g';
+            app.PeesstijfheidEditField.HorizontalAlignment = 'center';
+            app.PeesstijfheidEditField.FontName = 'Bahnschrift';
+            app.PeesstijfheidEditField.FontSize = 30;
+            app.PeesstijfheidEditField.FontColor = [0.5412 0.2706 0.0706];
+            app.PeesstijfheidEditField.BackgroundColor = [1 0.9725 0.8627];
+            app.PeesstijfheidEditField.Position = [388 280 74 38];
+            app.PeesstijfheidEditField.Value = 100;
 
             % Show the figure after all components are created
             app.UIFigure.Visible = 'on';
