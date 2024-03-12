@@ -18,8 +18,6 @@ classdef Vitruvian_Man_NL_exported < matlab.apps.AppBase
         PlantairflexielimitEditField  matlab.ui.control.NumericEditField
         PlantairflexielimitEditFieldLabel  matlab.ui.control.Label
         Label_2                       matlab.ui.control.Label
-        NaamAfstandSnelheidListBox    matlab.ui.control.ListBox
-        NaamAfstandLabel              matlab.ui.control.Label
         SluitvideoButton              matlab.ui.control.Button
         SpeelvideoButton              matlab.ui.control.Button
         SpierkrachtEditField          matlab.ui.control.NumericEditField
@@ -65,6 +63,7 @@ classdef Vitruvian_Man_NL_exported < matlab.apps.AppBase
         t_musStr
         t_pflim
         t_pftenstiff
+        t_subj_name
 
 
     end
@@ -87,47 +86,33 @@ classdef Vitruvian_Man_NL_exported < matlab.apps.AppBase
                 % calc distance walked for given energy budget and get
                 % other variables
                 [distance_i, avg_v_i, body_mass_i, muscle_strength_i,...
-                    plant_flex_lim_i, pf_tend_stiff_i] = getInfoFromMat(app,char(fullfile(MatFiles(i).folder,MatFiles(i).name)));
+                    plant_flex_lim_i, pf_tend_stiff_i,subject_name_i] = getInfoFromMat(app,char(fullfile(MatFiles(i).folder,MatFiles(i).name)));
                 name_tmp = MatFiles(i).name(1:end-4);
                 app.t_name{i,1} = name_tmp;
                 app.t_dist(i,1) = distance_i;
                 app.t_vel(i,1) = avg_v_i;
                 app.t_mass(i,1) = body_mass_i;
-                app.t_musStr(i,1) = muscle_strength_i;
+                app.t_musStr(i,1) = muscle_strength_i*100;
                 app.t_pflim(i,1) = plant_flex_lim_i;
-                app.t_pftenstiff(i,1) = pf_tend_stiff_i;
+                app.t_pftenstiff(i,1) = pf_tend_stiff_i*100;
+                app.t_subj_name{i,1} = subject_name_i;
 
             end
 
             % populate table
             app.Table = table(app.t_name, app.t_dist, app.t_vel,app.t_mass,...
-                app.t_musStr,app.t_pflim,app.t_pftenstiff);
+                app.t_musStr,app.t_pflim,app.t_pftenstiff,app.t_subj_name);
             app.UITable.Data = app.Table;
-            app.UITable.ColumnName = {'Filename', 'Afgelegde afstand (km)', 'Snelheid (m/s)',...
+            app.UITable.ColumnName = {'Filename', 'Afgelegde afstand (m)', 'Snelheid (m/s)',...
                 'Massa (kg)', 'Spierkracht (%)', 'Plantair flexie limit (°)',...
-                'Peesstijfheid (%)'};
-
-%             if ~isempty(app.tbldata{1,1})
-%                 app.NaamAfstandSnelheidListBox.Items = app.tbldata(:,1);
-%                 app.NaamAfstandSnelheidListBox.ItemsData = app.tbldata(:,2);
-%             end
+                'Peesstijfheid (%)','Modelnaam'};
 
         end
         
-%         function [total_distance, avg_vel] = calcDistance(app,savepath)
-%             %% get distance
-%             E_metab = 778e3; % 778 kJ = 1 pancake
-%             load(savepath,'R');
-%             COT = R.metabolics.Bhargava2004.COT;
-%             total_distance = round(E_metab/(COT*R.misc.body_mass));
-%             avg_vel = round(R.kinematics.avg_velocity*3.6);
-%             clear('R');
-% 
-%         end
 
         function [total_distance, avg_vel, body_mass, muscle_strength,...
-                    plant_flex_lim, pf_tend_stiff] = getInfoFromMat(app,savepath)
-            %% get distance
+                    plant_flex_lim, pf_tend_stiff,subject_name] = getInfoFromMat(app,savepath)
+            % get values
             E_metab = 778e3; % 778 kJ = 1 pancake
             load(savepath,'R');
             COT = R.metabolics.Bhargava2004.COT;
@@ -138,20 +123,10 @@ classdef Vitruvian_Man_NL_exported < matlab.apps.AppBase
             muscle_strength = R.S.subject.MT_params{1, 3};
             plant_flex_lim = R.S.subject.plant_flex_lim_deg;
             pf_tend_stiff = R.S.subject.tendon_stiff_scale{1, 2};
+            subject_name = R.S.subject.name;
             clear('R');
 
         end
-
-        function name_tmp2 = getName(app,name_tmp)
-            if strcmp(name_tmp(end-2:end-1),'_v')
-                name_tmp2 = name_tmp(1:end-3);
-            elseif strcmp(name_tmp(end-3:end-2),'_v')
-                name_tmp2 = name_tmp(1:end-4);
-            else
-                name_tmp2 = name_tmp;
-            end
-        end
-
         
         function setPaths(app)
             [init_path_savefolder,init_path_geom,init_path_casadi] = getPaths();
@@ -196,11 +171,6 @@ classdef Vitruvian_Man_NL_exported < matlab.apps.AppBase
             app.sel_osim_file = fullfile(app.path_repo,'Subjects','Vitruvian_Man','Vitruvian_Man.osim');
 
             setPaths(app)
-
-        end
-
-        % Callback function
-        function MaaktekeningButtonPushed(app, event)
 
         end
 
@@ -346,25 +316,6 @@ classdef Vitruvian_Man_NL_exported < matlab.apps.AppBase
 
         end
 
-        % Value changed function: NaamAfstandSnelheidListBox
-        function NaamAfstandSnelheidListBoxValueChanged(app, event)
-            app.sel_mot_file = app.NaamAfstandSnelheidListBox.Value;
-
-            [~,name_tmp,~] = fileparts(app.sel_mot_file);
-            name_tmp2 = getName(app,name_tmp);
-            osim_tmp = fullfile(app.path_repo,'Subjects',name_tmp2,[name_tmp2 '.osim']);
-            if exist(osim_tmp,'file')
-                app.sel_osim_file = osim_tmp;
-            else
-                res_tmp = app.sel_mot_file;
-                res_tmp(end-1) = 'a'; % .mot -> .mat
-                load (res_tmp,'model_info');
-                app.sel_osim_file = model_info.osim_path;
-            end
-            
-
-        end
-
         % Value changed function: LichaamslengteEditField
         function LichaamslengteEditFieldValueChanged(app, event)
             app.NaamEditField.Value = '';    
@@ -375,6 +326,34 @@ classdef Vitruvian_Man_NL_exported < matlab.apps.AppBase
         function MassaEditFieldValueChanged(app, event)
             app.NaamEditField.Value = '';    
             app.NaamEditField.Placeholder = '(geef nieuwe naam)';
+        end
+
+        % Cell selection callback: UITable
+        function UITableCellSelection(app, event)
+            % Get the selected row index
+            selectedRow = event.Indices(1);
+            
+            % Find the index of the 'Filename' column
+            filenameColumnIndex = find(strcmp(app.UITable.ColumnName, 'Filename'));
+            modelnameColumnIndex = find(strcmp(app.UITable.ColumnName, 'Modelnaam'));
+            
+            % Retrieve the value from the 'Filename' column of the selected row
+            selectedFilename = app.UITable.Data{selectedRow, filenameColumnIndex};
+            selectedModelname = app.UITable.Data{selectedRow, modelnameColumnIndex};
+
+            % generate correct file paths
+            app.sel_mot_file = fullfile(app.path_savefolder,app.GroupName,[char(selectedFilename) '.mot']);
+            osim_tmp = fullfile(app.path_repo,'Subjects',char(selectedModelname),[char(selectedModelname) '.osim']);
+
+            if exist(osim_tmp,'file')
+                app.sel_osim_file = osim_tmp;
+            else
+                res_tmp = app.sel_mot_file;
+                res_tmp(end-1) = 'a'; % .mot -> .mat
+                load (res_tmp,'model_info');
+                app.sel_osim_file = model_info.osim_path;
+            end
+            
         end
     end
 
@@ -533,7 +512,7 @@ classdef Vitruvian_Man_NL_exported < matlab.apps.AppBase
             app.SpeelvideoButton.FontName = 'Bahnschrift';
             app.SpeelvideoButton.FontSize = 30;
             app.SpeelvideoButton.FontColor = [0.5412 0.2706 0.0706];
-            app.SpeelvideoButton.Position = [1127 29 314 61];
+            app.SpeelvideoButton.Position = [1220 75 314 61];
             app.SpeelvideoButton.Text = 'Speel video';
 
             % Create SluitvideoButton
@@ -545,28 +524,8 @@ classdef Vitruvian_Man_NL_exported < matlab.apps.AppBase
             app.SluitvideoButton.FontColor = [0.5412 0.2706 0.0706];
             app.SluitvideoButton.Enable = 'off';
             app.SluitvideoButton.Visible = 'off';
-            app.SluitvideoButton.Position = [1127 29 314 61];
+            app.SluitvideoButton.Position = [1220 75 314 61];
             app.SluitvideoButton.Text = 'Sluit video';
-
-            % Create NaamAfstandLabel
-            app.NaamAfstandLabel = uilabel(app.UIFigure);
-            app.NaamAfstandLabel.BackgroundColor = [0.9216 0.8706 0.6706];
-            app.NaamAfstandLabel.FontName = 'Bahnschrift';
-            app.NaamAfstandLabel.FontSize = 22;
-            app.NaamAfstandLabel.FontColor = [0.5412 0.2706 0.0706];
-            app.NaamAfstandLabel.Position = [1076 768 499 42];
-            app.NaamAfstandLabel.Text = 'Naam              Afstand              Snelheid';
-
-            % Create NaamAfstandSnelheidListBox
-            app.NaamAfstandSnelheidListBox = uilistbox(app.UIFigure);
-            app.NaamAfstandSnelheidListBox.Items = {};
-            app.NaamAfstandSnelheidListBox.ValueChangedFcn = createCallbackFcn(app, @NaamAfstandSnelheidListBoxValueChanged, true);
-            app.NaamAfstandSnelheidListBox.FontName = 'Bahnschrift';
-            app.NaamAfstandSnelheidListBox.FontSize = 30;
-            app.NaamAfstandSnelheidListBox.FontColor = [0.5412 0.2706 0.0706];
-            app.NaamAfstandSnelheidListBox.BackgroundColor = [0.9216 0.8706 0.6706];
-            app.NaamAfstandSnelheidListBox.Position = [1076 127 384 644];
-            app.NaamAfstandSnelheidListBox.Value = {};
 
             % Create Label_2
             app.Label_2 = uilabel(app.UIFigure);
@@ -685,9 +644,10 @@ classdef Vitruvian_Man_NL_exported < matlab.apps.AppBase
 
             % Create UITable
             app.UITable = uitable(app.UIFigure);
-            app.UITable.ColumnName = {'Column 1'; 'Column 2'; 'Column 3'; 'Column 4'};
+            app.UITable.ColumnName = {'Filename'; 'Afgelegde afstand (m)'; 'Snelheid (m/s)'; 'Massa (kg)'; 'Spierkracht (%)'; 'Plantair flexie limit (°)'; 'Peesstijfheid (%)'; 'Modelnaam'};
             app.UITable.RowName = {};
-            app.UITable.Position = [598 237 844 483];
+            app.UITable.CellSelectionCallback = createCallbackFcn(app, @UITableCellSelection, true);
+            app.UITable.Position = [607 169 963 632];
 
             % Show the figure after all components are created
             app.UIFigure.Visible = 'on';
