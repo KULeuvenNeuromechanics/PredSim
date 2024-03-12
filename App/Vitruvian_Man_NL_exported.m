@@ -3,6 +3,7 @@ classdef Vitruvian_Man_NL_exported < matlab.apps.AppBase
     % Properties that correspond to app components
     properties (Access = public)
         UIFigure                      matlab.ui.Figure
+        UITable                       matlab.ui.control.Table
         PeesstijfheidEditField        matlab.ui.control.NumericEditField
         PeesstijfheidEditFieldLabel   matlab.ui.control.Label
         Label_3                       matlab.ui.control.Label
@@ -55,6 +56,16 @@ classdef Vitruvian_Man_NL_exported < matlab.apps.AppBase
         idx_sel_data = 1;
         sel_mot_file
         sel_osim_file
+        t_name
+        t_dist
+        t_vel
+        Table
+
+        t_mass
+        t_musStr
+        t_pflim
+        t_pftenstiff
+
 
     end
     
@@ -70,35 +81,63 @@ classdef Vitruvian_Man_NL_exported < matlab.apps.AppBase
                 app.NaamAfstandSnelheidListBox.ItemsData = {};
                 return
             end
+%             t = cell(length(MatFiles), 3);
             % loop over files
             for i=1:length(MatFiles)
-                % calc distance walked for given energy budget
-                [distance_i,avg_v_i] = calcDistance(app,char(fullfile(MatFiles(i).folder,MatFiles(i).name)));
+                % calc distance walked for given energy budget and get
+                % other variables
+                [distance_i, avg_v_i, body_mass_i, muscle_strength_i,...
+                    plant_flex_lim_i, pf_tend_stiff_i] = getInfoFromMat(app,char(fullfile(MatFiles(i).folder,MatFiles(i).name)));
                 name_tmp = MatFiles(i).name(1:end-4);
-                name_tmp2 = getName(app,name_tmp);
-            
-                % add name, distance, mot file to array
-                app.tbldata{i,1} = [name_tmp2 ': ' num2str(distance_i*1e-3,'%.1f') ' km, aan ' num2str(avg_v_i) ' km/h'];
-                app.tbldata{i,2} = fullfile(MatFiles(i).folder,[name_tmp '.mot']);
-                app.tbldata{i,3} = distance_i;
-                app.tbldata{i,3} = avg_v_i;
-                
+                app.t_name{i,1} = name_tmp;
+                app.t_dist(i,1) = distance_i;
+                app.t_vel(i,1) = avg_v_i;
+                app.t_mass(i,1) = body_mass_i;
+                app.t_musStr(i,1) = muscle_strength_i;
+                app.t_pflim(i,1) = plant_flex_lim_i;
+                app.t_pftenstiff(i,1) = pf_tend_stiff_i;
+
             end
 
-            if ~isempty(app.tbldata{1,1})
-                app.NaamAfstandSnelheidListBox.Items = app.tbldata(:,1);
-                app.NaamAfstandSnelheidListBox.ItemsData = app.tbldata(:,2);
-            end
+            % populate table
+            app.Table = table(app.t_name, app.t_dist, app.t_vel,app.t_mass,...
+                app.t_musStr,app.t_pflim,app.t_pftenstiff);
+            app.UITable.Data = app.Table;
+            app.UITable.ColumnName = {'Filename', 'Afgelegde afstand (km)', 'Snelheid (m/s)',...
+                'Massa (kg)', 'Spierkracht (%)', 'Plantair flexie limit (°)',...
+                'Peesstijfheid (%)'};
+
+%             if ~isempty(app.tbldata{1,1})
+%                 app.NaamAfstandSnelheidListBox.Items = app.tbldata(:,1);
+%                 app.NaamAfstandSnelheidListBox.ItemsData = app.tbldata(:,2);
+%             end
 
         end
         
-        function [total_distance, avg_vel] = calcDistance(app,savepath)
+%         function [total_distance, avg_vel] = calcDistance(app,savepath)
+%             %% get distance
+%             E_metab = 778e3; % 778 kJ = 1 pancake
+%             load(savepath,'R');
+%             COT = R.metabolics.Bhargava2004.COT;
+%             total_distance = round(E_metab/(COT*R.misc.body_mass));
+%             avg_vel = round(R.kinematics.avg_velocity*3.6);
+%             clear('R');
+% 
+%         end
+
+        function [total_distance, avg_vel, body_mass, muscle_strength,...
+                    plant_flex_lim, pf_tend_stiff] = getInfoFromMat(app,savepath)
             %% get distance
             E_metab = 778e3; % 778 kJ = 1 pancake
             load(savepath,'R');
             COT = R.metabolics.Bhargava2004.COT;
             total_distance = round(E_metab/(COT*R.misc.body_mass));
-            avg_vel = round(R.kinematics.avg_velocity*3.6);
+            avg_vel = R.kinematics.avg_velocity;
+
+            body_mass = R.misc.body_mass;
+            muscle_strength = R.S.subject.MT_params{1, 3};
+            plant_flex_lim = R.S.subject.plant_flex_lim_deg;
+            pf_tend_stiff = R.S.subject.tendon_stiff_scale{1, 2};
             clear('R');
 
         end
@@ -349,7 +388,7 @@ classdef Vitruvian_Man_NL_exported < matlab.apps.AppBase
             app.UIFigure = uifigure('Visible', 'off');
             app.UIFigure.AutoResizeChildren = 'off';
             app.UIFigure.Color = [0.9216 0.8706 0.6706];
-            app.UIFigure.Position = [1 41 1920 963];
+            app.UIFigure.Position = [1 41 1602 968];
             app.UIFigure.Name = 'MATLAB App';
 
             % Create GroepEditFieldLabel
@@ -357,7 +396,7 @@ classdef Vitruvian_Man_NL_exported < matlab.apps.AppBase
             app.GroepEditFieldLabel.FontName = 'Bahnschrift';
             app.GroepEditFieldLabel.FontSize = 30;
             app.GroepEditFieldLabel.FontColor = [0.5412 0.2706 0.0706];
-            app.GroepEditFieldLabel.Position = [88 762 86 42];
+            app.GroepEditFieldLabel.Position = [88 767 86 42];
             app.GroepEditFieldLabel.Text = 'Groep';
 
             % Create GroepEditField
@@ -369,14 +408,14 @@ classdef Vitruvian_Man_NL_exported < matlab.apps.AppBase
             app.GroepEditField.FontColor = [0.5412 0.2706 0.0706];
             app.GroepEditField.BackgroundColor = [1 0.9725 0.8627];
             app.GroepEditField.Placeholder = '(Naam groep)';
-            app.GroepEditField.Position = [206 766 306 31];
+            app.GroepEditField.Position = [206 771 306 31];
 
             % Create LichaamslengteEditFieldLabel
             app.LichaamslengteEditFieldLabel = uilabel(app.UIFigure);
             app.LichaamslengteEditFieldLabel.FontName = 'Bahnschrift';
             app.LichaamslengteEditFieldLabel.FontSize = 30;
             app.LichaamslengteEditFieldLabel.FontColor = [0.5412 0.2706 0.0706];
-            app.LichaamslengteEditFieldLabel.Position = [88 622 220 37];
+            app.LichaamslengteEditFieldLabel.Position = [88 627 220 37];
             app.LichaamslengteEditFieldLabel.Text = 'Lichaamslengte';
 
             % Create LichaamslengteEditField
@@ -389,7 +428,7 @@ classdef Vitruvian_Man_NL_exported < matlab.apps.AppBase
             app.LichaamslengteEditField.FontSize = 30;
             app.LichaamslengteEditField.FontColor = [0.5412 0.2706 0.0706];
             app.LichaamslengteEditField.BackgroundColor = [1 0.9725 0.8627];
-            app.LichaamslengteEditField.Position = [388 621 74 38];
+            app.LichaamslengteEditField.Position = [388 626 74 38];
             app.LichaamslengteEditField.Value = 180;
 
             % Create cmLabel
@@ -397,7 +436,7 @@ classdef Vitruvian_Man_NL_exported < matlab.apps.AppBase
             app.cmLabel.FontName = 'Bahnschrift';
             app.cmLabel.FontSize = 30;
             app.cmLabel.FontColor = [0.5412 0.2706 0.0706];
-            app.cmLabel.Position = [487 622 46 37];
+            app.cmLabel.Position = [487 627 46 37];
             app.cmLabel.Text = 'cm';
 
             % Create Onderzoeksstage2023PHABLabel
@@ -406,7 +445,7 @@ classdef Vitruvian_Man_NL_exported < matlab.apps.AppBase
             app.Onderzoeksstage2023PHABLabel.FontName = 'Bahnschrift';
             app.Onderzoeksstage2023PHABLabel.FontSize = 80;
             app.Onderzoeksstage2023PHABLabel.FontColor = [0.5412 0.2706 0.0706];
-            app.Onderzoeksstage2023PHABLabel.Position = [335 832 1295 111];
+            app.Onderzoeksstage2023PHABLabel.Position = [154 844 1295 111];
             app.Onderzoeksstage2023PHABLabel.Text = 'Onderzoeksstage 2023 PH AB';
 
             % Create StartsimulatieButton
@@ -416,7 +455,7 @@ classdef Vitruvian_Man_NL_exported < matlab.apps.AppBase
             app.StartsimulatieButton.FontName = 'Bahnschrift';
             app.StartsimulatieButton.FontSize = 30;
             app.StartsimulatieButton.FontColor = [0.5412 0.2706 0.0706];
-            app.StartsimulatieButton.Position = [118 70 314 61];
+            app.StartsimulatieButton.Position = [118 75 314 61];
             app.StartsimulatieButton.Text = 'Start simulatie';
 
             % Create NaamEditField
@@ -428,14 +467,14 @@ classdef Vitruvian_Man_NL_exported < matlab.apps.AppBase
             app.NaamEditField.FontColor = [0.5412 0.2706 0.0706];
             app.NaamEditField.BackgroundColor = [1 0.9725 0.8627];
             app.NaamEditField.Placeholder = '(Modelnaam)';
-            app.NaamEditField.Position = [269 722 244 31];
+            app.NaamEditField.Position = [269 727 244 31];
 
             % Create kgLabel
             app.kgLabel = uilabel(app.UIFigure);
             app.kgLabel.FontName = 'Bahnschrift';
             app.kgLabel.FontSize = 30;
             app.kgLabel.FontColor = [0.5412 0.2706 0.0706];
-            app.kgLabel.Position = [487 557 38 37];
+            app.kgLabel.Position = [487 562 38 37];
             app.kgLabel.Text = 'kg';
 
             % Create MassaEditFieldLabel
@@ -443,7 +482,7 @@ classdef Vitruvian_Man_NL_exported < matlab.apps.AppBase
             app.MassaEditFieldLabel.FontName = 'Bahnschrift';
             app.MassaEditFieldLabel.FontSize = 30;
             app.MassaEditFieldLabel.FontColor = [0.5412 0.2706 0.0706];
-            app.MassaEditFieldLabel.Position = [88 552 124 42];
+            app.MassaEditFieldLabel.Position = [88 557 124 42];
             app.MassaEditFieldLabel.Text = 'Massa';
 
             % Create MassaEditField
@@ -456,7 +495,7 @@ classdef Vitruvian_Man_NL_exported < matlab.apps.AppBase
             app.MassaEditField.FontSize = 30;
             app.MassaEditField.FontColor = [0.5412 0.2706 0.0706];
             app.MassaEditField.BackgroundColor = [1 0.9725 0.8627];
-            app.MassaEditField.Position = [388 556 74 38];
+            app.MassaEditField.Position = [388 561 74 38];
             app.MassaEditField.Value = 75;
 
             % Create Label
@@ -464,7 +503,7 @@ classdef Vitruvian_Man_NL_exported < matlab.apps.AppBase
             app.Label.FontName = 'Bahnschrift';
             app.Label.FontSize = 30;
             app.Label.FontColor = [0.5412 0.2706 0.0706];
-            app.Label.Position = [487 482 26 37];
+            app.Label.Position = [487 487 26 37];
             app.Label.Text = '%';
 
             % Create SpierkrachtEditFieldLabel
@@ -472,7 +511,7 @@ classdef Vitruvian_Man_NL_exported < matlab.apps.AppBase
             app.SpierkrachtEditFieldLabel.FontName = 'Bahnschrift';
             app.SpierkrachtEditFieldLabel.FontSize = 30;
             app.SpierkrachtEditFieldLabel.FontColor = [0.5412 0.2706 0.0706];
-            app.SpierkrachtEditFieldLabel.Position = [88 482 163 37];
+            app.SpierkrachtEditFieldLabel.Position = [88 487 163 37];
             app.SpierkrachtEditFieldLabel.Text = 'Spierkracht';
 
             % Create SpierkrachtEditField
@@ -484,7 +523,7 @@ classdef Vitruvian_Man_NL_exported < matlab.apps.AppBase
             app.SpierkrachtEditField.FontSize = 30;
             app.SpierkrachtEditField.FontColor = [0.5412 0.2706 0.0706];
             app.SpierkrachtEditField.BackgroundColor = [1 0.9725 0.8627];
-            app.SpierkrachtEditField.Position = [388 481 74 38];
+            app.SpierkrachtEditField.Position = [388 486 74 38];
             app.SpierkrachtEditField.Value = 100;
 
             % Create SpeelvideoButton
@@ -494,7 +533,7 @@ classdef Vitruvian_Man_NL_exported < matlab.apps.AppBase
             app.SpeelvideoButton.FontName = 'Bahnschrift';
             app.SpeelvideoButton.FontSize = 30;
             app.SpeelvideoButton.FontColor = [0.5412 0.2706 0.0706];
-            app.SpeelvideoButton.Position = [1481 59 314 61];
+            app.SpeelvideoButton.Position = [1127 29 314 61];
             app.SpeelvideoButton.Text = 'Speel video';
 
             % Create SluitvideoButton
@@ -506,7 +545,7 @@ classdef Vitruvian_Man_NL_exported < matlab.apps.AppBase
             app.SluitvideoButton.FontColor = [0.5412 0.2706 0.0706];
             app.SluitvideoButton.Enable = 'off';
             app.SluitvideoButton.Visible = 'off';
-            app.SluitvideoButton.Position = [1481 59 314 61];
+            app.SluitvideoButton.Position = [1127 29 314 61];
             app.SluitvideoButton.Text = 'Sluit video';
 
             % Create NaamAfstandLabel
@@ -515,7 +554,7 @@ classdef Vitruvian_Man_NL_exported < matlab.apps.AppBase
             app.NaamAfstandLabel.FontName = 'Bahnschrift';
             app.NaamAfstandLabel.FontSize = 22;
             app.NaamAfstandLabel.FontColor = [0.5412 0.2706 0.0706];
-            app.NaamAfstandLabel.Position = [1430 798 499 42];
+            app.NaamAfstandLabel.Position = [1076 768 499 42];
             app.NaamAfstandLabel.Text = 'Naam              Afstand              Snelheid';
 
             % Create NaamAfstandSnelheidListBox
@@ -526,7 +565,7 @@ classdef Vitruvian_Man_NL_exported < matlab.apps.AppBase
             app.NaamAfstandSnelheidListBox.FontSize = 30;
             app.NaamAfstandSnelheidListBox.FontColor = [0.5412 0.2706 0.0706];
             app.NaamAfstandSnelheidListBox.BackgroundColor = [0.9216 0.8706 0.6706];
-            app.NaamAfstandSnelheidListBox.Position = [1430 157 384 644];
+            app.NaamAfstandSnelheidListBox.Position = [1076 127 384 644];
             app.NaamAfstandSnelheidListBox.Value = {};
 
             % Create Label_2
@@ -534,7 +573,7 @@ classdef Vitruvian_Man_NL_exported < matlab.apps.AppBase
             app.Label_2.FontName = 'Bahnschrift';
             app.Label_2.FontSize = 30;
             app.Label_2.FontColor = [0.5412 0.2706 0.0706];
-            app.Label_2.Position = [487 414 25 37];
+            app.Label_2.Position = [487 419 25 37];
             app.Label_2.Text = '°';
 
             % Create PlantairflexielimitEditFieldLabel
@@ -542,7 +581,7 @@ classdef Vitruvian_Man_NL_exported < matlab.apps.AppBase
             app.PlantairflexielimitEditFieldLabel.FontName = 'Bahnschrift';
             app.PlantairflexielimitEditFieldLabel.FontSize = 30;
             app.PlantairflexielimitEditFieldLabel.FontColor = [0.5412 0.2706 0.0706];
-            app.PlantairflexielimitEditFieldLabel.Position = [88 414 263 37];
+            app.PlantairflexielimitEditFieldLabel.Position = [88 419 263 37];
             app.PlantairflexielimitEditFieldLabel.Text = 'Plantair flexie limit';
 
             % Create PlantairflexielimitEditField
@@ -554,7 +593,7 @@ classdef Vitruvian_Man_NL_exported < matlab.apps.AppBase
             app.PlantairflexielimitEditField.FontSize = 30;
             app.PlantairflexielimitEditField.FontColor = [0.5412 0.2706 0.0706];
             app.PlantairflexielimitEditField.BackgroundColor = [1 0.9725 0.8627];
-            app.PlantairflexielimitEditField.Position = [388 413 74 38];
+            app.PlantairflexielimitEditField.Position = [388 418 74 38];
             app.PlantairflexielimitEditField.Value = -30;
 
             % Create AanhetsimulerenLampLabel
@@ -562,12 +601,12 @@ classdef Vitruvian_Man_NL_exported < matlab.apps.AppBase
             app.AanhetsimulerenLampLabel.FontName = 'Bahnschrift';
             app.AanhetsimulerenLampLabel.FontSize = 30;
             app.AanhetsimulerenLampLabel.FontColor = [0.5412 0.2706 0.0706];
-            app.AanhetsimulerenLampLabel.Position = [104 211 254 37];
+            app.AanhetsimulerenLampLabel.Position = [104 216 254 37];
             app.AanhetsimulerenLampLabel.Text = 'Aan het simuleren';
 
             % Create AanhetsimulerenLamp
             app.AanhetsimulerenLamp = uilamp(app.UIFigure);
-            app.AanhetsimulerenLamp.Position = [420 211 42 42];
+            app.AanhetsimulerenLamp.Position = [420 216 42 42];
             app.AanhetsimulerenLamp.Color = [1 1 1];
 
             % Create KlaarvoorsimulatieLampLabel
@@ -575,19 +614,19 @@ classdef Vitruvian_Man_NL_exported < matlab.apps.AppBase
             app.KlaarvoorsimulatieLampLabel.FontName = 'Bahnschrift';
             app.KlaarvoorsimulatieLampLabel.FontSize = 30;
             app.KlaarvoorsimulatieLampLabel.FontColor = [0.5412 0.2706 0.0706];
-            app.KlaarvoorsimulatieLampLabel.Position = [104 164 281 37];
+            app.KlaarvoorsimulatieLampLabel.Position = [104 169 281 37];
             app.KlaarvoorsimulatieLampLabel.Text = 'Klaar voor simulatie';
 
             % Create KlaarvoorsimulatieLamp
             app.KlaarvoorsimulatieLamp = uilamp(app.UIFigure);
-            app.KlaarvoorsimulatieLamp.Position = [420 164 42 42];
+            app.KlaarvoorsimulatieLamp.Position = [420 169 42 42];
 
             % Create GroepEditFieldLabel_2
             app.GroepEditFieldLabel_2 = uilabel(app.UIFigure);
             app.GroepEditFieldLabel_2.FontName = 'Bahnschrift';
             app.GroepEditFieldLabel_2.FontSize = 30;
             app.GroepEditFieldLabel_2.FontColor = [0.5412 0.2706 0.0706];
-            app.GroepEditFieldLabel_2.Position = [92 712 160 42];
+            app.GroepEditFieldLabel_2.Position = [92 717 160 42];
             app.GroepEditFieldLabel_2.Text = 'Modelnaam';
 
             % Create SnelheidSpinnerLabel
@@ -595,7 +634,7 @@ classdef Vitruvian_Man_NL_exported < matlab.apps.AppBase
             app.SnelheidSpinnerLabel.FontName = 'Bahnschrift';
             app.SnelheidSpinnerLabel.FontSize = 30;
             app.SnelheidSpinnerLabel.FontColor = [0.5412 0.2706 0.0706];
-            app.SnelheidSpinnerLabel.Position = [88 349 122 37];
+            app.SnelheidSpinnerLabel.Position = [88 354 122 37];
             app.SnelheidSpinnerLabel.Text = 'Snelheid';
 
             % Create SnelheidSpinner
@@ -605,7 +644,7 @@ classdef Vitruvian_Man_NL_exported < matlab.apps.AppBase
             app.SnelheidSpinner.FontSize = 30;
             app.SnelheidSpinner.FontColor = [0.5412 0.2706 0.0706];
             app.SnelheidSpinner.BackgroundColor = [1 0.9686 0.8588];
-            app.SnelheidSpinner.Position = [388 348 100 38];
+            app.SnelheidSpinner.Position = [388 353 100 38];
             app.SnelheidSpinner.Value = 1.33;
 
             % Create msLabel
@@ -613,7 +652,7 @@ classdef Vitruvian_Man_NL_exported < matlab.apps.AppBase
             app.msLabel.FontName = 'Bahnschrift';
             app.msLabel.FontSize = 30;
             app.msLabel.FontColor = [0.5412 0.2706 0.0706];
-            app.msLabel.Position = [503 352 58 37];
+            app.msLabel.Position = [503 357 58 37];
             app.msLabel.Text = 'm/s';
 
             % Create Label_3
@@ -621,7 +660,7 @@ classdef Vitruvian_Man_NL_exported < matlab.apps.AppBase
             app.Label_3.FontName = 'Bahnschrift';
             app.Label_3.FontSize = 30;
             app.Label_3.FontColor = [0.5412 0.2706 0.0706];
-            app.Label_3.Position = [487 281 26 37];
+            app.Label_3.Position = [487 286 26 37];
             app.Label_3.Text = '%';
 
             % Create PeesstijfheidEditFieldLabel
@@ -629,7 +668,7 @@ classdef Vitruvian_Man_NL_exported < matlab.apps.AppBase
             app.PeesstijfheidEditFieldLabel.FontName = 'Bahnschrift';
             app.PeesstijfheidEditFieldLabel.FontSize = 30;
             app.PeesstijfheidEditFieldLabel.FontColor = [0.5412 0.2706 0.0706];
-            app.PeesstijfheidEditFieldLabel.Position = [88 281 178 37];
+            app.PeesstijfheidEditFieldLabel.Position = [88 286 178 37];
             app.PeesstijfheidEditFieldLabel.Text = 'Peesstijfheid';
 
             % Create PeesstijfheidEditField
@@ -641,8 +680,14 @@ classdef Vitruvian_Man_NL_exported < matlab.apps.AppBase
             app.PeesstijfheidEditField.FontSize = 30;
             app.PeesstijfheidEditField.FontColor = [0.5412 0.2706 0.0706];
             app.PeesstijfheidEditField.BackgroundColor = [1 0.9725 0.8627];
-            app.PeesstijfheidEditField.Position = [388 280 74 38];
+            app.PeesstijfheidEditField.Position = [388 285 74 38];
             app.PeesstijfheidEditField.Value = 100;
+
+            % Create UITable
+            app.UITable = uitable(app.UIFigure);
+            app.UITable.ColumnName = {'Column 1'; 'Column 2'; 'Column 3'; 'Column 4'};
+            app.UITable.RowName = {};
+            app.UITable.Position = [598 237 844 483];
 
             % Show the figure after all components are created
             app.UIFigure.Visible = 'on';
