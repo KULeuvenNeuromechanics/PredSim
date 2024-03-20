@@ -35,20 +35,13 @@ F_ext_input = MX(model_info.ExtFunIO.input.nInputs,1);
 % Assign Qs
 F_ext_input(model_info.ExtFunIO.input.Qs.all,1) = qs;
 
-F  = external('F',replace(fullfile(S.misc.subject_path,S.misc.external_function),'\','/'));
+F = external('F',replace(fullfile(S.misc.subject_path,S.misc.external_function),'\','/'));
 
 F_out = F(F_ext_input);
 
-if isfield(model_info.ExtFunIO.position,'calcn_r')
-    calcn_or_r = F_out(model_info.ExtFunIO.position.calcn_r);
-else
-    calcn_or_r = MX(3,1);
-end
-if isfield(model_info.ExtFunIO.position,'calcn_l')
-    calcn_or_l = F_out(model_info.ExtFunIO.position.calcn_l);
-else
-    calcn_or_l = MX(3,1);
-end
+calcn_or_r = F_out(model_info.ExtFunIO.position.calcn_r);
+calcn_or_l = F_out(model_info.ExtFunIO.position.calcn_l);
+
 
 f_getCalcnOriginInWorldFrame = Function('f_getCalcnOriginInWorldFrame',{qs},...
     {calcn_or_r,calcn_or_l},{'q'},{'calcn_or_r','calcn_or_l'});

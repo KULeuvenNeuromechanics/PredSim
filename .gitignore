@@ -8,7 +8,6 @@
 *.jpg
 *.eps
 
-
 Debug/*
 opensimAD/*
 App

@@ -54,7 +54,9 @@ S.solver.run_as_batch_job = 0;
 % S.bounds.dist_trav.lower    = ;
 % S.bounds.t_final.upper      = ;
 % S.bounds.t_final.lower      = ;
-% S.bounds.coordinates        = {{'knee_angle_r'},-1.70,3.055,{'mtp_angle_'},-1.05,0.5};
+% S.bounds.Qs                 = {'pelvis_tilt',-30,30,'pelvis_list',-30,30};
+
+
 
 % % S.metabolicE - metabolic energy
 % S.metabolicE.tanh_b = 100;
@@ -67,7 +69,8 @@ S.solver.run_as_batch_job = 0;
 % S.misc.msk_geom_eq         = '';
 % S.misc.poly_order.lower    = ;
 % S.misc.poly_order.upper    = ;
-% S.misc.msk_geom_bounds      = {{'knee_angle_r'},0,90,{'mtp_angle_'},-50,20};
+% S.misc.default_msk_geom_bound = ;
+% S.misc.msk_geom_bounds      = {{'knee_angle_r','knee_angle_l'},-120,10,'lumbar_extension',nan,30};
 % S.misc.gaitmotion_type = 'FullGaitCycle';
 
 % % S.post_process
@@ -94,7 +97,6 @@ S.solver.CasADi_path = casadi.GlobalOptions.getCasadiPath(); % ask casadi
 % S.subject.IG_pelvis_y       = ;
 % S.subject.adapt_IG_pelvis_y = 1;
 S.subject.v_pelvis_x_trgt   = 1.33;
-% S.subject.IK_Bounds = ;
 % S.subject.muscle_strength   = ;
 % S.subject.muscle_pass_stiff_shift = {{'soleus','_gas','per_','tib_','_dig_','_hal_','FDB'},0.9}; %,'FDB'
 % S.subject.muscle_pass_stiff_scale = ;
@@ -108,6 +110,7 @@ S.subject.v_pelvis_x_trgt   = 1.33;
 % S.subject.set_damping_coefficient_selected_dofs = {'mtp_angle',2};
 % S.subject.set_limit_torque_coefficients_selected_dofs = {{'mtj_angle_l','mtj_angle_r'},[0,0,0,0],[0,0]};
 % S.subject.base_joints_arms = [];
+
 
 % % S.weights
 % S.weights.E         = 0;

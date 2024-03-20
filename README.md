@@ -76,8 +76,8 @@ This code can automatically convert an OpenSim model to the external function us
 - Model should be 3D.
 - Your model should not have locked joints. Locked joints would technically require having kinematic constraints, which is possible but makes the problem more complicated. Replace them with weld joints instead.
 - Constraints on coordinates will be ignored (eg, coupling constraints).
-- Using SimmSplines to describe coordinates (e.g. Yamaguchi knee model) is not supported as the implementation in OpenSim is not really compatible with algorithmic differentiation. Change them to Polynomials instead. GeometryPaths can contain SimmSplines.
-- Your model needs to have contact elements that interact with the ground. Only *SmoothSphereHalfSpaceForce* contact forces are supported. You can use [_AdaptOpenSimModel.m_](https://github.com/KULeuvenNeuromechanics/PredSim/blob/master/AdaptOpenSimModel/AdaptOpenSimModel.m) to add contact geometries and forces to your model.
+- Using SimmSplines to describe coordinates (e.g. Yamaguchi knee model) is not supported as the implementation in OpenSim is not really compatible with algorithmic differentiation. Change them to Polynomials instead. GeometryPaths can contain SimmSplines. [_AdaptOpenSimModel.m_](https://github.com/KULeuvenNeuromechanics/PredSim/blob/master/AdaptOpenSimModel/AdaptOpenSimModel.m) takes care of changing present SimmSplines to polynomials.
+- Your model needs to have contact elements that interact with the ground. Only *SmoothSphereHalfSpaceForce* contact forces are supported. You can use [_AdaptOpenSimModel.m_](./AdaptOpenSimModel/AdaptOpenSimModel.m) to add contact geometries and forces to your model. You can also scale the radius, stiffness and dissipation of the contact spheres.
 - Your model can have any Hill-type muscle model, but it will be implemented as a [DeGroote-Fregly muscle](https://doi.org/10.1007/s10439-016-1591-9).
 - Torque/force actuators of the class *ActivationCoordinateActuator* are supported. You can add actuators by running [_AdaptOpenSimModel.m_](./AdaptOpenSimModel/AdaptOpenSimModel.m). Actuators are not required.
 
@@ -101,8 +101,12 @@ This code can automatically convert an OpenSim model to the external function us
 
 #### S.bounds
 
-- **S.bounds.a.lower**: 
+- **S.bounds.activation_all_muscles.lower**: 
 	- minimal muscle activation. Provide a number between 0 and 1. Default is *0.05* [double]
+- **S.bounds.activation_all_muscles.upper**: 
+	- maximal muscle activation. Provide a number between 0 and 1. Default is *1* [double]
+- **S.bounds.activation_selected_muscles**:
+	- Cell array where 1st entry is muscle name(s) , 2nd entry is its lower bound, and 3rd entry is its upper bound. Insert 'nan' or [] to lower bounds to only overwrite upper bounds, or vice versa. For another bound, add 3 more entries.
 - **S.bounds.SLL.upper**: 
 	- upper bound on left step length in meters. If not specified, no bound is implemented on left step length. 
 - **S.bounds.SLR.upper**: 
@@ -113,8 +117,6 @@ This code can automatically convert an OpenSim model to the external function us
 	- lower bound on final time in seconds. Default is *0.1* s [double].
 - **S.bounds.t_final.upper**: 
 	- upper bound on final time in seconds for full gait cycle simulation. Default is *2* s [double]. For half gait cycle simulation, half of this value gets implemented as upper bound for final time.
-- **S.bounds.coordinates**: 
-	- Cell array where 1st entry is dof name(s) , 2nd entry is its lower bound, and 3rd entry is its upper bound. Insert 'nan' or [] to lower bounds to only overwrite upper bounds, or vice versa. For another bound, add 3 more entries. For example, {{'knee_angle_r','knee_angle_l'},-120,10,'pelvis_tilt',[],30} implements limit of -120° and 10° on knee angles, and default lower bound with 30° upper bound for pelvis_tilt. This setting changes the bounds of the optimization variables. When formulating the OCP, the variables are sclaed w.r.t. their bounds to improve conditioning. Changing these bounds can have a strong influence on convergence.
 - **S.bounds.points**:
 	- Cell array of structs where each cell defines a point. Points are used to define distanceconstraints. Each struct has the following fields:
 		- body: name of a body in the OpenSim model [char].
@@ -124,9 +126,32 @@ This code can automatically convert an OpenSim model to the external function us
 	- Cell array of structs where each cell defines a constraint on the distance between two points. Each struct has the following fields:
 		- point1: name of a point. If this is the name of a body in the OpenSim model, and no point with this name is defined, the origin of this body will be used [char]
 		- point2: name of a point. If this is the name of a body in the OpenSim model, and no point with this name is defined, the origin of this body will be used [char]
-		- direction: direction in which the distance  is constrained. Accepted inputs are: 1) any combination `x`, `y`, and `z`; and 2) `sagittal`, `coronal`, `frontal`, or `transverse` [char]. Note that for distances in one dimension (`point1 - point2`) the sign is kept 
+		- direction: direction in which the distance  is constrained. Accepted inputs are: 1) any combination `x`, `y`, and `z`; and 2) `sagittal`, `coronal`, `frontal`, or `transverse`. Default is *`xyz`* [char]. Note that for distances in one dimension (`point1 - point2`) the sign is kept.
 		- lower_bound: lower bound on the distance, in m [double]. Default is no lower bound applied.
 		- upper_bound: upper bound on the distance, in m [double]. Default is no upper bound applied.
+- **S.bounds.Qs**: 
+	- Cell array where 1st entry is dof name(s) , 2nd entry is its lower bound, and 3rd entry is its upper bound. In ° or m.
+	Insert 'nan' or [] to lower bounds to only overwrite upper bounds, or vice versa. For another bound, add 3 more entries. For example, {{'knee_angle_r','knee_angle_l'},-120,10,'pelvis_tilt',[],30} implements limit of -120° and 10° on knee angles, and default lower bound with 30° upper bound for pelvis_tilt. This setting changes the bounds of the optimization variables. When formulating the OCP, the variables are scaled w.r.t. their bounds to improve conditioning. Changing these bounds can have a strong influence on convergence.
+- **S.bounds.Qdots**: 
+	- Same as S.bounds.Qs, but for velocities.
+- **S.bounds.Qdotdots**: 
+	- Same as S.bounds.Qs, but for accelerations.
+- **S.bounds.default_coordinate_bounds**:
+	- Table with default values of bounds on Qs, Qdots, and Qdotdots. Default is *Default_Coordinate_Bounds.csv*. [string] Values in the file are assumed in rad or m.
+- **S.bounds.Qdots_factor_RoM**:
+	- Velocity bounds that are not given by another setting, will be taken symmetric and proportional to the range of motion. Default is *10* [double]
+- **S.bounds.Qdotdots_factor_RoM**:
+	- Acceleration bounds that are not given by another setting, will be taken symmetric and proportional to the range of motion. Default is *155* [double]
+- **S.bounds.factor_IG_pelvis_ty.lower**:
+	- Set lower bound op vertical position of floating base proportional to IG_pelvis_y. Default is *0.5* [double] Set to empty [] to not use this.
+- **S.bounds.factor_IG_pelvis_ty.upper**:
+	- Set upper bound op vertical position of floating base proportional to IG_pelvis_y. Default is *1.2* [double] Set to empty [] to not use this.
+
+	Order of priority for coordinate bounds:
+	1. Individual bounds from settings (S.bounds.Qs, S.bounds.Qdots, S.bounds.Qdotdots)
+	2. Default bounds from table (S.bounds.default_coordinate_bounds)
+	3. Read from model file. Qs: min and max coordinate values, Qdots: +/-10x coordinate range, Qdotdots: +/-155x coordinate range.
+
 
 #### S.metabolicE - metabolic energy
 
@@ -171,12 +196,25 @@ This code can automatically convert an OpenSim model to the external function us
 	- damping coefficient of muscles. Default is *0.01* [double]. Used as damping value that is multiplied by the normalized muscle velocity, in the muscle velocity dependent term in calculation of normalized contractile element force of the muscle.
 - **S.misc.constant_pennation_angle**: 
 	- specify if pennation angle of the muscles is supposed to stay constant (0 or 1). Default is *0* [double]
+- **S.misc.default_scaling_NLP**:
+	- Filename with table that contains scale factors for Qs, Qdots, Qdotdots, and Moments in its columns. The first column should contain the coordinate names for its corresponding row. Default is *''*, i.e. scale factors are derived from bounds. [char]
+- **S.misc.scaling_Qs**:
+	- cell array of name-value pairs of coordinate names and the scale factor for the optimisation variables corresponding to their position.
+- **S.misc.scaling_Qdots**:
+	- cell array of name-value pairs of coordinate names and the scale factor for the optimisation variables corresponding to their velocity.
+- **S.misc.scaling_Qdotdots**:
+	- cell array of name-value pairs of coordinate names and the scale factor for the optimisation variables corresponding to their acceleration.
+- **S.misc.scaling_moments**:
+	- cell array of name-value pairs of coordinate names and the scale factor for the constraint violation on their moment equilibrium.
 - **S.misc.git.local_hash**: 
 	- hash of the local instance [char]. This is the identifier of the version of the code on your machine. You cannot change this setting.
 - **S.misc.git.branch_name**: 
 	- current branch of the local instance [char]. You cannot change this setting.
 - **S.misc.git.remote_hash**: 
 	- hash of the last commit on the remote [char]. This is the identifier of the latest version on the remote, i.e. GitHub. You cannot change this setting.
+- **S.misc.computername**: 
+	- name of the computer on which the simulation was run [char]. You cannot change this setting.
+
 
 #### S.post_process
 
@@ -219,8 +257,6 @@ This code can automatically convert an OpenSim model to the external function us
 	- boolean to adjust the trajectory of height of pelvis from the ground for data-informed initial guess. Default is *0*. 0 means the trajectory will not be changed. If 1, the trajectory will be changed such that the average value of the trajectory is equal to s.subject.IG_pelvis_y.
 - **S.subject.v_pelvis_x_trgt**: 
 	- average velocity you want the model to have, in meters per second. Default is *1.25* m/s [double]
-- **S.subject.IK_Bounds**: 
-	- A .mot file that is used to define bounds on the kinematics. Default is *IK_Bounds_Default.mot* [char]. This file can be found in the OCP folder. This setting changes the bounds of the optimization variables. When formulating the OCP, the variables are sclaed w.r.t. their bounds to improve conditioning. Changing these bounds can have a strong influence on convergence.
 - **S.subject.muscle_strength**: 
 	- structure with [scaling factors for muscle strength](/FiguresForDocumentation/fig_muscle_tendon_properties_scaling.png). This scales the max muscle force of the active muscle force. Default is *[]*, that is, no scaling. Input as a cell array where 1st input is the muscle(s) name, 2nd is the scale factor. If more than one scaling is to be performed, add 2 more inputs. For example, S.subject.muscle_strength = {{'soleus_l','soleus_r'},0.9,{'tib_ant_l'},1.1} will scale both soleus by a factor of 0.9 and tibialis anterior left by a scale of 1.1.
 - **S.subject.muscle_pass_stiff_scale**: 
@@ -243,14 +279,16 @@ This code can automatically convert an OpenSim model to the external function us
 	- stiffness coefficient can be specified here for each coordinate individually. For example, S.subject.set_stiffness_coefficient_selected_dofs = {{'hip_flexion_l','hip_flexion_r'},0.012,{'knee_angle_l'},0.011} will put stiffness coefficient of both hip flexions to 0.012 Nm/rad and that of knee angle left to 0.011 Nm/rad. If not defined here for a particular coordinate, S.subject.damping_coefficient_all_dofs will be used for that coordinate. Default is empty.
 - **S.subject.set_limit_torque_coefficients_selected_dofs**: 
 	- Default values of coordinate limit torques are defined in the function [get_default_coord_limit_torque_coefficients.m](./PreProcessing/get_default_coord_limit_torque_coefficients.m). If values other than these are to be used, they can be specified here.
+- **S.subject.base_joints_legs**:
+	- Joint name that is the base of a leg, left and right. Default is 'hip' [char]. Inputs of the form 'hip_r', {'hip_l'}, {'hip_r','hip_l'} are equivalent.
+- **S.subject.base_joints_arms**:
+	- Joint name that is the base of an arm, left and right. Default is 'acromial' [char]. Inputs of the form 'acromial_r', {'acromial_l'}, {'acromial_r','acromial_l'} are equivalent. Set to empty [] if the model does not have arms.
+
 - **S.subject.stiffness_all_ligaments**:
 	- Default stiffness model (i.e. force-length) used for ligaments. Default is [*ligamentGefen2002*](./ModelComponents/ligamentGefen2002.m) [char]
 - **S.subject.set_stiffness_selected_ligaments**:
 	- Use name-value pairs to use different stiffness models for specific ligaments. Default is *{'PlantarFascia',['plantarFasciaNatali2010'](./ModelComponents/plantarFasciaNatali2010.m)}* 
-- **S.subject.base_joints_legs**:
-	- Joint name that is the base of a leg, left and right. Default is 'hip' [char]
-- **S.subject.base_joints_arms**:
-	- Joint name that is the base of an arm, left and right. Default is 'acromial' [char]
+
 
 #### S.weights
 

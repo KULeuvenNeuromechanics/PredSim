@@ -32,7 +32,7 @@ S.orthosis     = [];
 S.OpenSimADOptions  = [];
 
 % bounds have an .upper and .lower field
-S.bounds.a          = [];
+S.bounds.activation_all_muscles = [];
 S.bounds.SLL        = [];
 S.bounds.SLR        = [];
 S.bounds.dist_trav  = [];
@@ -49,6 +49,9 @@ S.orthosis.settings = {};
 
 % initiate for warning
 S.subject.adapt_IG_pelvis_y = 0;
+
+% save computername
+S.misc.computername = getenv('COMPUTERNAME');
 
 
 %%

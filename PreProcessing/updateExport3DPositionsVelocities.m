@@ -2,7 +2,8 @@ function [S] = updateExport3DPositionsVelocities(S,osim_path)
 % --------------------------------------------------------------------------
 % updateExport3DPositionsVelocities
 %   Updates the entries of S.OpenSimADOptions.export3DPositions and 
-%   S.OpenSimADOptions.export3DVelocities. 
+%   S.OpenSimADOptions.export3DVelocities such that they include the fields
+%   required for other settings.
 % 
 % INPUT:
 %   - S -
@@ -19,19 +20,16 @@ function [S] = updateExport3DPositionsVelocities(S,osim_path)
 % 
 % Original author: Lars D'Hondt
 % Original date: 9/May/2023
-%
-% Last edit by: 
-% Last edit date: 
 % --------------------------------------------------------------------------
 
-import org.opensim.modeling.*;
+import org.opensim.modeling.*
 
 %% Add calcn origins for step length constraints
 if ~isempty(S.bounds.SLL.upper)
-    S.bounds.points(end+1).name = 'calcn_l';
+    S.bounds.points(end+1).body = 'calcn_l';
 end
 if ~isempty(S.bounds.SLR.upper)
-    S.bounds.points(end+1).name = 'calcn_r';
+    S.bounds.points(end+1).body = 'calcn_r';
 end
 
 %% Fill in blank inputs in points definitions
@@ -40,13 +38,14 @@ pointNames = [];
 for i=1:length(S.bounds.points)
     % body needs to be specified
     if ~isfield(S.bounds.points(i),'body') || isempty(S.bounds.points(i).body)
-        errmsg = ['Please enter the name of a body in your osim model in "S.bounds.points(',...
-            num2str(i) ').body".'];
+        errmsg = ['Please enter the name of a body in your osim model in',...
+            ' "S.bounds.points(',num2str(i) ').body".'];
         error(errmsg);
     end
 
     % default position is origin
-    if ~isfield(S.bounds.points(i),'point_in_body') || isempty(S.bounds.points(i).point_in_body)
+    if ~isfield(S.bounds.points(i),'point_in_body') ||...
+            isempty(S.bounds.points(i).point_in_body)
         S.bounds.points(i).point_in_body = [0,0,0];
     end
 
@@ -98,8 +97,10 @@ for i=1:length(S.bounds.distanceConstraints)
     hasUpperBound = isfield(S.bounds.distanceConstraints(i),'upper_bound')...
             && ~isempty(S.bounds.distanceConstraints(i).upper_bound);
     if ~hasLowerBound && ~hasUpperBound
-        error(['The distance constraint between "' S.bounds.distanceConstraints(i).point1, ...
-            '" and "' S.bounds.distanceConstraints(i).point2 '" ("S.bounds.distanceConstraints(',...
+        error(['The distance constraint between "',...
+            S.bounds.distanceConstraints(i).point1, ...
+            '" and "' S.bounds.distanceConstraints(i).point2,...
+            '" ("S.bounds.distanceConstraints(',...
             num2str(i) ')") has no value for upper or lower bound.'])
     end
 
@@ -125,17 +126,22 @@ S.bounds.points = segments;
 
 %% Add points for constraints to export3DPositions
 
-S.OpenSimADOptions.export3DPositions = [S.OpenSimADOptions.export3DPositions(:), S.bounds.points(:)];
+S.OpenSimADOptions.export3DPositions =...
+    [S.OpenSimADOptions.export3DPositions(:); S.bounds.points(:)];
 
 
 %% Test that the bodies exist in the osim model
-
-fields = ["export3DPositions","export3DVelocities"];
+% Note: 'ground' is a valid name for a body in which we want te define a
+% point, but since OpenSim models do not consider the ground as a body, it
+% will get removed. The points in ground will not be added to the positions
+% we want to be exported from OpenSimAD. We already know the position wrt
+% ground of a point attached to ground.
 
 model = Model(osim_path);
 bodyset = model.getBodySet();
 
-for j=fields
+for j=["export3DPositions","export3DVelocities"]
+    
     segments = S.OpenSimADOptions.(j);
     
     if isempty(segments)
@@ -150,8 +156,8 @@ for j=fields
             validNames(end+1) = i;
         catch
             if ~strcmpi(segments(i).body,'ground') % no warning for removing ground
-                warning(['   Cannot find body name "' segments(i).body '" in osim model. ',...
-                    'Removing from S.OpenSimADOptions.' char(j) '.'])
+                warning(['   Cannot find body name "' segments(i).body,...
+                    '" in osim model. Removing from S.OpenSimADOptions.',char(j),'.'])
             end
         end
     end
@@ -176,6 +182,12 @@ for j=fields
 end
 
 %% Remove constraints that rely on undefined points
+% The list of defined points consists of the points in
+% S.OpenSimADOptions.export3DPositions, since those are the points that
+% are defined in an existing body. 
+% As explained above, points in ground will also be excluded. So we scan
+% through S.bounds.points, and add any point defined in ground to the list
+% of defined points.
 
 validConstraints = true(length(S.bounds.distanceConstraints),1);
 pointNames = [];
@@ -188,16 +200,17 @@ for i=1:length(S.bounds.points)
         pointNames{end+1} = S.bounds.points(i).name;
     end
 end
+
 for i=1:length(S.bounds.distanceConstraints)
 
     if ~any(strcmp(pointNames,S.bounds.distanceConstraints(i).point1))
         validConstraints(i) = false;
-        warning(['   Cannot find valid point "' S.bounds.distanceConstraints(i).point1,...
+        warning(['   Cannot find valid point "',S.bounds.distanceConstraints(i).point1,...
             '". Removing entry from S.bounds.distanceConstraints.'])
 
     elseif ~any(strcmp(pointNames,S.bounds.distanceConstraints(i).point2))
         validConstraints(i) = false;
-        warning(['   Cannot find valid point "' S.bounds.distanceConstraints(i).point2,...
+        warning(['   Cannot find valid point "',S.bounds.distanceConstraints(i).point2,...
             '". Removing entry from S.bounds.distanceConstraints.'])
     end
 
@@ -207,6 +220,7 @@ end
 S.bounds.distanceConstraints = S.bounds.distanceConstraints(validConstraints);
 
 %% Add field with indices of direction of distance
+% Function generated by OpenSimAD will return x-y-z position or velocity. 
 for i=1:length(S.bounds.distanceConstraints)
 
     dir_i = char(S.bounds.distanceConstraints(i).direction);
@@ -234,8 +248,8 @@ for i=1:length(S.bounds.distanceConstraints)
 
             otherwise
                 error(['Direction of distance constraint is invalid. Please set',...
-                    ' "S.bounds.distanceConstraints(' num2str(i) ').direction" to any',...
-                    ' combination of x, y and z, or an anatomical plane.'])
+                    ' "S.bounds.distanceConstraints(' num2str(i) ').direction" to',...
+                    ' any combination of x, y and z, or an anatomical plane.'])
         end
     end
 
@@ -244,12 +258,15 @@ for i=1:length(S.bounds.distanceConstraints)
 end
 
 %% Adjust bounds
-% If 2D or 3D distance, we use square distance and square bounds to avoid calculating sqrt of distance.
+% If 2D or 3D distance, we use square distance and square bounds to avoid 
+% calculating sqrt of distance.
 for i=1:length(S.bounds.distanceConstraints)
 
     if length(S.bounds.distanceConstraints(i).directionVectorIdx)>1
-        S.bounds.distanceConstraints(i).lower_bound = S.bounds.distanceConstraints(i).lower_bound^2;
-        S.bounds.distanceConstraints(i).upper_bound = S.bounds.distanceConstraints(i).upper_bound^2;
+        S.bounds.distanceConstraints(i).lower_bound =...
+            S.bounds.distanceConstraints(i).lower_bound^2;
+        S.bounds.distanceConstraints(i).upper_bound =...
+            S.bounds.distanceConstraints(i).upper_bound^2;
     end
 
 end

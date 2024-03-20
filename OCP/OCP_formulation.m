@@ -82,16 +82,15 @@ MuscleMass = struct_array_to_double_array(model_info.muscle_info.parameters,'mus
 
 %% Get bounds and initial guess
 
-[bounds,scaling] = getBounds(S,model_info);
+bounds_nsc = getBounds(S,model_info);
+scaling = getScaleFactor(S,model_info,bounds_nsc);
+bounds = scaleBounds(S,model_info,bounds_nsc,scaling);
 
 if strcmp(S.subject.IG_selection,'quasi-random')
     guess = getGuess_QR_opti(S,model_info,scaling,d);
 else
     guess = getGuess_DI_opti(S,model_info,scaling,d);
 end
-
-% adapt guess so that it fits within the bounds
-[guess,bounds] = AdaptGuess_UserInput(S,guess,bounds);
 
 
 if (S.misc.visualize_bounds)
@@ -387,7 +386,7 @@ for j=1:d
 
     % Evaluate ligament moment
     M_lig_j = f_casadi.ligamentMoment(Qskj_nsc(:,j+1));
-    
+
 
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Add path constraints
@@ -428,7 +427,7 @@ for j=1:d
         Ti = Ti + M_ort_coord_totj(i);
 
         % total coordinate torque equals inverse dynamics torque
-        eq_constr{end+1} = Tj(i,1) - Ti;
+        eq_constr{end+1} = (Tj(i,1) - Ti)./scaling.Moments(i);
 
     end
 
@@ -680,6 +679,7 @@ if ~S.post_process.load_prev_opti_vars
     % Create setup
     setup.tolerance.ipopt = S.solver.tol_ipopt;
     setup.bounds = bounds;
+    setup.bounds_nsc = bounds_nsc;
     setup.scaling = scaling;
     setup.guess = guess;
     

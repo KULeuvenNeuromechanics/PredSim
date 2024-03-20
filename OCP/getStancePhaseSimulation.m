@@ -69,8 +69,8 @@ idx_init_contact = find(is_init_contact == 1);
 idx_last_contact = find(is_init_contact == -1);
 
 
-if idx_init_contact(1) == 1 % no need to shift
-    idx_GC = [idx_init_contact(1):N]';
+if isempty(idx_init_contact) || idx_init_contact(1) == 1 % no need to shift
+    idx_GC = 1:N;
     idx_GC_base_forward_offset = [];
 
 else
