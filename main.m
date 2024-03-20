@@ -16,7 +16,7 @@ clc
 pathDefaultSettings = fullfile(pathRepo,'DefaultSettings');
 addpath(pathDefaultSettings)
 
-[S] = initializeSettings('DHondt_2023_2seg'); % 'DHondt_2023_2seg' 'DHondt_et_al_2024_3seg'
+[S] = initializeSettings('DHondt_2023_2seg');
 S.misc.main_path = pathRepo;
 
 addpath(fullfile(S.misc.main_path,'VariousFunctions'))
@@ -74,8 +74,8 @@ S.solver.run_as_batch_job = 0;
 S.post_process.make_plot = 0;
 % S.post_process.savename  = 'datetime';
 % S.post_process.load_prev_opti_vars = 1;
-S.post_process.rerun   = 1;
-S.post_process.result_filename = 'DHondt_2023_2seg_job915';
+% S.post_process.rerun   = 1;
+% S.post_process.result_filename = '';
 
 % % S.solver
 % S.solver.linear_solver  = '';
