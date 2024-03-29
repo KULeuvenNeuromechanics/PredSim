@@ -57,7 +57,6 @@ S.solver.run_as_batch_job = 0;
 % % S.metabolicE - metabolic energy
 % S.metabolicE.tanh_b = 100;
 % S.metabolicE.model  = '';
-% S.metabolicE.includeStrengthInEnergetics = ;
 
 % % S.misc - miscellanious
 % S.misc.v_max_s             = ;
