@@ -158,7 +158,7 @@ This code can automatically convert an OpenSim model to the external function us
 - **S.metabolicE.tanh_b**: 
 	- hyperbolic tangeant smoothing factor used in the metabolic cost calculation. Default is *10* [double]
 - **S.metabolicE.includeStrenthInEnergetics**: 
-	- include strength scaling in energetics. 0 (don't include) or 1 (include). Default is *0* [double]
+	- include muscle strength scaling in energetics. 0 (don't include) or 1 (include). Default is *0* [double]
 - **S.metabolicE.model**: 
 	- the name of the metabolic energy model used. Default is [*Bhargava2004*](https://doi.org/10.1016/S0021-9290(03)00239-2) [char]. Currently only Bhargava2004 model has been implemented. Other options that will be added in the future are:
 		- [*Umberger2003*](https://doi.org/10.1080/1025584031000091678)
