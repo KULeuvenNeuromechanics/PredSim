@@ -130,11 +130,6 @@ if ~isfield(S.metabolicE,'tanh_b')
     S.metabolicE.tanh_b = 10;
 end
 
-% include muscle strength scaling in energetics
-if ~isfield(S.metabolicE,'includeStrengthInEnergetics')
-    S.metabolicE.includeStrengthInEnergetics = 0;
-end
-
 % name of the metabolic energy model used
 if ~isfield(S.metabolicE,'model')
     S.metabolicE.model = 'Bhargava2004';
