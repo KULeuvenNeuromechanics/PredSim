@@ -1,4 +1,4 @@
-function [R] = PostProcessing_orthosis(model_info,f_casadi,R)
+function [R] = PostProcess_orthosis(model_info,f_casadi,R)
 % --------------------------------------------------------------------------
 % PostProcessing_orthosis
 %   Calculate generalised forces from orthoses.

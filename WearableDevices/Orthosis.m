@@ -5,6 +5,38 @@ classdef Orthosis < handle
 %   in predictive simulations. For examples on how to use this, see
 %   parametricAFO, ankleExoZhang2017.
 %
+%   General workflow:
+%   1) Create a MATLAB function describing an orthosis
+%       a) function header
+%           function [Orthosis_object] = exampleOrthosis(init, settings_orthosis)
+%       
+%       b) create Orthosis object
+%           Orthosis_object = Orthosis('exampleName', init);
+%
+%       c) read parameter values
+%           param_1 = settings_orthosis.param_1;
+%           param_2 = settings_orthosis.param_2;
+%
+%       d) use methods to create variables
+%           see Orthosis/var, Orthosis/var_coord, Orthosis/var_point,
+%           Orthosis/var_GRF, Orthosis/var_muscle
+%
+%       e) calculate forces exerted by the orthosis
+%           be creative ;)
+%
+%       f) use methods to add the forces to the musculoskeletal model
+%           see Orthosis/addCoordForce, Orthosis/addBodyForce,
+%           Orthosis/addBodyMoment
+%
+%   2) Add a custom orthosis to the predictive simulations via main.m
+%       a) use the function we just created
+%           S.orthosis.settings{1}.function_name = 'exampleOrthosis';
+%
+%       b) set the parameter values
+%           S.orthosis.settings{1}.param_1 = 42;
+%           S.orthosis.settings{1}.param_2 = "whatever";
+%
+%
 %   See also parametricAFO, ankleExoZhang2017 
 % 
 % Original author: Lars D'Hondt
@@ -12,32 +44,29 @@ classdef Orthosis < handle
 % --------------------------------------------------------------------------
 
     properties(Access = protected)
-        % general properties
-        name = []; % name of the orthosis
-        Nmesh = 1; % number of meshpoints used to describe the time-varying 
-            % behaviour of the orthosis. Set to 1 if time-independent.
 
-        % properties of CasADi Function describing orthosis mechanics
-        arg = {}; % input arguments
-        res = {}; % output arguments
+        name = []; % name of the orthosis
+        Nmesh = 1; % number of meshpoints used to describe the time-varying behaviour of the orthosis. Set to 1 if time-independent.
+
+
+        arg = {}; % input arguments of CasADi Function describing orthosis mechanics
+        res = {}; % output arguments of CasADi Function describing orthosis mechanics
         res_pp = {}; % output arguments for post-processing function
-        names_arg = {}; % names of input arguments
-        names_res = {}; % names of output arguments
-        names_res_pp = {}; % names of pp output arguments
-        meta_arg = []; % metadata of input arguments
-        meta_res = []; % metadata of output arguments
+        names_arg = {}; % names of input arguments of CasADi Function describing orthosis mechanics
+        names_res = {}; % names of output arguments of CasADi Function describing orthosis mechanics
+        names_res_pp = {}; % names of post-processing output arguments
+        meta_arg = []; % metadata of input arguments of CasADi Function describing orthosis mechanics
+        meta_res = []; % metadata of output arguments of CasADi Function describing orthosis mechanics
         fun = []; % handle of CasADi Function
 
-        % properties of interface with OpenSimAD. 
-            % These will be passed to generateExternalFunction
-        BodyForces = {}; % input3DBodyForces
-        BodyMoments = {}; % input3DBodyMoments
-        PointPositions = {}; % export3DPositions
-        PointVelocities = {}; % export3DVelocities
-        
-        % properties of OpenSim model that is to be used with orthosis
-        osimPath = []; % path to model file
 
+        BodyForces = {}; % input3DBodyForces for OpenSimAD
+        BodyMoments = {}; % input3DBodyMoments for OpenSimAD
+        PointPositions = {}; % export3DPositions for OpenSimAD
+        PointVelocities = {}; % export3DVelocities for OpenSimAD
+        
+
+        osimPath = []; % path to model file
         warningOsimPathNotSet = false; % only warn once that osimPath was not set.
 
         osimCoordsAll = {}; % coordinate names
@@ -80,8 +109,9 @@ classdef Orthosis < handle
             %   torque profile.
             %
             % OUTPUT:
-            %   - self - [Orthosis]
-            %   * new Orthosis
+            %   - orthosis_obj - [Orthosis]
+            %   * new Orthosis (object)
+            %
             
             self.name = name;
 
@@ -102,14 +132,17 @@ classdef Orthosis < handle
 
     %% getters and setters
         function name = getName(self)
+            % Get the name of the Orthosis
             name = self.name;
         end
 
         function N_mesh = getNmesh(self)
+            % Get the number of mesh intervals of the simulation
             N_mesh = self.Nmesh;
         end
 
         function fun = getFunction(self)
+            % Get the CasADi Function describing the Orthosis
             if isempty(self.fun)
                 createCasadiFunction(self);
             end
@@ -117,22 +150,31 @@ classdef Orthosis < handle
         end
 
         function BodyForces = getBodyForces(self)
+            % Get cell array of structs describing body forces in OpenSimAD format
             BodyForces = self.BodyForces;
         end
 
         function BodyMoments = getBodyMoments(self)
+            % Get cell array of structs describing body moments in OpenSimAD format
             BodyMoments = self.BodyMoments;
         end
 
         function PointPositions = getPointPositions(self)
+            % Get cell array of structs describing point positions in OpenSimAD format
             PointPositions = self.PointPositions;
         end
 
         function PointVelocities = getPointVelocities(self)
+            % Get cell array of structs describing point velocities in OpenSimAD format
             PointVelocities = self.PointPositions;
         end
 
         function [] = setOsimPath(self,osimPath)
+            arguments
+                self Orthosis
+                osimPath char {mustBeFile}
+            end
+            % Set the path to the OpenSim model file associated with the Orthosis
             self.osimPath = osimPath;
             updatePropertiesFromOsimModel(self);
         end
@@ -145,6 +187,26 @@ classdef Orthosis < handle
                 pos_vel_acc char {mustBeMember(pos_vel_acc,{'pos','vel','acc'})} = 'pos';
             end
             % Create a variable for a coordinate position, velocity or acceleration
+            %
+            % EXAMPLE
+            %   Position of the right ankle:
+            %   q_ankle_r = orthosis_obj.var_coord('ankle_angle_r');
+            %   
+            %   Angular acceleration of the left knee:
+            %   ddq_knee_l = orthosis_obj.var_coord('knee_angle_l','acc');
+            %
+            % INPUT:
+            %   - osim_coord_name - [char]
+            %   * Name of a coordinate in the OpenSim model
+            %
+            %   - pos_vel_acc - [char] (optional) Default: 'pos'
+            %   * Use position, velocity or acceleration of the coordinate
+            %
+            % OUTPUT:
+            %   - coord - [1x1 variable]
+            %   * Variable for the position, velocity or acceleration of a
+            %   coordinate. This can be used to describe the Orthosis.
+            %
 
             var_name = ['coord_',osim_coord_name,'_',pos_vel_acc];
             coord = casadi.SX.sym(var_name,1,self.Nmesh);
@@ -171,7 +233,35 @@ classdef Orthosis < handle
                 location_in_body (1,3) double = [0, 0, 0];
                 pos_vel char {mustBeMember(pos_vel,{'pos','vel'})} = 'pos';
             end
-            % Create a variable for a point position or velocity
+            % Create a variable for the position or velocity (w.r.t. ground) of a point
+            %
+            % EXAMPLE
+            %   Position of the right hip joint centre:
+            %   pos_hip_r = orthosis_obj.var_point('hip_r','femur_r');
+            %   
+            %   Velocity of the head:
+            %   vel_head = orthosis_obj.var_point('head','torso',[0.06, 0.54, 0],'vel');
+            %
+            % INPUT:
+            %   - point_name - [char]
+            %   * Name of the point. Point names, defined here and in
+            %   S.bounds.points, shoule be unique.
+            %
+            %   - osim_body_name - [char]
+            %   * Name of a body in the OpenSim model, on which the point
+            %   is located
+            %
+            %   - location in body - [1x3 double] (optional) Default: [0, 0, 0]
+            %   * Location of the point in the body.
+            %
+            %   - pos_vel - [char] (optional) Default: 'pos'
+            %   * Use position or velocity of the point
+            %
+            % OUTPUT:
+            %   - point - [3x1 variable]
+            %   * Variable for the position or velocity of a point. This
+            %   can be used to describe the Orthosis. 
+            %
 
             var_name = ['point_',point_name,'_',pos_vel];
             point = casadi.SX.sym(var_name,3,self.Nmesh);
@@ -201,6 +291,23 @@ classdef Orthosis < handle
                 F_d char {mustBeMember(F_d,{'Force','indentation'})} = 'Force';
             end
             % Create a variable for a ground reaction force or contact indentation
+            %
+            % EXAMPLE
+            %   GRF under the right heel:
+            %   GRF_heel_r = orthosis_obj.var_GRF('heel_r');
+            %
+            % INPUT:
+            %   - osim_contact_name - [char]
+            %   * Name of a contact sphere in the OpenSim model.
+            %
+            %   - F_d - ['Force' or 'indentation'] (optional) Default: 'Force'
+            %   * Use force or indentation. 
+            %
+            % OUTPUT:
+            %   - GRF - [3x1 or 1x1 variable]
+            %   * F_d = 'Force': vector of xyz ground reaction forces.
+            %     F_d = 'indentation': indentation of the contact sphere
+            %
 
             var_name = ['GRF_',osim_contact_name,'_',F_d];
             switch F_d
@@ -213,7 +320,7 @@ classdef Orthosis < handle
                     self.meta_arg(end).subtype = 'fromExtFun';
                     self.meta_arg(end).type = 'GRFs';
                 case 'indentation'
-                    GRF = getContactIndentation(self,osim_contact_name);
+                    GRF = calcContactIndentation(self,osim_contact_name);
                     % Metadata for contact indentation is added when
                     % creating the point position variable.
             end
@@ -224,7 +331,22 @@ classdef Orthosis < handle
                 self Orthosis
                 osim_muscle_name char {inputExistsInOsimModel(self,osim_muscle_name,'muscle')}
             end
-            % Create a variable for a muscle activation
+            % Create a variable for the activation of a muscle
+            %
+            % EXAMPLE
+            %   Activation of the right soleus:
+            %   act_sol_r = orthosis_obj.var_muscle('soleus_r');
+            %
+            % INPUT:
+            %   - muscle_name - [char]
+            %   * Name of a muscle in the OpenSim model.
+            %
+            % OUTPUT:
+            %   - act - [1x1 variable]
+            %   * Variable for the activation of a muscle.
+            %
+
+            % note: can be extended to include e.g. fibre length
 
             var_name = ['muscle_',osim_muscle_name,'_act'];
             act = casadi.SX.sym(var_name,1,self.Nmesh);
@@ -269,6 +391,18 @@ classdef Orthosis < handle
                 osim_coord_name char {inputExistsInOsimModel(self,osim_coord_name,'coord')}
             end
             % Add a force or moment acting on a coordinate.
+            %
+            % EXAMPLE
+            %   Add moment to the right ankle:
+            %   orthosis_obj.addCoordForce(5,'ankle_angle_r');
+            %
+            % INPUT:
+            %   - value - [1x1 variable or double]
+            %   * Value of the force or moment (in N or Nm)
+            %
+            %   - osim_coord_name - [char]
+            %   * Name of a coordinate in the OpenSim model
+            %
 
             % value should be a row vector with Nmesh elements
             if size(value,1)~=1 || size(value,2)~=self.Nmesh
@@ -302,6 +436,32 @@ classdef Orthosis < handle
                 reference_frame char {inputExistsInOsimModel(self,reference_frame,'frame')} = osim_body_name;
             end
             % Add a force vector acting on a body.
+            %
+            % EXAMPLE
+            %   Add a force on the pelvis, with the vector given in pelvis reference frame:
+            %   orthosis_obj.addBodyForce(F_push, 'F_push', 'pelvis');
+            %
+            %   Add a force on the pelvis, with the vector given in ground reference frame:
+            %   orthosis_obj.addBodyForce(F_push, 'F_push', 'pelvis', [0,0,0], 'ground');
+            %
+            % INPUT:
+            %   - value - [3x1 variable or double]
+            %   * Value of the force (in N)
+            %
+            %   - force_name - [char]
+            %   * Name of the force.
+            %
+            %   - osim_body_name - [char]
+            %   * Name of a body in the OpenSim model, on which the force
+            %   is applied.
+            %
+            %   - location in body - [1x3 double] (optional) Default: [0, 0, 0]
+            %   * Location of the point in the body where the force is applied.
+            %
+            %   - reference frame - [char] (optional) Default: osim_body_name
+            %   * Name of a body in the OpenSim model, in whose reference
+            %   frame the force vector is expressed.
+            %
 
             % value should be a 3xNmesh matrix
             if size(value,1)~=3 || size(value,2)~=self.Nmesh
@@ -333,16 +493,39 @@ classdef Orthosis < handle
             end
         end % end of addBodyForce
 
-        function [] = addBodyMoment(self,value,force_name,osim_body_name,...
+        function [] = addBodyMoment(self,value,moment_name,osim_body_name,...
                 reference_frame)
             arguments
                 self Orthosis
                 value (3,:)
-                force_name char
+                moment_name char
                 osim_body_name char {inputExistsInOsimModel(self,osim_body_name,'body')}
                 reference_frame char {inputExistsInOsimModel(self,reference_frame,'frame')} = osim_body_name;
             end
             % Add a moment vector acting on a body.
+            %
+            % EXAMPLE
+            %   Add a moment on the tibia, and an equal but opposite moment
+            %   on the hindfoot:
+            %   orthosis_obj.addBodyMoment(T_ankle, 'T_exo_shank_r','tibia_r');
+            %   orthosis_obj.addBodyMoment(-T_ankle, 'T_exo_foot_r','calcn_r','tibia_r']);
+            %
+            % INPUT:
+            %   - value - [3x1 variable or double]
+            %   * Value of the moment (in Nm)
+            %
+            %   - moment_name - [char]
+            %   * Name of the moment.
+            %
+            %   - osim_body_name - [char]
+            %   * Name of a body in the OpenSim model, on which the moment
+            %   is applied.
+            %
+            %   - reference frame - [char] (optional) Default: osim_body_name
+            %   * Name of a body in the OpenSim model, in whose reference
+            %   frame the moment vector is expressed.
+            %
+
 
             % value should be a 3xNmesh matrix
             if size(value,1)~=3 || size(value,2)~=self.Nmesh
@@ -350,7 +533,7 @@ classdef Orthosis < handle
                     inputname(2),3,self.Nmesh,size(value,1),size(value,2));
             end
 
-            F_name = ['BodyMoment_',force_name];
+            F_name = ['BodyMoment_',moment_name];
 
             idx = find(cellfun(@(x)strcmp(x,F_name), self.names_res));
             if isempty(idx)
@@ -358,13 +541,13 @@ classdef Orthosis < handle
                 self.names_res{end+1} = F_name;
 
                 self.BodyMoments(end+1).body = osim_body_name;
-                self.BodyMoments(end).name = force_name;
+                self.BodyMoments(end).name = moment_name;
                 self.BodyMoments(end).reference_frame = reference_frame;
 
                 self.osimBodiesUsed{end+1} = osim_body_name;
                 self.osimBodiesUsed{end+1} = reference_frame;
 
-                self.meta_res(end+1).name = force_name;
+                self.meta_res(end+1).name = moment_name;
                 self.meta_res(end).type = 'Moments';
                 self.meta_res(end).subtype = 'toExtFun';
             else
@@ -380,6 +563,16 @@ classdef Orthosis < handle
                 label char
             end
             % Add internal variable to be evaluated in post-processing
+            %   The values at each mesh point will be stored in 
+            %   R.orthosis.separate{i}.(label)
+            %
+            % INPUT:
+            %   - var - [variable]
+            %   * Variable, or result of calculation based on variables.
+            %
+            %   - label - [char]
+            %   * Label used to store the values of this variable.
+            %
 
             self.res_pp{end+1} = var;
             self.names_res_pp{end+1} = label;
@@ -438,7 +631,7 @@ classdef Orthosis < handle
 
     %% CasADi
         function [] = createCasadiFunction(self)
-            % create CasADi Function
+            % Create a CasADi Function for the added forces in function of the defined variables
             self.fun = casadi.Function(['f_orthosis_',self.name],...
                 self.arg, [self.res, self.res_pp],...
                 self.names_arg, [self.names_res, self.names_res_pp]);
@@ -450,7 +643,22 @@ classdef Orthosis < handle
                 ExtFunIO
                 muscleNames
             end
-            % Wrap the casadi function of the orthosis for easy integration with PredSim
+            % Wrap the CasADi Function of the orthosis for easy integration with PredSim
+            %
+            % INPUTS:
+            %   - ExtFunIO - [struct]
+            %   * model_info.ExtFunIO
+            %
+            %   - muscleNames - [cell array of chars]
+            %   * model_info.muscle_info.muscle_names
+            %
+            % OUTPUTS:
+            %   - wrap_fun - [casadi.Function]
+            %   * CasADi Function for use in OCP formulation
+            %
+            %   - wrap_fun_pp - [casadi.Function]
+            %   * CasADi Function for use in post-processing
+            %
 
             import casadi.*
 
@@ -523,14 +731,14 @@ classdef Orthosis < handle
             wrap_fun_pp = Function(['f_orthosis_',self.name,'_wrapped_postprocessing'],...
                 wrap_arg, wrap_res_pp, arg_names, self.names_res_pp);
             
-        end
+        end % end of wrapCasadiFunction
 
     end % end of methods
 
 %%
     methods(Access=private) % private — Access by class methods only (not from subclasses)
 
-        function indentation = getContactIndentation(self,contact_name)
+        function indentation = calcContactIndentation(self,contact_name)
             % get a variable representing the indentation of a contact sphere
 
             % open model
@@ -583,7 +791,9 @@ classdef Orthosis < handle
 
     end % end of private methods
 
-    methods(Access=protected) % protected — Access from methods in class or subclasses
+    methods(Access=protected, Hidden=true) 
+        % protected — Access from methods in class or subclasses
+        % hidden - do not show in documentation
         
         function inputExistsInOsimModel(self,input,type)
             % Assert that the input argument is valid for the OpenSim model
@@ -619,5 +829,46 @@ classdef Orthosis < handle
         end % end of inputExistsInOsimModel
 
     end % end of protected methods
+
+
+    methods(Hidden=true)
+        % hidden - do not show in documentation
+
+        % Hide methods inherited from handle so they are not in the
+        % documentation for Orthosis
+        function argout = eq(varargin)
+            argout = eq@handle(varargin{:});
+        end
+        function argout = ge(varargin)
+            argout = ge@handle(varargin{:});
+        end
+        function argout = gt(varargin)
+            argout = gt@handle(varargin{:});
+        end
+        function argout = le(varargin)
+            argout = le@handle(varargin{:});
+        end
+        function argout = lt(varargin)
+            argout = lt@handle(varargin{:});
+        end
+        function argout = ne(varargin)
+            argout = ne@handle(varargin{:});
+        end
+        function argout = listener(varargin)
+            argout = listener@handle(varargin{:});
+        end
+        function argout = addlistener(varargin)
+            argout = addlistener@handle(varargin{:});
+        end
+        function argout = notify(varargin)
+            argout = notify@handle(varargin{:});
+        end
+        function argout = findobj(varargin)
+            argout = findobj@handle(varargin{:});
+        end
+        function argout = findprop(varargin)
+            argout = findprop@handle(varargin{:});
+        end
+    end
 
 end % end of classdef

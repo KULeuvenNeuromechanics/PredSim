@@ -258,7 +258,7 @@ else
     % fit the model
     mdl = fitnlm(x_fit,y_fit,modelfun,coeff_0);
     % get coefficient values
-    coeff_sol = table2array(mdl.Coefficients(:,1))
+    coeff_sol = table2array(mdl.Coefficients(:,1));
 
 end
 

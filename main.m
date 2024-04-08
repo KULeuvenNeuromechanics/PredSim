@@ -16,14 +16,14 @@ clc
 pathDefaultSettings = fullfile(pathRepo,'DefaultSettings');
 addpath(pathDefaultSettings)
 
-[S] = initializeSettings('DHondt_2023_2seg');
+[S] = initializeSettings('Falisse_et_al_2022');
 S.misc.main_path = pathRepo;
 
 addpath(fullfile(S.misc.main_path,'VariousFunctions'))
 
 %% Required inputs
 % name of the subject
-S.subject.name = 'DHondt_2023_2seg';
+S.subject.name = 'Falisse_et_al_2022';
 
 % path to folder where you want to store the results of the OCP
 S.subject.save_folder  = fullfile(pathRepoFolder,'PredSimResults',S.subject.name); 
@@ -33,15 +33,12 @@ S.subject.save_folder  = fullfile(pathRepoFolder,'PredSimResults',S.subject.name
 S.subject.IG_selection = fullfile(S.misc.main_path,'OCP','IK_Guess_Full_GC.mot');
 S.subject.IG_selection_gaitCyclePercent = 100;
 % S.subject.IG_selection = 'quasi-random';
-% S.subject.IG_selection = fullfile('C:\GBW_MyPrograms\PredSimResults',...
-%     'DHondt_et_al_2024_3seg', 'DHondt_et_al_2024_3seg_job889.mot');
-% S.subject.IG_selection_gaitCyclePercent = 200;
 
 % give the path to the osim model of your subject
 osim_path = fullfile(pathRepo,'Subjects',S.subject.name,[S.subject.name '.osim']);
 
 % Do you want to run the simulation as a batch job (parallel computing toolbox)
-S.solver.run_as_batch_job = 0;
+S.solver.run_as_batch_job = 1;
 
 %% Optional inputs
 % see README.md in the main folder for information about these optional
@@ -123,24 +120,12 @@ S.subject.v_pelvis_x_trgt   = 1.33;
 
 
 % % S.orthosis
-% ortho1.function_name = 'EXO001_ankleExo'; % EXO001_ankleExoNuckols2020
-% % ortho1.function_name = 'ankleExoTorques';
-% ortho1.ankle_stiffness = 100; % Nm/rad
-% ortho1.pf_offset = 0;
-% ortho1.smooth_b = 10;
+ortho1.function_name = 'parametricAFO';
+ortho1.ankle_stiffness = 100; % Nm/rad
+ortho1.mtp_stiffness = 10; % Nm/rad
 
-% ortho1.function_name = 'ankleExoZhang2017';
-% ortho1.dependencies_path = 'C:\Users\u0150099\OneDrive - KU Leuven\PhD\literature\assistive devices\aal5054_zhang_sm_data_s2';
-% ortho1.peak_torque = 20;
-% ortho1.peak_timing = 52.9; % 50
-% ortho1.rise_time = 26.2;
-% ortho1.drop_time = 9.8; % 5
-% ortho1.plotAssistanceProfile = figure();
 
-ortho1.function_name = 'ankleExoEmgProportional';
-ortho1.gain = 40; % Nm at max soleus activation
-
-% % add orthosis on right side
+% add orthosis on right side
 ortho1.left_right = 'r';
 S.orthosis.settings{1} = ortho1;
 % add the same orthosis on left side

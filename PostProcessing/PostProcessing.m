@@ -80,7 +80,7 @@ R.misc.body_weight = model_info.mass*9.81;
 [R] = PostProcess_metabolic_energy(model_info,f_casadi,R);
 
 % Calculate orthosis forces
-[R] = PostProcessing_orthosis(model_info,f_casadi,R);
+[R] = PostProcess_orthosis(model_info,f_casadi,R);
 
 % Please implement additional post-processing steps as functions following
 % the template, and call them from here.
