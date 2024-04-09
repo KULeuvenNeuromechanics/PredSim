@@ -1,3 +1,17 @@
+% --------------------------------------------------------------------------
+% fitOrthosisFromData
+%   Script to fit a function describing the orthosis based on measured
+%   data. Orthosis function calculates a moment from the bending angle and the 
+%   bending angular velocity.
+% 
+% note: this is still a draft version, but feedback is welcome.
+% 
+% Original author: Lars D'Hondt
+% Original date: January 2024
+% --------------------------------------------------------------------------
+
+
+
 clear
 close all
 clc
