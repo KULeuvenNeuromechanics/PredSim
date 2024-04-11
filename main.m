@@ -120,16 +120,17 @@ S.subject.v_pelvis_x_trgt   = 1.33;
 
 
 % % S.orthosis
-% ortho1.function_name = 'parametricAFO';
-% ortho1.ankle_stiffness = 100; % Nm/rad
-% ortho1.mtp_stiffness = 10; % Nm/rad
-% 
-% % add orthosis on right side
-% ortho1.left_right = 'r';
-% S.orthosis.settings{1} = ortho1;
-% % add the same orthosis on left side
-% ortho1.left_right = 'l';
-% S.orthosis.settings{2} = ortho1;
+% add orthosis on right side
+S.orthosis.settings{1}.function_name = 'parametricAFO';
+S.orthosis.settings{1}.ankle_stiffness = 100; % Nm/rad
+S.orthosis.settings{1}.mtp_stiffness = 10; % Nm/rad
+S.orthosis.settings{1}.left_right = 'r';
+
+% add the same orthosis on left side
+S.orthosis.settings{2}.function_name = 'parametricAFO';
+S.orthosis.settings{2}.ankle_stiffness = 100; % Nm/rad
+S.orthosis.settings{2}.mtp_stiffness = 10; % Nm/rad
+S.orthosis.settings{2}.left_right = 'l';
 
 
 % %S.OpenSimADOptions: required inputs to convert .osim to .dll
