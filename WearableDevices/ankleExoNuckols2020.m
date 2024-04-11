@@ -5,6 +5,11 @@ function [exo] = ankleExoNuckols2020(init, settings_orthosis)
 %   and a rotational spring on the MTP angle. Each spring is defined by a
 %   stiffness constant.
 % 
+%   [1] R. W. Nuckols and G. S. Sawicki, “Impact of elastic ankle exoskeleton
+%       stiffness on neuromechanics and energetics of human walking across 
+%       multiple speeds,” Journal of NeuroEngineering and Rehabilitation, 
+%       vol. 17, no. 1, p. 75, Jun. 2020, doi: 10.1186/s12984-020-00703-4.
+%
 %
 % INPUT:
 %   - init -
@@ -37,18 +42,13 @@ side = settings_orthosis.left_right; % 'l' for left or 'r' for right
 % get joint angles
 q_ankle = exo.var_coord(['ankle_angle_',side]); % ankle angle in rad;
 
-% % calculate moments
-% T_ankle = k_ankle*(q_ankle+0.1).*smoothIf(q_ankle+0.1,0.05,0);
-% T_ankle = [0;0; T_ankle];
-% 
-% % apply exo torque on tibia and calcn
-% exo.addBodyMoment(T_ankle, ['T_exo_shank_',side],['tibia_',side]);
-% exo.addBodyMoment(-T_ankle, ['T_exo_foot_',side],['calcn_',side],['tibia_',side]);
+% calculate moments
+T_ankle = k_ankle*(q_ankle+0.1).*smoothIf(q_ankle+0.1,0.05,0);
+T_ankle = [0;0; T_ankle];
 
-Deltaq = q_ankle +5*pi/180;
-Deltaq_pos = getSmoothingHuberCon(Deltaq,0,Deltaq,5,1);
-T_ankle = -k_ankle*Deltaq_pos;
+% apply exo torque on tibia and calcn
+exo.addBodyMoment(T_ankle, ['T_exo_shank_',side],['tibia_',side]);
+exo.addBodyMoment(-T_ankle, ['T_exo_foot_',side],['calcn_',side],['tibia_',side]);
 
-exo.addCoordForce(T_ankle,['ankle_angle_',side]);
 
 end
