@@ -12,9 +12,8 @@ function [] = runTestSimulation(model_name, varargin)
 %   * Options to configure the test. [name-value pairs]
 %   List of options:
 %       - run_as_batch_job  see S.solver.run_as_batch_job
-%       - PathCpp2Dll_Exe   see S.Cpp2Dll.PathCpp2Dll_Exe
 %       - CasADi_path       see S.solver.CasADi_path
-%       - Cpp2Dll_compiler  see S.Cpp2Dll.compiler
+%       - OpenSimAD_compiler  see S.OpenSimADOptions.compiler
 %       - max_iter          see S.solver.max_iter
 %       - mode  'paper': use settings from the paper of the model, 
 %           'fast': use settings for faster simulation Default is 'paper'
@@ -33,9 +32,8 @@ function [] = runTestSimulation(model_name, varargin)
 
 %% options
 run_as_batch_job = false;
-PathCpp2Dll_Exe = [];
 CasADi_path = [];
-Cpp2Dll_compiler = [];
+OpenSimAD_compiler = [];
 max_iter = -1;
 mode = 'paper'; % paper, fast
 compare_printout = true;
@@ -44,14 +42,11 @@ for i=1:length(varargin)
     if strcmpi(varargin{i},'run_as_batch_job')
         run_as_batch_job = varargin{i+1};
     end
-    if strcmpi(varargin{i},'PathCpp2Dll_Exe')
-        PathCpp2Dll_Exe = varargin{i+1};
-    end
     if strcmpi(varargin{i},'CasADi_path')
         CasADi_path = varargin{i+1};
     end
     if strcmpi(varargin{i},'Cpp2Dll_compiler')
-        Cpp2Dll_compiler = varargin{i+1};
+        OpenSimAD_compiler = varargin{i+1};
     end
     if strcmpi(varargin{i},'max_iter')
         max_iter = varargin{i+1};
@@ -69,7 +64,7 @@ for i=1:length(varargin)
 end
 
 model_name = char(model_name);
-model = char(mode);
+mode = char(mode);
 
 %% Configure settings for simulation
 
@@ -110,22 +105,21 @@ osim_path = replace(res_ref.model_info.osim_path, S.misc.main_path, pathRepo);
 S.misc.main_path = pathRepo;
 
 
-if ~isempty(PathCpp2Dll_Exe)
-    S.Cpp2Dll.PathCpp2Dll_Exe = InstallOsim2Dll_Exe(PathCpp2Dll_Exe);
-end
 if ~isempty(CasADi_path)
     S.solver.CasADi_path = CasADi_path;
 else
     S.solver = rmfield(S.solver,'CasADi_path');
 end
-if ~isempty(Cpp2Dll_compiler)
-    S.Cpp2Dll.compiler = Cpp2Dll_compiler;
+if ~isempty(OpenSimAD_compiler)
+    S.Cpp2Dll.compiler = OpenSimAD_compiler;
 else
     S.Cpp2Dll = rmfield(S.Cpp2Dll,'compiler');
 end
 if max_iter > 0
     S.solver.max_iter = max_iter;
 end
+
+S.OpenSimADOptions.verbose_mode = 0; % 0 for no outputs from cmake
 
 %% run test simulation
 
