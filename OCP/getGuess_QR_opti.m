@@ -47,12 +47,21 @@ if isempty(idx_speed)
 end
 guess.tf = all_tf(idx_speed);
 
+% extrapolate outside of 0.73:5 range
+if isempty(idx_speed)
+    guess.tf = -0.1750*S.subject.v_pelvis_x_trgt + 0.8277;
+end
+% avoid going too low
+if guess.tf < 0.15
+    guess.tf = 0.15;
+end
+
 %% Qs
 % The model is moving forward but with a standing position (Qs=0)
 guess.Qs = zeros(N,nq.all);
 guess.Qs(:,model_info.ExtFunIO.jointi.base_forward) = linspace(0,guess.tf*S.subject.v_pelvis_x_trgt,N);
 % The model is standing on the ground
-guess.Qs(:,coordi.pelvis_ty) = model_info.IG_pelvis_y;
+guess.Qs(:,model_info.ExtFunIO.jointi.base_vertical) = model_info.IG_pelvis_y;
 
 %% Qdots
 guess.Qdots = zeros(N,nq.all);

@@ -16,7 +16,7 @@ clc
 pathDefaultSettings = fullfile(pathRepo,'DefaultSettings');
 addpath(pathDefaultSettings)
 
-[S] = initializeSettings();
+[S] = initializeSettings('Falisse_et_al_2022');
 S.misc.main_path = pathRepo;
 
 addpath(fullfile(S.misc.main_path,'VariousFunctions'))
@@ -29,15 +29,13 @@ S.subject.name = 'Falisse_et_al_2022';
 S.subject.save_folder  = fullfile(pathRepoFolder,'PredSimResults',S.subject.name); 
 
 % either choose "quasi-random" or give the path to a .mot file you want to use as initial guess
+% S.subject.IG_selection = 'quasi-random';
 S.subject.IG_selection = fullfile(S.misc.main_path,'OCP','IK_Guess_Full_GC.mot');
 S.subject.IG_selection_gaitCyclePercent = 100;
+% S.subject.IG_selection = 'quasi-random';
 
 % give the path to the osim model of your subject
 osim_path = fullfile(pathRepo,'Subjects',S.subject.name,[S.subject.name '.osim']);
-
-% path to folder with program to create dll files from opensim model (will
-% be downloaded automatically if it is not there)
-S.Cpp2Dll.PathCpp2Dll_Exe = 'C:\GBW_MyPrograms\Osim2Dll_exe';
 
 % Do you want to run the simulation as a batch job (parallel computing toolbox)
 S.solver.run_as_batch_job = 0;
@@ -48,18 +46,16 @@ S.solver.run_as_batch_job = 0;
 
 % % S.bounds
 % S.bounds.a.lower            = ;
-% S.bounds.calcn_dist.lower   = ;
-% S.bounds.toes_dist.lower    = ;
-% S.bounds.tibia_dist.lower   = ;
 % S.bounds.SLL.upper          = ;
 % S.bounds.SLR.upper          = ;
 % S.bounds.dist_trav.lower    = ;
 % S.bounds.t_final.upper      = ;
 % S.bounds.t_final.lower      = ;
-% S.bounds.coordinates        = {'pelvis_tilt',-30,30,'pelvis_list',-30,30};
+% S.bounds.Qs                 = {'pelvis_tilt',-30,30,'pelvis_list',-30,30};
+
 
 % % S.metabolicE - metabolic energy
-% S.metabolicE.tanh_b = ;
+% S.metabolicE.tanh_b = 100;
 % S.metabolicE.model  = '';
 
 % % S.misc - miscellanious
@@ -69,6 +65,7 @@ S.solver.run_as_batch_job = 0;
 % S.misc.msk_geom_eq         = '';
 % S.misc.poly_order.lower    = ;
 % S.misc.poly_order.upper    = ;
+% S.misc.msk_geom_bounds      = {{'knee_angle_r'},0,90,{'mtp_angle_'},-50,20};
 % S.misc.default_msk_geom_bound = ;
 % S.misc.msk_geom_bounds      = {{'knee_angle_r','knee_angle_l'},-120,10,'lumbar_extension',nan,30};
 % S.misc.gaitmotion_type = 'FullGaitCycle';
@@ -88,47 +85,46 @@ S.post_process.make_plot = 1;
 % S.solver.N_threads      = 6;
 % S.solver.N_meshes       = 100;
 % S.solver.par_cluster_name = ;
-S.solver.CasADi_path    = 'C:\GBW_MyPrograms\casadi_3_5_5';
+% S.solver.CasADi_path    = 'C:\GBW_MyPrograms\casadi_3_5_5';
 
 
 % % S.subject
 % S.subject.mass              = ;
 % S.subject.IG_pelvis_y       = ;
-% S.subject.adapt_IG_pelvis_y = ;
+S.subject.adapt_IG_pelvis_y = 1;
 S.subject.v_pelvis_x_trgt   = 1.33;
-% S.subject.IK_Bounds = ;
 % S.subject.muscle_strength   = ;
-% S.subject.muscle_pass_stiff_shift = {{'soleus_l','soleus_r'},0.9,{'tib_ant_l'},1.1};
+% S.subject.muscle_pass_stiff_shift = {{'soleus','_gas','per_','tib_','_dig_','_hal_','FDB'},0.9}; %,'FDB'
 % S.subject.muscle_pass_stiff_scale = ;
-% S.subject.tendon_stiff_scale      = ;
-S.subject.mtp_type          = '2022paper';
-% S.subject.scale_MT_params         = {{'soleus_l'},'FMo',0.9,{'soleus_l'},'alphao',1.1};
+% S.subject.tendon_stiff_scale      = {{'soleus','_gas'},0.5};
+% S.subject.scale_MT_params = {{'soleus_l'},'FMo',0.9,{'soleus_l'},'alphao',1.1};
 % S.subject.spasticity        = ;
 % S.subject.muscle_coordination = ;
-S.subject.set_stiffness_coefficient_selected_dofs = {{'mtp_angle_l','mtp_angle_r'},25};
-S.subject.set_damping_coefficient_selected_dofs = {{'mtp_angle_l','mtp_angle_r'},2};
-% S.subject.set_limit_torque_coefficients_selected_dofs = {{'mtp_angle_l','mtp_angle_r'},[0,0,0,0],[0,0]};
+% S.subject.set_stiffness_coefficient_selected_dofs = {{'mtp_angle_l','mtp_angle_r'},25};
+% S.subject.set_damping_coefficient_selected_dofs = {{'mtp_angle_l','mtp_angle_r'},2};
+% S.subject.set_limit_torque_coefficients_selected_dofs = ...
+%     {{'knee_angle_r','knee_angle_l'},-[11.03 -11.33 -6.09 33.94]',-[0.13 -2.4]',...
+%     {'mtp_angle_r','mtp_angle_l'},-[0.18 -70.08 -0.9 14.87]',-[65/180*pi 0]'};
+% S.subject.base_joints_legs = 'hip';
+% S.subject.base_joints_arms = [];
+% S.subject.mtp_type          = '2022paper';
 
 % % S.weights
-% S.weights.E         = ;
+% S.weights.E         = 0;
 % S.weights.E_exp     = ;
-% S.weights.q_dotdot  = ;
-% S.weights.e_arm     = ;
-% S.weights.pass_torq = ;
-% S.weights.a         = ;
+% S.weights.q_dotdot  = 0;
+% S.weights.e_arm     = 10;
+% S.weights.pass_torq = 1;
+% S.weights.a         = 10*18;
 % S.weights.slack_ctrl = ;
 % S.weights.pass_torq_includes_damping = ;
 
-% %S.Cpp2Dll: required inputs to convert .osim to .dll
-% S.Cpp2Dll.compiler = 'Visual Studio 17 2022';
-% S.Cpp2Dll.export3DSegmentOrigins = ;
-S.Cpp2Dll.verbose_mode = 0; % 0 for no outputs from cmake
-% S.Cpp2Dll.jointsOrder = ;
-% S.Cpp2Dll.coordinatesOrder = ;
+% %S.OpenSimADOptions: required inputs to convert .osim to .dll
+% S.OpenSimADOptions.compiler = 'Visual Studio 17 2022';
+S.OpenSimADOptions.verbose_mode = 0; % 0 for no outputs from cmake
+
         
 %% Run predictive simulations
-% Check for updates in osim2dll
-S.Cpp2Dll.PathCpp2Dll_Exe = InstallOsim2Dll_Exe(S.Cpp2Dll.PathCpp2Dll_Exe);
 
 % warning wrt pelvis heigt for IG
 if S.subject.adapt_IG_pelvis_y == 0 && S.subject.IG_selection ~= "quasi-random"

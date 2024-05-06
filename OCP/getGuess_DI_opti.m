@@ -83,8 +83,9 @@ guess.Qs(:,model_info.ExtFunIO.jointi.base_forward) = guess.Qs(:,model_info.ExtF
 
 if S.subject.adapt_IG_pelvis_y
     % Adjust pelvis height
-    guess.Qs(:,model_info.ExtFunIO.coordi.pelvis_ty) = guess.Qs(:,model_info.ExtFunIO.coordi.pelvis_ty) ...
-        - mean(guess.Qs(:,model_info.ExtFunIO.coordi.pelvis_ty)) + model_info.IG_pelvis_y;
+    guess.Qs(:,model_info.ExtFunIO.jointi.base_vertical) = ...
+        guess.Qs(:,model_info.ExtFunIO.jointi.base_vertical) ...
+        - mean(guess.Qs(:,model_info.ExtFunIO.jointi.base_vertical)) + model_info.IG_pelvis_y;
 end
 
 % Interpolation
@@ -152,6 +153,15 @@ if isempty(idx_speed)
     idx_speed = find(all_speeds > S.subject.v_pelvis_x_trgt,1,'first');
 end
 guess.tf = all_tf(idx_speed);
+
+% extrapolate outside of 0.73:5 range
+if isempty(idx_speed)
+    guess.tf = -0.1750*S.subject.v_pelvis_x_trgt + 0.8277;
+end
+% avoid going too low
+if guess.tf < 0.15
+    guess.tf = 0.15;
+end
 
 %% Scaling
 guess.Qs = guess.Qs./repmat(scaling.Qs,N+1,1);

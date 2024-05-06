@@ -4,6 +4,7 @@ clc
 
 import casadi.*
 
+addpath('./Debugging/')
 
 %% reference function
 % example: normalised sum of 8 squared values
