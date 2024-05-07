@@ -17,10 +17,10 @@ function [] = OCP_formulation(S,model_info,f_casadi)
 %   - This function returns no outputs -
 % 
 % Original author: Dhruv Gupta and Lars D'Hondt
-% Original date: Januari-May/2022
+% Original date: January-May/2022
 %
-% Last edit by: 
-% Last edit date: 
+% Last edit by: Míriam Febrer (add synergies)
+% Last edit date: May/2024
 % --------------------------------------------------------------------------
 
 disp('Start formulating OCP...')
@@ -71,6 +71,14 @@ sumCross = sum(model_info.muscle_info.muscle_spanning_joint_info);
 % Parameters for activation dynamics
 tact = model_info.muscle_info.tact; % Activation time constant
 tdeact = model_info.muscle_info.tdeact; % Deactivation time constant
+
+% Muscles indices for synergies
+if (S.subject.synergies) % for reading right - left synergies results
+    % hard-coded for 3D model 'Falisse_et_al_2022'
+    % TO DO: automate this
+    idx_m_r = [1:43,87,89,91];
+    idx_m_l = [44:86,88,90,92];
+end
 
 %% Metabolic energy model parameters
 % We extract the specific tensions and slow twitch rations.
@@ -196,6 +204,48 @@ opti.subject_to(bounds.Qdotdots.lower'*ones(1,d*N) < A_col < ...
     bounds.Qdotdots.upper'*ones(1,d*N));
 opti.set_initial(A_col, guess.Qdotdots_col');
 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% If Muscle synergies, add additional variables
+if (S.subject.synergies)
+    
+    % Additional states: Synergy activations at mesh points (right and left independently)
+    
+    % Right synergy activations at mesh points
+    SynH_r = opti.variable(S.NSyn_r,N+1);
+    % Bounds and initial guess from muscle activations (this could be
+    % modified)
+    opti.subject_to(bounds.a.lower(1:S.NSyn_r)'*ones(1,N+1) < SynH_r < ...
+        bounds.a.upper(1:S.NSyn_r)'*ones(1,N+1));
+    opti.set_initial(SynH_r, guess.a(:,1:S.NSyn_r)');
+       
+    % Left synergy activations at mesh points (left)
+    SynH_l = opti.variable(S.NSyn_l,N+1);
+    opti.subject_to(bounds.a.lower(1:S.NSyn_l)'*ones(1,N+1) < SynH_l < ...
+        bounds.a.upper(1:S.NSyn_l)'*ones(1,N+1));
+    opti.set_initial(SynH_l, guess.a(:,1:S.NSyn_l)');   
+   
+    % Additional parameters
+    % Synergy weights as static parameters (constant in time)
+        % Bounded between 0 and 1
+        % IG 0.2 (random, could be another value if it makes sense)
+    if strcmp(S.misc.gaitmotion_type,'HalfGaitCycle') % same weights right and left
+        
+        SynW = opti.variable(NMuscle/2,S.NSyn_r);
+        opti.subject_to(zeros(NMuscle/2,S.NSyn_r) < SynW < ones(NMuscle/2,S.NSyn_r));
+        opti.set_initial(SynW, 0.2*ones(NMuscle/2,S.NSyn_r));
+        
+    elseif strcmp(S.misc.gaitmotion_type,'FullGaitCycle') % independent weights right and left
+        SynW_r = opti.variable(NMuscle/2,S.NSyn_r);
+        opti.subject_to(zeros(NMuscle/2,S.NSyn_r) < SynW_r < ones(NMuscle/2,S.NSyn_r));
+        opti.set_initial(SynW_r, 0.2*ones(NMuscle/2,S.NSyn_r));
+        
+        SynW_l = opti.variable(NMuscle/2,S.NSyn_l);
+        opti.subject_to(zeros(NMuscle/2,S.NSyn_l) < SynW_l < ones(NMuscle/2,S.NSyn_l));
+        opti.set_initial(SynW_l, 0.2*ones(NMuscle/2,S.NSyn_l));
+    end
+end
+
 %% OCP: collocation equations
 % Define CasADi variables for static parameters
 tfk         = MX.sym('tfk'); % MX variable for final time
@@ -226,11 +276,31 @@ end
 % Define CasADi variables for "slack" controls
 dFTtildej   = MX.sym('dFTtildej',NMuscle,d);
 Aj          = MX.sym('Aj',nq.all,d);
+
+% If muscle synergies, define CasADi variables for additional variables
+if (S.subject.synergies)    
+    % synergy activations, right and left
+    SynH_rk          = MX.sym('SynH_rk',S.NSyn_r);
+    SynH_lk          = MX.sym('SynH_lk',S.NSyn_l);
+    % Synergy weights
+    if strcmp(S.misc.gaitmotion_type,'HalfGaitCycle') % same weights right and left
+        SynW_k         = MX.sym('SynW_k',NMuscle/2,S.NSyn_r);
+    elseif strcmp(S.misc.gaitmotion_type,'FullGaitCycle') % independent weights right and left
+        SynW_rk         = MX.sym('SynW_rk',NMuscle/2,S.NSyn_r);
+        SynW_lk         = MX.sym('SynW_lk',NMuscle/2,S.NSyn_l);
+    end
+end
+
 J           = 0; % Initialize cost function
 eq_constr   = {}; % Initialize equality constraint vector
 ineq_constr_deact = {}; % Initialize inequality constraint vector
 ineq_constr_act = {}; % Initialize inequality constraint vector
 ineq_constr_distance = cell(length(S.bounds.distanceConstraints),1);
+
+if (S.subject.synergies)   
+    ineq_constr_syn = {}; % Initialize inequality constraint vector
+end
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Time step
 h = tfk/N;
@@ -326,6 +396,18 @@ for j=1:d
         J = J + W.slack_ctrl * B(j+1) *(f_casadi.J_arms_dof(Aj(model_info.ExtFunIO.jointi.armsi,j)))*h;
     end
 
+    % If muscle synergies: Instead of a - WH = 0 as an equality constraint, have it as a
+        % term in the cost function to be minimized (+ inequality constraint)     
+    if (S.subject.synergies)        
+        if strcmp(S.misc.gaitmotion_type,'HalfGaitCycle') % same weights right and left
+            syn_constr_k_r = ak(idx_m_r) - SynW_k*SynH_rk;
+            syn_constr_k_l = ak(idx_m_l) - SynW_k*SynH_lk;
+        elseif strcmp(S.misc.gaitmotion_type,'FullGaitCycle')
+            syn_constr_k_r = ak(idx_m_r) - SynW_rk*SynH_rk;
+            syn_constr_k_l = ak(idx_m_l) - SynW_lk*SynH_lk;
+        end
+        J = J + W.Syn_constr * B(j+1) *(f_casadi.J_muscles([syn_constr_k_r;syn_constr_k_l]))*h;   
+    end
     
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Create zero (sparse) input vector for external function
@@ -439,21 +521,67 @@ for j=1:d
 
 end % End loop over collocation points
 
+% If synergy weights are tracked
+if (S.subject.synergies)
+    if (S.Syn_cf_knownSynW)
+        if strcmp(S.misc.gaitmotion_type,'HalfGaitCycle') % same weights right and left 
+            
+        SynW_k_sel = SynW_k(S.knownSynW_idx,:); % select the weights that
+        % we want to impose/track (there are no conditions/constraints applied to the other weights)
+        Jtemp = 0;
+        for i = 1:S.NSyn_r
+            for k = 1:length(S.knownSynW_idx)
+                Jtemp = Jtemp + (SynW_k_sel(k,i)-S.knownSynW(k,i)).^2;
+            end
+        end
+        Jtemp = Jtemp/(length(S.knownSynW_idx)); % should we divide by another value?
+        % for now, I divide by the number of muscles for which we know weights
+        % (but maybe this should be multiplied by the number of synergies)
+        J = J + W.knownSynW * Jtemp;
+                    
+        elseif strcmp(S.misc.gaitmotion_type,'FullGaitCycle')
+            % TO DO: here we can track both, only right or only left
+        end
+    end
+end
+
+% Synergies: a - WH = 0
+% Only applied for mesh points
+if (S.subject.synergies)
+    if strcmp(S.misc.gaitmotion_type,'HalfGaitCycle')
+        ineq_constr_syn{end+1} =  [ak(idx_m_r);ak(idx_m_l)] - [SynW_k*SynH_rk;SynW_k*SynH_lk];
+    elseif strcmp(S.misc.gaitmotion_type,'FullGaitCycle')
+        ineq_constr_syn{end+1} =  [ak(idx_m_r);ak(idx_m_l)] - [SynW_rk*SynH_rk;SynW_lk*SynH_lk];
+    end
+end
+
 eq_constr = vertcat(eq_constr{:});
 ineq_constr_deact = vertcat(ineq_constr_deact{:});
 ineq_constr_act = vertcat(ineq_constr_act{:});
 for i_dc=1:length(ineq_constr_distance)
     ineq_constr_distance{i_dc} = vertcat(ineq_constr_distance{i_dc}{:});
 end
-
+if (S.subject.synergies)
+    ineq_constr_syn = vertcat(ineq_constr_syn{:});
+end
 
 % Casadi function to get constraints and objective
 coll_input_vars_def = {tfk,ak,aj,FTtildek,FTtildej,Qsk,Qsj,Qdotsk,Qdotsj,vAk,dFTtildej,Aj};
 if nq.torqAct > 0
     coll_input_vars_def = [coll_input_vars_def,{a_ak,a_aj,e_ak}];
 end
-f_coll = Function('f_coll',coll_input_vars_def,...
-    {eq_constr,ineq_constr_deact,ineq_constr_act,ineq_constr_distance{:},J});
+if (S.subject.synergies)
+    if strcmp(S.misc.gaitmotion_type,'HalfGaitCycle') % same weights right and left
+        coll_input_vars_def = [coll_input_vars_def,{SynH_rk,SynH_lk,SynW_k}];
+    elseif strcmp(S.misc.gaitmotion_type,'FullGaitCycle') 
+        coll_input_vars_def = [coll_input_vars_def,{SynH_rk,SynH_lk,SynW_rk,SynW_lk}];
+    end
+    f_coll = Function('f_coll',coll_input_vars_def,...
+        {eq_constr,ineq_constr_deact,ineq_constr_act,ineq_constr_distance{:},ineq_constr_syn,J});
+else
+    f_coll = Function('f_coll',coll_input_vars_def,...
+        {eq_constr,ineq_constr_deact,ineq_constr_act,ineq_constr_distance{:},J});
+end
 
 % Repeat function for each mesh interval and assign evaluation to multiple threads
 f_coll_map = f_coll.map(N,S.solver.parallel_mode,S.solver.N_threads);
@@ -465,7 +593,18 @@ if nq.torqAct > 0
     coll_input_vars_eval = [coll_input_vars_eval, {a_a(:,1:end-1), a_a_col, e_a}];
 end
 coll_ineq_constr_distance = cell(1,length(ineq_constr_distance));
-[coll_eq_constr,coll_ineq_constr_deact,coll_ineq_constr_act,coll_ineq_constr_distance{:},Jall] = f_coll_map(coll_input_vars_eval{:});
+% [coll_eq_constr,coll_ineq_constr_deact,coll_ineq_constr_act,coll_ineq_constr_distance{:},Jall] = f_coll_map(coll_input_vars_eval{:});
+
+if (S.subject.synergies)    
+    if strcmp(S.misc.gaitmotion_type,'HalfGaitCycle') % same weights right and left
+        coll_input_vars_eval = [coll_input_vars_eval,{SynH_r(:,1:end-1), SynH_l(:,1:end-1), SynW}];
+    elseif strcmp(S.misc.gaitmotion_type,'FullGaitCycle') 
+        coll_input_vars_eval = [coll_input_vars_eval,{SynH_r(:,1:end-1), SynH_l(:,1:end-1), SynW_r,SynW_l}];
+    end 
+    [coll_eq_constr,coll_ineq_constr_deact,coll_ineq_constr_act,coll_ineq_constr_distance{:},coll_ineq_constr_syn,Jall] = f_coll_map(coll_input_vars_eval{:});
+else
+    [coll_eq_constr,coll_ineq_constr_deact,coll_ineq_constr_act,coll_ineq_constr_distance{:},Jall] = f_coll_map(coll_input_vars_eval{:});
+end
 
 % equality constraints
 opti.subject_to(coll_eq_constr == 0);
@@ -490,6 +629,9 @@ for i_dc=1:length(ineq_constr_distance)
         opti.subject_to(coll_ineq_constr_distance_i_dc(:) < S.bounds.distanceConstraints(i_dc).upper_bound);
     end
 
+end
+if (S.subject.synergies)
+    opti.subject_to(S.SynConstrLower < coll_ineq_constr_syn(:) < S.SynConstrUpper); 
 end
 
 % Loop over mesh points
@@ -537,7 +679,14 @@ if strcmp(S.misc.gaitmotion_type,'HalfGaitCycle')
     if ~isempty(model_info.ExtFunIO.symQs.ActOpp)
         opti.subject_to(a_a(model_info.ExtFunIO.symQs.ActOpp,end) + a_a(model_info.ExtFunIO.symQs.ActOpp,1) == 0);
     end
-
+    % Symmetry constraints for synergies
+    % TO DO: check if this is needed. It may help having these constraints,
+    % but we are imposing symmetry for activations, and weights are the
+    % same for right and left
+    if (S.subject.synergies)
+        opti.subject_to(SynH_r(:,end) - SynH_l(:,1) == 0);
+        opti.subject_to(SynH_l(:,end) - SynH_r(:,1) == 0);
+    end
 else
     opti.subject_to(Qs(model_info.ExtFunIO.symQs.QsFullGC,end) - Qs(model_info.ExtFunIO.symQs.QsFullGC,1) == 0);
     opti.subject_to(Qdots(:,end) - Qdots(:,1) == 0);
@@ -548,6 +697,10 @@ else
     % Torque actuator activations
     if nq.torqAct > 0
         opti.subject_to(a_a(:,end) - a_a(:,1) == 0);
+    end
+    if (S.subject.synergies)
+        opti.subject_to(SynH_r(:,end) - SynH_r(:,1) == 0);
+        opti.subject_to(SynH_l(:,end) - SynH_l(:,1) == 0);
     end
 
 end
@@ -696,6 +849,21 @@ dFTtilde_col_opt=reshape(w_opt(starti:starti+NMuscle*(d*N)-1),NMuscle,d*N)';
 starti = starti + NMuscle*(d*N);
 qdotdot_col_opt =reshape(w_opt(starti:starti+nq.all*(d*N)-1),nq.all,(d*N))';
 starti = starti + nq.all*(d*N);
+if (S.subject.synergies)
+    SynH_r_opt = reshape(w_opt(starti:starti+S.NSyn_r*(N+1)-1),S.NSyn_r,N+1)';
+    starti = starti + S.NSyn_r*(N+1);   
+    SynH_l_opt = reshape(w_opt(starti:starti+S.NSyn_l*(N+1)-1),S.NSyn_l,N+1)';
+    starti = starti + S.NSyn_l*(N+1);    
+    if strcmp(S.misc.gaitmotion_type,'HalfGaitCycle')
+        SynW_opt = reshape(w_opt(starti:starti+NMuscle/2*S.NSyn_r-1),NMuscle/2,S.NSyn_r)';
+        starti = starti + NMuscle/2*S.NSyn_r;
+    elseif strcmp(S.misc.gaitmotion_type,'FullGaitCycle')
+        SynW_r_opt = reshape(w_opt(starti:starti+NMuscle/2*S.NSyn_r-1),NMuscle/2,S.NSyn_r)';
+        starti = starti + NMuscle/2*S.NSyn_r;
+        SynW_l_opt = reshape(w_opt(starti:starti+NMuscle/2*S.NSyn_l-1),NMuscle/2,S.NSyn_l)';
+        starti = starti + NMuscle/2*S.NSyn_l;
+    end
+end
 if starti - 1 ~= length(w_opt)
     disp('error when extracting results')
 end
@@ -760,6 +928,13 @@ if nq.torqAct > 0
     a_a_opt_unsc = a_a_opt(1:end-1,:);
     % Torque actuator activations (1:N)
     a_a_opt_unsc_all = a_a_opt;
+end
+if (S.subject.synergies)
+    % Muscle synergies (1:N-1) at mesh points
+    SynH_r_opt_unsc = SynH_r_opt(1:end-1,:).*repmat(...
+        scaling.a,size(SynH_r_opt(1:end-1,:),1),size(SynH_r_opt,2)); % same scaling as a
+    SynH_l_opt_unsc = SynH_l_opt(1:end-1,:).*repmat(...
+        scaling.a,size(SynH_l_opt(1:end-1,:),1),size(SynH_l_opt,2)); % same scaling as a
 end
 
 % Controls at mesh points
@@ -1035,6 +1210,14 @@ if strcmp(S.misc.gaitmotion_type,'HalfGaitCycle')
         e_a_opt_unsc(idx_2nd_half_GC,model_info.ExtFunIO.symQs.ActOpp) = -e_a_opt_unsc(idx_2nd_half_GC,model_info.ExtFunIO.symQs.ActOpp);
 
     end
+    
+    % Synergy activations
+    if (S.subject.synergies)
+        SynH_r_opt_unsc_half = SynH_r_opt_unsc;
+        SynH_l_opt_unsc_half = SynH_l_opt_unsc;
+        SynH_r_opt_unsc = [SynH_r_opt_unsc_half; SynH_l_opt_unsc_half]; % mesh points
+        SynH_l_opt_unsc = [SynH_l_opt_unsc_half; SynH_r_opt_unsc_half];
+    end
 
 end
 
@@ -1078,6 +1261,11 @@ if nq.torqAct > 0
     e_a_GC = e_a_opt_unsc(idx_GC,:);
 end
 
+if(S.subject.synergies)
+    SynH_r_GC = SynH_r_opt_unsc(idx_GC,:);
+    SynH_l_GC = SynH_l_opt_unsc(idx_GC,:);
+end
+
 % adjust forward position to be continuous and start at 0
 Qs_GC(idx_GC_base_forward_offset,model_info.ExtFunIO.jointi.base_forward) = Qs_GC(idx_GC_base_forward_offset,model_info.ExtFunIO.jointi.base_forward) + dist_trav_opt;
 Qs_GC(:,model_info.ExtFunIO.jointi.base_forward) = Qs_GC(:,model_info.ExtFunIO.jointi.base_forward) - Qs_GC(1,model_info.ExtFunIO.jointi.base_forward);
@@ -1105,6 +1293,17 @@ R.kinematics.Qdots = Qdots_GC;
 R.kinematics.Qddots = Qdotdots_GC;
 R.muscles.a = Acts_GC;
 R.muscles.da = dActs_GC;
+if (S.subject.synergies)
+    R.muscles.SynH_r = SynH_r_GC;   
+    R.muscles.SynH_l = SynH_l_GC;    
+    if strcmp(S.misc.gaitmotion_type,'HalfGaitCycle')
+        R.muscles.SynW_r = SynW_opt;
+        R.muscles.SynW_l = SynW_opt;
+    elseif strcmp(S.misc.gaitmotion_type,'FullGaitCycle')    
+        R.muscles.SynW_r = SynW_r_opt;
+        R.muscles.SynW_l = SynW_l_opt;
+    end
+end
 R.muscles.FTtilde = FTtilde_GC;
 R.muscles.dFTtilde = dFTtilde_GC;
 if nq.torqAct > 0
