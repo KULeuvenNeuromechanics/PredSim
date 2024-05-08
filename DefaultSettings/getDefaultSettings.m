@@ -327,6 +327,16 @@ if isempty(S.solver.CasADi_path) && S.solver.run_as_batch_job
     error('Running a simulation as batch job requires "S.solver.CasADi_path" to contain the CasADi installation folder')
 end
 
+if ~isfield(S.solver,'adaptIG')
+    S.solver.adaptIG = false;
+end
+if ~isfield(S.solver,'adaptIG_max_iter')
+    S.solver.adaptIG_max_iter = 100;
+end
+if ~isfield(S.solver,'adaptIG_tol_ipopt')
+    S.solver.adaptIG_tol_ipopt = 2;
+end
+
 %% subject
 if ~isfield(S,'subject')
     S.subject = [];
@@ -520,6 +530,22 @@ if ~isfield(S.weights,'slack_ctrl')
     S.weights.slack_ctrl = 0.001; 
 end
 
+% weights for optimising initial guess adaptation
+if ~isfield(S.weights,'adaptIG_residuals')
+    S.weights.adaptIG_residuals = 1;
+end
+if ~isfield(S.weights,'adaptIG_collocation')
+    S.weights.adaptIG_collocation = 1;
+end
+if ~isfield(S.weights,'adaptIG_Qs')
+    S.weights.adaptIG_Qs = 1;
+end
+if ~isfield(S.weights,'adaptIG_Qdots')
+    S.weights.adaptIG_Qdots = 1e-3;
+end
+if ~isfield(S.weights,'adaptIG_Qdotdots')
+    S.weights.adaptIG_Qdotdots = 1e-3;
+end
 
 %% OpenSimADOptions
 
