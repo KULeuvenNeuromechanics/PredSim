@@ -1,9 +1,24 @@
-function [guess] = adaptInitialGuess(S, model_info, scaling, guess, d)
+function [guess] = adaptInitialGuess(varargin)
 % --------------------------------------------------------------------------
 % adaptInitialGuess
-%   Explanation of what this function does. Length depends on function 
-%   complexity. Include relevant citations. If applicable, provide an
-%   example and/or refer to a unit test. 
+%   Adapts the kinematics at the initial guess with the aim of improving
+%   convergence of the main simulation.
+%   
+%   The position, velocity and acceleration guesses are adapted by adding
+%   an offset to each value. To the vertical position of the floating base,
+%   we add a second offset which is constant for all timepoints.
+
+%   The values of these offsets are optimised to minimise a multi-objective
+%   costfunction. The different terms are (the squared 2-norm of):
+%       - residuals: inverse dynamics forces and moments on the floating
+%       base (scaled by body weight)
+%       - collocation: error on the relation between derivatives (scaled by
+%       NLP scaling)
+%       - Qs: offsets on the positions (scaled by NLP scaling) Note that the
+%       constant offset on floating base vertical position is not included
+%       in the cost.
+%       - Qdots: offsets on the velocities (scaled by NLP scaling)
+%       - Qdotdots: offsets on the accelerations (scaled by NLP scaling)
 % 
 %
 % INPUT:
@@ -19,9 +34,6 @@ function [guess] = adaptInitialGuess(S, model_info, scaling, guess, d)
 %   - guess -
 %   * initial guess values for all optimisation variables
 %
-%   - d -
-%   * degree of the interpolating polynomial of the collocation scheme
-%
 % OUTPUT:
 %   - guess -
 %   * initial guess values for all optimisation variables
@@ -31,51 +43,24 @@ function [guess] = adaptInitialGuess(S, model_info, scaling, guess, d)
 % --------------------------------------------------------------------------
 
 
-% alternative input: load information from previous result
-if nargin==1
+% [advanced use] detect call with alternative inputs
+if nargin==4
+    S = varargin{1};
+    model_info = varargin{2};
+    scaling = varargin{3};
+    guess = varargin{4};
 
-    Outname = S;
-    load(Outname, 'setup','model_info','R');
-    
-    if exist('R','var')
-        S = R.S;
-    else
-        load(Outname, 'S');
-    end
-    guess = setup.guess;
-    scaling = setup.scaling;
+else
+    [S, model_info, scaling, guess] = inputHelper(varargin{:});
 
-    d = 3;
 end
 
-% weights for objective function
-if ~isfield(S.weights,'adaptIG_residuals')
-    S.weights.adaptIG_residuals = 10;
-end
-if ~isfield(S.weights,'adaptIG_collocation')
-    S.weights.adaptIG_collocation = 1;
-end
-if ~isfield(S.weights,'adaptIG_Qs')
-    S.weights.adaptIG_Qs = 1;
-end
-if ~isfield(S.weights,'adaptIG_Qdots')
-    S.weights.adaptIG_Qdots = 1e-3;
-end
-if ~isfield(S.weights,'adaptIG_Qdotdots')
-    S.weights.adaptIG_Qdotdots = 1e-3;
-end
-
-if ~isfield(S.solver,'adaptIG_max_iter')
-    S.solver.adaptIG_max_iter = 100;
-end
-if ~isfield(S.solver,'adaptIG_tol_ipopt')
-    S.solver.adaptIG_tol_ipopt = 2;
-end
+%%
 
 fprintf("\tStarting optimisation to adapt initial guess...\n\n")
 t0=tic;
 
-%%
+
 import casadi.*
 
 
@@ -100,6 +85,7 @@ if isempty(model_info.ExtFunIO.jointi.base_vertical)
 end
 
 %%
+d = size(guess.Qs_col,1)/(size(guess.Qs,1)-1)
 [~,C,~,~] = CollocationScheme(d,'radau');
 
 h = guess.tf/(size(guess.Qs_col,1)/d);
@@ -333,6 +319,97 @@ guess.Qdots_col = sol.value(Qdots)';
 guess.Qdotdots_col_og = guess.Qdotdots_col;
 guess.Qdotdots_col = sol.value(Qdotdots)';
 
+guess.residuals_og = res_0;
+guess.residuals = res_sol;
 
 
 end % end of function
+
+function [S, model_info, scaling, guess] = inputHelper(options)
+% helper function to use alternative inputs when calling adaptInitialGuess
+% from outside PredSim.
+arguments
+    options.prevRes char {mustBeFile} = [];
+    options.S struct = []
+    options.model_info struct = [];
+    options.scaling struct = [];
+    options.guess struct = [];
+    options.weight_residuals (1,1) double {mustBeNonnegative} = 10;
+    options.weight_collocation (1,1) double {mustBeNonnegative} = 1;
+    options.weight_Qs (1,1) double {mustBeNonnegative} = 1;
+    options.weight_Qdots (1,1) double {mustBeNonnegative} = 1e-3;
+    options.weight_Qdotdots (1,1) double {mustBeNonnegative} = 1e-3;
+    options.solver_max_iter (1,1) double {mustBeNonnegative} = 100;
+    options.solver_tol_ipopt (1,1) double {mustBeNonnegative} = 2;
+end
+
+% initialise S
+S.weights = [];
+S.solver = [];
+
+% load previous result
+if ~isempty(options.prevRes)
+    load(options.prevRes, 'setup','model_info','R');
+    
+    if exist('R','var')
+        S = R.S;
+    else
+        load(options.prevRes, 'S');
+    end
+    guess = setup.guess;
+    scaling = setup.scaling;
+end
+
+if ~isempty(options.S)
+    S = options.S;
+end
+if ~isempty(options.model_info)
+    model_info = options.model_info;
+end
+if ~isempty(options.scaling)
+    scaling = options.scaling;
+end
+if ~isempty(options.guess)
+    guess = options.guess;
+end
+
+% read weights and solver options
+for s=string(fieldnames(options))
+    % weights
+    if contains(s,'weight_')
+        s_w = replace(s,'weight_','');
+        if ~isfield(S.weights,s_w)
+            S.weights.(s_w) = options.(s);
+        end
+    end
+    % solver
+    if contains(s,'solver_')
+        s_s = replace(s,'solver_','');
+        if ~isfield(S.solver,s_s)
+            S.solver.(s_s) = options.(s);
+        end
+    end
+end
+
+if ~exist('guess','var')
+    N = R.S.solver.N_meshes;
+    d = 3;
+    ncoord = model_info.ExtFunIO.jointi.nq.all;
+
+    guess.Qs = zeros(N+1,ncoord);
+    guess.Qdots = zeros(N+1,ncoord);
+    guess.Qdotdots = zeros(N+1,ncoord);
+
+    guess.Qs_col = zeros(N*d,ncoord);
+    guess.Qdots_col = zeros(N*d,ncoord);
+    guess.Qdotdots_col = zeros(N*d,ncoord);
+
+end
+
+if ~exist('scaling','var')
+    scaling.Qs = ones(1,ncoord);
+    scaling.Qdots = ones(1,ncoord);
+    scaling.Qdotdots = ones(1,ncoord);
+end
+
+end % end of inputHelper
