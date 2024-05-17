@@ -93,7 +93,7 @@ else
 end
 
 if S.solver.adaptIG
-    [guess] = adaptInitialGuess(S, model_info, scaling, guess, d);
+    [guess] = adaptInitialGuess(S, model_info, scaling, guess);
 end
 
 if (S.misc.visualize_bounds)
