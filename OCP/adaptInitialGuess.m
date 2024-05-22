@@ -34,6 +34,9 @@ function [guess] = adaptInitialGuess(varargin)
 %   - guess -
 %   * initial guess values for all optimisation variables
 %
+%   - bounds -
+%   * boundaries for all scaled optimisation variables
+%
 % OUTPUT:
 %   - guess -
 %   * initial guess values for all optimisation variables
@@ -44,14 +47,15 @@ function [guess] = adaptInitialGuess(varargin)
 
 
 % [advanced use] detect call with alternative inputs
-if nargin==4
+if nargin==5
     S = varargin{1};
     model_info = varargin{2};
     scaling = varargin{3};
     guess = varargin{4};
+    bounds = varargin{5};
 
 else
-    [S, model_info, scaling, guess] = inputHelper(varargin{:});
+    [S, model_info, scaling, guess, bounds] = inputHelper(varargin{:});
 
 end
 
@@ -85,7 +89,7 @@ if isempty(model_info.ExtFunIO.jointi.base_vertical)
 end
 
 %%
-d = size(guess.Qs_col,1)/(size(guess.Qs,1)-1)
+d = size(guess.Qs_col,1)/(size(guess.Qs,1)-1);
 [~,C,~,~] = CollocationScheme(d,'radau');
 
 h = guess.tf/(size(guess.Qs_col,1)/d);
@@ -129,6 +133,14 @@ Qdotdots = Qdotdots_0 + offset_Qdotdots;
 Qs_nsc = Qs.*(scaling.Qs'*ones(1,size(Qs,2)));
 Qdots_nsc = Qdots.*(scaling.Qdots'*ones(1,size(Qdots,2)));
 Qdotdots_nsc = Qdotdots.*(scaling.Qdotdots'*ones(1,size(Qdotdots,2)));
+
+% contrain bounds
+opti.subject_to(bounds.Qs.lower'*ones(1,size(Qs,2)) < Qs < ...
+    bounds.Qs.upper'*ones(1,size(Qs,2)));
+opti.subject_to(bounds.Qdots.lower'*ones(1,size(Qdots,2)) < Qdots < ...
+    bounds.Qs.upper'*ones(1,size(Qdots,2)));
+opti.subject_to(bounds.Qdotdots.lower'*ones(1,size(Qdotdots,2)) < Qdotdots < ...
+    bounds.Qs.upper'*ones(1,size(Qdotdots,2)));
 
 % Create input vector for external function
 F_ext_input = MX(model_info.ExtFunIO.input.nInputs, size(Qs,2));
@@ -325,7 +337,7 @@ guess.residuals = res_sol;
 
 end % end of function
 
-function [S, model_info, scaling, guess] = inputHelper(options)
+function [S, model_info, scaling, guess, bounds] = inputHelper(options)
 % helper function to use alternative inputs when calling adaptInitialGuess
 % from outside PredSim.
 arguments
@@ -334,6 +346,7 @@ arguments
     options.model_info struct = [];
     options.scaling struct = [];
     options.guess struct = [];
+    options.bounds struct = [];
     options.weight_residuals (1,1) double {mustBeNonnegative} = 10;
     options.weight_collocation (1,1) double {mustBeNonnegative} = 1;
     options.weight_Qs (1,1) double {mustBeNonnegative} = 1;
@@ -358,6 +371,7 @@ if ~isempty(options.prevRes)
     end
     guess = setup.guess;
     scaling = setup.scaling;
+    bounds = setup.bounds
 end
 
 if ~isempty(options.S)
@@ -371,6 +385,9 @@ if ~isempty(options.scaling)
 end
 if ~isempty(options.guess)
     guess = options.guess;
+end
+if ~isempty(options.bounds)
+    bounds = options.bounds;
 end
 
 % read weights and solver options
@@ -410,6 +427,15 @@ if ~exist('scaling','var')
     scaling.Qs = ones(1,ncoord);
     scaling.Qdots = ones(1,ncoord);
     scaling.Qdotdots = ones(1,ncoord);
+end
+
+if ~exist('bounds','var')
+    bounds.Qs.lower = -inf(1,ncoord);
+    bounds.Qs.upper = inf(1,ncoord);
+    bounds.Qdots.lower = -inf(1,ncoord);
+    bounds.Qdots.upper = inf(1,ncoord);
+    bounds.Qdotdots.lower = -inf(1,ncoord);
+    bounds.Qdotdots.upper = inf(1,ncoord);
 end
 
 end % end of inputHelper
