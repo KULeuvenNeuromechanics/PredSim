@@ -7,7 +7,7 @@ function [guess] = adaptInitialGuess(varargin)
 %   The position, velocity and acceleration guesses are adapted by adding
 %   an offset to each value. To the vertical position of the floating base,
 %   we add a second offset which is constant for all timepoints.
-
+%
 %   The values of these offsets are optimised to minimise a multi-objective
 %   costfunction. The different terms are (the squared 2-norm of):
 %       - residuals: inverse dynamics forces and moments on the floating
