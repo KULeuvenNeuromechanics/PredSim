@@ -4,9 +4,8 @@ clc
 
 %%
 casadi_path = casadi.GlobalOptions.getCasadiPath();
-PathCpp2Dll_Exe = 'C:\GBW_MyPrograms\Osim2Dll_exe';
 
-computer_options = {'casadi_path',casadi_path, 'PathCpp2Dll_Exe',PathCpp2Dll_Exe};
+computer_options = {'casadi_path',casadi_path};
 
 
 test1_options = {'max_iter',5, 'compare_result',false};
