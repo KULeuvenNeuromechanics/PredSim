@@ -16,38 +16,49 @@
 | Field | Description | Dimension | Unit |
 |------ | ----------- | ---- | ---- |
 | mesh | timestamps of mesh points of simulation | 1 x (mesh + 1) | [s] |
-| coll | timestamps of mesh and collocation points of simulation | 1 x (mesh*collocatio_order + 1) | [s] |
-| mesh_GC | timestamps of mesh points of gait cycle | 1 x mesh [^1] | [s] |
+| coll | timestamps of mesh and collocation points of simulation | 1 x (mesh*collocation_order + 1) | [s] |
+| mesh_GC | timestamps of mesh points of gait cycle | 1 x mesh[^1] | [s] |
 
 ### R.colheaders
 | Field | Description | Dimension | Unit |
 |------ | ----------- | ---- | ---- |
-| coordinates | names of the coordinates, in the order that they are stored in the matrices with results | [text] |
-| muscles | names of the muscles, in the order that they are stored in the matrices with results | [text] |
-| objective | names of the objective terms, in the order that they are stored in the matrices with results | [text] |
-| GRF | names of the ground reaction forces directions, in the order that they are stored in the matrices with results | [text] |
+| coordinates | names of the coordinates, in the order that they are stored in the matrices with results | 1 x coordinates | [text] |
+| muscles | names of the muscles, in the order that they are stored in the matrices with results | 1 x muscles | [text] |
+| objective | names of the objective terms, in the order that they are stored in the matrices with results | 1 x 8 | [text] |
+| GRF | names of the ground reaction forces directions, in the order that they are stored in the matrices with results | 1 x 3 | [text] |
 
 ### R.kinematics
 | Field | Description | Dimension | Unit |
 |------ | ----------- | ---- | ---- |
-| Qs | coordinate positions | [° or m] |
-| Qdots | coordinate velocities | [°/s or m/s] |
-| Qdotdots | coordinate accelerations | [°/s^2 or m/s^2] |
-| Qs_rad | coordinate positions | [rad or m] |
-| Qdots_rad | coordinate velocities | [rad/s or m/s] |
-| Qdotdots_rad | coordinate accelerations | [rad/s^2 or m/s^2] |
+| Qs | coordinate positions | mesh[^1] x coordinates | [° or m] |
+| Qdots | coordinate velocities | mesh[^1] x coordinates | [°/s or m/s] |
+| Qdotdots | coordinate accelerations | mesh[^1] x coordinates | [°/s^2 or m/s^2] |
+| Qs_rad | coordinate positions | mesh[^1] x coordinates | [rad or m] |
+| Qdots_rad | coordinate velocities | mesh[^1] x coordinates | [rad/s or m/s] |
+| Qdotdots_rad | coordinate accelerations | mesh[^1] x coordinates | [rad/s^2 or m/s^2] |
 
 ### R.muscles
 | Field | Description | Dimension | Unit |
 |------ | ----------- | ---- | ---- |
-| a | activation | [-] |
-| da | time derivative of activation | [1/s] |
-| FTtilde | force at the tendon (normalised to FMo) | [-] |
-| dFTtilde | time derivative of force at the tendon (normalised to FMo) | [1/s] |
-| e | excitation | [-] |
-| lMT | muscle-tendon length | [m] |
-| vMT | muscle-tendon lengthening velocity | [m/s] |
-| dM | muscle-tendon length | [m] |
+| a | muscle activation | mesh[^1] x muscles | [-] |
+| da | time derivative of activation | mesh[^1] x muscles | [1/s] |
+| FTtilde | force at the tendon (normalised to FMo) | mesh[^1] x muscles | [-] |
+| dFTtilde | time derivative of force at the tendon (normalised to FMo) | mesh[^1] x muscles | [1/s] |
+| e | muscle excitation | mesh[^1] x muscles | [-] |
+| lMT | muscle-tendon length | mesh[^1] x muscles | [m] |
+| vMT | muscle-tendon lengthening velocity | mesh[^1] x muscles | [m/s] |
+| dM | muscle-tendon length | mesh[^1] x muscles x coordinates | [m] |
+| FT | force at the tendon  | mesh[^1] x muscles | [N] |
+| Fce | force of the contractile element (CE)  | mesh[^1] x muscles | [N] |
+| Fpass | force of the parallel elasticity (PE)  | mesh[^1] x muscles | [N] |
+| Fiso | max isometric force of the contractile element (CE) (normalised to FMo) | mesh[^1] x muscles | [-] |
+| lM | muscle fibre length | mesh[^1] x muscles | [m] |
+| lMtilde | muscle fibre length (normalised to lMo) | mesh[^1] x muscles | [-] |
+| vM | muscle fibre lengthening velocity | mesh[^1] x muscles | [m/s] |
+| vMtilde | muscle fibre lengthening velocity (normalised to vMmax) | mesh[^1] x muscles | [1/s] |
+| lT | tendon length | mesh[^1] x muscles | [m] |
+| vT | tendon lengthening velocity | mesh[^1] x muscles | [m/s] |
+
 
 
 <img src="./Hill-type%20muscle%20model.svg" width="400" height="auto">
@@ -57,6 +68,12 @@ Hill-type muscle
 
 
 ### R.torque_actuators
+| Field | Description | Dimension | Unit |
+|------ | ----------- | ---- | ---- |
+| a | actuator activation | mesh[^1] x actuators | [-] |
+| e | actuator excitation | mesh[^1] x actuators | [-] |
+| T | actuator torque | mesh[^1] x actuators | [-] |
+
 
 ### R.ground_reaction
 
