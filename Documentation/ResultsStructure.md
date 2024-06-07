@@ -76,10 +76,24 @@ Hill-type muscle
 
 
 ### R.ground_reaction
+| Field | Description | Dimension | Unit |
+|------ | ----------- | ---- | ---- |
+| GRF_r | ground reaction forces right side | mesh[^1] x 3 | [N] |
+| GRF_l | ground reaction forces left side | mesh[^1] x 3 | [N] |
+| GRM_r | ground reaction moments right side | mesh[^1] x 3 | [Nm] |
+| GRM_l | ground reaction moments left side | mesh[^1] x 3 | [Nm] |
+| COP_r | centre of pressure right side (in ground frame) | mesh[^1] x 3 | [m] |
+| COP_l | centre of pressure left side (in ground frame) | mesh[^1] x 3 | [m] |
+| idx_stance_r | indices of meshpoints with ground contact on right side | <mesh[^1] x 1 | [-] |
+| idx_stance_l | indices of meshpoints with ground contact on left side | <mesh[^1] x 1 | [-] |
 
 ### R.misc
 
 ### R.kinetics
+| Field | Description | Dimension | Unit |
+|------ | ----------- | ---- | ---- |
+| T_ID | inverse dynamics (inertial and contact) | mesh[^1] x coordinates | [Nm or N] |
+| T_spring | coordinate moments by springs | mesh[^1] x coordinates | [Nm or N] |
 
 ### R.spatiotemp
 
