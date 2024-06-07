@@ -71,7 +71,7 @@ S.solver.run_as_batch_job = 0;
 % S.misc.gaitmotion_type = 'FullGaitCycle';
 
 % % S.post_process
-S.post_process.make_plot = 1;
+S.post_process.make_plot = 0;
 % S.post_process.savename  = 'datetime';
 % S.post_process.load_prev_opti_vars = 1;
 % S.post_process.rerun   = 1;
@@ -80,12 +80,12 @@ S.post_process.make_plot = 1;
 % % S.solver
 % S.solver.linear_solver  = '';
 % S.solver.tol_ipopt      = ;
-% S.solver.max_iter       = 5;
+S.solver.max_iter       = 5;
 % S.solver.parallel_mode  = '';
 % S.solver.N_threads      = 6;
 % S.solver.N_meshes       = 100;
 % S.solver.par_cluster_name = ;
-% S.solver.CasADi_path    = 'C:\GBW_MyPrograms\casadi_3_5_5';
+S.solver.CasADi_path    = 'C:\Users\febre\Documents\MATLAB\casadi-3.6.5-windows64-matlab2018b'; %'C:\GBW_MyPrograms\casadi_3_5_5';
 
 
 % % S.subject
@@ -118,6 +118,42 @@ S.subject.v_pelvis_x_trgt   = 1.33;
 % S.weights.a         = 10*18;
 % S.weights.slack_ctrl = ;
 % S.weights.pass_torq_includes_damping = ;
+
+
+%% Example muscle synergies
+
+% Muscle synergies
+S.subject.synergies = 1; % 1 = implement muscle synergies
+S.NSyn_r = 4;
+S.NSyn_l = 4; % if half cycle (symmetric) should be the same as NSyn_l
+% (for now, this is not automatic) TO DO
+S.weights.Syn_constr = 1e4; % cost function weight for (a-WH)^2
+S.SynConstrLower = -0.001;
+S.SynConstrUpper = 0.001;
+S.misc.gaitmotion_type = 'HalfGaitCycle'; %'FullGaitCycle';
+S.sim_name = 'Syn_4R_4L_HalfCycle_trackWeightsPitto2020'; % No estic segura de si ho agafa
+
+S.Syn_cf_knownSynW = 1; % TO DO: "organise" this a little bit better
+% by default, zero?
+% S.Syn_cf_knownSynW_r = 0;
+% S.Syn_cf_knownSynW_l = 0;  
+% load('Pitto2020_4Syn.mat');
+% Define weights from Pitto et al. 2020
+
+Pitto2020_4Syn = [0 0.1 0.6 0 0.2 0.95 1 0.15;...
+    0.28 0.1 0.4 0 1 0.08 0.05 0;...
+    0 0.05 0.15 1 0.01 0.04 0 0.04;...
+    0.75 0.8 0.2 0 0 0.03 0.05 1]; % 
+S.knownSynW = [Pitto2020_4Syn(:,1),...
+    Pitto2020_4Syn(:,2),...
+    Pitto2020_4Syn(:,3),Pitto2020_4Syn(:,3),...
+    Pitto2020_4Syn(:,4),Pitto2020_4Syn(:,4),...
+    Pitto2020_4Syn(:,5),...
+    Pitto2020_4Syn(:,6),Pitto2020_4Syn(:,6),...
+    Pitto2020_4Syn(:,7),...
+    Pitto2020_4Syn(:,8),Pitto2020_4Syn(:,8),Pitto2020_4Syn(:,8)]';
+S.knownSynW_idx = [28 31 9 10 7 8 38 32 33 34 1 2 3]; % TO DO: make this more "automatic"
+S.weights.knownSynW = 1e2;
 
 % %S.OpenSimADOptions: required inputs to convert .osim to .dll
 % S.OpenSimADOptions.compiler = 'Visual Studio 17 2022';

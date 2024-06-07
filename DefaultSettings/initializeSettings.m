@@ -41,7 +41,7 @@ S.bounds.t_final    = [];
 S.misc.poly_order = [];
 
 % save the git hash
-[S.misc.git.local_hash,S.misc.git.branch_name, S.misc.git.remote_hash] = get_git_hash;
+% [S.misc.git.local_hash,S.misc.git.branch_name, S.misc.git.remote_hash] = get_git_hash;
 
 % initiate for warning
 S.subject.adapt_IG_pelvis_y = 0;
