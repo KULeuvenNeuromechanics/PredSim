@@ -49,13 +49,13 @@ For this repository the Git Bash commands are:
     ```
     > When you push, do so on `origin` with `git push origin`.
    
-    > When you want to pull changes from `upstream` you can just fetch the remote and rebase on top of your work.
+    > When you want to pull changes from `upstream` you can just fetch the remote and merge on top of your work.
     ```bash
     git fetch upstream
 	git checkout local_branch_to_update
-    git rebase upstream/upstream_branch_to_update_from
+    git merge upstream/upstream_branch_to_update_from
     ```
-    And solve the conflicts if any.
+    And solve the conflicts if any. You can also opt to do rebase instead of a merge, but this rewrites the git history. For more details on the difference between merge and rebase, see e.g.  https://stackoverflow.com/questions/16666089/whats-the-difference-between-Git-merge-and-git-rebase
 
  7. If you use GitHub Desktop, you have to add PredSim_private to the list of repositories:
    - Current repository
