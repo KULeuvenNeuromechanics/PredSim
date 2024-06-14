@@ -241,6 +241,8 @@ This code can automatically convert an OpenSim model to the external function us
 	- number of threads in parallel mode. Default is *4* [double]. When using batch computing, this value is overwritten with the number of threads assigned to each worker in you parallel cluster.
 - **S.solver.N_meshes**: 
 	- number of mesh intervals. Default is *50* [double] for S.misc.gaitmotion_type = HalfGaitCycle and *100* for FullGaitCycle
+- **S.solver.adaptIG**:
+	- use automatic adaptation of initial guess kinematics with the aim of improving convergence. Default is *true* [logical]. Use S.solver.adaptIG_max_iter, S.solver.adaptIG_tol_ipopt, S.weights.adaptIG_residuals, S.weights.adaptIG_collocation, S.weights.adaptIG_Qs, S.weights.adaptIG_Qdots, and S.weights.adaptIG_Qdotdots to configure the adaptation.
 
 #### S.subject
 
