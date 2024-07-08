@@ -1,4 +1,4 @@
-function [] = runTestSimulation(model_name, varargin)
+function [] = runTestSimulation(model_name, options)
 % --------------------------------------------------------------------------
 % runTestSimulation
 %   Run a simulation and compare the outcome to a reference.
@@ -11,13 +11,13 @@ function [] = runTestSimulation(model_name, varargin)
 %   - options (optional) -
 %   * Options to configure the test. [name-value pairs]
 %   List of options:
-%       - run_as_batch_job  see S.solver.run_as_batch_job
-%       - PathCpp2Dll_Exe   see S.Cpp2Dll.PathCpp2Dll_Exe
-%       - CasADi_path       see S.solver.CasADi_path
-%       - Cpp2Dll_compiler  see S.Cpp2Dll.compiler
-%       - max_iter          see S.solver.max_iter
+%       - run_as_batch_job  see S.solver.run_as_batch_job Default is false
+%       - CasADi_path       see S.solver.CasADi_path Default is []
+%       - OpenSimAD_compiler  see S.OpenSimADOptions.compiler Default is []
+%       - OpenSimAD_verbose_mode see S.OpenSimADOptions.verbose_mode
+%       - max_iter          see S.solver.max_iter Default is 10000
 %       - mode  'paper': use settings from the paper of the model, 
-%           'fast': use settings for faster simulation Default is 'paper'
+%               'fast': use settings for faster simulation Default is 'paper'
 %       - compare_printout  compare ipopt printout. Default is true. Needs
 %       only a few iterations, but can give false negatives.
 %       - compare_result    compare result. Default is true. Reliable, but
@@ -31,45 +31,18 @@ function [] = runTestSimulation(model_name, varargin)
 % Original date: 4/January/2024
 % --------------------------------------------------------------------------
 
-%% options
-run_as_batch_job = false;
-PathCpp2Dll_Exe = [];
-CasADi_path = [];
-Cpp2Dll_compiler = [];
-max_iter = -1;
-mode = 'paper'; % paper, fast
-compare_printout = true;
-compare_result = true;
-for i=1:length(varargin)
-    if strcmpi(varargin{i},'run_as_batch_job')
-        run_as_batch_job = varargin{i+1};
-    end
-    if strcmpi(varargin{i},'PathCpp2Dll_Exe')
-        PathCpp2Dll_Exe = varargin{i+1};
-    end
-    if strcmpi(varargin{i},'CasADi_path')
-        CasADi_path = varargin{i+1};
-    end
-    if strcmpi(varargin{i},'Cpp2Dll_compiler')
-        Cpp2Dll_compiler = varargin{i+1};
-    end
-    if strcmpi(varargin{i},'max_iter')
-        max_iter = varargin{i+1};
-    end
-    if strcmpi(varargin{i},'mode')
-        mode = varargin{i+1};
-    end
-    if strcmpi(varargin{i},'compare_printout')
-        compare_printout = varargin{i+1};
-    end
-    if strcmpi(varargin{i},'compare_result')
-        compare_result = varargin{i+1};
-    end
-
+arguments
+    model_name char
+    options.run_as_batch_job (1,1) logical = false;
+    options.CasADi_path char = [];
+    options.OpenSimAD_compiler char = [];
+    options.OpenSimAD_verbose_mode (1,1) logical = false;
+    options.max_iter (1,1) double = 10000;
+    options.mode char {mustBeMember(options.mode,{'paper','fast'})} = 'paper';
+    options.compare_printout (1,1) logical = true;
+    options.compare_result (1,1) logical = true;
 end
 
-model_name = char(model_name);
-model = char(mode);
 
 %% Configure settings for simulation
 
@@ -83,13 +56,17 @@ addpath(pathDefaultSettings)
 addpath(fullfile(pathRepo,'VariousFunctions'))
 
 % load reference result
-res_ref = load(fullfile(pathTestDir,'ReferenceResults',model_name,[model_name,'_',mode,'.mat']),'R','model_info');
+res_ref = load(fullfile(pathTestDir,'ReferenceResults',model_name,[model_name,'_',options.mode,'.mat']),'R','model_info');
 R_ref = res_ref.R;
 
 
 % Initialize S
 S = R_ref.S;
 
+% Handle case where reference results where run with old OpenSimAD integration
+if ~isfield(S,'OpenSimADOptions') && isfield(S,'Cpp2Dll')
+    S.OpenSimADOptions = S.Cpp2Dll;
+end
 
 % Store result of test simulation in Debug folder
 if ~isfolder(fullfile(pathRepo,'Debug'))
@@ -110,30 +87,29 @@ osim_path = replace(res_ref.model_info.osim_path, S.misc.main_path, pathRepo);
 S.misc.main_path = pathRepo;
 
 
-if ~isempty(PathCpp2Dll_Exe)
-    S.Cpp2Dll.PathCpp2Dll_Exe = InstallOsim2Dll_Exe(PathCpp2Dll_Exe);
-end
-if ~isempty(CasADi_path)
-    S.solver.CasADi_path = CasADi_path;
+if ~isempty(options.CasADi_path)
+    S.solver.CasADi_path = options.CasADi_path;
 else
     S.solver = rmfield(S.solver,'CasADi_path');
 end
-if ~isempty(Cpp2Dll_compiler)
-    S.Cpp2Dll.compiler = Cpp2Dll_compiler;
+if ~isempty(options.OpenSimAD_compiler)
+    S.OpenSimADOptions.compiler = options.OpenSimAD_compiler;
 else
-    S.Cpp2Dll = rmfield(S.Cpp2Dll,'compiler');
+    S.OpenSimADOptions = rmfield(S.OpenSimADOptions,'compiler');
 end
-if max_iter > 0
-    S.solver.max_iter = max_iter;
+if options.max_iter > 0
+    S.solver.max_iter = options.max_iter;
 end
+
+S.OpenSimADOptions.verbose_mode = options.OpenSimAD_verbose_mode;
 
 %% run test simulation
 
-if run_as_batch_job
-    jobRunTest =@(S,osim_path) runTest(S,osim_path, model_name,mode,result_filename,compare_result,compare_printout,pathTestDir);
+if options.run_as_batch_job
+    jobRunTest =@(S,osim_path) runTest(S,osim_path, model_name,options.mode,result_filename,options.compare_result,options.compare_printout,pathTestDir);
     add_pred_sim_to_batch(S,osim_path,jobRunTest);
 else
-    runTest(S,osim_path, model_name,mode,result_filename,compare_result,compare_printout,pathTestDir);
+    runTest(S,osim_path, model_name,options.mode,result_filename,options.compare_result,options.compare_printout,pathTestDir);
 end
 
 cd(pathTestDir);
@@ -255,12 +231,18 @@ if compare_printout
 end
 
 %%
-% options = [{model_name},varargin];
-% celldisp(options);
+
 if test_success
-    fprintf('Test successful\n\n');
+    fprintf(['\n=====================================================\n',...
+        '|\t\t\t\t\tTest successful\t\t\t\t\t|',...
+        '\n=====================================================\n\n']);
+
 else
-    error('Test failed')
+    f_geom_path = fullfile(S.misc.subject_path, S.misc.msk_geom_name);
+    f_ID_path = fullfile(S.misc.subject_path, S.misc.external_function);
+
+    error(['\nTest failed\n\tTry removing (or renaming or moving) ',...
+        '"%s" and "%s" and rerun the test.\n'], f_geom_path, f_ID_path)
 end
 
 
