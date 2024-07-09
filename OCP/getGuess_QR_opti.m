@@ -76,6 +76,8 @@ guess.a = 0.1*ones(N,NMuscle);
 guess.vA = 0.01*ones(N,NMuscle);
 guess.FTtilde = 0.1*ones(N,NMuscle);
 guess.dFTtilde = 0.01*ones(N,NMuscle);
+guess.SynH = 0.1*ones(N,NMuscle);
+guess.SynW = 0.2;
 
 %% Torque actuator activations
 guess.a_a = 0.1*ones(N,nq.torqAct);

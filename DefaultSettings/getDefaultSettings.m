@@ -120,6 +120,12 @@ if ~isfield(S.bounds,'distanceConstraints')
     S.bounds.distanceConstraints = [];
 end
 
+% bounds on synergy constraints, (a-WH)^2
+if ~isfield(S.bounds,'SynConstr')
+    S.bounds.SynConstr.lower = -0.001;
+    S.bounds.SynConstr.upper = 0.001;
+end
+
 %% metabolicE
 if ~isfield(S,'metabolicE')
     S.metabolicE = [];
@@ -474,6 +480,16 @@ if ~isfield(S.subject,'base_joints_arms')
     S.subject.base_joints_arms = 'acromial';
 end
 
+% If synergies are implemented in the simulation
+if ~isfield(S.subject,'synergies')
+    S.subject.synergies = 0;
+end
+
+% If synergy weights are tracked in the simulation
+if ~isfield(S.subject,'TrackSynW')
+    S.subject.TrackSynW = 0;
+end
+
 %% weights
 if ~isfield(S,'weights')
     S.weights = [];
@@ -518,6 +534,16 @@ end
 % weight on slack controls
 if ~isfield(S.weights,'slack_ctrl')
     S.weights.slack_ctrl = 0.001; 
+end
+
+% weight on synergy constraint, (a-WH)^2
+if ~isfield(S.weights,'SynConstr')
+    S.weights.SynConstr = 1e4; 
+end
+
+% weight on synergy weights tracking
+if ~isfield(S.weights,'TrackSynW')
+    S.weights.TrackSynW = 1e2; 
 end
 
 

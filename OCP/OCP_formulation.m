@@ -19,8 +19,8 @@ function [] = OCP_formulation(S,model_info,f_casadi)
 % Original author: Dhruv Gupta and Lars D'Hondt
 % Original date: January-May/2022
 %
-% Last edit by: Míriam Febrer (add synergies)
-% Last edit date: May/2024
+% Last edit by:
+% Last edit date:
 % --------------------------------------------------------------------------
 
 disp('Start formulating OCP...')
@@ -72,12 +72,10 @@ sumCross = sum(model_info.muscle_info.muscle_spanning_joint_info);
 tact = model_info.muscle_info.tact; % Activation time constant
 tdeact = model_info.muscle_info.tdeact; % Deactivation time constant
 
-% Muscles indices for synergies
-if (S.subject.synergies) % for reading right - left synergies results
-    % hard-coded for 3D model 'Falisse_et_al_2022'
-    % TO DO: automate this
-    idx_m_r = [1:43,87,89,91];
-    idx_m_l = [44:86,88,90,92];
+% Muscles indices for reading synergies
+if (S.subject.synergies) 
+    idx_m_r = S.subject.idx_m_r;
+    idx_m_l = S.subject.idx_m_l;
 end
 
 %% Metabolic energy model parameters
@@ -206,43 +204,54 @@ opti.set_initial(A_col, guess.Qdotdots_col');
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% If Muscle synergies, add additional variables
-if (S.subject.synergies)
-    
-    % Additional states: Synergy activations at mesh points (right and left independently)
-    
-    % Right synergy activations at mesh points
-    SynH_r = opti.variable(S.NSyn_r,N+1);
-    % Bounds and initial guess from muscle activations (this could be
-    % modified)
-    opti.subject_to(bounds.a.lower(1:S.NSyn_r)'*ones(1,N+1) < SynH_r < ...
-        bounds.a.upper(1:S.NSyn_r)'*ones(1,N+1));
-    opti.set_initial(SynH_r, guess.a(:,1:S.NSyn_r)');
-       
-    % Left synergy activations at mesh points (left)
-    SynH_l = opti.variable(S.NSyn_l,N+1);
-    opti.subject_to(bounds.a.lower(1:S.NSyn_l)'*ones(1,N+1) < SynH_l < ...
-        bounds.a.upper(1:S.NSyn_l)'*ones(1,N+1));
-    opti.set_initial(SynH_l, guess.a(:,1:S.NSyn_l)');   
-   
-    % Additional parameters
+% If Muscle synergies, add additional variables:
+    % Synergy activations as states at mesh points (right and left independently)
     % Synergy weights as static parameters (constant in time)
-        % Bounded between 0 and 1
-        % IG 0.2 (random, could be another value if it makes sense)
-    if strcmp(S.misc.gaitmotion_type,'HalfGaitCycle') % same weights right and left
+if (S.subject.synergies)        
+    if strcmp(S.misc.gaitmotion_type,'HalfGaitCycle') % Same number of synergies right and left
+
+        % Right synergy activations at mesh points
+        SynH_r = opti.variable(S.subject.NSyn,N+1);
+        opti.subject_to(bounds.SynH.lower(1:S.subject.NSyn)'*ones(1,N+1) < SynH_r < ...
+            bounds.SynH.upper(1:S.subject.NSyn)'*ones(1,N+1));
+        opti.set_initial(SynH_r, guess.SynH(:,1:S.subject.NSyn)');
+
+        % Left synergy activations at mesh points
+        SynH_l = opti.variable(S.subject.NSyn,N+1);
+        opti.subject_to(bounds.SynH.lower(1:S.subject.NSyn)'*ones(1,N+1) < SynH_l < ...
+            bounds.SynH.upper(1:S.subject.NSyn)'*ones(1,N+1));
+        opti.set_initial(SynH_l, guess.SynH(:,1:S.subject.NSyn)');
+
+        % Synergy weights
+        SynW = opti.variable(NMuscle/2,S.subject.NSyn);
+        opti.subject_to(bounds.SynW.lower*ones(NMuscle/2,S.subject.NSyn) < SynW < bounds.SynW.upper*ones(NMuscle/2,S.subject.NSyn));
+        opti.set_initial(SynW,  guess.SynW*ones(NMuscle/2,S.subject.NSyn));
+
+    elseif strcmp(S.misc.gaitmotion_type,'FullGaitCycle')
+
+        % Right synergy activations at mesh points
+        SynH_r = opti.variable(S.subject.NSyn_r,N+1);
+        % Bounds and initial guess from muscle activations (this could be
+        % modified)
+        opti.subject_to(bounds.SynH.lower(1:S.subject.NSyn_r)'*ones(1,N+1) < SynH_r < ...
+            bounds.SynH.upper(1:S.subject.NSyn_r)'*ones(1,N+1));
+        opti.set_initial(SynH_r, guess.SynH(:,1:S.subject.NSyn_r)');
+
+        % Left synergy activations at mesh points (left)
+        SynH_l = opti.variable(S.subject.NSyn_l,N+1);
+        opti.subject_to(bounds.SynH.lower(1:S.subject.NSyn_l)'*ones(1,N+1) < SynH_l < ...
+            bounds.SynH.upper(1:S.subject.NSyn_l)'*ones(1,N+1));
+        opti.set_initial(SynH_l, guess.SynH(:,1:S.subject.NSyn_l)');
+
+        % Right synergy weights
+        SynW_r = opti.variable(NMuscle/2,S.subject.NSyn_r);
+        opti.subject_to(bounds.SynW.lower*ones(NMuscle/2,S.subject.NSyn_r) < SynW_r < bounds.SynW.upper*ones(NMuscle/2,S.subject.NSyn_r));
+        opti.set_initial(SynW_r, guess.SynW*ones(NMuscle/2,S.subject.NSyn_r));
         
-        SynW = opti.variable(NMuscle/2,S.NSyn_r);
-        opti.subject_to(zeros(NMuscle/2,S.NSyn_r) < SynW < ones(NMuscle/2,S.NSyn_r));
-        opti.set_initial(SynW, 0.2*ones(NMuscle/2,S.NSyn_r));
-        
-    elseif strcmp(S.misc.gaitmotion_type,'FullGaitCycle') % independent weights right and left
-        SynW_r = opti.variable(NMuscle/2,S.NSyn_r);
-        opti.subject_to(zeros(NMuscle/2,S.NSyn_r) < SynW_r < ones(NMuscle/2,S.NSyn_r));
-        opti.set_initial(SynW_r, 0.2*ones(NMuscle/2,S.NSyn_r));
-        
-        SynW_l = opti.variable(NMuscle/2,S.NSyn_l);
-        opti.subject_to(zeros(NMuscle/2,S.NSyn_l) < SynW_l < ones(NMuscle/2,S.NSyn_l));
-        opti.set_initial(SynW_l, 0.2*ones(NMuscle/2,S.NSyn_l));
+        % Left synergy weights
+        SynW_l = opti.variable(NMuscle/2,S.subject.NSyn_l);
+        opti.subject_to(bounds.SynW.lower*ones(NMuscle/2,S.subject.NSyn_l) < SynW_l < bounds.SynW.upper*ones(NMuscle/2,S.subject.NSyn_l));
+        opti.set_initial(SynW_l, guess.SynW*ones(NMuscle/2,S.subject.NSyn_l));
     end
 end
 
@@ -278,16 +287,17 @@ dFTtildej   = MX.sym('dFTtildej',NMuscle,d);
 Aj          = MX.sym('Aj',nq.all,d);
 
 % If muscle synergies, define CasADi variables for additional variables
-if (S.subject.synergies)    
-    % synergy activations, right and left
-    SynH_rk          = MX.sym('SynH_rk',S.NSyn_r);
-    SynH_lk          = MX.sym('SynH_lk',S.NSyn_l);
+if (S.subject.synergies)
     % Synergy weights
-    if strcmp(S.misc.gaitmotion_type,'HalfGaitCycle') % same weights right and left
-        SynW_k         = MX.sym('SynW_k',NMuscle/2,S.NSyn_r);
-    elseif strcmp(S.misc.gaitmotion_type,'FullGaitCycle') % independent weights right and left
-        SynW_rk         = MX.sym('SynW_rk',NMuscle/2,S.NSyn_r);
-        SynW_lk         = MX.sym('SynW_lk',NMuscle/2,S.NSyn_l);
+    if strcmp(S.misc.gaitmotion_type,'HalfGaitCycle') 
+        SynH_rk          = MX.sym('SynH_rk',S.subject.NSyn);
+        SynH_lk          = MX.sym('SynH_lk',S.subject.NSyn);
+        SynW_k         = MX.sym('SynW_k',NMuscle/2,S.subject.NSyn);
+    elseif strcmp(S.misc.gaitmotion_type,'FullGaitCycle') 
+        SynH_rk          = MX.sym('SynH_rk',S.subject.NSyn_r);
+        SynH_lk          = MX.sym('SynH_lk',S.subject.NSyn_l);
+        SynW_rk         = MX.sym('SynW_rk',NMuscle/2,S.subject.NSyn_r);
+        SynW_lk         = MX.sym('SynW_lk',NMuscle/2,S.subject.NSyn_l);
     end
 end
 
@@ -406,7 +416,7 @@ for j=1:d
             syn_constr_k_r = ak(idx_m_r) - SynW_rk*SynH_rk;
             syn_constr_k_l = ak(idx_m_l) - SynW_lk*SynH_lk;
         end
-        J = J + W.Syn_constr * B(j+1) *(f_casadi.J_muscles([syn_constr_k_r;syn_constr_k_l]))*h;   
+        J = J + W.SynConstr * B(j+1) *(f_casadi.J_muscles([syn_constr_k_r;syn_constr_k_l]))*h;   
     end
     
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -521,26 +531,65 @@ for j=1:d
 
 end % End loop over collocation points
 
-% If synergy weights are tracked
+% Add tracking terms in the cost function if synergy weights are tracked
+% Here we select the weights that we want to impose/track 
+% (there are no conditions/constraints applied to the other weights)
 if (S.subject.synergies)
-    if (S.Syn_cf_knownSynW)
-        if strcmp(S.misc.gaitmotion_type,'HalfGaitCycle') % same weights right and left 
-            
-        SynW_k_sel = SynW_k(S.knownSynW_idx,:); % select the weights that
-        % we want to impose/track (there are no conditions/constraints applied to the other weights)
+    if (S.subject.TrackSynW)
+        if strcmp(S.misc.gaitmotion_type,'HalfGaitCycle') % same weights right and left             
+        SynW_k_sel = SynW_k(S.subject.knownSynW_idx,:); 
         Jtemp = 0;
-        for i = 1:S.NSyn_r
-            for k = 1:length(S.knownSynW_idx)
-                Jtemp = Jtemp + (SynW_k_sel(k,i)-S.knownSynW(k,i)).^2;
+        for i = 1:S.subject.NSyn
+            for k = 1:length(S.subject.knownSynW_idx)
+                Jtemp = Jtemp + (SynW_k_sel(k,i)-S.subject.knownSynW(k,i)).^2;
             end
         end
-        Jtemp = Jtemp/(length(S.knownSynW_idx)); % should we divide by another value?
-        % for now, I divide by the number of muscles for which we know weights
-        % (but maybe this should be multiplied by the number of synergies)
-        J = J + W.knownSynW * Jtemp;
+        Jtemp = Jtemp/(length(S.subject.knownSynW_idx)); 
+        J = J + W.TrackSynW * Jtemp;                    
+        
+        elseif strcmp(S.misc.gaitmotion_type,'FullGaitCycle') % Options: Track only right, only left, or both
+            switch S.subject.TrackSynW_side
+                case 'onlyRight'
+                    SynW_rk_sel = SynW_rk(S.subject.knownSynW_idx_r,:); 
+                    Jtemp = 0;
+                    for i = 1:S.subject.NSyn_r
+                        for k = 1:length(S.subject.knownSynW_idx_r)
+                            Jtemp = Jtemp + (SynW_rk_sel(k,i)-S.subject.knownSynW_r(k,i)).^2;
+                        end
+                    end
+                    Jtemp = Jtemp/(length(S.subject.knownSynW_idx_r)); 
+                    J = J + W.TrackSynW * Jtemp;
+                case 'onlyLeft'
+                    SynW_lk_sel = SynW_lk(S.subject.knownSynW_idx_l,:); 
+                    Jtemp = 0;
+                    for i = 1:S.subject.NSyn_l
+                        for k = 1:length(S.subject.knownSynW_idx_l)
+                            Jtemp = Jtemp + (SynW_lk_sel(k,i)-S.subject.knownSynW_l(k,i)).^2;
+                        end
+                    end
+                    Jtemp = Jtemp/(length(S.subject.knownSynW_idx_l)); 
+                    J = J + W.TrackSynW * Jtemp;
+                case 'RightLeft'                                        
+                    SynW_rk_sel = SynW_rk(S.subject.knownSynW_idx_r,:); 
+                    Jtemp = 0;
+                    for i = 1:S.NSyn_r
+                        for k = 1:length(S.subject.knownSynW_idx_r)
+                            Jtemp = Jtemp + (SynW_rk_sel(k,i)-S.subject.knownSynW_r(k,i)).^2;
+                        end
+                    end
+                    Jtemp = Jtemp/(length(S.subject.knownSynW_idx_r)); 
+                    J = J + W.TrackSynW * Jtemp;
                     
-        elseif strcmp(S.misc.gaitmotion_type,'FullGaitCycle')
-            % TO DO: here we can track both, only right or only left
+                    SynW_lk_sel = SynW_lk(S.subject.knownSynW_idx_l,:); 
+                    Jtemp = 0;
+                    for i = 1:S.NSyn_l
+                        for k = 1:length(S.subject.knownSynW_idx_l)
+                            Jtemp = Jtemp + (SynW_lk_sel(k,i)-S.subject.knownSynW_l(k,i)).^2;
+                        end
+                    end
+                    Jtemp = Jtemp/(length(S.subject.knownSynW_idx_l)); 
+                    J = J + W.TrackSynW * Jtemp;
+            end
         end
     end
 end
@@ -593,7 +642,6 @@ if nq.torqAct > 0
     coll_input_vars_eval = [coll_input_vars_eval, {a_a(:,1:end-1), a_a_col, e_a}];
 end
 coll_ineq_constr_distance = cell(1,length(ineq_constr_distance));
-% [coll_eq_constr,coll_ineq_constr_deact,coll_ineq_constr_act,coll_ineq_constr_distance{:},Jall] = f_coll_map(coll_input_vars_eval{:});
 
 if (S.subject.synergies)    
     if strcmp(S.misc.gaitmotion_type,'HalfGaitCycle') % same weights right and left
@@ -631,7 +679,7 @@ for i_dc=1:length(ineq_constr_distance)
 
 end
 if (S.subject.synergies)
-    opti.subject_to(S.SynConstrLower < coll_ineq_constr_syn(:) < S.SynConstrUpper); 
+    opti.subject_to(S.bounds.SynConstr.lower < coll_ineq_constr_syn(:) < S.bounds.SynConstr.upper); 
 end
 
 % Loop over mesh points
@@ -849,19 +897,23 @@ dFTtilde_col_opt=reshape(w_opt(starti:starti+NMuscle*(d*N)-1),NMuscle,d*N)';
 starti = starti + NMuscle*(d*N);
 qdotdot_col_opt =reshape(w_opt(starti:starti+nq.all*(d*N)-1),nq.all,(d*N))';
 starti = starti + nq.all*(d*N);
-if (S.subject.synergies)
-    SynH_r_opt = reshape(w_opt(starti:starti+S.NSyn_r*(N+1)-1),S.NSyn_r,N+1)';
-    starti = starti + S.NSyn_r*(N+1);   
-    SynH_l_opt = reshape(w_opt(starti:starti+S.NSyn_l*(N+1)-1),S.NSyn_l,N+1)';
-    starti = starti + S.NSyn_l*(N+1);    
+if (S.subject.synergies)       
     if strcmp(S.misc.gaitmotion_type,'HalfGaitCycle')
-        SynW_opt = reshape(w_opt(starti:starti+NMuscle/2*S.NSyn_r-1),NMuscle/2,S.NSyn_r)';
-        starti = starti + NMuscle/2*S.NSyn_r;
+        SynH_r_opt = reshape(w_opt(starti:starti+S.subject.NSyn*(N+1)-1),S.subject.NSyn,N+1)';
+        starti = starti + S.subject.NSyn*(N+1);
+        SynH_l_opt = reshape(w_opt(starti:starti+S.subject.NSyn*(N+1)-1),S.subject.NSyn,N+1)';
+        starti = starti + S.subject.NSyn*(N+1);
+        SynW_opt = reshape(w_opt(starti:starti+NMuscle/2*S.subject.NSyn-1),NMuscle/2,S.subject.NSyn)';
+        starti = starti + NMuscle/2*S.subject.NSyn;
     elseif strcmp(S.misc.gaitmotion_type,'FullGaitCycle')
-        SynW_r_opt = reshape(w_opt(starti:starti+NMuscle/2*S.NSyn_r-1),NMuscle/2,S.NSyn_r)';
-        starti = starti + NMuscle/2*S.NSyn_r;
-        SynW_l_opt = reshape(w_opt(starti:starti+NMuscle/2*S.NSyn_l-1),NMuscle/2,S.NSyn_l)';
-        starti = starti + NMuscle/2*S.NSyn_l;
+        SynH_r_opt = reshape(w_opt(starti:starti+S.subject.NSyn_r*(N+1)-1),S.subject.NSyn_r,N+1)';
+        starti = starti + S.subject.NSyn_r*(N+1);
+        SynH_l_opt = reshape(w_opt(starti:starti+S.subject.NSyn_l*(N+1)-1),S.subject.NSyn_l,N+1)';
+        starti = starti + S.subject.NSyn_l*(N+1);
+        SynW_r_opt = reshape(w_opt(starti:starti+NMuscle/2*S.subject.NSyn_r-1),NMuscle/2,S.subject.NSyn_r)';
+        starti = starti + NMuscle/2*S.subject.NSyn_r;
+        SynW_l_opt = reshape(w_opt(starti:starti+NMuscle/2*S.subject.NSyn_l-1),NMuscle/2,S.subject.NSyn_l)';
+        starti = starti + NMuscle/2*S.subject.NSyn_l;
     end
 end
 if starti - 1 ~= length(w_opt)

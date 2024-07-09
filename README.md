@@ -143,14 +143,19 @@ This code can automatically convert an OpenSim model to the external function us
 - **S.bounds.Qdotdots_factor_RoM**:
 	- Acceleration bounds that are not given by another setting, will be taken symmetric and proportional to the range of motion. Default is *155* [double]
 - **S.bounds.factor_IG_pelvis_ty.lower**:
-	- Set lower bound op vertical position of floating base proportional to IG_pelvis_y. Default is *0.5* [double] Set to empty [] to not use this.
+	- Set lower bound on vertical position of floating base proportional to IG_pelvis_y. Default is *0.5* [double] Set to empty [] to not use this.
 - **S.bounds.factor_IG_pelvis_ty.upper**:
-	- Set upper bound op vertical position of floating base proportional to IG_pelvis_y. Default is *1.2* [double] Set to empty [] to not use this.
+	- Set upper bound on vertical position of floating base proportional to IG_pelvis_y. Default is *1.2* [double] Set to empty [] to not use this.
+- **S.bounds.SynConstr.lower**:
+	- Set lower bound on synergy constraints. Default is *-0.001* [double].
+- **S.bounds.SynConstr.upper**:
+	- Set upper bound on synergy constraints. Default is *0.001* [double].
 
 	Order of priority for coordinate bounds:
 	1. Individual bounds from settings (S.bounds.Qs, S.bounds.Qdots, S.bounds.Qdotdots)
 	2. Default bounds from table (S.bounds.default_coordinate_bounds)
 	3. Read from model file. Qs: min and max coordinate values, Qdots: +/-10x coordinate range, Qdotdots: +/-155x coordinate range.
+
 
 
 #### S.metabolicE - metabolic energy
@@ -274,7 +279,7 @@ This code can automatically convert an OpenSim model to the external function us
 - **S.subject.set_damping_coefficient_selected_dofs**: 
 	- damping coefficient can be specified here for each coordinate individually. For example, S.subject.set_damping_coefficient_selected_dofs = {{'hip_flexion_l','hip_flexion_r'},0.12,{'knee_angle_l'},0.11} will put damping coefficient of both hip flexions to 0.12 and that of knee angle left to 0.11. If not defined here for a particular coordinateS.subject.damping_coefficient_all_dofs will be used for that coordinate. Default is empty.
 - **S.subject.stiffness_coefficient_all_dofs**: 
-	- stiffness coefficient for all coordinates (except coordinates connected to ground, generally pelvis (also called floating base)). Default in *0* Nm/rad [double]
+	- stiffness coefficient for all coordinates (except coordinates connected to ground, generally pelvis (also called floating base)). Default is *0* Nm/rad [double]
 - **S.subject.set_stiffness_coefficient_selected_dofs**: 
 	- stiffness coefficient can be specified here for each coordinate individually. For example, S.subject.set_stiffness_coefficient_selected_dofs = {{'hip_flexion_l','hip_flexion_r'},0.012,{'knee_angle_l'},0.011} will put stiffness coefficient of both hip flexions to 0.012 Nm/rad and that of knee angle left to 0.011 Nm/rad. If not defined here for a particular coordinate, S.subject.damping_coefficient_all_dofs will be used for that coordinate. Default is empty.
 - **S.subject.set_limit_torque_coefficients_selected_dofs**: 
@@ -287,6 +292,19 @@ This code can automatically convert an OpenSim model to the external function us
 	- Default stiffness model (i.e. force-length) used for ligaments. Default is [*ligamentGefen2002*](./ModelComponents/ligamentGefen2002.m) [char]
 - **S.subject.set_stiffness_selected_ligaments**:
 	- Use name-value pairs to use different stiffness models for specific ligaments. Default is *{'PlantarFascia',['plantarFasciaNatali2010'](./ModelComponents/plantarFasciaNatali2010.m)}* 
+- **S.subject.synergies**:
+	- boolean that indicates if muscle activations are controlled by synergies. Default is *0* (no synergies implemented).
+	- When synergies are implemented, different variables need to be defined:
+	- **S.subject.idx_m_r**: indices for right muscles. The user should update them for each model. 
+	- **S.subject.idx_m_l**: indices for left muscles. The user should update them for each model.
+	- **S.subject.NSyn**: number of synergies per leg. Use this variable if a symmetric cycle is predicted (S.misc.gaitmotion_type = 'HalfGaitCycle')
+	- **S.subject.NSyn_r**, **S.subject.NSyn_l**: same as 'S.subject.NSyn' but defined independently for right and left legs. Use these variables if a full cycle is predicted (S.misc.gaitmotion_type = 'FullGaitCycle')
+	- **S.subject.TrackSynW**: boolean that indicates if synergy weights are tracked. Default is *0* (no weights tracking).
+	- **S.subject.TrackSynW_side**: indicates if weights are tracked for one or both legs. Possible options are: 'onlyLeft', 'onlyRight' or 'RightLeft'. Use this variable only if a full cycle is predicted (S.misc.gaitmotion_type = 'FullGaitCycle')
+	- **S.subject.knownSynW**: [n_muscles x n_synergies] matrix containing the weights per muscle and per synergy that will be tracked. Use this variable if a symmetric cycle is predicted (S.misc.gaitmotion_type = 'HalfGaitCycle')
+	- **S.subject.knownSynW_r**, **S.subject.knownSynW_l**: same as 'S.subject.knownSynW' but defined independently for right and left legs. Use these variables if a full cycle is predicted (S.misc.gaitmotion_type = 'FullGaitCycle')	
+	- **S.subject.knownSynW_idx**: indices of the muscles for which we want to track weights (specified in 'S.subject.knownSynW'). Use this variable if a symmetric cycle is predicted (S.misc.gaitmotion_type = 'HalfGaitCycle')
+	- **S.subject.knownSynW_idx_r**, **S.subject.knownSynW_idx_l**: same as 'S.subject.knownSynW_idx' but defined independently for right and left legs. Use these variables if a full cycle is predicted (S.misc.gaitmotion_type = 'FullGaitCycle')
 
 #### S.weights
 
@@ -306,6 +324,10 @@ This code can automatically convert an OpenSim model to the external function us
 	- weight on muscle activations. Default is *2000* [double]
 - **S.weights.slack_ctrl**: 
 	- weight on slack controls. Default is *0.001* [double]
+- **S.weights.SynConstr**: 
+	- weight on synergy constraints, (a-WH)^2. Default is *1e4* [double]; 
+- **S.weights.TrackSynW**:
+	- weight on synergy weights tracking. Default is *1e2* [double]; 
 
 #### S.OpenSimADOptions
 These settings are passed to OpenSimAD.
