@@ -75,8 +75,10 @@ for i=1:n_coord
         tau_d(i) = -model_info.passive_moment_info.parameters(i).damping_coeff*qdot(i);
     end
 
-    if ~isempty(model_info.passive_moment_info.parameters(i).K_pass) && ~isempty(model_info.passive_moment_info.parameters(i).theta_pass)
-        tau_lim(i) = f_limit_torque(model_info.passive_moment_info.parameters(i).K_pass,model_info.passive_moment_info.parameters(i).theta_pass,q(i));
+    if ~isempty(model_info.passive_moment_info.parameters(i).K_pass) &&...
+            ~isempty(model_info.passive_moment_info.parameters(i).theta_pass)
+        tau_lim(i) = f_limit_torque(model_info.passive_moment_info.parameters(i).K_pass,...
+            model_info.passive_moment_info.parameters(i).theta_pass,q(i));
 
     end
 end
