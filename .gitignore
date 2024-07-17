@@ -26,15 +26,15 @@ Subjects/Falisse_et_al_2022/*
 !Subjects/Falisse_et_al_2022/*.md
 !Subjects/Falisse_et_al_2022/settings*.m
 
-!Subjects/DHondt_2023_3seg/
-Subjects/DHondt_2023_3seg/*
-!Subjects/DHondt_2023_3seg/*.osim
-!Subjects/DHondt_2023_3seg/*.md
-!Subjects/DHondt_2023_3seg/settings*.m
+!Subjects/DHondt_et_al_2024_3seg/
+Subjects/DHondt_et_al_2024_3seg/*
+!Subjects/DHondt_et_al_2024_3seg/*.osim
+!Subjects/DHondt_et_al_2024_3seg/*.md
+!Subjects/DHondt_et_al_2024_3seg/settings*.m
 
-!Subjects/DHondt_2023_2seg/
-Subjects/DHondt_2023_2seg/*
-!Subjects/DHondt_2023_2seg/*.osim
-!Subjects/DHondt_2023_2seg/*.md
-!Subjects/DHondt_2023_2seg/settings*.m
+!Subjects/DHondt_et_al_2024_4seg/
+Subjects/DHondt_et_al_2024_4seg/*
+!Subjects/DHondt_et_al_2024_4seg/*.osim
+!Subjects/DHondt_et_al_2024_4seg/*.md
+!Subjects/DHondt_et_al_2024_4seg/settings*.m
 
