@@ -147,7 +147,7 @@ This code can automatically convert an OpenSim model to the external function us
 - **S.bounds.factor_IG_pelvis_ty.upper**:
 	- Set upper bound on vertical position of floating base proportional to IG_pelvis_y. Default is *1.2* [double] Set to empty [] to not use this.
 - **S.bounds.SynConstr.lower**:
-	- Set lower bound on synergy constraints. Default is *-0.001* [double].
+	- Set lower bound on synergy constraints. Default is *-0.001* [double]. Synergy constraints ensure that muscle activation patterns (a) are described as a linear combination of time-invariant synergy weights (W) and time-variant synergy activations (H): lower_bound <= a-WH <= upper_bound
 - **S.bounds.SynConstr.upper**:
 	- Set upper bound on synergy constraints. Default is *0.001* [double].
 
