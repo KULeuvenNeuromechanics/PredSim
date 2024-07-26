@@ -76,6 +76,8 @@ tdeact = model_info.muscle_info.tdeact; % Deactivation time constant
 if (S.subject.synergies) 
     idx_m_r = S.subject.idx_m_r;
     idx_m_l = S.subject.idx_m_l;
+    muscleNames_r = muscleNames(idx_m_r);
+    muscleNames_l = muscleNames(idx_m_l);
 end
 
 %% Metabolic energy model parameters
@@ -534,59 +536,106 @@ end % End loop over collocation points
 % Here we select the weights that we want to impose/track 
 % (there are no conditions/constraints applied to the other weights)
 if (S.subject.synergies)
+
     if (S.subject.TrackSynW)
-        if strcmp(S.misc.gaitmotion_type,'HalfGaitCycle') % same weights right and left             
-        SynW_rk_sel = SynW_rk(S.subject.knownSynW_idx,:); 
-        Jtemp = 0;
-        for i = 1:S.subject.NSyn
-            for k = 1:length(S.subject.knownSynW_idx)
-                Jtemp = Jtemp + (SynW_rk_sel(k,i)-S.subject.knownSynW(k,i)).^2;
+        if strcmp(S.misc.gaitmotion_type,'HalfGaitCycle') % same weights right and left  
+
+            knownSynW_r_all = unpack_name_value_combinations(S.subject.knownSynW_r,muscleNames_r,[S.subject.TrackSynW_NSyn_r]);
+            k = 1;
+            for i = 1:NMuscle/2
+                if ~isnan(knownSynW_r_all(1,i))
+                    knownSynW_idx(k) = i;
+                    knownSynW(k,:) = knownSynW_r_all(:,i);
+                    k = k + 1;
+                end
             end
-        end
-        Jtemp = Jtemp/(length(S.subject.knownSynW_idx)); 
-        J = J + W.TrackSynW * Jtemp;                    
+            SynW_rk_sel = SynW_rk(knownSynW_idx,:);
+            Jtemp = 0;
+            for i = 1:S.subject.TrackSynW_NSyn_r
+                for k = 1:length(knownSynW_idx)
+                    Jtemp = Jtemp + (SynW_rk_sel(k,i)-knownSynW(k,i)).^2;
+                end
+            end
+            Jtemp = Jtemp/(length(knownSynW_idx));
+            J = J + W.TrackSynW * Jtemp;
         
         elseif strcmp(S.misc.gaitmotion_type,'FullGaitCycle') % Options: Track only right, only left, or both
             switch S.subject.TrackSynW_side
                 case 'onlyRight'
-                    SynW_rk_sel = SynW_rk(S.subject.knownSynW_idx_r,:); 
-                    Jtemp = 0;
-                    for i = 1:S.subject.NSyn_r
-                        for k = 1:length(S.subject.knownSynW_idx_r)
-                            Jtemp = Jtemp + (SynW_rk_sel(k,i)-S.subject.knownSynW_r(k,i)).^2;
+                    knownSynW_r_all = unpack_name_value_combinations(S.subject.knownSynW_r,muscleNames_r,[S.subject.TrackSynW_NSyn_r]);
+                    k = 1;
+                    for i = 1:NMuscle/2
+                        if ~isnan(knownSynW_r_all(1,i))
+                            knownSynW_idx(k) = i;
+                            knownSynW(k,:) = knownSynW_r_all(:,i);
+                            k = k + 1;
                         end
                     end
-                    Jtemp = Jtemp/(length(S.subject.knownSynW_idx_r)); 
+                    SynW_rk_sel = SynW_rk(knownSynW_idx,:);
+                    Jtemp = 0;
+                    for i = 1:S.subject.TrackSynW_NSyn_r
+                        for k = 1:length(knownSynW_idx)
+                            Jtemp = Jtemp + (SynW_rk_sel(k,i)-knownSynW(k,i)).^2;
+                        end
+                    end
+                    Jtemp = Jtemp/(length(knownSynW_idx)); 
                     J = J + W.TrackSynW * Jtemp;
                 case 'onlyLeft'
-                    SynW_lk_sel = SynW_lk(S.subject.knownSynW_idx_l,:); 
-                    Jtemp = 0;
-                    for i = 1:S.subject.NSyn_l
-                        for k = 1:length(S.subject.knownSynW_idx_l)
-                            Jtemp = Jtemp + (SynW_lk_sel(k,i)-S.subject.knownSynW_l(k,i)).^2;
+                    knownSynW_l_all = unpack_name_value_combinations(S.subject.knownSynW_l,muscleNames_l,[S.subject.TrackSynW_NSyn_l]);
+                    k = 1;
+                    for i = 1:NMuscle/2
+                        if ~isnan(knownSynW_l_all(1,i))
+                            knownSynW_idx(k) = i;
+                            knownSynW(k,:) = knownSynW_l_all(:,i);
+                            k = k + 1;
                         end
                     end
-                    Jtemp = Jtemp/(length(S.subject.knownSynW_idx_l)); 
+                    SynW_lk_sel = SynW_lk(knownSynW_idx,:); 
+                    Jtemp = 0;
+                    for i = 1:S.subject.TrackSynW_NSyn_l
+                        for k = 1:length(knownSynW_idx)
+                            Jtemp = Jtemp + (SynW_lk_sel(k,i)-knownSynW(k,i)).^2;
+                        end
+                    end
+                    Jtemp = Jtemp/(length(knownSynW_idx)); 
                     J = J + W.TrackSynW * Jtemp;
                 case 'RightLeft'                                        
-                    SynW_rk_sel = SynW_rk(S.subject.knownSynW_idx_r,:); 
-                    Jtemp = 0;
-                    for i = 1:S.NSyn_r
-                        for k = 1:length(S.subject.knownSynW_idx_r)
-                            Jtemp = Jtemp + (SynW_rk_sel(k,i)-S.subject.knownSynW_r(k,i)).^2;
+                    knownSynW_r_all = unpack_name_value_combinations(S.subject.knownSynW_r,muscleNames_r,[S.subject.TrackSynW_NSyn_r]);
+                    k = 1;
+                    for i = 1:NMuscle/2
+                        if ~isnan(knownSynW_r_all(1,i))
+                            knownSynW_idx(k) = i;
+                            knownSynW(k,:) = knownSynW_r_all(:,i);
+                            k = k + 1;
                         end
                     end
-                    Jtemp = Jtemp/(length(S.subject.knownSynW_idx_r)); 
+                    SynW_rk_sel = SynW_rk(knownSynW_idx,:);
+                    Jtemp = 0;
+                    for i = 1:S.subject.TrackSynW_NSyn_r
+                        for k = 1:length(knownSynW_idx)
+                            Jtemp = Jtemp + (SynW_rk_sel(k,i)-knownSynW(k,i)).^2;
+                        end
+                    end
+                    Jtemp = Jtemp/(length(knownSynW_idx)); 
                     J = J + W.TrackSynW * Jtemp;
                     
-                    SynW_lk_sel = SynW_lk(S.subject.knownSynW_idx_l,:); 
-                    Jtemp = 0;
-                    for i = 1:S.NSyn_l
-                        for k = 1:length(S.subject.knownSynW_idx_l)
-                            Jtemp = Jtemp + (SynW_lk_sel(k,i)-S.subject.knownSynW_l(k,i)).^2;
+                    knownSynW_l_all = unpack_name_value_combinations(S.subject.knownSynW_l,muscleNames_l,[S.subject.TrackSynW_NSyn_l]);
+                    k = 1;
+                    for i = 1:NMuscle/2
+                        if ~isnan(knownSynW_l_all(1,i))
+                            knownSynW_idx(k) = i;
+                            knownSynW(k,:) = knownSynW_l_all(:,i);
+                            k = k + 1;
                         end
                     end
-                    Jtemp = Jtemp/(length(S.subject.knownSynW_idx_l)); 
+                    SynW_lk_sel = SynW_lk(knownSynW_idx,:); 
+                    Jtemp = 0;
+                    for i = 1:S.subject.TrackSynW_NSyn_l
+                        for k = 1:length(knownSynW_idx)
+                            Jtemp = Jtemp + (SynW_lk_sel(k,i)-knownSynW(k,i)).^2;
+                        end
+                    end
+                    Jtemp = Jtemp/(length(knownSynW_idx)); 
                     J = J + W.TrackSynW * Jtemp;
             end
         end

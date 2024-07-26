@@ -301,10 +301,9 @@ This code can automatically convert an OpenSim model to the external function us
 	- **S.subject.NSyn_r**, **S.subject.NSyn_l**: same as 'S.subject.NSyn' but defined independently for right and left legs. Use these variables if a full cycle is predicted (S.misc.gaitmotion_type = 'FullGaitCycle')
 	- **S.subject.TrackSynW**: boolean that indicates if synergy weights are tracked. Default is *0* (no weights tracking).
 	- **S.subject.TrackSynW_side**: indicates if weights are tracked for one or both legs. Possible options are: 'onlyLeft', 'onlyRight' or 'RightLeft'. Use this variable only if a full cycle is predicted (S.misc.gaitmotion_type = 'FullGaitCycle')
-	- **S.subject.knownSynW**: [n_muscles x n_synergies] matrix containing the weights per muscle and per synergy that will be tracked. Use this variable if a symmetric cycle is predicted (S.misc.gaitmotion_type = 'HalfGaitCycle')
-	- **S.subject.knownSynW_r**, **S.subject.knownSynW_l**: same as 'S.subject.knownSynW' but defined independently for right and left legs. Use these variables if a full cycle is predicted (S.misc.gaitmotion_type = 'FullGaitCycle')	
-	- **S.subject.knownSynW_idx**: indices of the muscles for which we want to track weights (specified in 'S.subject.knownSynW'). Use this variable if a symmetric cycle is predicted (S.misc.gaitmotion_type = 'HalfGaitCycle')
-	- **S.subject.knownSynW_idx_r**, **S.subject.knownSynW_idx_l**: same as 'S.subject.knownSynW_idx' but defined independently for right and left legs. Use these variables if a full cycle is predicted (S.misc.gaitmotion_type = 'FullGaitCycle')
+	- **S.subject.knownSynW_r**: synergy weights to be tracked are specified here, using the following form: {'muscleName1', weightArray1, {'muscleName2a', 'muscleName2b'}, weightArray2, etc.}. The 'weightArray' is an horizontal vector containing the muscle weight (between 0 and 1) on each synergy.
+	- **S.subject.knownSynW_l**: same as 'S.subject.knownSynW_r' but for the left leg. Use this variable only if a full cycle is predicted (S.misc.gaitmotion_type = 'FullGaitCycle')
+	- **S.subject.TrackSynW_NSyn_r**, **S.subject.TrackSynW_NSyn_l**: number of right and left synergy weights that are tracked for the muscles defined in 'S.subject.knownSynW_r' and 'S.subject.knownSynW_l'. This number may be different from 'S.subject.NSyn_r' or 'S.subject.NSyn_l'.
 
 #### S.weights
 
