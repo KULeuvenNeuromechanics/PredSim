@@ -62,6 +62,8 @@ elseif strcmp(S.misc.gaitmotion_type,'FullGaitCycle') % Options: Track only righ
             TrackSyn_cost = TrackSyn_cost +  W.TrackSynW * Jtemp;
         case 'RightLeft'
             % right
+            knownSynW_idx = [];
+            knownSynW = [];
             knownSynW_r_all = unpack_name_value_combinations(S.subject.knownSynW_r,muscleNames_r,[S.subject.TrackSynW_NSyn_r]);
             k = 1;
             for i = 1:NMuscle/2
@@ -82,6 +84,8 @@ elseif strcmp(S.misc.gaitmotion_type,'FullGaitCycle') % Options: Track only righ
             J_opt = J_opt + W.TrackSynW * Jtemp;
             TrackSyn_cost = TrackSyn_cost +  W.TrackSynW * Jtemp;
             % left
+            knownSynW_idx = [];
+            knownSynW = [];
             knownSynW_l_all = unpack_name_value_combinations(S.subject.knownSynW_l,muscleNames_l,[S.subject.TrackSynW_NSyn_l]);
             k = 1;
             for i = 1:NMuscle/2
