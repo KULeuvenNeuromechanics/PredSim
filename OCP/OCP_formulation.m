@@ -850,6 +850,7 @@ if (S.subject.synergies)
         starti = starti + S.subject.NSyn*(N+1);
         SynW_r_opt = reshape(w_opt(starti:starti+NMuscle/2*S.subject.NSyn-1),NMuscle/2,S.subject.NSyn)';
         starti = starti + NMuscle/2*S.subject.NSyn;
+        SynW_l_opt = SynW_r_opt;
     elseif strcmp(S.misc.gaitmotion_type,'FullGaitCycle')
         SynH_r_opt = reshape(w_opt(starti:starti+S.subject.NSyn_r*(N+1)-1),S.subject.NSyn_r,N+1)';
         starti = starti + S.subject.NSyn_r*(N+1);
@@ -1018,6 +1019,7 @@ vA_cost         = 0;
 dFTtilde_cost   = 0;
 QdotdotArm_cost = 0;
 Syn_cost        = 0;
+TrackSyn_cost   = 0;
 count           = 1;
 h_opt           = tf_opt/N;
 for k=1:N

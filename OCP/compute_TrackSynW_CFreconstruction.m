@@ -1,5 +1,3 @@
-TrackSyn_cost = 0;
-
 if strcmp(S.misc.gaitmotion_type,'HalfGaitCycle') % same weights right and left
     knownSynW_r_all = unpack_name_value_combinations(S.subject.knownSynW_r,muscleNames_r,[S.subject.TrackSynW_NSyn_r]);
     k = 1;
