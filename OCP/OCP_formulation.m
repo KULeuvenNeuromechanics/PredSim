@@ -74,8 +74,8 @@ tdeact = model_info.muscle_info.tdeact; % Deactivation time constant
 
 % Muscles indices for reading synergies
 if (S.subject.synergies) 
-    idx_m_r = S.subject.idx_m_r;
-    idx_m_l = S.subject.idx_m_l;
+    idx_m_r = model_info.muscle_info.idx_right;
+    idx_m_l = model_info.muscle_info.idx_left;
     muscleNames_r = muscleNames(idx_m_r);
     muscleNames_l = muscleNames(idx_m_l);
 end

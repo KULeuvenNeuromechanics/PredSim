@@ -104,7 +104,29 @@ symQs.MusInvB = orderMusInv;
 
 model_info.ExtFunIO.symQs = symQs;
 
-% add osim_path so it will be included in saved results
+%% indices for left and right side muscles
+idx_mus_l = [];
+idx_mus_r = [];
+
+for i=1:length(model_info.muscle_info.muscle_names)
+
+    mus_i = model_info.muscle_info.muscle_names{i};
+    [mus_i_l, mus_i_r] = mirrorName(mus_i);
+
+    if strcmp(mus_i, mus_i_l)
+        idx_mus_l(end+1) = i;
+
+    elseif strcmp(mus_i, mus_i_r)
+        idx_mus_r(end+1) = i;
+
+    end
+end
+
+model_info.muscle_info.idx_left = idx_mus_l;
+model_info.muscle_info.idx_right = idx_mus_r;
+
+
+%% add osim_path so it will be included in saved results
 model_info.osim_path = osim_path;
 
 
