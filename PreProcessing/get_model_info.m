@@ -112,12 +112,20 @@ for i=1:length(model_info.muscle_info.muscle_names)
 
     mus_i = model_info.muscle_info.muscle_names{i};
     [mus_i_l, mus_i_r] = mirrorName(mus_i);
-
-    if strcmp(mus_i, mus_i_l)
-        idx_mus_l(end+1) = i;
-
-    elseif strcmp(mus_i, mus_i_r)
+    if strcmp(mus_i, mus_i_r)
         idx_mus_r(end+1) = i;
+
+        % For half GC, set idx of left muscles to be symmetric to idx of
+        % right muscles.
+        if strcmp(S.misc.gaitmotion_type,'HalfGaitCycle')
+            idx_mus_l(end+1) = find(strcmp(model_info.muscle_info.muscle_names, mus_i_l));
+
+        end
+
+        % For full GC, we do not need the idx to be symmetric. Additionally,
+        % some muscle might only exist left or right.
+    elseif ~strcmp(S.misc.gaitmotion_type,'HalfGaitCycle') && strcmp(mus_i, mus_i_l)
+        idx_mus_l(end+1) = i;
 
     end
 end

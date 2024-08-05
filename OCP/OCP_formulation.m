@@ -226,9 +226,9 @@ if (S.subject.synergies)
         opti.set_initial(SynH_l, guess.SynH(:,1:S.subject.NSyn)');
 
         % Synergy weights
-        SynW_r = opti.variable(NMuscle/2,S.subject.NSyn);
-        opti.subject_to(bounds.SynW.lower*ones(NMuscle/2,S.subject.NSyn) < SynW_r < bounds.SynW.upper*ones(NMuscle/2,S.subject.NSyn));
-        opti.set_initial(SynW_r,  guess.SynW*ones(NMuscle/2,S.subject.NSyn));
+        SynW_r = opti.variable(length(idx_m_r),S.subject.NSyn);
+        opti.subject_to(bounds.SynW.lower*ones(length(idx_m_r),S.subject.NSyn) < SynW_r < bounds.SynW.upper*ones(length(idx_m_r),S.subject.NSyn));
+        opti.set_initial(SynW_r,  guess.SynW*ones(length(idx_m_r),S.subject.NSyn));
 
         SynW_l = SynW_r; 
 
@@ -249,14 +249,14 @@ if (S.subject.synergies)
         opti.set_initial(SynH_l, guess.SynH(:,1:S.subject.NSyn_l)');
 
         % Right synergy weights
-        SynW_r = opti.variable(NMuscle/2,S.subject.NSyn_r);
-        opti.subject_to(bounds.SynW.lower*ones(NMuscle/2,S.subject.NSyn_r) < SynW_r < bounds.SynW.upper*ones(NMuscle/2,S.subject.NSyn_r));
-        opti.set_initial(SynW_r, guess.SynW*ones(NMuscle/2,S.subject.NSyn_r));
+        SynW_r = opti.variable(length(idx_m_r),S.subject.NSyn_r);
+        opti.subject_to(bounds.SynW.lower*ones(length(idx_m_r),S.subject.NSyn_r) < SynW_r < bounds.SynW.upper*ones(length(idx_m_r),S.subject.NSyn_r));
+        opti.set_initial(SynW_r, guess.SynW*ones(length(idx_m_r),S.subject.NSyn_r));
         
         % Left synergy weights
-        SynW_l = opti.variable(NMuscle/2,S.subject.NSyn_l);
-        opti.subject_to(bounds.SynW.lower*ones(NMuscle/2,S.subject.NSyn_l) < SynW_l < bounds.SynW.upper*ones(NMuscle/2,S.subject.NSyn_l));
-        opti.set_initial(SynW_l, guess.SynW*ones(NMuscle/2,S.subject.NSyn_l));
+        SynW_l = opti.variable(length(idx_m_l),S.subject.NSyn_l);
+        opti.subject_to(bounds.SynW.lower*ones(length(idx_m_l),S.subject.NSyn_l) < SynW_l < bounds.SynW.upper*ones(length(idx_m_l),S.subject.NSyn_l));
+        opti.set_initial(SynW_l, guess.SynW*ones(length(idx_m_l),S.subject.NSyn_l));
     end
 end
 
@@ -295,8 +295,8 @@ Aj          = MX.sym('Aj',nq.all,d);
 if (S.subject.synergies)
     SynH_rk         = MX.sym('SynH_rk',S.subject.NSyn_r);
     SynH_lk         = MX.sym('SynH_lk',S.subject.NSyn_l);
-    SynW_rk         = MX.sym('SynW_rk',NMuscle/2,S.subject.NSyn_r);
-    SynW_lk         = MX.sym('SynW_lk',NMuscle/2,S.subject.NSyn_l);
+    SynW_rk         = MX.sym('SynW_rk',length(idx_m_r),S.subject.NSyn_r);
+    SynW_lk         = MX.sym('SynW_lk',length(idx_m_l),S.subject.NSyn_l);
 end
 
 J           = 0; % Initialize cost function
