@@ -524,10 +524,9 @@ end % End loop over collocation points
 % Add tracking terms in the cost function if synergy weights are tracked
 % Here we select the weights that we want to impose/track 
 % (there are no conditions/constraints applied to the other weights)
-if (S.subject.synergies)
-    if (S.subject.TrackSynW)
-        compute_TrackSynW;
-    end
+if (S.subject.synergies) && (S.subject.TrackSynW)
+    J_TrackSynW = f_casadi.TrackSynW(SynW_rk, SynW_lk);
+    J = J + W.TrackSynW * J_TrackSynW;
 end
 
 % Synergies: a - WH = 0

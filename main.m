@@ -160,12 +160,22 @@ S.subject.v_pelvis_x_trgt   = 1.33;
 S.OpenSimADOptions.verbose_mode = 0; % 0 for no outputs from cmake
 
  
-% S.subject.synergies = 1; % 1 = implement muscle synergies
-% S.subject.TrackSynW = 0; % 1 = track synergy weights
-% S.misc.gaitmotion_type = 'HalfGaitCycle';
-% S.subject.NSyn = 4;
-% S.subject.NSyn_r = 4;
-% S.subject.NSyn_l = 4;
+% (from the case of 4 synergies in Pitto et al 2020)
+S.subject.synergies = 1; % 1 = implement muscle synergies
+S.subject.TrackSynW = 1; % 1 = track synergy weights
+S.misc.gaitmotion_type = 'HalfGaitCycle';
+S.subject.NSyn = 4; % NSyn_r = NSyn_l
+S.subject.TrackSynW_NSyn_r = 4; % number of tracked synergies (may be different from the number of synergies)
+S.subject.knownSynW_r = {'rect_fem_r', [0 0.28 0 0.75],...
+    'vas_lat_r', [0.1 0.1 0.05 0.8],...
+    {'bifemlh_r','bifemsh_r'}, [0.6 0.4 0.15 0.2],...
+    {'semiten_r','semimem_r'}, [0 0 1 0],...
+    'tib_ant_r', [0.2 1 0.01 0],...
+    {'med_gas_r','lat_gas_r'}, [0.95 0.08 0.04 0.03],...
+    'soleus_r', [1 0.05 0 0.05],...
+    {'glut_med1_r','glut_med2_r','glut_med3_r'}, [0.15 0 0.04 1]};
+S.subject.NSyn_r = 4;
+S.subject.NSyn_l = 4;
 
 %% Run predictive simulations
 
