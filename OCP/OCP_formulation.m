@@ -293,18 +293,10 @@ Aj          = MX.sym('Aj',nq.all,d);
 
 % If muscle synergies, define CasADi variables for additional variables
 if (S.subject.synergies)
-    % Synergy weights
-    if strcmp(S.misc.gaitmotion_type,'HalfGaitCycle') 
-        SynH_rk          = MX.sym('SynH_rk',S.subject.NSyn);
-        SynH_lk          = MX.sym('SynH_lk',S.subject.NSyn);
-        SynW_rk         = MX.sym('SynW_rk',NMuscle/2,S.subject.NSyn);
-        SynW_lk         = SynW_rk;
-    elseif strcmp(S.misc.gaitmotion_type,'FullGaitCycle') 
-        SynH_rk          = MX.sym('SynH_rk',S.subject.NSyn_r);
-        SynH_lk          = MX.sym('SynH_lk',S.subject.NSyn_l);
-        SynW_rk         = MX.sym('SynW_rk',NMuscle/2,S.subject.NSyn_r);
-        SynW_lk         = MX.sym('SynW_lk',NMuscle/2,S.subject.NSyn_l);
-    end
+    SynH_rk         = MX.sym('SynH_rk',S.subject.NSyn_r);
+    SynH_lk         = MX.sym('SynH_lk',S.subject.NSyn_l);
+    SynW_rk         = MX.sym('SynW_rk',NMuscle/2,S.subject.NSyn_r);
+    SynW_lk         = MX.sym('SynW_lk',NMuscle/2,S.subject.NSyn_l);
 end
 
 J           = 0; % Initialize cost function
@@ -312,10 +304,7 @@ eq_constr   = {}; % Initialize equality constraint vector
 ineq_constr_deact = {}; % Initialize inequality constraint vector
 ineq_constr_act = {}; % Initialize inequality constraint vector
 ineq_constr_distance = cell(length(S.bounds.distanceConstraints),1);
-
-if (S.subject.synergies)   
-    ineq_constr_syn = {}; % Initialize inequality constraint vector
-end
+ineq_constr_syn = {}; % Initialize inequality constraint vector
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Time step
@@ -544,7 +533,7 @@ end
 % Synergies: a - WH = 0
 % Only applied for mesh points
 if (S.subject.synergies)
-        ineq_constr_syn{end+1} =  [ak(idx_m_r);ak(idx_m_l)] - [SynW_rk*SynH_rk;SynW_lk*SynH_lk];
+    ineq_constr_syn{end+1} =  [ak(idx_m_r);ak(idx_m_l)] - [SynW_rk*SynH_rk;SynW_lk*SynH_lk];
 end
 
 eq_constr = vertcat(eq_constr{:});
@@ -553,9 +542,7 @@ ineq_constr_act = vertcat(ineq_constr_act{:});
 for i_dc=1:length(ineq_constr_distance)
     ineq_constr_distance{i_dc} = vertcat(ineq_constr_distance{i_dc}{:});
 end
-if (S.subject.synergies)
-    ineq_constr_syn = vertcat(ineq_constr_syn{:});
-end
+ineq_constr_syn = vertcat(ineq_constr_syn{:});
 
 % Casadi function to get constraints and objective
 coll_input_vars_def = {tfk,ak,aj,FTtildek,FTtildej,Qsk,Qsj,Qdotsk,Qdotsj,vAk,dFTtildej,Aj};
@@ -563,18 +550,12 @@ if nq.torqAct > 0
     coll_input_vars_def = [coll_input_vars_def,{a_ak,a_aj,e_ak}];
 end
 if (S.subject.synergies)
-    if strcmp(S.misc.gaitmotion_type,'HalfGaitCycle') % same weights right and left
-        coll_input_vars_def = [coll_input_vars_def,{SynH_rk,SynH_lk,SynW_rk}]; % left weights are not variables, 
-        % just "a copy" of right weights
-    elseif strcmp(S.misc.gaitmotion_type,'FullGaitCycle') 
-        coll_input_vars_def = [coll_input_vars_def,{SynH_rk,SynH_lk,SynW_rk,SynW_lk}];
-    end
-    f_coll = Function('f_coll',coll_input_vars_def,...
-        {eq_constr,ineq_constr_deact,ineq_constr_act,ineq_constr_distance{:},ineq_constr_syn,J});
-else
-    f_coll = Function('f_coll',coll_input_vars_def,...
-        {eq_constr,ineq_constr_deact,ineq_constr_act,ineq_constr_distance{:},J});
+    coll_input_vars_def = [coll_input_vars_def,{SynH_rk,SynH_lk,SynW_rk,SynW_lk}];
 end
+
+f_coll = Function('f_coll',coll_input_vars_def,...
+        {eq_constr, ineq_constr_deact, ineq_constr_act,...
+        ineq_constr_distance{:}, ineq_constr_syn,J});
 
 % Repeat function for each mesh interval and assign evaluation to multiple threads
 f_coll_map = f_coll.map(N,S.solver.parallel_mode,S.solver.N_threads);
@@ -585,19 +566,15 @@ coll_input_vars_eval = {tf,a(:,1:end-1), a_col, FTtilde(:,1:end-1), FTtilde_col,
 if nq.torqAct > 0
     coll_input_vars_eval = [coll_input_vars_eval, {a_a(:,1:end-1), a_a_col, e_a}];
 end
+if (S.subject.synergies)    
+    coll_input_vars_eval = [coll_input_vars_eval,{SynH_r(:,1:end-1), SynH_l(:,1:end-1), SynW_r,SynW_l}];
+end
+
 coll_ineq_constr_distance = cell(1,length(ineq_constr_distance));
 
-if (S.subject.synergies)    
-    if strcmp(S.misc.gaitmotion_type,'HalfGaitCycle') % same weights right and left
-        coll_input_vars_eval = [coll_input_vars_eval,{SynH_r(:,1:end-1), SynH_l(:,1:end-1), SynW_r}]; % left weights are not variables, 
-        % just "a copy" of right weights
-    elseif strcmp(S.misc.gaitmotion_type,'FullGaitCycle') 
-        coll_input_vars_eval = [coll_input_vars_eval,{SynH_r(:,1:end-1), SynH_l(:,1:end-1), SynW_r,SynW_l}];
-    end 
-    [coll_eq_constr,coll_ineq_constr_deact,coll_ineq_constr_act,coll_ineq_constr_distance{:},coll_ineq_constr_syn,Jall] = f_coll_map(coll_input_vars_eval{:});
-else
-    [coll_eq_constr,coll_ineq_constr_deact,coll_ineq_constr_act,coll_ineq_constr_distance{:},Jall] = f_coll_map(coll_input_vars_eval{:});
-end
+[coll_eq_constr, coll_ineq_constr_deact, coll_ineq_constr_act,...
+    coll_ineq_constr_distance{:}, coll_ineq_constr_syn,Jall] =...
+    f_coll_map(coll_input_vars_eval{:});
 
 % equality constraints
 opti.subject_to(coll_eq_constr == 0);

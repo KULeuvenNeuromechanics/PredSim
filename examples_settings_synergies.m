@@ -8,6 +8,8 @@ S.subject.synergies = 1; % 1 = implement muscle synergies
 S.subject.TrackSynW = 0; % 1 = track synergy weights
 S.misc.gaitmotion_type = 'HalfGaitCycle';
 S.subject.NSyn = 4;
+S.subject.NSyn_r = 4;
+S.subject.NSyn_l = 4;
 
 %% Example 2: Symmetric synergies, track weights 
 % (from the case of 4 synergies in Pitto et al 2020)
