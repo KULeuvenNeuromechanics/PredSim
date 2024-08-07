@@ -16,8 +16,13 @@ This repository is a work in progress
 Please cite the original authors if you use this simulation framework.
 
 1. Falisse A, Serrancoli G, Dembia C, Gillis J, Jonkers J, De Groote F. 2019 Rapid predictive simulations with complex musculoskeletal models suggest that diverse healthy and pathological human gaits can emerge from similar control strategies. Journal of the Royal Society Interface 16: 20190402. http://dx.doi.org/10.1098/rsif.2019.0402. You can find the original repository here: https://github.com/antoinefalisse/3dpredictsim (MATLAB)
- 
-2. Falisse A, Afschrift M, De Groote F. 2022 Modeling toes contributes to realistic stance knee mechanics in three-dimensional predictive simulations of walking. PLoS ONE 17(1): e0256311. https://doi.org/10.1371/journal.pone.0256311. You can find the original repository here: https://github.com/antoinefalisse/3dpredictsim_mtp (python)
+
+2. Falisse, A., Serrancolí, G., Dembia, C. L., Gillis, J., & De Groote, F. 2019 Algorithmic differentiation improves the computational efficiency of OpenSim-based trajectory optimization of human movement. PLOS ONE, 14(10), e0217730. https://doi.org/10.1371/journal.pone.0217730
+
+3. Falisse A, Afschrift M, De Groote F. 2022 Modeling toes contributes to realistic stance knee mechanics in three-dimensional predictive simulations of walking. PLoS ONE 17(1): e0256311. https://doi.org/10.1371/journal.pone.0256311. You can find the original repository here: https://github.com/antoinefalisse/3dpredictsim_mtp (python)
+
+4. D’Hondt, L., De Groote, F., & Afschrift, M. 2024 A dynamic foot model for predictive simulations of human gait reveals causal relations between foot structure and whole-body mechanics. PLOS Computational Biology, 20(6), e1012219. https://doi.org/10.1371/journal.pcbi.1012219. You can find the original repository here: https://github.com/Lars-DHondt-KUL/3dpredictsim/tree/four-segment_foot_model (MATLAB)
+
 
 
 ### If you are familiar with a previous version of this simulation framework, here is a rundown of the changes

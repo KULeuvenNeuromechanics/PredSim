@@ -67,6 +67,7 @@ sigma_data.intobl_r = 0.25;
 sigma_data.extobl_r = 0.25;    
 sigma_data.add_long_r = 0.74643;
 sigma_data.add_brev_r = 0.75263;
+sigma_data.FDB_r = 0.25;
 
 % left muscles
 sigma_data.glut_med1_l = 0.74455;
@@ -115,6 +116,7 @@ sigma_data.intobl_l = 0.25;
 sigma_data.extobl_l = 0.25;    
 sigma_data.add_long_l = 0.74643;
 sigma_data.add_brev_l = 0.75263;
+sigma_data.FDB_l = 0.25;
 
 %% gait1018 muscle groups
 % right muscle groups

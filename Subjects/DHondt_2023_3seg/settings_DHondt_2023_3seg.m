@@ -21,7 +21,7 @@ S.subject.IG_selection = 'quasi-random';
 
 S.metabolicE.tanh_b = 100;
 
-S.bounds.coordinates = {'pelvis_ty',0.55,1.1, 'pelvis_tilt',-2.9302,nan};
+S.bounds.Qs = {'pelvis_ty',0.55,1.1, 'pelvis_tilt',-2.9302,nan};
 
 S.subject.muscle_pass_stiff_shift = {{'soleus','_gas','per_','tib_','_dig_','_hal_','FDB'},0.9};
 S.subject.tendon_stiff_scale = {{'soleus','_gas'},0.5};

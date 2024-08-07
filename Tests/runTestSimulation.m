@@ -81,7 +81,6 @@ S.post_process.result_filename = result_filename;
 
 % update paths
 S.subject.IG_selection = replace(S.subject.IG_selection, S.misc.main_path, pathRepo);
-S.subject.IK_Bounds = replace(S.subject.IK_Bounds, S.misc.main_path, pathRepo);
 osim_path = replace(res_ref.model_info.osim_path, S.misc.main_path, pathRepo);
 
 S.misc.main_path = pathRepo;
