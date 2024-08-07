@@ -346,17 +346,28 @@ function [joints_chain, coords_chain] = getKinematicChain(joint_table,starting_j
     joints_chain = [];
     coords_chain = [];
     has_next_joint = true;
-    next_joint = {starting_joint};
-    if ~contains(joint_table.joint,next_joint)
+    next_joints_array = {starting_joint};
+    if ~contains(joint_table.joint,next_joints_array)
         return
     end
     while has_next_joint
-        joints_chain{end+1,1} = next_joint{1};
+        % take joint to analyse from FIFO array
+        next_joint = next_joints_array{1};
+        % add joint to kinematic chain
+        joints_chain{end+1,1} = next_joint;
+        % add coordinates to kinematic chain
         coords_i = joint_table.coordinates(strcmp(joint_table.joint,next_joint));
         coords_chain = [coords_chain(:); coords_i{:}];
+        % get the child frame of this joint
         next_frame = joint_table.child(strcmp(joint_table.joint,next_joint));
-        next_joint = joint_table.joint(strcmp(joint_table.parent,next_frame));
-        if isempty(next_joint)
+        % get joints that have this frame as their parent frame and add
+        % them to FIFO array
+        next_joint_i = joint_table.joint(strcmp(joint_table.parent,next_frame));
+        next_joints_array = [next_joints_array(:); next_joint_i(:)];
+        % remove 1st joint from array, since that one is done
+        next_joints_array = next_joints_array(2:end);
+        % set stop criterion if there ar no more joints to analyse
+        if isempty(next_joints_array)
             has_next_joint = false;
         end
     end
