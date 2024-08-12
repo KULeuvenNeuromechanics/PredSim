@@ -1,9 +1,7 @@
 function [exo] = ankleExoNuckols2020(init, settings_orthosis)
 % --------------------------------------------------------------------------
-% parametricAFO
-%   Defines an ankle-foot orthosis as a rotational spring on the ankle angle
-%   and a rotational spring on the MTP angle. Each spring is defined by a
-%   stiffness constant.
+% ankleExoNuckols2020
+%   Defines a passive ankle exoskeleton as described by Nuckols et al.
 % 
 %   [1] R. W. Nuckols and G. S. Sawicki, “Impact of elastic ankle exoskeleton
 %       stiffness on neuromechanics and energetics of human walking across 
@@ -17,9 +15,8 @@ function [exo] = ankleExoNuckols2020(init, settings_orthosis)
 % 
 %   - settings_orthosis -
 %   * struct with information about this orthosis, containing the fields:
-%       - function_name = parametricAFO  i.e. name of this function           
+%       - function_name = 'ankleExoNuckols2020'  i.e. name of this function           
 %       - ankle_stiffness:  ankle stiffness in Nm/rad
-%       - mtp_stiffness:    mtp stiffness in Nm/rad
 %       - left_right:       'l' for left or 'r' for right
 %   Values are set via S.orthosis.settings{i} in main.m
 %

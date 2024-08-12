@@ -12,7 +12,7 @@ function [AFO] = parametricAFO(init, settings_orthosis)
 % 
 %   - settings_orthosis -
 %   * struct with information about this orthosis, containing the fields:
-%       - function_name = parametricAFO  i.e. name of this function           
+%       - function_name = 'parametricAFO'  i.e. name of this function           
 %       - ankle_stiffness:  ankle stiffness in Nm/rad
 %       - mtp_stiffness:    mtp stiffness in Nm/rad
 %       - left_right:       'l' for left or 'r' for right
