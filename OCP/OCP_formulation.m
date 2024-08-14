@@ -86,7 +86,7 @@ bounds_nsc = getBounds(S,model_info);
 scaling = getScaleFactor(S,model_info,bounds_nsc);
 bounds = scaleBounds(S,model_info,bounds_nsc,scaling);
 
-if strcmp(S.subject.IG_selection,'quasi-random')
+if strcmp(S.solver.IG_selection,'quasi-random')
     guess = getGuess_QR_opti(S,model_info,scaling,d);
 else
     guess = getGuess_DI_opti(S,model_info,scaling,d);
@@ -636,13 +636,13 @@ if ~S.post_process.load_prev_opti_vars
     setup.scaling = scaling;
     setup.guess = guess;
     
-    Outname = fullfile(S.subject.save_folder,[S.post_process.result_filename '.mat']);
+    Outname = fullfile(S.misc.save_folder,[S.misc.result_filename '.mat']);
     save(Outname,'w_opt','stats','setup','model_info','S');
 
 else % S.post_process.load_prev_opti_vars = true
     
     % Advanced feature, for debugging only: load w_opt and reconstruct R before rerunning the post-processing.
-    Outname = fullfile(S.subject.save_folder,[S.post_process.result_filename '.mat']);
+    Outname = fullfile(S.misc.save_folder,[S.misc.result_filename '.mat']);
     disp(['Loading vector with optimization variables from previous solution: ' Outname])
     clear 'S'
     load(Outname,'w_opt','stats','setup','model_info','R','S');
@@ -1121,7 +1121,7 @@ R.ground_reaction.initial_contact_side = HS1;
 
 
 % save results
-Outname = fullfile(S.subject.save_folder,[S.post_process.result_filename '.mat']);
+Outname = fullfile(S.misc.save_folder,[S.misc.result_filename '.mat']);
 disp(['Saving results as: ' Outname])
 save(Outname,'w_opt','stats','setup','R','model_info');
 

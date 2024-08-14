@@ -237,6 +237,24 @@ if ~isfield(S.misc,'scaling_Moments')
     S.misc.scaling_Moments = [];
 end
 
+% folder path to store the subject specific results
+if ~isfield(S.misc,'save_folder')
+   error("Please provide a folder to store the results in. " + ...
+       "Specify the folder path in S.misc.save_folder."); 
+elseif ~isfolder(S.misc.save_folder)
+    mkdir(S.misc.save_folder);
+end
+
+% name used for saving the resultfiles (choose custom or structurized savename)
+if ~isfield(S.misc,'savename')
+    S.misc.savename = 'structured';
+end
+
+% filename of the result
+if ~isfield(S.misc,'result_filename')
+    S.misc.result_filename = [];
+end
+
 %% post_process
 if ~isfield(S,'post_process')
     S.post_process = [];
@@ -245,16 +263,6 @@ end
 % boolean to plot post processing results
 if ~isfield(S.post_process,'make_plot')
     S.post_process.make_plot = 0;
-end
-
-% name used for saving the resultfiles (choose custom or structurized savename)
-if ~isfield(S.post_process,'savename')
-    S.post_process.savename = 'structured';
-end
-
-% filename of the result to post-process
-if ~isfield(S.post_process,'result_filename')
-    S.post_process.result_filename = [];
 end
 
 % rerun post-processing without solving OCP
@@ -327,16 +335,41 @@ if isempty(S.solver.CasADi_path) && S.solver.run_as_batch_job
     error('Running a simulation as batch job requires "S.solver.CasADi_path" to contain the CasADi installation folder')
 end
 
+% initial guess inputs
+% input should be a string: "quasi-random" or the path to a .mot file
+if ~isfield(S.solver,'IG_selection')
+    error('Please specify what you want to use as an initial guess. Either choose "quasi-random" or specify the path of a .mot file in S.solver.IG_selection.')
+else
+    [~,NAME,EXT] = fileparts(S.solver.IG_selection);
+    if EXT == ".mot" && isfile(S.solver.IG_selection)
+        disp(['Using ',char(S.solver.IG_selection), ' as initial guess.'])
+        if ~isfield(S.solver,'IG_selection_gaitCyclePercent')
+            error(['Please specify what percent of gait cycle data is present ' ...
+                'in the initial guess file in S.solver.IG_selection_gaitCyclePercent. ' ...
+                'For example, use 50, 100, and 200 if the provided intial guess ' ...
+                'file has half a gait cycle, full gait cycle or two full ' ...
+                'gait cycles, respectively.'])
+        end
+        if ((strcmp(S.misc.gaitmotion_type,'FullGaitCycle')) && (S.solver.IG_selection_gaitCyclePercent < 100))
+            error('Cannot use an initial guess of an incomplete gait cycle for predictive simulation of a full gait cycle. Please adjust S.misc.gaitmotion_type or initial guess file.')
+        elseif ((strcmp(S.misc.gaitmotion_type,'HalfGaitCycle')) && (S.solver.IG_selection_gaitCyclePercent < 50))
+            error('Cannot use an initial guess of less than half gait gait cycle for predictive simulation of a half gait cycle. Please adjust S.misc.gaitmotion_type or initial guess file.')
+        end
+        
+    elseif EXT == ".mot" && ~isfile(S.solver.IG_selection)
+        error('The motion file path you specified does not exist. Check if the path exists or if you made a typo.')
+        
+    elseif EXT == "" && NAME == "quasi-random"
+         disp('Using a quasi-random initial guess.')
+         
+    elseif EXT == "" && NAME ~= "quasi-random"
+        error('Please specify what you want to use as an initial guess. Either choose "quasi-random" or specify the path of a .mot file.')
+    end
+end
+
 %% subject
 if ~isfield(S,'subject')
     S.subject = [];
-end
-
-% folder path to store the subject specific results
-if ~isfield(S.subject,'save_folder')
-   error('Please provide a folder to store the results in. Specify the folder path in S.subject.save_folder.'); 
-elseif ~isfolder(S.subject.save_folder)
-    mkdir(S.subject.save_folder);
 end
 
 % name of the subject
@@ -377,34 +410,6 @@ if ~isfield(S.subject,'tendon_stiff_scale')
     S.subject.tendon_stiff_scale = [];
 end
 
-% initial guess inputs
-% input should be a string: "quasi-random" or the path to a .mot file
-if ~isfield(S.subject,'IG_selection')
-    error('Please specify what you want to use as an initial guess. Either choose "quasi-random" or specify the path of a .mot file in S.subject.IG_selection.')
-else
-    [~,NAME,EXT] = fileparts(S.subject.IG_selection);
-    if EXT == ".mot" && isfile(S.subject.IG_selection)
-        disp(['Using ',char(S.subject.IG_selection), ' as initial guess.'])
-        if ~isfield(S.subject,'IG_selection_gaitCyclePercent')
-            error('Please specify what percent of gait cycle data is present in the initial guess file in S.subject.IG_selection_gaitCyclePercent. For example, use 50, 100, and 200 if the provided intial guess file has half a gait cycle, full gait cycle or two full gait cycles, respectively.')
-        end
-        if ((strcmp(S.misc.gaitmotion_type,'FullGaitCycle')) && (S.subject.IG_selection_gaitCyclePercent < 100))
-            error('Cannot use an initial guess of an incomplete gait cycle for predictive simulation of a full gait cycle. Please adjust S.misc.gaitmotion_type or initial guess file.')
-        elseif ((strcmp(S.misc.gaitmotion_type,'HalfGaitCycle')) && (S.subject.IG_selection_gaitCyclePercent < 50))
-            error('Cannot use an initial guess of less than half gait gait cycle for predictive simulation of a half gait cycle. Please adjust S.misc.gaitmotion_type or initial guess file.')
-        end
-        
-    elseif EXT == ".mot" && ~isfile(S.subject.IG_selection)
-        error('The motion file path you specified does not exist. Check if the path exists or if you made a typo.')
-        
-    elseif EXT == "" && NAME == "quasi-random"
-         disp('Using a quasi-random initial guess.')
-         
-    elseif EXT == "" && NAME ~= "quasi-random"
-        error('Please specify what you want to use as an initial guess. Either choose "quasi-random" or specify the path of a .mot file.')
-    end
-end
-
 % type of mtp joint used in the model
 if ~isfield(S.subject,'mtp_type')
     S.subject.mtp_type = ''; 
@@ -413,20 +418,6 @@ end
 % muscle tendon properties
 if ~isfield(S.subject,'scale_MT_params')
     S.subject.scale_MT_params = []; 
-end
-
-% muscle spasticity
-if ~isfield(S.subject,'spasticity')
-    S.subject.spasticity = []; 
-elseif ~isempty(S.subject.spasticity)
-    warning('spasticity is not yet implemented.')
-end
-
-% muscle coordination
-if ~isfield(S.subject,'muscle_coordination')
-    S.subject.muscle_coordination = []; 
-elseif ~isempty(S.subject.muscle_coordination)
-    warning('muscle coordination is not yet implemented.')
 end
 
 % damping coefficient for all degrees of freedon
@@ -603,7 +594,7 @@ end
 
 % Print outputs from compiler
 if ~isfield(S.OpenSimADOptions,'verbose_mode')
-    S.OpenSimADOptions.verbose_mode = true;
+    S.OpenSimADOptions.verbose_mode = false;
 end 
 
 % Test external function versus ID Tool

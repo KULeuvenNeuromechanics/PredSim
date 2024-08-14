@@ -34,14 +34,14 @@ if ~isempty(S.solver.CasADi_path)
 end
 
 % Make sure folder to save results exists
-OutFolder = S.subject.save_folder;
+OutFolder = S.misc.save_folder;
 if ~isfolder(OutFolder)
     mkdir(OutFolder);
 end
 
 if S.post_process.load_prev_opti_vars
     % load settings and model_info when only running post-processing
-    Outname = fullfile(S.subject.save_folder,[S.post_process.result_filename '.mat']);
+    Outname = fullfile(S.misc.save_folder,[S.misc.result_filename '.mat']);
     load(Outname,'R','model_info');
     S = R.S;
     S.post_process.load_prev_opti_vars = 1;
@@ -51,7 +51,7 @@ if S.post_process.load_prev_opti_vars
 
 elseif S.post_process.rerun
     % load settings and model_info when only running post-processing
-    Outname = fullfile(S.subject.save_folder,[S.post_process.result_filename '.mat']);
+    Outname = fullfile(S.misc.save_folder,[S.misc.result_filename '.mat']);
     load(Outname,'R','model_info');
     S = R.S;
     S.post_process.rerun = 1;
@@ -59,8 +59,8 @@ elseif S.post_process.rerun
     osim_path = model_info.osim_path;
     R.S = S;
 
-elseif isempty(S.post_process.result_filename)
-    if strcmp(S.post_process.savename,'structured')
+elseif isempty(S.misc.result_filename)
+    if strcmp(S.misc.savename,'structured')
         % use a structured savename
         if S.solver.run_as_batch_job
             result_filename = [S.subject.name '_job' num2str(S.solver.job_id)];
@@ -75,22 +75,22 @@ elseif isempty(S.post_process.result_filename)
                 ct = ct+1;
             end
         end
-        S.post_process.result_filename = result_filename;
+        S.misc.result_filename = result_filename;
 
-    elseif strcmp(S.post_process.savename,'datetime')
+    elseif strcmp(S.misc.savename,'datetime')
         % use system date and time
-        S.post_process.result_filename = [S.subject.name '_' datestr(datetime,30)];
+        S.misc.result_filename = [S.subject.name '_' datestr(datetime,30)];
         
     end   
 end
 
 if nargout == 1
-    varargout{1} = S.post_process.result_filename;
+    varargout{1} = S.misc.result_filename;
 end
 
 %% Start diary
 t00 = tic;
-Outname = fullfile(S.subject.save_folder,[S.post_process.result_filename '_log.txt']);
+Outname = fullfile(S.misc.save_folder,[S.misc.result_filename '_log.txt']);
 diary(Outname);
 disp(' ')
 disp(['Subject name: ' S.subject.name])

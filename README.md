@@ -88,14 +88,12 @@ This code can automatically convert an OpenSim model to the external function us
 	- the name or code of the subject you are simulating.
 - **osim_path**: 
 	- path to the scaled opensim model of the subject.	
-- **S.subject.save_folder**: 
-	- path to the folder where you want to store the results of the OCP. If the folder does not exist yet on your machine, it will be created automatically.
-- **S.subject.IG_selection**: 
+- **S.misc.save_folder**: 
+	- path to the folder where you want to store the simulation results. If the folder does not exist yet on your machine, it will be created automatically.
+- **S.solver.IG_selection**: 
 	- either choose 'quasi-random' or give the path to a .mot file you want to use as initial guess.
-- **S.subject.IG_selection_gaitCyclePercent**: 
-	- if S.subject.IG_selection is a .mot file, S.subject.IG_selection_gaitCyclePercent is required. Here, specify what percent of gait cycle does the .mot file contain. For example, if the .mot file has 2 gait cycles, S.subject.IG_selection_gaitCyclePercent is 200.
-- **S.solver.run_as_batch_job**: 
-	- specify if the OCP is to be solved as a batch job (0: no, 1: yes). Batch processing requires the [Parallel Computing Toolbox](https://nl.mathworks.com/products/parallel-computing.html).
+- **S.solver.IG_selection_gaitCyclePercent**: 
+	- if S.solver.IG_selection is a .mot file, S.solver.IG_selection_gaitCyclePercent is required. Here, specify what percent of gait cycle does the .mot file contain. For example, if the .mot file has 2 gait cycles, S.solver.IG_selection_gaitCyclePercent is 200.
 
 ### OptionalSettings
 
@@ -214,6 +212,12 @@ This code can automatically convert an OpenSim model to the external function us
 	- hash of the last commit on the remote [char]. This is the identifier of the latest version on the remote, i.e. GitHub. You cannot change this setting.
 - **S.misc.computername**: 
 	- name of the computer on which the simulation was run [char]. You cannot change this setting.
+- **S.misc.save_folder**: 
+	- path to folder to store the results. If the folder does not exist, it is created automatically. [char]
+- **S.misc.result_filename**: 
+	- File name for results. Used for the name of .mat file that saves the results, diary of the OCP, and name of the .mot file of the output motion. When rerunning post-processing of an existing result, giving this file name is required. Default value is empty.
+- **S.misc.savename**: 
+	- Type of savename to use if S.misc.result_filename is empty. Default is *structured* [char]. This sets S.misc.result_filename = <S.subject.name>_v\<n>. Where <S.subject.name> is defined in S.subject.name. n = 1 if <S.subject.name>_v1.mat does not exist. n is increased until n is found such that <S.subject.name>_v\<n>.mat does not exist. To change this structuring process, change its implementation in [run_pred_sim.m file](./run_pred_sim.m). An alternative option is *datetime* [char], this uses <S.subject.name>\_\<yyyymmddTHHMMSS>. Where \<yyyymmddTHHMMSS> is the system date and time when creating the savename.
 
 
 #### S.post_process
@@ -221,11 +225,9 @@ This code can automatically convert an OpenSim model to the external function us
 - **S.post_process.make_plot**: 
 	- boolean to plot post processing results (0 or 1). Default is *0*.
 - **S.post_process.rerun**: 
-	- boolean to rerun post-processing without solving OCP (0 or 1). Default is *0*. If this option is set to 1, one should specify the S.post_process.result_filename.
-- **S.post_process.result_filename**: 
-	- File name for results. Used for the name of .mat file that saves the results, diary of the OCP, and name of the .mot file of the output motion. When rerunning post-processing of an existing result, giving this file name is required. Default value is 
-- **S.post_process.savename**: 
-	- Type of savename to use if S.post_process.result_filename is empty. Defaults is *structured* [char]. This uses the name of the .mat file of results is used as <S.subject.name>_v\<n>. Where <S.subject.name> is defined in S.subject.name. n = 1 if <S.subject.name>_v1.mat does not exist. n is increased until n is found such that <S.subject.name>_v\<n>.mat does not exist. To change this structuring process, change its implementation in [run_pred_sim.m file](./run_pred_sim.m). An alternative option is *datetime* [char], this uses <S.subject.name>\_\<yyyymmddTHHMMSS>. Where \<yyyymmddTHHMMSS> is the system date and time when creating the savename.
+	- boolean to rerun post-processing without solving OCP (0 or 1). Default is *0*. If this option is set to 1, one should specify the S.misc.result_filename.
+- **S.post_process.load_prev_opti_vars**:
+	- load w_opt and reconstruct R before rerunning the post-processing. Advanced feature, for debugging only, you should not need this.
 
 #### S.solver
 
@@ -241,11 +243,11 @@ This code can automatically convert an OpenSim model to the external function us
 	- number of threads in parallel mode. Default is *4* [double]. When using batch computing, this value is overwritten with the number of threads assigned to each worker in you parallel cluster.
 - **S.solver.N_meshes**: 
 	- number of mesh intervals. Default is *50* [double] for S.misc.gaitmotion_type = HalfGaitCycle and *100* for FullGaitCycle
+- **S.solver.run_as_batch_job**: 
+	- specify if the OCP is to be solved as a batch job. Default is *false* [bool] Batch processing requires the [Parallel Computing Toolbox](https://nl.mathworks.com/products/parallel-computing.html).
 
 #### S.subject
 
-- **S.subject.save_folder**: 
-	- folder path to store the intermediate subject specific results (e.g. external function with skeletal dynamics, CasADi function with musculoskeletal geometry polynomials). If the folder does not exist, it is created automatically.
 - **S.subject.mass**: 
 	- mass of the subject in kilograms. Default is *[]* kilograms [double]. Default is empty, it will be overwritten by the mass extracted from the OpenSim model.
 - **S.subject.IG_pelvis_y**: 
@@ -332,7 +334,7 @@ These settings are passed to OpenSimAD.
        - Visual studio 2017: 'Visual Studio 16 2019'
        - Visual studio 2017: 'Visual Studio 17 2022'
 - **S.OpenSimADOptions.verbose_mode**:
-	- print outputs from windows command prompt to matlab command window (and log file). Default is *true* [bool].
+	- print outputs from windows command prompt to matlab command window (and log file). Default is *false* [bool].
 - **S.OpenSimADOptions.verify_ID**:
 	- verify the generated function versus the inverse dynamics tool in OpenSim. Default is *false* [bool].
 - **S.OpenSimADOptions.jointsOrder**: 

@@ -22,7 +22,7 @@ function [] = PostProcessing(S,model_info,f_casadi)
 % --------------------------------------------------------------------------
 
 % load results
-Outname = fullfile(S.subject.save_folder,[S.post_process.result_filename '.mat']);
+Outname = fullfile(S.misc.save_folder,[S.misc.result_filename '.mat']);
 load(Outname,'R');
 
 % kinematics in radians
@@ -85,8 +85,6 @@ R.misc.body_weight = model_info.mass*9.81;
 
 
 %%
-Outname = fullfile(S.subject.save_folder,[S.post_process.result_filename '.mat']);
-% load(Outname,'w_opt','stats','setup','model_info');
 save(Outname,'R','-append');
 
 
