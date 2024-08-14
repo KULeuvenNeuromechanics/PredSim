@@ -142,7 +142,7 @@ classdef Orthosis < handle
         end
 
         function fun = getFunction(self)
-            % Get the CasADi Function describing the Orthosis
+            % [internal] Get the CasADi Function describing the Orthosis
             if isempty(self.fun)
                 createCasadiFunction(self);
             end
@@ -150,22 +150,22 @@ classdef Orthosis < handle
         end
 
         function BodyForces = getBodyForces(self)
-            % Get cell array of structs describing body forces in OpenSimAD format
+            % [internal] Get cell array of structs describing body forces in OpenSimAD format
             BodyForces = self.BodyForces;
         end
 
         function BodyMoments = getBodyMoments(self)
-            % Get cell array of structs describing body moments in OpenSimAD format
+            % [internal] Get cell array of structs describing body moments in OpenSimAD format
             BodyMoments = self.BodyMoments;
         end
 
         function PointPositions = getPointPositions(self)
-            % Get cell array of structs describing point positions in OpenSimAD format
+            % [internal] Get cell array of structs describing point positions in OpenSimAD format
             PointPositions = self.PointPositions;
         end
 
         function PointVelocities = getPointVelocities(self)
-            % Get cell array of structs describing point velocities in OpenSimAD format
+            % [internal] Get cell array of structs describing point velocities in OpenSimAD format
             PointVelocities = self.PointPositions;
         end
 
@@ -581,7 +581,7 @@ classdef Orthosis < handle
 
     %% OpenSim
         function [] = updatePropertiesFromOsimModel(self)
-            % Read properties from OpenSim model and update the stored info
+            % [internal] Read properties from OpenSim model and update the stored info
 
             if isempty(self.osimPath)
                 error('Please use %s.setOsimPath to set the path to an OpenSim model file.',inputname(1));
@@ -631,7 +631,7 @@ classdef Orthosis < handle
 
     %% CasADi
         function [] = createCasadiFunction(self)
-            % Create a CasADi Function for the added forces in function of the defined variables
+            % [internal] Create a CasADi Function for the added forces in function of the defined variables
             self.fun = casadi.Function(['f_orthosis_',self.name],...
                 self.arg, [self.res, self.res_pp],...
                 self.names_arg, [self.names_res, self.names_res_pp]);
@@ -643,7 +643,7 @@ classdef Orthosis < handle
                 ExtFunIO
                 muscleNames
             end
-            % Wrap the CasADi Function of the orthosis for easy integration with PredSim
+            % [internal] Wrap the CasADi Function of the orthosis for easy integration with PredSim
             %
             % INPUTS:
             %   - ExtFunIO - [struct]
