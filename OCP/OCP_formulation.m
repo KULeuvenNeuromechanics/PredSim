@@ -214,21 +214,21 @@ if (S.subject.synergies)
         % and same weights right and left
 
         % Right synergy activations at mesh points
-        SynH_r = opti.variable(S.subject.NSyn,N+1);
-        opti.subject_to(bounds.SynH.lower(1:S.subject.NSyn)'*ones(1,N+1) < SynH_r < ...
-            bounds.SynH.upper(1:S.subject.NSyn)'*ones(1,N+1));
-        opti.set_initial(SynH_r, guess.SynH(:,1:S.subject.NSyn)');
+        SynH_r = opti.variable(S.subject.NSyn_r,N+1);
+        opti.subject_to(bounds.SynH.lower(1:S.subject.NSyn_r)'*ones(1,N+1) < SynH_r < ...
+            bounds.SynH.upper(1:S.subject.NSyn_r)'*ones(1,N+1));
+        opti.set_initial(SynH_r, guess.SynH(:,1:S.subject.NSyn_r)');
 
         % Left synergy activations at mesh points
-        SynH_l = opti.variable(S.subject.NSyn,N+1);
-        opti.subject_to(bounds.SynH.lower(1:S.subject.NSyn)'*ones(1,N+1) < SynH_l < ...
-            bounds.SynH.upper(1:S.subject.NSyn)'*ones(1,N+1));
-        opti.set_initial(SynH_l, guess.SynH(:,1:S.subject.NSyn)');
+        SynH_l = opti.variable(S.subject.NSyn_l,N+1);
+        opti.subject_to(bounds.SynH.lower(1:S.subject.NSyn_l)'*ones(1,N+1) < SynH_l < ...
+            bounds.SynH.upper(1:S.subject.NSyn_l)'*ones(1,N+1));
+        opti.set_initial(SynH_l, guess.SynH(:,1:S.subject.NSyn_l)');
 
         % Synergy weights
-        SynW_r = opti.variable(length(idx_m_r),S.subject.NSyn);
-        opti.subject_to(bounds.SynW.lower*ones(length(idx_m_r),S.subject.NSyn) < SynW_r < bounds.SynW.upper*ones(length(idx_m_r),S.subject.NSyn));
-        opti.set_initial(SynW_r,  guess.SynW*ones(length(idx_m_r),S.subject.NSyn));
+        SynW_r = opti.variable(length(idx_m_r),S.subject.NSyn_r);
+        opti.subject_to(bounds.SynW.lower*ones(length(idx_m_r),S.subject.NSyn_r) < SynW_r < bounds.SynW.upper*ones(length(idx_m_r),S.subject.NSyn_r));
+        opti.set_initial(SynW_r,  guess.SynW*ones(length(idx_m_r),S.subject.NSyn_r));
 
         SynW_l = SynW_r; 
 
@@ -820,12 +820,12 @@ qdotdot_col_opt =reshape(w_opt(starti:starti+nq.all*(d*N)-1),nq.all,(d*N))';
 starti = starti + nq.all*(d*N);
 if (S.subject.synergies)       
     if strcmp(S.misc.gaitmotion_type,'HalfGaitCycle')
-        SynH_r_opt = reshape(w_opt(starti:starti+S.subject.NSyn*(N+1)-1),S.subject.NSyn,N+1)';
-        starti = starti + S.subject.NSyn*(N+1);
-        SynH_l_opt = reshape(w_opt(starti:starti+S.subject.NSyn*(N+1)-1),S.subject.NSyn,N+1)';
-        starti = starti + S.subject.NSyn*(N+1);
-        SynW_r_opt = reshape(w_opt(starti:starti+NMuscle/2*S.subject.NSyn-1),NMuscle/2,S.subject.NSyn)';
-        starti = starti + NMuscle/2*S.subject.NSyn;
+        SynH_r_opt = reshape(w_opt(starti:starti+S.subject.NSyn_r*(N+1)-1),S.subject.NSyn_r,N+1)';
+        starti = starti + S.subject.NSynr_r*(N+1);
+        SynH_l_opt = reshape(w_opt(starti:starti+S.subject.NSyn_l*(N+1)-1),S.subject.NSyn_l,N+1)';
+        starti = starti + S.subject.NSyn_l*(N+1);
+        SynW_r_opt = reshape(w_opt(starti:starti+NMuscle/2*S.subject.NSyn_r-1),NMuscle/2,S.subject.NSyn_r)';
+        starti = starti + NMuscle/2*S.subject.NSyn_r;
         SynW_l_opt = SynW_r_opt;
     elseif strcmp(S.misc.gaitmotion_type,'FullGaitCycle')
         SynH_r_opt = reshape(w_opt(starti:starti+S.subject.NSyn_r*(N+1)-1),S.subject.NSyn_r,N+1)';
