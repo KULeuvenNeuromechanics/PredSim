@@ -289,6 +289,16 @@ if ~isfield(S,'solver')
     S.solver = [];
 end
 
+% options for nlpsol
+if ~isfield(S.solver,'nlpsol_options')
+    S.solver.nlpsol_options = [];
+end
+
+% options for ipopt
+if ~isfield(S.solver,'ipopt_options')
+    S.solver.ipopt_options = [];
+end
+
 % solver algorithm used in the OCP
 if ~isfield(S.solver,'linear_solver')
     S.solver.linear_solver = 'mumps';
@@ -299,6 +309,11 @@ end
 % requires more time
 if ~isfield(S.solver,'tol_ipopt')
     S.solver.tol_ipopt = 4;
+end
+
+% constraint violation has be below 10^(-x) at the solution
+if ~isfield(S.solver,'constr_viol_tol_ipopt')
+    S.solver.constr_viol_tol_ipopt = 6;
 end
 
 % maximal amount of itereations after wich the solver will stop
@@ -530,6 +545,11 @@ end
 % weight on muscle activations
 if ~isfield(S.weights,'a')
     S.weights.a = 2000; 
+end
+
+% exponent for the mmuscle activations
+if ~isfield(S.weights,'a_exp')
+    S.weights.a_exp = 2; 
 end
 
 % weight on slack controls

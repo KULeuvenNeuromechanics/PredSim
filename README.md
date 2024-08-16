@@ -232,22 +232,28 @@ This code can automatically convert an OpenSim model to the external function us
 
 #### S.solver
 
-- **S.solver.linear_solver**: 
-	- solver algorithm used for the OCP. Default is *mumps* [char].
-- **S.solver.tol_ipopt**: 
-	- the power (10^-x) the tolerance ipopt has to reach before the OCP can be regarded as solved; a higher number gives a more precise answer. Default is *4* [double]
-- **S.solver.max_iter**: 
-	- maximal amount of iterations after wich the solver will stop. Default is *10000* [double]
+- **S.solver.CasADi_path**:
+	- Path to CasADi installation (top folder). By default, this will use the CasADi installation that is in the matlab search path.
+- **S.solver.N_meshes**: 
+	- number of mesh intervals. Default is *50* [double] for S.misc.gaitmotion_type = HalfGaitCycle and *100* for FullGaitCycle	
+- **S.solver.run_as_batch_job**: 
+	- specify if the OCP is to be solved as a batch job. Default is *false* [bool]. Batch processing requires the [Parallel Computing Toolbox](https://nl.mathworks.com/products/parallel-computing.html).
 - **S.solver.parallel_mode**: 
 	- type of parallel computing. Default is *thread* [char].
 - **S.solver.N_threads**: 
-	- number of threads in parallel mode. Default is *4* [double]. When using batch computing, this value is overwritten with the number of threads assigned to each worker in you parallel cluster.
-- **S.solver.N_meshes**: 
-	- number of mesh intervals. Default is *50* [double] for S.misc.gaitmotion_type = HalfGaitCycle and *100* for FullGaitCycle
-- **S.solver.run_as_batch_job**: 
-	- specify if the OCP is to be solved as a batch job. Default is *false* [bool]. Batch processing requires the [Parallel Computing Toolbox](https://nl.mathworks.com/products/parallel-computing.html).
-- **S.solver.CasADi_path**:
-	- Path to CasADi installation (top folder). By default, this will use the CasADi installation that is in the matlab search path.
+	- number of threads in parallel mode. Default is *4* [double]. When using batch computing, this value is overwritten with the number of threads assigned to each worker in your parallel cluster.
+- **S.solver.nlpsol_options**:
+	- Options to be passed to [CasADi's nonlinear program solver](https://web.casadi.org/api/html/d4/d89/group__nlpsol.html). Default is *[]* [struct].
+- **S.solver.ipopt_options**:
+	- Options to be passed to [ipopt](https://coin-or.github.io/Ipopt/OPTIONS.html#OPTIONS_REF). Default is *[]* [struct]. Overwrites S.solver.nlpsol_options.ipopt.
+- **S.solver.linear_solver**: 
+	- linear solver algorithm used by ipopt. Default is *mumps* [char]. Overwrites S.solver.ipopt_options.linear_solver.
+- **S.solver.tol_ipopt**: 
+	- the [ipopt convergence tolerance](https://coin-or.github.io/Ipopt/OPTIONS.html#OPT_tol) is set to 10^(-S.solver.tol_ipopt). A higher number gives a more precise answer, but takes more time. Default is *4* [double]. Overwrites S.solver.ipopt_options.tol.
+- **S.solver.constr_viol_tol_ipopt**: 
+	- the [ipopt constraint violation tolerance](https://coin-or.github.io/Ipopt/OPTIONS.html#OPT_constr_viol_tol) is set to 10^(-S.solver.constr_viol_tol_ipopt). A higher number gives a more precise answer, but takes more time. Default is *6* [double]. Overwrites S.solver.ipopt_options.constr_viol_tol.
+- **S.solver.max_iter**: 
+	- maximal amount of iterations after wich the solver will stop. Default is *10000* [double]. Overwrites S.solver.ipopt_options.max_iter.
 
 #### S.subject
 
@@ -322,6 +328,8 @@ This code can automatically convert an OpenSim model to the external function us
 	- specify if damping torque = damping coefficient * coordinate velocity is to be included in the cost function (0 or 1). Default is 0 [double].
 - **S.weights.a**: 
 	- weight on muscle activations. Default is *2000* [double]
+- **S.weights.a_exp**: 
+	- exponent for the muscle activation. Default is *2* [double]
 - **S.weights.slack_ctrl**: 
 	- weight on slack controls. Default is *0.001* [double]
 
