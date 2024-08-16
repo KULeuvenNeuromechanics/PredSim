@@ -320,7 +320,7 @@ for j=1:d
         W.slack_ctrl * B(j+1) *(f_casadi.J_muscles(dFTtildej(:,j)))*h;
 
     if nq.torqAct > 0
-        J = J + W.e_arm      * B(j+1) *(f_casadi.J_torq_act(e_ak))*h;
+        J = J + W.e_torqAct      * B(j+1) *(f_casadi.J_torq_act(e_ak))*h;
     end
     if nq.arms > 0
         J = J + W.slack_ctrl * B(j+1) *(f_casadi.J_arms_dof(Aj(model_info.ExtFunIO.jointi.armsi,j)))*h;
@@ -557,7 +557,7 @@ Qs_nsc = Qs.*(scaling.Qs'*ones(1,N+1));
 dist_trav_tot = Qs_nsc(model_info.ExtFunIO.jointi.base_forward,end) - ...
     Qs_nsc(model_info.ExtFunIO.jointi.base_forward,1);
 vel_aver_tot = dist_trav_tot/tf;
-opti.subject_to(vel_aver_tot - S.subject.v_pelvis_x_trgt == 0)
+opti.subject_to(vel_aver_tot - S.misc.forward_velocity == 0)
 
 % optional constraints
 if strcmp(S.misc.gaitmotion_type,'HalfGaitCycle')
@@ -830,7 +830,7 @@ dist_trav_opt = q_opt_unsc_all.rad(end,model_info.ExtFunIO.jointi.base_forward) 
 time_elaps_opt = tf_opt; % time elapsed
 vel_aver_opt = dist_trav_opt/time_elaps_opt;
 % assert_v_tg should be 0
-assert_v_tg = abs(vel_aver_opt-S.subject.v_pelvis_x_trgt);
+assert_v_tg = abs(vel_aver_opt-S.misc.forward_velocity);
 if assert_v_tg > 1*10^(-S.solver.tol_ipopt)
     disp('Issue when reconstructing average speed')
 end
@@ -891,9 +891,9 @@ for k=1:N
             W.slack_ctrl*B(j+1) *(f_casadi.J_muscles(dFTtilde_col_opt(count,:)))*h_opt);
             
         if nq.torqAct > 0
-            J_opt = J_opt + 1/(dist_trav_opt)*(W.e_arm*B(j+1)      *(f_casadi.J_torq_act(e_a_opt(k,:)))*h_opt);
+            J_opt = J_opt + 1/(dist_trav_opt)*(W.e_torqAct*B(j+1)      *(f_casadi.J_torq_act(e_a_opt(k,:)))*h_opt);
 
-            Actu_cost = Actu_cost + W.e_arm*B(j+1)*(f_casadi.J_torq_act(e_a_opt(k,:)))*h_opt;
+            Actu_cost = Actu_cost + W.e_torqAct*B(j+1)*(f_casadi.J_torq_act(e_a_opt(k,:)))*h_opt;
         end
         if nq.arms > 0
             J_opt = J_opt + 1/(dist_trav_opt)*(W.slack_ctrl*B(j+1) *(f_casadi.J_arms_dof(qdotdot_col_opt(count,model_info.ExtFunIO.jointi.armsi)))*h_opt);

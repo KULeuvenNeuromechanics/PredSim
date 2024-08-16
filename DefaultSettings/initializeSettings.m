@@ -1,23 +1,19 @@
 function [S] = initializeSettings(varargin)
 % --------------------------------------------------------------------------
-%initializeSettings
-%   This function creates the empty settings struct S up to the field 
-%   above the field containing data. 
+% initializeSettings
+%   Initialize the settings struct
 % 
 % INPUT:
 %   - reference_name - (optional input)
-%   * pass the name of a reference model to initialise the settings
+%   * pass the name of a reference model to initialize the settings
 %   according to the relevant publication. 
 % 
 % OUTPUT:
 %   - S -
-%   * empty settings struct S
+%   * settings struct
 %
 % Original author: Bram Van Den Bosch
 % Original date: 01/12/2021
-%
-% Last edit by: Bram Van Den Bosch
-% Last edit date: 26/May/2023
 % --------------------------------------------------------------------------
 
 S = struct;

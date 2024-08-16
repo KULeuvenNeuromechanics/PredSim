@@ -18,7 +18,8 @@ addpath(fullfile(pathRepo,'DefaultSettings'))
 [S] = initializeSettings('Falisse_et_al_2022');
 
 
-%% Required inputs
+%% Settings
+
 % name of the subject
 S.subject.name = 'Falisse_et_al_2022';
 
@@ -33,12 +34,6 @@ S.solver.IG_selection_gaitCyclePercent = 100;
 % give the path to the osim model of your subject
 osim_path = fullfile(pathRepo,'Subjects',S.subject.name,[S.subject.name '.osim']);
 
-%% Optional inputs
-% see README.md in the main folder for information about these optional
-% inputs.
-
-S.post_process.make_plot = 0;
-
 S.subject.adapt_IG_pelvis_y = 1;
 
 S.solver.max_iter = 5;
@@ -52,19 +47,35 @@ if S.subject.adapt_IG_pelvis_y == 0 && S.subject.IG_selection ~= "quasi-random"
 end
 
 % Start simulation
-if S.solver.run_as_batch_job
-    add_pred_sim_to_batch(S,osim_path)
-else
-    [savename] = run_pred_sim(S,osim_path);
-end
+
+[savename] = runPredSim(S, osim_path);
+
 
 %% Plot results
-if S.post_process.make_plot && ~S.solver.run_as_batch_job
-    % set path to saved result
-    result_paths{2} = fullfile(S.subject.save_folder,[savename '.mat']);
-    % add path to subfolder with plotting functions
-    addpath(fullfile(S.misc.main_path,'PlotFigures'))
-    % call plotting script
-    run_this_file_to_plot_figures
-end
+% see .\PlotFigures\run_this_file_to_plot_figures.m for more
 
+if ~S.solver.run_as_batch_job
+
+    % set path to reference result
+    result_paths{1} = fullfile(pathRepo,'Tests','ReferenceResults',...
+        'Falisse_et_al_2022','Falisse_et_al_2022_paper.mat');
+    
+    % set path to saved result
+    result_paths{2} = fullfile(S.misc.save_folder,[savename '.mat']);
+    
+    % Cell array with legend name for each result
+    legend_names = {'Reference result', 'Your first simulation'};
+    
+    % add path to subfolder with plotting functions
+    addpath(fullfile(pathRepo,'PlotFigures'))
+    
+    figure_settings(1).name = 'all_angles';
+    figure_settings(1).dofs = {'all_coords'};
+    figure_settings(1).variables = {'Qs'};
+    figure_settings(1).savepath = [];
+    figure_settings(1).filetype = {};
+    
+    % call plotting function
+    plot_figures(result_paths, legend_names, figure_settings);
+
+end

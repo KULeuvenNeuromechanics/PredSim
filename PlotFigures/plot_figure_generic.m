@@ -46,7 +46,11 @@ fig_pos = 0;
 % default color is blue
 colr = [0 0.4470 0.7410];
 % legend name
-legName = R.S.post_process.result_filename;
+if isfield(R.S,'misc.result_filename')
+    legName = R.S.misc.result_filename;
+else
+    legName = 'simulation';
+end
 % use no interpreter for legend
 lgInt = 'none';
 

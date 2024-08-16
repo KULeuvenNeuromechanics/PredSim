@@ -143,6 +143,11 @@ end
 % subject folder to save intermediate data
 S.misc.subject_path = fullfile(S.misc.main_path,'Subjects',S.subject.name);
 
+% average velocity you want the model to have, in meters per second
+if ~isfield(S.misc,'forward_velocity')
+    S.misc.forward_velocity = 1.25;
+end
+
 % maximal contraction velocity identifier --TO CHECK--
 if ~isfield(S.misc,'v_max_s')
     S.misc.v_max_s = 0;
@@ -260,17 +265,13 @@ if ~isfield(S,'post_process')
     S.post_process = [];
 end
 
-% boolean to plot post processing results
-if ~isfield(S.post_process,'make_plot')
-    S.post_process.make_plot = 0;
-end
-
 % rerun post-processing without solving OCP
 if ~isfield(S.post_process,'rerun')
     S.post_process.rerun = 0;
 end
 if S.post_process.rerun && isempty(S.post_process.result_filename)
-    error('Please provide the name of the result to post-process. (S.post_process.result_filename)')
+    error(['Please provide the name of the result to post-process. ' ...
+        '(S.post_process.result_filename)'])
 end
 
 % load w_opt and reconstruct R before rerunning the post-processing
@@ -279,7 +280,8 @@ if ~isfield(S.post_process,'load_prev_opti_vars')
     S.post_process.load_prev_opti_vars = 0;
 end
 if S.post_process.load_prev_opti_vars && isempty(S.post_process.result_filename)
-    error('Please provide the name of the result from which to load the optimization variables. (S.post_process.result_filename)')
+    error(['Please provide the name of the result from which to load the ' ...
+        'optimization variables. (S.post_process.result_filename)'])
 end
 
 %% solver
@@ -326,19 +328,23 @@ end
 
 % path to CasADi installation folder
 if ~isfield(S.solver,'CasADi_path')
-    S.solver.CasADi_path = [];
+    try
+        S.solver.CasADi_path = casadi.GlobalOptions.getCasadiPath();
+    catch
+        error("Please add CasADi to the matlab search path, or pass the path " + ...
+            "to your CasADi installation (top folder) to S.solver.CasADi_path.")
+    end
 elseif ~isempty(S.solver.CasADi_path) && ~isfolder(S.solver.CasADi_path)
-     error('Unable to find the path assigned to "S.solver.CasADi_path"')
-end
-
-if isempty(S.solver.CasADi_path) && S.solver.run_as_batch_job
-    error('Running a simulation as batch job requires "S.solver.CasADi_path" to contain the CasADi installation folder')
+    error("Unable to find the path assigned to S.solver.CasADi_path:" + ...
+        " \n\t%s",S.solver.CasADi_path)
 end
 
 % initial guess inputs
 % input should be a string: "quasi-random" or the path to a .mot file
 if ~isfield(S.solver,'IG_selection')
-    error('Please specify what you want to use as an initial guess. Either choose "quasi-random" or specify the path of a .mot file in S.solver.IG_selection.')
+    error(['Please specify what you want to use as an initial guess. Either ' ...
+        'choose "quasi-random" or specify the path of a .mot file in ' ...
+        'S.solver.IG_selection.'])
 else
     [~,NAME,EXT] = fileparts(S.solver.IG_selection);
     if EXT == ".mot" && isfile(S.solver.IG_selection)
@@ -350,20 +356,28 @@ else
                 'file has half a gait cycle, full gait cycle or two full ' ...
                 'gait cycles, respectively.'])
         end
-        if ((strcmp(S.misc.gaitmotion_type,'FullGaitCycle')) && (S.solver.IG_selection_gaitCyclePercent < 100))
-            error('Cannot use an initial guess of an incomplete gait cycle for predictive simulation of a full gait cycle. Please adjust S.misc.gaitmotion_type or initial guess file.')
-        elseif ((strcmp(S.misc.gaitmotion_type,'HalfGaitCycle')) && (S.solver.IG_selection_gaitCyclePercent < 50))
-            error('Cannot use an initial guess of less than half gait gait cycle for predictive simulation of a half gait cycle. Please adjust S.misc.gaitmotion_type or initial guess file.')
+        if ((strcmp(S.misc.gaitmotion_type,'FullGaitCycle')) ...
+                && (S.solver.IG_selection_gaitCyclePercent < 100))
+            error(['Cannot use an initial guess of an incomplete gait cycle ' ...
+                'for predictive simulation of a full gait cycle. Please ' ...
+                'adjust S.misc.gaitmotion_type or initial guess file.'])
+        elseif ((strcmp(S.misc.gaitmotion_type,'HalfGaitCycle')) ...
+                && (S.solver.IG_selection_gaitCyclePercent < 50))
+            error(['Cannot use an initial guess of less than half gait gait ' ...
+                'cycle for predictive simulation of a half gait cycle. Please ' ...
+                'adjust S.misc.gaitmotion_type or initial guess file.'])
         end
         
     elseif EXT == ".mot" && ~isfile(S.solver.IG_selection)
-        error('The motion file path you specified does not exist. Check if the path exists or if you made a typo.')
+        error(['The motion file path you specified does not exist. Check if ' ...
+            'the path exists or if you made a typo.'])
         
     elseif EXT == "" && NAME == "quasi-random"
          disp('Using a quasi-random initial guess.')
          
     elseif EXT == "" && NAME ~= "quasi-random"
-        error('Please specify what you want to use as an initial guess. Either choose "quasi-random" or specify the path of a .mot file.')
+        error(['Please specify what you want to use as an initial guess. ' ...
+            'Either choose "quasi-random" or specify the path of a .mot file.'])
     end
 end
 
@@ -374,7 +388,8 @@ end
 
 % name of the subject
 if ~isfield(S.subject,'name')
-    error('Please provide a name for this subject. This name will be used to store the results. Specify the name in S.subject.name.');
+    error(['Please provide a name for this subject. This name will be used ' ...
+        'to store the results. Specify the name in S.subject.name.']);
 end
 
 % mass of the subject, in kilograms
@@ -385,11 +400,6 @@ end
 % height of the pelvis for the initial guess, in meters
 if ~isfield(S.subject,'IG_pelvis_y')
    S.subject.IG_pelvis_y = [];
-end
-
-% average velocity you want the model to have, in meters per second
-if ~isfield(S.subject,'v_pelvis_x_trgt')
-    S.subject.v_pelvis_x_trgt = 1.25;
 end
 
 % muscle strength
@@ -467,7 +477,8 @@ end
 
 % ligament stiffness for selected ligaments
 if ~isfield(S.subject,'set_stiffness_selected_ligaments')
-    S.subject.set_stiffness_selected_ligaments = {'PlantarFascia','plantarFasciaNatali2010'};
+    S.subject.set_stiffness_selected_ligaments =...
+        {'PlantarFascia','plantarFasciaNatali2010'};
 end
 
 % joints that are considered base of a leg
@@ -500,9 +511,9 @@ if ~isfield(S.weights,'q_dotdot')
     S.weights.q_dotdot = 50000; 
 end
 
-% weight on arm excitations
-if ~isfield(S.weights,'e_arm')
-    S.weights.e_arm = 10^6; 
+% weight on actuator excitations
+if ~isfield(S.weights,'e_torqAct')
+    S.weights.e_torqAct = 10^6; 
 end
 
 % weight on passive torques
