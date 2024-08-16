@@ -342,17 +342,7 @@ if ~isfield(S.solver,'N_meshes')
 end
 
 % path to CasADi installation folder
-if ~isfield(S.solver,'CasADi_path')
-    try
-        S.solver.CasADi_path = casadi.GlobalOptions.getCasadiPath();
-    catch
-        error("Please add CasADi to the matlab search path, or pass the path " + ...
-            "to your CasADi installation (top folder) to S.solver.CasADi_path.")
-    end
-elseif ~isempty(S.solver.CasADi_path) && ~isfolder(S.solver.CasADi_path)
-    error("Unable to find the path assigned to S.solver.CasADi_path:" + ...
-        " \n\t%s",S.solver.CasADi_path)
-end
+
 
 % initial guess inputs
 % input should be a string: "quasi-random" or the path to a .mot file
