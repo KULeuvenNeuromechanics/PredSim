@@ -88,15 +88,15 @@ This code can automatically convert an OpenSim model to the external function us
 - **S.subject.name**: 
 	- The name or code of the subject you are simulating. 
 - **osim_path**: 
-	- path to the scaled opensim model of the subject.	
+	- Path to the scaled opensim model of the subject.	
 - **S.misc.save_folder**: 
-	- path to the folder where you want to store the simulation results. If the folder does not exist yet on your machine, it will be created automatically.
+	- Path to the folder where you want to store the simulation results. If the folder does not exist yet on your machine, it will be created automatically.
 - **S.solver.IG_selection**: 
-	- either choose 'quasi-random' or give the path to a .mot file you want to use as initial guess.
+	- Either choose 'quasi-random' or give the path to a .mot file you want to use as initial guess. In a quasi-random initial guess, the model is translated forward at the imposed velocity while all other coordinates are kept constant (vertical position of floating base is S.subject.IG_pelvis_y, others are 0). 
 - **S.solver.IG_selection_gaitCyclePercent**: 
-	- if S.solver.IG_selection is a .mot file, S.solver.IG_selection_gaitCyclePercent is required. Here, specify what percent of gait cycle does the .mot file contain. For example, if the .mot file has 2 gait cycles, S.solver.IG_selection_gaitCyclePercent is 200.
+	- If S.solver.IG_selection is a .mot file, S.solver.IG_selection_gaitCyclePercent is required. Here, specify what percent of gait cycle does the .mot file contain. For example, if the .mot file has 2 gait cycles, S.solver.IG_selection_gaitCyclePercent is 200.
 
-### OptionalSettings
+### Optional Settings
 
 #### S.bounds
 
@@ -369,4 +369,5 @@ These settings are passed to OpenSimAD.
 	- Export total ground reaction moments of left and right side. Default is *true* [bool]
 - **S.OpenSimADOptions.exportContactPowers**: 
 	- Export power due to vertical compression of each contact element. Default is *true* [bool]
+
 
