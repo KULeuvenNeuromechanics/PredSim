@@ -12,7 +12,7 @@
 
 S.subject.name = 'Falisse_et_al_2022';
 
-S.subject.v_pelvis_x_trgt   = 1.33;
+S.misc.forward_velocity = 1.33;
 
 S.subject.mtp_type = '2022paper';
 S.subject.set_stiffness_coefficient_selected_dofs = {'mtp_angle',25};
