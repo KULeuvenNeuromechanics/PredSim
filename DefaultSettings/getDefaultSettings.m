@@ -311,7 +311,7 @@ if ~isfield(S.solver,'tol_ipopt')
     S.solver.tol_ipopt = 4;
 end
 
-% constraint violation has be below 10^(-x) at the solution
+% constraint violation has to be below 10^(-x) at the solution
 if ~isfield(S.solver,'constr_viol_tol_ipopt')
     S.solver.constr_viol_tol_ipopt = 6;
 end
@@ -341,7 +341,6 @@ if ~isfield(S.solver,'N_meshes')
     end
 end
 
-% path to CasADi installation folder
 
 
 % initial guess inputs
@@ -368,7 +367,7 @@ else
                 'adjust S.misc.gaitmotion_type or initial guess file.'])
         elseif ((strcmp(S.misc.gaitmotion_type,'HalfGaitCycle')) ...
                 && (S.solver.IG_selection_gaitCyclePercent < 50))
-            error(['Cannot use an initial guess of less than half gait gait ' ...
+            error(['Cannot use an initial guess of less than a half gait ' ...
                 'cycle for predictive simulation of a half gait cycle. Please ' ...
                 'adjust S.misc.gaitmotion_type or initial guess file.'])
         end
@@ -537,7 +536,7 @@ if ~isfield(S.weights,'a')
     S.weights.a = 2000; 
 end
 
-% exponent for the mmuscle activations
+% exponent for the muscle activations
 if ~isfield(S.weights,'a_exp')
     S.weights.a_exp = 2; 
 end
