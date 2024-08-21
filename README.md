@@ -281,9 +281,22 @@ This code can automatically convert an OpenSim model to the external function us
 - **S.subject.stiffness_coefficient_all_dofs**: 
 	- stiffness coefficient for all coordinates (except coordinates connected to ground, generally pelvis (also called floating base)). Default in *0* Nm/rad [double]
 - **S.subject.set_stiffness_coefficient_selected_dofs**: 
-	- stiffness coefficient can be specified here for each coordinate individually. For example, S.subject.set_stiffness_coefficient_selected_dofs = {{'hip_flexion_l','hip_flexion_r'},0.012,{'knee_angle_l'},0.011} will put stiffness coefficient of both hip flexions to 0.012 Nm/rad and that of knee angle left to 0.011 Nm/rad. If not defined here for a particular coordinate, S.subject.damping_coefficient_all_dofs will be used for that coordinate. Default is empty.
+	- stiffness coefficient can be specified here for each coordinate individually. For example, S.subject.set_stiffness_coefficient_selected_dofs = {{'hip_flexion_l','hip_flexion_r'},0.012,{'knee_angle_l'},0.011} will put stiffness coefficient of both hip flexions to 0.012 Nm/rad and that of knee angle left to 0.011 Nm/rad. If not defined here for a particular coordinate, S.subject.stiffness_coefficient_all_dofs will be used for that coordinate. Default is empty.
+- **S.subject.set_stiffness_offset_selected_dofs**: 
+	- position where moment of linear stiffness is zero can be specified here for each coordinate individually. For example, S.subject.set_stiffness_offset_selected_dofs = {{'hip_flexion_l','hip_flexion_r'},-0.3,} will offset the hip flexion stiffness such that their moment is zero at -0.3 rad hip flexion. Default is empty.
+- **S.subject.default_coord_lim_torq_coeff**:
+	- file with default coefficients for coordinate limit torques. Default is *'default_coord_lim_torq_coeff.csv'* [char].
+	The provided file should be compatible with [`readtable`](https://mathworks.com/help/matlab/ref/readtable.html). The table should contain a column with coordinate names (header: name), 4 columns with stiffness coefficients, (headers: K_1, K_2, K_3, K_4), and 2 columns with offset coefficients (headers: theta_1, theta_2).
+	Limit torques are calculated in function of coordinate value q as: `Tau = K(1)*exp(K(2)*(q-theta(2))) + K(3)*exp(K(4)*(q-theta(1)))`.
+	Default coefficients are taken from *Anderson III, Frank Clayton. A dynamic optimization solution for a complete cycle of normal gait. The University of Texas at Austin, 1999.*
+- **S.subject.scale_default_coord_lim_torq**:
+	- scale factor for the amplitude of *all* default coordinate limit torques. Default is empty [double].
+	All `K(1)` and `K(3)` values read from the file with default coefficients are multiplied by this factor.
+	To scale the limit torques for individual degrees of freedom, use *S.subject.set_limit_torque_coefficients_selected_dofs*.
 - **S.subject.set_limit_torque_coefficients_selected_dofs**: 
-	- Default values of coordinate limit torques are defined in the function [get_default_coord_limit_torque_coefficients.m](https://github.com/KULeuvenNeuromechanics/PredSim/blob/master/PreProcessing/get_default_coord_limit_torque_coefficients.m). If values other than these are to be used, they can be specified here.
+	- Set limit torque coefficients for a coordinate. Default is empty [cell array] with pattern {coordinate name(s) [char, cell array of chars], K [4x1 double], theta [2x1 double]}.
+	For the specified coordinates, the coefficients from this setting take priority over the coefficients from the file with defaults (*S.subject.default_coord_lim_torq_coeff*).
+	Note: Setting `K(1) = nan` will cause the limit torque for that coordinate to be excluded, even if it was given in the defaults.
 - **S.subject.base_joints_legs**:
 	- Joint name that is the base of a leg, left and right. Default is 'hip' [char]. Inputs of the form 'hip_r', {'hip_l'}, {'hip_r','hip_l'} are equivalent.
 - **S.subject.base_joints_arms**:
