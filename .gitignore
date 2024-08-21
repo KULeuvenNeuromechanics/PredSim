@@ -38,3 +38,8 @@ Subjects/DHondt_2023_2seg/*
 !Subjects/DHondt_2023_2seg/*.md
 !Subjects/DHondt_2023_2seg/settings*.m
 
+!Subjects/gait1018/
+Subjects/gait1018/*
+!Subjects/gait1018/*.osim
+!Subjects/gait1018/*.md
+!Subjects/gait1018/settings*.m
