@@ -341,7 +341,6 @@ if ~isfield(S.solver,'N_meshes')
     end
 end
 
-% path to CasADi installation folder
 
 
 % initial guess inputs
