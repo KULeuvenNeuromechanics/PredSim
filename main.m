@@ -16,29 +16,28 @@ clc
 pathDefaultSettings = fullfile(pathRepo,'DefaultSettings');
 addpath(pathDefaultSettings)
 
-[S] = initializeSettings('Falisse_et_al_2022');
+[S] = initializeSettings('DHondt_et_al_2024_4seg');
 S.misc.main_path = pathRepo;
 
 addpath(fullfile(S.misc.main_path,'VariousFunctions'))
 
 %% Required inputs
 % name of the subject
-S.subject.name = 'Falisse_et_al_2022';
+S.subject.name = 'DHondt_et_al_2024_4seg';
 
 % path to folder where you want to store the results of the OCP
 S.subject.save_folder  = fullfile(pathRepoFolder,'PredSimResults',S.subject.name); 
 
 % either choose "quasi-random" or give the path to a .mot file you want to use as initial guess
 % S.subject.IG_selection = 'quasi-random';
-S.subject.IG_selection = fullfile(S.misc.main_path,'OCP','IK_Guess_Full_GC.mot');
-S.subject.IG_selection_gaitCyclePercent = 100;
-% S.subject.IG_selection = 'quasi-random';
+% S.subject.IG_selection = fullfile(S.misc.main_path,'OCP','IK_Guess_Full_GC.mot');
+% S.subject.IG_selection_gaitCyclePercent = 100;
 
 % give the path to the osim model of your subject
 osim_path = fullfile(pathRepo,'Subjects',S.subject.name,[S.subject.name '.osim']);
 
 % Do you want to run the simulation as a batch job (parallel computing toolbox)
-S.solver.run_as_batch_job = 0;
+S.solver.run_as_batch_job = 1;
 
 %% Optional inputs
 % see README.md in the main folder for information about these optional
@@ -71,7 +70,7 @@ S.solver.run_as_batch_job = 0;
 % S.misc.gaitmotion_type = 'FullGaitCycle';
 
 % % S.post_process
-S.post_process.make_plot = 1;
+S.post_process.make_plot = 0;
 % S.post_process.savename  = 'datetime';
 % S.post_process.load_prev_opti_vars = 1;
 % S.post_process.rerun   = 1;
@@ -82,21 +81,21 @@ S.post_process.make_plot = 1;
 % S.solver.tol_ipopt      = ;
 % S.solver.max_iter       = 5;
 % S.solver.parallel_mode  = '';
-% S.solver.N_threads      = 6;
-% S.solver.N_meshes       = 100;
+% S.solver.N_threads      = 10;
+% S.solver.N_meshes       = 50;
 % S.solver.par_cluster_name = ;
-% S.solver.CasADi_path    = 'C:\GBW_MyPrograms\casadi_3_5_5';
+S.solver.CasADi_path    = 'C:\GBW_MyPrograms\casadi/v3.6.5';
 
 
 % % S.subject
 % S.subject.mass              = ;
-% S.subject.IG_pelvis_y       = ;
-S.subject.adapt_IG_pelvis_y = 1;
-S.subject.v_pelvis_x_trgt   = 1.33;
+% S.subject.IG_pelvis_y       = 1;
+% S.subject.adapt_IG_pelvis_y = 1;
+% S.subject.v_pelvis_x_trgt   = 1.33;
 % S.subject.muscle_strength   = ;
 % S.subject.muscle_pass_stiff_shift = {{'soleus','_gas','per_','tib_','_dig_','_hal_','FDB'},0.9}; %,'FDB'
 % S.subject.muscle_pass_stiff_scale = ;
-% S.subject.tendon_stiff_scale      = {{'soleus','_gas'},0.5};
+% S.subject.tendon_stiff_scale      = {{'soleus','gastroc'},0.5};
 % S.subject.scale_MT_params = {{'soleus_l'},'FMo',0.9,{'soleus_l'},'alphao',1.1};
 % S.subject.spasticity        = ;
 % S.subject.muscle_coordination = ;
@@ -111,9 +110,9 @@ S.subject.v_pelvis_x_trgt   = 1.33;
 
 % % S.weights
 % S.weights.E         = 0;
-% S.weights.E_exp     = ;
-% S.weights.q_dotdot  = 0;
-% S.weights.e_arm     = 10;
+% % S.weights.E_exp     = ;
+% S.weights.q_dotdot  = 1;
+% S.weights.e_arm     = 500;
 % S.weights.pass_torq = 1;
 % S.weights.a         = 10*18;
 % S.weights.slack_ctrl = ;
@@ -124,6 +123,13 @@ S.subject.v_pelvis_x_trgt   = 1.33;
 S.OpenSimADOptions.verbose_mode = 0; % 0 for no outputs from cmake
 
         
+% S.bounds.distanceConstraints = [];
+% S.bounds.distanceConstraints(end+1).point1 = 'toes_l';
+% S.bounds.distanceConstraints(end).point2 = 'ground';
+% S.bounds.distanceConstraints(end).direction = 'y';
+% S.bounds.distanceConstraints(end).lower_bound = 0.05;
+% S.bounds.distanceConstraints(end).upper_bound = [];
+
 %% Run predictive simulations
 
 % warning wrt pelvis heigt for IG
