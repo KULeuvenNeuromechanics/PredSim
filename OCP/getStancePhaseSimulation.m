@@ -43,9 +43,11 @@ threshold = threshold_init;
 nFramesBelow= sum(GRFy < threshold,"all");
 while nFramesBelow == 0
     threshold = threshold + 1;
-    nFramesBelow= sum(GRFy < threshold,"all");
+    nFramesBelow = sum(GRFy < threshold,"all");
     if threshold-threshold_init > 200
-        error('Vertical ground reaction forces are all way above heelstrike threshold.') % just in case
+        warning(['Vertical ground reaction forces are all way above heelstrike threshold. ' ...
+            'First mesh point of post-processed results may not reflect initial contact.'])
+        break
     end
 end
 
