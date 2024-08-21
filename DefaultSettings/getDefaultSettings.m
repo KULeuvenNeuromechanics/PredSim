@@ -536,7 +536,7 @@ if ~isfield(S.weights,'a')
     S.weights.a = 2000; 
 end
 
-% exponent for the mmuscle activations
+% exponent for the muscle activations
 if ~isfield(S.weights,'a_exp')
     S.weights.a_exp = 2; 
 end
