@@ -343,6 +343,37 @@ symmetry = symQs;
 end
 %%
 function [joints_chain, coords_chain] = getKinematicChain(joint_table,starting_joint)
+% --------------------------------------------------------------------------
+% getKinematicChain
+%   Get the names of the joints and coordinates that belong to the
+%   kinematic chain starting at a given joint.
+% 
+%
+%   See also identify_kinematic_chains
+%
+% INPUT:
+%   - joint_table -
+%   * Table with a row for each joint and columns:
+%       - joint: name of the joint
+%       - child: name of the body that has the child frame of the joint
+%       - parent: name of the body that has the paret frame of the joint
+%       - coordinates: cell array with names of all coordinates of the joint
+% 
+%   - starting_joint -
+%   * Name of the joint that acts as the start of the kinematic chain.
+%
+%
+% OUTPUT:
+%   - joints_chain -
+%   * Cell array with names of the joints of the kinematic chain.
+%
+%   - coords_chain -
+%   * Cell array with names of the coordinates of the kinematic chain.
+% 
+% Original author: Lars D'Hondt
+% Original date: May/2024
+% --------------------------------------------------------------------------
+
     joints_chain = [];
     coords_chain = [];
     has_next_joint = true;
