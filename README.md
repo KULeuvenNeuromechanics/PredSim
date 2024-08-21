@@ -239,7 +239,7 @@ This code can automatically convert an OpenSim model to the external function us
 - **S.solver.run_as_batch_job**: 
 	- specify if the OCP is to be solved as a batch job. Default is *false* [bool]. Batch processing requires the [Parallel Computing Toolbox](https://nl.mathworks.com/products/parallel-computing.html).
 - **S.solver.parallel_mode**: 
-	- type of parallel computing. Default is *thread* [char].
+	- type of parallel computing. Default is *thread* [char]. Other types are not supported.
 - **S.solver.N_threads**: 
 	- number of threads in parallel mode. Default is *4* [double]. When using batch computing, this value is overwritten with the number of threads assigned to each worker in your parallel cluster.
 - **S.solver.nlpsol_options**:
