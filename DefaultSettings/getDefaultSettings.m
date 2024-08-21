@@ -269,7 +269,7 @@ end
 if ~isfield(S.post_process,'rerun')
     S.post_process.rerun = 0;
 end
-if S.post_process.rerun && isempty(S.post_process.result_filename)
+if S.post_process.rerun && isempty(S.misc.result_filename)
     error(['Please provide the name of the result to post-process. ' ...
         '(S.post_process.result_filename)'])
 end
@@ -279,7 +279,7 @@ end
 if ~isfield(S.post_process,'load_prev_opti_vars')
     S.post_process.load_prev_opti_vars = 0;
 end
-if S.post_process.load_prev_opti_vars && isempty(S.post_process.result_filename)
+if S.post_process.load_prev_opti_vars && isempty(S.misc.result_filename)
     error(['Please provide the name of the result from which to load the ' ...
         'optimization variables. (S.post_process.result_filename)'])
 end
