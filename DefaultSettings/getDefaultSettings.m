@@ -311,7 +311,7 @@ if ~isfield(S.solver,'tol_ipopt')
     S.solver.tol_ipopt = 4;
 end
 
-% constraint violation has be below 10^(-x) at the solution
+% constraint violation has to be below 10^(-x) at the solution
 if ~isfield(S.solver,'constr_viol_tol_ipopt')
     S.solver.constr_viol_tol_ipopt = 6;
 end
