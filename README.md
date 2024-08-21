@@ -266,8 +266,6 @@ This code can automatically convert an OpenSim model to the external function us
 	- S.subject.IG_pelvis_y is also used to establish bounds on vertical pelvis position.
 - **S.subject.adapt_IG_pelvis_y**: 
 	- boolean to adjust the trajectory of height of pelvis from the ground for data-informed initial guess. Default is *0*. 0 means the trajectory will not be changed. If 1, the trajectory will be changed such that the average value of the trajectory is equal to S.subject.IG_pelvis_y.
-- **S.subject.v_pelvis_x_trgt**: 
-	- average velocity you want the model to have, in meters per second. Default is *1.25* m/s [double]
 - **S.subject.muscle_strength**: 
 	- structure with [scaling factors for muscle strength](/FiguresForDocumentation/fig_muscle_tendon_properties_scaling.png). This scales the max muscle force of the active muscle force. Default is *[]*, that is, no scaling. Input as a cell array where 1st input is the muscle(s) name, 2nd is the scale factor. If more than one scaling is to be performed, add 2 more inputs. For example, S.subject.muscle_strength = {{'soleus_l','soleus_r'},0.9,{'tib_ant_l'},1.1} will scale both soleus by a factor of 0.9 and tibialis anterior left by a scale of 1.1.
 - **S.subject.muscle_pass_stiff_scale**: 
