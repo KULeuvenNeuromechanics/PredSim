@@ -32,7 +32,6 @@ S.subject.save_folder  = fullfile(pathRepoFolder,'PredSimResults',S.subject.name
 % S.subject.IG_selection = 'quasi-random';
 S.subject.IG_selection = fullfile(S.misc.main_path,'OCP','IK_Guess_Full_GC.mot');
 S.subject.IG_selection_gaitCyclePercent = 100;
-% S.subject.IG_selection = 'quasi-random';
 
 % give the path to the osim model of your subject
 osim_path = fullfile(pathRepo,'Subjects',S.subject.name,[S.subject.name '.osim']);
@@ -85,20 +84,19 @@ S.post_process.make_plot = 1;
 % S.solver.N_threads      = 6;
 S.solver.N_meshes       = 50;
 % S.solver.par_cluster_name = ;
-% S.solver.CasADi_path    = 'C:\GBW_MyPrograms\casadi_3_5_5';
 S.solver.CasADi_path = casadi.GlobalOptions.getCasadiPath(); % ask casadi
+
 
 
 % % S.subject
 % S.subject.mass              = ;
-% S.subject.IG_pelvis_y       = ;
+% S.subject.IG_pelvis_y       = 1;
 % S.subject.adapt_IG_pelvis_y = 1;
-S.subject.v_pelvis_x_trgt   = 1.33;
+% S.subject.v_pelvis_x_trgt   = 1.33;
 % S.subject.muscle_strength   = ;
 % S.subject.muscle_pass_stiff_shift = {{'soleus','_gas','per_','tib_','_dig_','_hal_','FDB'},0.9}; %,'FDB'
 % S.subject.muscle_pass_stiff_scale = ;
-
-% S.subject.tendon_stiff_scale      = {{'soleus','_gas'},2};
+% S.subject.tendon_stiff_scale      = {{'soleus','gastroc'},0.5};
 % S.subject.scale_MT_params = {{'soleus_l'},'FMo',0.9,{'soleus_l'},'alphao',1.1};
 % S.subject.spasticity        = ;
 % S.subject.muscle_coordination = ;
@@ -111,9 +109,9 @@ S.subject.v_pelvis_x_trgt   = 1.33;
 
 % % S.weights
 % S.weights.E         = 0;
-% S.weights.E_exp     = ;
-% S.weights.q_dotdot  = 0;
-% S.weights.e_arm     = 10;
+% % S.weights.E_exp     = ;
+% S.weights.q_dotdot  = 1;
+% S.weights.e_arm     = 500;
 % S.weights.pass_torq = 1;
 % S.weights.a         = 10*18;
 % S.weights.slack_ctrl = ;
@@ -137,7 +135,7 @@ S.orthosis.settings{2}.left_right = 'l';
 % S.OpenSimADOptions.compiler = 'Visual Studio 17 2022';
 S.OpenSimADOptions.verbose_mode = 0; % 0 for no outputs from cmake
 
-        
+
 %% Run predictive simulations
 
 % warning wrt pelvis heigt for IG
