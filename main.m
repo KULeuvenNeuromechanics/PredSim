@@ -16,28 +16,28 @@ clc
 pathDefaultSettings = fullfile(pathRepo,'DefaultSettings');
 addpath(pathDefaultSettings)
 
-[S] = initializeSettings('DHondt_et_al_2024_4seg');
+[S] = initializeSettings('Falisse_et_al_2022');
 S.misc.main_path = pathRepo;
 
 addpath(fullfile(S.misc.main_path,'VariousFunctions'))
 
 %% Required inputs
 % name of the subject
-S.subject.name = 'DHondt_et_al_2024_4seg';
+S.subject.name = 'Falisse_et_al_2022';
 
 % path to folder where you want to store the results of the OCP
 S.subject.save_folder  = fullfile(pathRepoFolder,'PredSimResults',S.subject.name); 
 
 % either choose "quasi-random" or give the path to a .mot file you want to use as initial guess
 % S.subject.IG_selection = 'quasi-random';
-% S.subject.IG_selection = fullfile(S.misc.main_path,'OCP','IK_Guess_Full_GC.mot');
-% S.subject.IG_selection_gaitCyclePercent = 100;
+S.subject.IG_selection = fullfile(S.misc.main_path,'OCP','IK_Guess_Full_GC.mot');
+S.subject.IG_selection_gaitCyclePercent = 100;
 
 % give the path to the osim model of your subject
 osim_path = fullfile(pathRepo,'Subjects',S.subject.name,[S.subject.name '.osim']);
 
 % Do you want to run the simulation as a batch job (parallel computing toolbox)
-S.solver.run_as_batch_job = 1;
+S.solver.run_as_batch_job = 0;
 
 %% Optional inputs
 % see README.md in the main folder for information about these optional
@@ -70,7 +70,7 @@ S.solver.run_as_batch_job = 1;
 % S.misc.gaitmotion_type = 'FullGaitCycle';
 
 % % S.post_process
-S.post_process.make_plot = 0;
+S.post_process.make_plot = 1;
 % S.post_process.savename  = 'datetime';
 % S.post_process.load_prev_opti_vars = 1;
 % S.post_process.rerun   = 1;
@@ -84,7 +84,7 @@ S.post_process.make_plot = 0;
 % S.solver.N_threads      = 10;
 % S.solver.N_meshes       = 50;
 % S.solver.par_cluster_name = ;
-S.solver.CasADi_path    = 'C:\GBW_MyPrograms\casadi/v3.6.5';
+% S.solver.CasADi_path    = 'C:\GBW_MyPrograms\casadi/v3.6.5';
 
 
 % % S.subject
@@ -122,13 +122,6 @@ S.solver.CasADi_path    = 'C:\GBW_MyPrograms\casadi/v3.6.5';
 % S.OpenSimADOptions.compiler = 'Visual Studio 17 2022';
 S.OpenSimADOptions.verbose_mode = 0; % 0 for no outputs from cmake
 
-        
-% S.bounds.distanceConstraints = [];
-% S.bounds.distanceConstraints(end+1).point1 = 'toes_l';
-% S.bounds.distanceConstraints(end).point2 = 'ground';
-% S.bounds.distanceConstraints(end).direction = 'y';
-% S.bounds.distanceConstraints(end).lower_bound = 0.05;
-% S.bounds.distanceConstraints(end).upper_bound = [];
 
 %% Run predictive simulations
 
