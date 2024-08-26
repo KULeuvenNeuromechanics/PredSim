@@ -16,7 +16,8 @@ function [AFO] = parametricAFO(init, settings_orthosis)
 %       - ankle_stiffness:  ankle stiffness in Nm/rad
 %       - mtp_stiffness:    mtp stiffness in Nm/rad
 %       - left_right:       'l' for left or 'r' for right
-%   Values are set via S.orthosis.settings{i} in main.m
+%   Values are set via S.orthosis.settings{i} in main.m, with i the index
+%   of the orthosis.
 %
 %
 % OUTPUT:

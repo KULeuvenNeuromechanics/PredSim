@@ -18,7 +18,8 @@ function [exo] = ankleExoNuckols2020(init, settings_orthosis)
 %       - function_name = 'ankleExoNuckols2020'  i.e. name of this function           
 %       - ankle_stiffness:  ankle stiffness in Nm/rad
 %       - left_right:       'l' for left or 'r' for right
-%   Values are set via S.orthosis.settings{i} in main.m
+%   Values are set via S.orthosis.settings{i} in main.m, with i the index
+%   of the orthosis.
 %
 %
 % OUTPUT:

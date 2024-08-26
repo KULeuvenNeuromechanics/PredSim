@@ -70,7 +70,7 @@ S.solver.run_as_batch_job = 0;
 % S.misc.gaitmotion_type = 'FullGaitCycle';
 
 % % S.post_process
-S.post_process.make_plot = 1;
+S.post_process.make_plot = 0;
 % S.post_process.savename  = 'datetime';
 % S.post_process.load_prev_opti_vars = 1;
 % S.post_process.rerun   = 1;
@@ -82,15 +82,15 @@ S.post_process.make_plot = 1;
 % S.solver.max_iter       = 5;
 % S.solver.parallel_mode  = '';
 % S.solver.N_threads      = 6;
-S.solver.N_meshes       = 50;
+% S.solver.N_meshes       = 50;
 % S.solver.par_cluster_name = ;
 S.solver.CasADi_path = casadi.GlobalOptions.getCasadiPath(); % ask casadi
 
 
 
 % % S.subject
-% S.subject.mass              = ;
-% S.subject.IG_pelvis_y       = 1;
+% S.subject.mass              = 62;
+% S.subject.IG_pelvis_y       = ;
 % S.subject.adapt_IG_pelvis_y = 1;
 % S.subject.v_pelvis_x_trgt   = 1.33;
 % S.subject.muscle_strength   = ;
@@ -119,16 +119,16 @@ S.solver.CasADi_path = casadi.GlobalOptions.getCasadiPath(); % ask casadi
 
 % % S.orthosis
 % add orthosis on right side
-S.orthosis.settings{1}.function_name = 'parametricAFO';
-S.orthosis.settings{1}.ankle_stiffness = 100; % Nm/rad
-S.orthosis.settings{1}.mtp_stiffness = 10; % Nm/rad
-S.orthosis.settings{1}.left_right = 'r';
-
-% add the same orthosis on left side
-S.orthosis.settings{2}.function_name = 'parametricAFO';
-S.orthosis.settings{2}.ankle_stiffness = 100; % Nm/rad
-S.orthosis.settings{2}.mtp_stiffness = 10; % Nm/rad
-S.orthosis.settings{2}.left_right = 'l';
+% S.orthosis.settings{1}.function_name = 'parametricAFO';
+% S.orthosis.settings{1}.ankle_stiffness = 100; % Nm/rad
+% S.orthosis.settings{1}.mtp_stiffness = 10; % Nm/rad
+% S.orthosis.settings{1}.left_right = 'r';
+% 
+% % add the same orthosis on left side
+% S.orthosis.settings{2}.function_name = 'parametricAFO';
+% S.orthosis.settings{2}.ankle_stiffness = 100; % Nm/rad
+% S.orthosis.settings{2}.mtp_stiffness = 10; % Nm/rad
+% S.orthosis.settings{2}.left_right = 'l';
 
 
 % %S.OpenSimADOptions: required inputs to convert .osim to .dll

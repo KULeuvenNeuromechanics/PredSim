@@ -12,9 +12,10 @@ function [exo] = ankleExoEmgProportional(init, settings_orthosis)
 %   - settings_orthosis -
 %   * struct with information about this orthosis, containing the fields:
 %       - function_name = 'ankleExoEmgProportional'  i.e. name of this function
-%       - gain:             T = gain*act
+%       - gain:             T = -gain*act
 %       - left_right:       'l' for left or 'r' for right
-%   Values are set via S.orthosis.settings{i} in main.m
+%   Values are set via S.orthosis.settings{i} in main.m, with i the index
+%   of the orthosis.
 %
 %
 % OUTPUT:
@@ -34,7 +35,7 @@ side = settings_orthosis.left_right; % 'l' for left or 'r' for right
 
 emg = exo.var_muscle(['soleus_',side]);
 
-T_ankle = (emg-0.05)*gain; % only use activation above lower bound (0.05)
+T_ankle = -(emg-0.05)*gain; % only use activation above lower bound (0.05)
 exo.addCoordForce(T_ankle,['ankle_angle_',side]);
 
 end

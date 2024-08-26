@@ -24,10 +24,11 @@ function [exo] = ankleExoZhang2017(init, settings_orthosis)
 %       - isFullGaitCycle   assistance profile for full stride when true,
 %       half stride when false. Default is false.
 %       - peak_torque:      peak torque in Nm/rad
-%       - peak_timing:      timing of peak as % of stride
+%       - peak_time:      timing of peak as % of stride
 %       - rise_time:        rise time as % of stride
-%       - drop_time:        drop time as % of stride
-%   Values are set via S.orthosis.settings{i} in main.m
+%       - fall_time:        fall time as % of stride
+%   Values are set via S.orthosis.settings{i} in main.m, with i the index
+%   of the orthosis.
 %
 %
 % OUTPUT:
@@ -49,9 +50,9 @@ else
     isFullGaitCycle = false;
 end
 exo_params(1) = settings_orthosis.peak_torque;
-exo_params(2) = settings_orthosis.peak_timing;
+exo_params(2) = settings_orthosis.peak_time;
 exo_params(3) = settings_orthosis.rise_time;
-exo_params(4) = settings_orthosis.drop_time;
+exo_params(4) = settings_orthosis.fall_time;
 side = settings_orthosis.left_right; % 'l' for left or 'r' for right
 
 % number of control intervals for simulation
