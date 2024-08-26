@@ -1,9 +1,13 @@
 
 
 
-## R | results
+## R: results
 
-### R.S | settings used to generate these results
+Results are ordered such that they represent 1 gait cycle, starting at the right side initial contact.
+If *S.misc.gaitmotion_type* is *FullGaitCycle*, the results use *S.solver.N_meshes* meshpoints.
+If *S.misc.gaitmotion_type* is *HalfGaitCycle*, the results use *2\*S.solver.N_meshes meshpoints*.
+
+### R.S: settings used to generate these results
 
 ### R.objective
 | Field | Description | Dimension | Unit |
@@ -17,7 +21,7 @@
 |------ | ----------- | ---- | ---- |
 | mesh | timestamps of mesh points of simulation | 1 x (mesh + 1) | [s] |
 | coll | timestamps of mesh and collocation points of simulation | 1 x (mesh*collocation_order + 1) | [s] |
-| mesh_GC | timestamps of mesh points of gait cycle | 1 x mesh[^1] | [s] |
+| mesh_GC | timestamps of mesh points of gait cycle | 1 x mesh | [s] |
 
 ### R.colheaders
 | Field | Description | Dimension | Unit |
@@ -26,38 +30,39 @@
 | muscles | names of the muscles, in the order that they are stored in the matrices with results | 1 x muscles | [text] |
 | objective | names of the objective terms, in the order that they are stored in the matrices with results | 1 x 8 | [text] |
 | GRF | names of the ground reaction forces directions, in the order that they are stored in the matrices with results | 1 x 3 | [text] |
+| ligaments | names of the ligaments, in the order that they are stored in the matrices with results | 1 x ligaments | [text] |
 
 ### R.kinematics
 | Field | Description | Dimension | Unit |
 |------ | ----------- | ---- | ---- |
-| Qs | coordinate positions | mesh[^1] x coordinates | [° or m] |
-| Qdots | coordinate velocities | mesh[^1] x coordinates | [°/s or m/s] |
-| Qdotdots | coordinate accelerations | mesh[^1] x coordinates | [°/s^2 or m/s^2] |
-| Qs_rad | coordinate positions | mesh[^1] x coordinates | [rad or m] |
-| Qdots_rad | coordinate velocities | mesh[^1] x coordinates | [rad/s or m/s] |
-| Qdotdots_rad | coordinate accelerations | mesh[^1] x coordinates | [rad/s^2 or m/s^2] |
+| Qs | coordinate positions | mesh x coordinates | [° or m] |
+| Qdots | coordinate velocities | mesh x coordinates | [°/s or m/s] |
+| Qdotdots | coordinate accelerations | mesh x coordinates | [°/s^2 or m/s^2] |
+| Qs_rad | coordinate positions | mesh x coordinates | [rad or m] |
+| Qdots_rad | coordinate velocities | mesh x coordinates | [rad/s or m/s] |
+| Qdotdots_rad | coordinate accelerations | mesh x coordinates | [rad/s^2 or m/s^2] |
 
 ### R.muscles
 | Field | Description | Dimension | Unit |
 |------ | ----------- | ---- | ---- |
-| a | muscle activation | mesh[^1] x muscles | [-] |
-| da | time derivative of activation | mesh[^1] x muscles | [1/s] |
-| FTtilde | force at the tendon (normalised to FMo) | mesh[^1] x muscles | [-] |
-| dFTtilde | time derivative of force at the tendon (normalised to FMo) | mesh[^1] x muscles | [1/s] |
-| e | muscle excitation | mesh[^1] x muscles | [-] |
-| lMT | muscle-tendon length | mesh[^1] x muscles | [m] |
-| vMT | muscle-tendon lengthening velocity | mesh[^1] x muscles | [m/s] |
-| dM | muscle-tendon length | mesh[^1] x muscles x coordinates | [m] |
-| FT | force at the tendon  | mesh[^1] x muscles | [N] |
-| Fce | force of the contractile element (CE)  | mesh[^1] x muscles | [N] |
-| Fpass | force of the parallel elasticity (PE)  | mesh[^1] x muscles | [N] |
-| Fiso | max isometric force of the contractile element (CE) (normalised to FMo) | mesh[^1] x muscles | [-] |
-| lM | muscle fibre length | mesh[^1] x muscles | [m] |
-| lMtilde | muscle fibre length (normalised to lMo) | mesh[^1] x muscles | [-] |
-| vM | muscle fibre lengthening velocity | mesh[^1] x muscles | [m/s] |
-| vMtilde | muscle fibre lengthening velocity (normalised to vMmax) | mesh[^1] x muscles | [1/s] |
-| lT | tendon length | mesh[^1] x muscles | [m] |
-| vT | tendon lengthening velocity | mesh[^1] x muscles | [m/s] |
+| a | muscle activation | mesh x muscles | [-] |
+| da | time derivative of activation | mesh x muscles | [1/s] |
+| FTtilde | force at the tendon (normalised to FMo) | mesh x muscles | [-] |
+| dFTtilde | time derivative of force at the tendon (normalised to FMo) | mesh x muscles | [1/s] |
+| e | muscle excitation | mesh x muscles | [-] |
+| lMT | muscle-tendon length | mesh x muscles | [m] |
+| vMT | muscle-tendon lengthening velocity | mesh x muscles | [m/s] |
+| dM | muscle-tendon length | mesh x muscles x coordinates | [m] |
+| FT | force at the tendon  | mesh x muscles | [N] |
+| Fce | force of the contractile element (CE)  | mesh x muscles | [N] |
+| Fpass | force of the parallel elasticity (PE)  | mesh x muscles | [N] |
+| Fiso | max isometric force of the contractile element (CE) (normalised to FMo) | mesh x muscles | [-] |
+| lM | muscle fibre length | mesh x muscles | [m] |
+| lMtilde | muscle fibre length (normalised to lMo) | mesh x muscles | [-] |
+| vM | muscle fibre lengthening velocity | mesh x muscles | [m/s] |
+| vMtilde | muscle fibre lengthening velocity (normalised to vMmax) | mesh x muscles | [1/s] |
+| lT | tendon length | mesh x muscles | [m] |
+| vT | tendon lengthening velocity | mesh x muscles | [m/s] |
 
 
 
@@ -70,33 +75,76 @@ Hill-type muscle
 ### R.torque_actuators
 | Field | Description | Dimension | Unit |
 |------ | ----------- | ---- | ---- |
-| a | actuator activation | mesh[^1] x actuators | [-] |
-| e | actuator excitation | mesh[^1] x actuators | [-] |
-| T | actuator torque | mesh[^1] x actuators | [-] |
+| a | actuator activation | mesh x actuators | [-] |
+| e | actuator excitation | mesh x actuators | [-] |
+| T | actuator torque | mesh x actuators | [-] |
 
 
 ### R.ground_reaction
 | Field | Description | Dimension | Unit |
 |------ | ----------- | ---- | ---- |
-| GRF_r | ground reaction forces right side | mesh[^1] x 3 | [N] |
-| GRF_l | ground reaction forces left side | mesh[^1] x 3 | [N] |
-| GRM_r | ground reaction moments right side | mesh[^1] x 3 | [Nm] |
-| GRM_l | ground reaction moments left side | mesh[^1] x 3 | [Nm] |
-| COP_r | centre of pressure right side (in ground frame) | mesh[^1] x 3 | [m] |
-| COP_l | centre of pressure left side (in ground frame) | mesh[^1] x 3 | [m] |
-| idx_stance_r | indices of meshpoints with ground contact on right side | <mesh[^1] x 1 | [-] |
-| idx_stance_l | indices of meshpoints with ground contact on left side | <mesh[^1] x 1 | [-] |
+| threshold | threshold for the vertical ground reaction force to detect stance | 1 x 1 | [N] |
+| initial_contact_side | side where initial contact was detected before post-processing | 1 x 1 | [text] |
+| GRF_r | ground reaction forces right side | mesh x 3 | [N] |
+| GRF_l | ground reaction forces left side | mesh x 3 | [N] |
+| GRM_r | ground reaction moments right side | mesh x 3 | [Nm] |
+| GRM_l | ground reaction moments left side | mesh x 3 | [Nm] |
+| COP_r | centre of pressure right side (in ground frame) | mesh x 3 | [m] |
+| COP_l | centre of pressure left side (in ground frame) | mesh x 3 | [m] |
+| idx_stance_r | indices of meshpoints with ground contact on right side | <mesh x 1 | [-] |
+| idx_stance_l | indices of meshpoints with ground contact on left side | <mesh x 1 | [-] |
 
 ### R.misc
+| Field | Description | Dimension | Unit |
+|------ | ----------- | ---- | ---- |
+| body_mass | body mass | 1 x 1 | [kg] |
+| body_weight | body weight | 1 x 1 | [N] |
 
 ### R.kinetics
 | Field | Description | Dimension | Unit |
 |------ | ----------- | ---- | ---- |
-| T_ID | inverse dynamics (inertial and contact) | mesh[^1] x coordinates | [Nm or N] |
-| T_spring | coordinate moments by springs | mesh[^1] x coordinates | [Nm or N] |
+| T_ID | inverse dynamics (inertial and contact) | mesh x coordinates | [Nm or N] |
+| T_spring | coordinate moments by springs | mesh x coordinates | [Nm or N] |
+| T_damping | coordinate moments by dampers | mesh x coordinates | [Nm or N] |
+| T_limit | coordinate moments by limit torques | mesh x coordinates | [Nm or N] |
+
+### R.ligaments
+| Field | Description | Dimension | Unit |
+|------ | ----------- | ---- | ---- |
+| l | ligament length | mesh x ligaments | [m] |
+| v | ligament lengthening velocity | mesh x ligaments | [m/s] |
+| F | ligament force | mesh x ligaments | [N] |
+| strain | ligament strain | mesh x ligaments | [%] |
+| stress | ligament stress | mesh x ligaments | [MPa] |
+| moment | coordinate moment (or force) due to ligaments | mesh x coordinates | [Nm or N] |
+| moment | coordinate power due to ligaments | mesh x coordinates | [W] |
 
 ### R.spatiotemp
+| Field | Description | Dimension | Unit |
+|------ | ----------- | ---- | ---- |
+| step_length_r | step length of right leg | 1 x 1 | [m] |
+| step_length_l | step length of left leg | 1 x 1 | [m] |
+| stance_r | duration of stance phase of right leg, relative to gait cycle | 1 x 1 | [%] |
+| swing_r | duration of swing phase of right leg, relative to gait cycle | 1 x 1 | [%] |
+| stance_l | duration of stance phase of left leg, relative to gait cycle | 1 x 1 | [%] |
+| swing_l | duration of swing phase of left leg, relative to gait cycle | 1 x 1 | [%] |
+| double_support | duration of double support phase, relative to gait cycle | 1 x 1 | [%] |
+| stride_freq | stride frequency | 1 x 1 | [Hz] |
+| step_width_COP | step width, calculated based on centre of pressure | 1 x 1 | [m] |
+| dist_trav | distance traveled, calculated based on floating base forward position | 1 x 1 | [m] |
 
 ### R.metabolics
 
-[^1]: 
+#### R.metabolics.Bhargava2004
+
+| Field | Description | Dimension | Unit |
+|------ | ----------- | ---- | ---- |
+| Edot_gait | Metabolic energy rate of each muscle. [$\dot{E}$ in equation 1](https://doi.org/10.1016/S0021-9290(03)00239-2) | mesh x muscles | [W/kg] |
+| Adot | Activation heat rate of each muscle. [$\dot{A}$ in equation 3](https://doi.org/10.1016/S0021-9290(03)00239-2) | mesh x muscles | [W/kg] |
+| Mdot | Maintenance heat rate of each muscle. [$\dot{M}$ in equation 7](https://doi.org/10.1016/S0021-9290(03)00239-2) | mesh x muscles | [W/kg] |
+| Sdot | Shortening heat rate of each muscle. [$\dot{S}$ in equation 8](https://doi.org/10.1016/S0021-9290(03)00239-2) | mesh x muscles | [W/kg] |
+| Wdot | Work rate of each muscle. [$\dot{W}$ in equation 12](https://doi.org/10.1016/S0021-9290(03)00239-2) | mesh x muscles | [W/kg] |
+| Edot_incl_basal | Total metabolic energy rate. | mesh x 1 | [W/kg] |
+| COT | Cost of transport  | 1 x 1 | [J/kg/m] |
+
+
