@@ -362,3 +362,10 @@ These settings are passed to OpenSimAD.
 - **S.OpenSimADOptions.exportContactPowers**: 
 	- Export power due to vertical compression of each contact element. Default is *true* [bool]
 
+#### S.orthosis
+Interface to add custom orthoses to the simulation model.
+
+- **S.orthosis.settings**:
+	- Cell array of structs, where each struct contains the settings for one orthosis. Each orthosis should have a setting *function_name* [char] that refers to the function that describes the orthosis. See [functions in PredSim/WearableDevices for examples](./WearableDevices/). The other fields are passed to this function, so they can be used to set parameter values. See example functions and `help Orthosis` for how to define custom orthoses.
+
+	

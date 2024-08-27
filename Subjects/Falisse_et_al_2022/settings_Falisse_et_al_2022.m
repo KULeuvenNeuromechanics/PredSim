@@ -14,9 +14,11 @@ S.subject.name = 'Falisse_et_al_2022';
 
 S.subject.v_pelvis_x_trgt   = 1.33;
 
+
 S.subject.mtp_type = '2022paper';
 S.subject.set_stiffness_coefficient_selected_dofs = {'mtp_angle',25};
 S.subject.set_damping_coefficient_selected_dofs = {'mtp_angle',2};
+
 
 % to prevent body segments from clipping into eachother
 S.bounds.distanceConstraints(1).point1 = 'calcn_r';
@@ -48,4 +50,5 @@ S.bounds.distanceConstraints(5).point2 = 'toes_l';
 S.bounds.distanceConstraints(5).direction = 'xz';
 S.bounds.distanceConstraints(5).lower_bound = 0.1;
 S.bounds.distanceConstraints(5).upper_bound = 2;
+
 

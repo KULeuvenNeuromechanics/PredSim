@@ -118,7 +118,7 @@ if extFunOk
             if ~extFunOk
                 break
             end
-            extFunOk = isfield(IO.velocities,S.OpenSimADOptions.export3DVelocities(i).name);
+            extFunOk = isfield(IO.velocity,S.OpenSimADOptions.export3DVelocities(i).name);
         end
     end
 

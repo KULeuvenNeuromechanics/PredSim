@@ -53,6 +53,7 @@ S.solver.run_as_batch_job = 0;
 % S.bounds.Qs                 = {'pelvis_tilt',-30,30,'pelvis_list',-30,30};
 
 
+
 % % S.metabolicE - metabolic energy
 % S.metabolicE.tanh_b = 100;
 % S.metabolicE.model  = '';
@@ -64,13 +65,12 @@ S.solver.run_as_batch_job = 0;
 % S.misc.msk_geom_eq         = '';
 % S.misc.poly_order.lower    = ;
 % S.misc.poly_order.upper    = ;
-% S.misc.msk_geom_bounds      = {{'knee_angle_r'},0,90,{'mtp_angle_'},-50,20};
 % S.misc.default_msk_geom_bound = ;
 % S.misc.msk_geom_bounds      = {{'knee_angle_r','knee_angle_l'},-120,10,'lumbar_extension',nan,30};
 % S.misc.gaitmotion_type = 'FullGaitCycle';
 
 % % S.post_process
-S.post_process.make_plot = 1;
+S.post_process.make_plot = 0;
 % S.post_process.savename  = 'datetime';
 % S.post_process.load_prev_opti_vars = 1;
 % S.post_process.rerun   = 1;
@@ -81,15 +81,16 @@ S.post_process.make_plot = 1;
 % S.solver.tol_ipopt      = ;
 % S.solver.max_iter       = 5;
 % S.solver.parallel_mode  = '';
-% S.solver.N_threads      = 10;
+% S.solver.N_threads      = 6;
 % S.solver.N_meshes       = 50;
 % S.solver.par_cluster_name = ;
-% S.solver.CasADi_path    = 'C:\GBW_MyPrograms\casadi/v3.6.5';
+S.solver.CasADi_path = casadi.GlobalOptions.getCasadiPath(); % ask casadi
+
 
 
 % % S.subject
-% S.subject.mass              = ;
-% S.subject.IG_pelvis_y       = 1;
+% S.subject.mass              = 62;
+% S.subject.IG_pelvis_y       = ;
 % S.subject.adapt_IG_pelvis_y = 1;
 % S.subject.v_pelvis_x_trgt   = 1.33;
 % S.subject.muscle_strength   = ;
@@ -99,14 +100,12 @@ S.post_process.make_plot = 1;
 % S.subject.scale_MT_params = {{'soleus_l'},'FMo',0.9,{'soleus_l'},'alphao',1.1};
 % S.subject.spasticity        = ;
 % S.subject.muscle_coordination = ;
-% S.subject.set_stiffness_coefficient_selected_dofs = {{'mtp_angle_l','mtp_angle_r'},25};
-% S.subject.set_damping_coefficient_selected_dofs = {{'mtp_angle_l','mtp_angle_r'},2};
-% S.subject.set_limit_torque_coefficients_selected_dofs = ...
-%     {{'knee_angle_r','knee_angle_l'},-[11.03 -11.33 -6.09 33.94]',-[0.13 -2.4]',...
-%     {'mtp_angle_r','mtp_angle_l'},-[0.18 -70.08 -0.9 14.87]',-[65/180*pi 0]'};
-% S.subject.base_joints_legs = 'hip';
-% S.subject.base_joints_arms = [];
 % S.subject.mtp_type          = '2022paper';
+% S.subject.set_stiffness_coefficient_selected_dofs = {'mtp_angle',1};
+% S.subject.set_damping_coefficient_selected_dofs = {'mtp_angle',2};
+% S.subject.set_limit_torque_coefficients_selected_dofs = {{'mtj_angle_l','mtj_angle_r'},[0,0,0,0],[0,0]};
+% S.subject.base_joints_arms = [];
+
 
 % % S.weights
 % S.weights.E         = 0;
@@ -116,7 +115,21 @@ S.post_process.make_plot = 1;
 % S.weights.pass_torq = 1;
 % S.weights.a         = 10*18;
 % S.weights.slack_ctrl = ;
-% S.weights.pass_torq_includes_damping = ;
+
+
+% % S.orthosis
+% add orthosis on right side
+% S.orthosis.settings{1}.function_name = 'parametricAFO';
+% S.orthosis.settings{1}.ankle_stiffness = 100; % Nm/rad
+% S.orthosis.settings{1}.mtp_stiffness = 10; % Nm/rad
+% S.orthosis.settings{1}.left_right = 'r';
+% 
+% % add the same orthosis on left side
+% S.orthosis.settings{2}.function_name = 'parametricAFO';
+% S.orthosis.settings{2}.ankle_stiffness = 100; % Nm/rad
+% S.orthosis.settings{2}.mtp_stiffness = 10; % Nm/rad
+% S.orthosis.settings{2}.left_right = 'l';
+
 
 % %S.OpenSimADOptions: required inputs to convert .osim to .dll
 % S.OpenSimADOptions.compiler = 'Visual Studio 17 2022';
@@ -127,7 +140,7 @@ S.OpenSimADOptions.verbose_mode = 0; % 0 for no outputs from cmake
 
 % warning wrt pelvis heigt for IG
 if S.subject.adapt_IG_pelvis_y == 0 && S.subject.IG_selection ~= "quasi-random"
-    uiwait(msgbox(["Pelvis height of the IG will not be changed.";"Set S.subject.adapt_IG_pelvis_y to 1 if you want to use the model's pelvis height."],"Warning","warn"));
+%     uiwait(msgbox(["Pelvis height of the IG will not be changed.";"Set S.subject.adapt_IG_pelvis_y to 1 if you want to use the model's pelvis height."],"Warning","warn"));
 end
 
 % Start simulation
