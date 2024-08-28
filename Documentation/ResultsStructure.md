@@ -141,7 +141,7 @@ Hill-type muscle
 |------ | ----------- | ---- | ---- |
 | Edot_gait | Metabolic energy rate of each muscle. $\dot{E}$ [in equation 1](https://doi.org/10.1016/S0021-9290(03)00239-2) | mesh x muscles | [W/kg] |
 | Adot | Activation heat rate of each muscle. $\dot{A}$ [in equation 3](https://doi.org/10.1016/S0021-9290(03)00239-2) | mesh x muscles | [W/kg] |
-| Mdot | Maintenance heat rate of each muscle. [$\dot{M}$ in equation 7](https://doi.org/10.1016/S0021-9290(03)00239-2) | mesh x muscles | [W/kg] |
+| Mdot | Maintenance heat rate of each muscle. $\dot{M}$ [in equation 7](https://doi.org/10.1016/S0021-9290(03)00239-2) | mesh x muscles | [W/kg] |
 | Sdot | Shortening heat rate of each muscle. $\dot{S}$ [in equation 8](https://doi.org/10.1016/S0021-9290(03)00239-2) | mesh x muscles | [W/kg] |
 | Wdot | Work rate of each muscle. [$\dot{W}$ in equation 12](https://doi.org/10.1016/S0021-9290(03)00239-2) | mesh x muscles | [W/kg] |
 | Edot_incl_basal | Total metabolic energy rate. | mesh x 1 | [W/kg] |
