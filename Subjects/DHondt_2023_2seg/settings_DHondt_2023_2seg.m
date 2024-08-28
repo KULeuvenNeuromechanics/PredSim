@@ -16,7 +16,6 @@ S.subject.v_pelvis_x_trgt   = 1.33;
 
 S.solver.N_meshes = 100;
 
-S.subject.IG_selection_gaitCyclePercent = 100;
 S.subject.IG_selection = 'quasi-random';
 
 S.metabolicE.tanh_b = 100;
@@ -61,4 +60,5 @@ S.bounds.distanceConstraints(5).point2 = 'toes_l';
 S.bounds.distanceConstraints(5).direction = 'xz';
 S.bounds.distanceConstraints(5).lower_bound = 0.1;
 S.bounds.distanceConstraints(5).upper_bound = 2;
+
 
