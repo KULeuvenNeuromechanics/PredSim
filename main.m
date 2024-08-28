@@ -21,7 +21,7 @@ addpath(fullfile(pathRepo,'DefaultSettings'))
 %% Settings
 
 % name of the subject
-S.subject.name = 'DHondt_et_al_2024_4seg';
+S.subject.name = 'Falisse_et_al_2022';
 
 % path to folder where you want to store the results of the OCP
 S.misc.save_folder  = fullfile(pathRepoFolder,'PredSimResults',S.subject.name); 
