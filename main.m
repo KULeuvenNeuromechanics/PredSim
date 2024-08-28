@@ -21,7 +21,7 @@ addpath(fullfile(pathRepo,'DefaultSettings'))
 %% Settings
 
 % name of the subject
-S.subject.name = 'Falisse_et_al_2022';
+S.subject.name = 'DHondt_et_al_2024_4seg';
 
 % path to folder where you want to store the results of the OCP
 S.misc.save_folder  = fullfile(pathRepoFolder,'PredSimResults',S.subject.name); 
@@ -34,7 +34,8 @@ S.solver.IG_selection_gaitCyclePercent = 100;
 % give the path to the osim model of your subject
 osim_path = fullfile(pathRepo,'Subjects',S.subject.name,[S.subject.name '.osim']);
 
-        
+
+
 %% Run predictive simulations
 
 % warning wrt pelvis heigt for IG
