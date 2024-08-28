@@ -821,7 +821,7 @@ starti = starti + nq.all*(d*N);
 if (S.subject.synergies)       
     if strcmp(S.misc.gaitmotion_type,'HalfGaitCycle')
         SynH_r_opt = reshape(w_opt(starti:starti+S.subject.NSyn_r*(N+1)-1),S.subject.NSyn_r,N+1)';
-        starti = starti + S.subject.NSynr_r*(N+1);
+        starti = starti + S.subject.NSyn_r*(N+1);
         SynH_l_opt = reshape(w_opt(starti:starti+S.subject.NSyn_l*(N+1)-1),S.subject.NSyn_l,N+1)';
         starti = starti + S.subject.NSyn_l*(N+1);
         SynW_r_opt = reshape(w_opt(starti:starti+NMuscle/2*S.subject.NSyn_r-1),NMuscle/2,S.subject.NSyn_r)';
@@ -1077,10 +1077,9 @@ for k=1:N
     end
 end
 
-if (S.subject.synergies)
-    if (S.subject.TrackSynW)
-        compute_TrackSynW_CFreconstruction; 
-    end
+if (S.subject.synergies) && (S.subject.TrackSynW)
+    TrackSyn_cost = f_casadi.TrackSynW(SynW_r_opt', SynW_l_opt');
+    J_opt = J_opt + W.TrackSynW * TrackSyn_cost;
 end
 
 J_optf = full(J_opt);

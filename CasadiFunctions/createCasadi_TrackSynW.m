@@ -1,33 +1,24 @@
 function [f_TrackSynW] = createCasadi_TrackSynW(S,model_info)
 % --------------------------------------------------------------------------
-% meaningful_function_name
-%   Explanation of what this function does. Length depends on function 
-%   complexity. Include relevant citations. If applicable, provide an
-%   example and/or refer to a unit test. 
+% createCasadi_TrackSynW 
+%   Function to create CasADi function for the term in the cost function
+%   that tracks selected synergy weights
+%   
 % 
-%
-%   References
-%   [1] cite a relevant paper if applicable
-%
-%   See also related_function_name
-%
 % INPUT:
-%   - input_1 -
-%   * brief description of input_1, including data type.
+%   - S -
+%   * setting structure S
 % 
-%   - input_2 -
-%   * brief description of input_2. For more complex inputs, such as structs,
-%   include an example input.
-%
-%   - input_3 - (optional) Default: default_value
-%   * brief description of input_3, including data type.
+%   - model_info -
+%   * structure with all the model information based on the OpenSim model
 %
 % OUTPUT:
-%   - output_1 -
-%   * brief description of output_1
+%   - f_TrackSynW -
+%   * CasADi function for the term in the cost function
+%   that tracks selected synergy weights
 % 
-% Original author: (First name Last name)
-% Original date: (Using "30/May/2022" format avoids confusion)
+% Original author: Lars D'Hondt
+% Original date: July 2024
 % --------------------------------------------------------------------------
 
 import casadi.*
