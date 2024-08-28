@@ -99,8 +99,8 @@ guess.a = 0.1*ones(N,NMuscle);
 guess.vA = 0.01*ones(N,NMuscle);
 guess.FTtilde = 0.1*ones(N,NMuscle);
 guess.dFTtilde = 0.01*ones(N,NMuscle);
-guess.SynH = 0.1*ones(N+1,NMuscle);
-guess.SynW = 0.2;
+guess.SynH = S.subject.SynH_guess*ones(N+1,NMuscle);
+guess.SynW = S.subject.SynW_guess;
 
 %% Arm activations
 guess.a_a = 0.1*ones(N,nq.torqAct);

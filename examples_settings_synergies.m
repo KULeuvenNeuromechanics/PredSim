@@ -1,22 +1,16 @@
-% Right and left muscles indices. Hard-coded for 3D model
-% 'Falisse_et_al_2022.osim'. This may be automated
-S.subject.idx_m_r = [1:43,87,89,91];
-S.subject.idx_m_l = [44:86,88,90,92];
 
 %% Example 1: Symmetric synergies, free weights
 S.subject.synergies = 1; % 1 = implement muscle synergies
 S.subject.TrackSynW = 0; % 1 = track synergy weights
 S.misc.gaitmotion_type = 'HalfGaitCycle';
-S.subject.NSyn = 4;
-S.subject.NSyn_r = 4;
-S.subject.NSyn_l = 4;
+S.subject.NSyn_r = 4; % NSyn_l = NSyn_r
 
 %% Example 2: Symmetric synergies, track weights 
 % (from the case of 4 synergies in Pitto et al 2020)
 S.subject.synergies = 1; % 1 = implement muscle synergies
 S.subject.TrackSynW = 1; % 1 = track synergy weights
 S.misc.gaitmotion_type = 'HalfGaitCycle';
-S.subject.NSyn = 4; % NSyn_r = NSyn_l
+S.subject.NSyn_r = 4; % NSyn_l = NSyn_r
 S.subject.TrackSynW_NSyn_r = 4; % number of tracked synergies (may be different from the number of synergies)
 S.subject.knownSynW_r = {'rect_fem_r', [0 0.28 0 0.75],...
     'vas_lat_r', [0.1 0.1 0.05 0.8],...
@@ -51,3 +45,4 @@ S.subject.knownSynW_l = {'rect_fem_l', [0.3265 0.2298],...
     {'med_gas_l','lat_gas_l'}, [0.4883 0.4313],...
     'soleus_l', [0.6271 0.2091],...
     {'glut_med1_l','glut_med2_l','glut_med3_l'}, [0.2610 0.2617]};
+

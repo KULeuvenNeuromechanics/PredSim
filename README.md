@@ -297,6 +297,8 @@ This code can automatically convert an OpenSim model to the external function us
 	- When synergies are implemented, different variables need to be defined:
 	- **S.subject.NSyn_r**: number of synergies for the right leg. This value needs to be defined.
 	- **S.subject.NSyn_l**: number of synergies for the left leg. Default is equal to S.subject.NSyn_r. When simulating symmetric gait (i.e. S.misc.gaitmotion_type = 'FullGaitCycle'), this is also set equal to S.subject.NSyn_r.
+	- **S.subject.SynH_guess**: . Default is *0.1* [double]
+	- **S.subject.SynW_guess**: . Default is *0.2* [double]
 	- **S.subject.TrackSynW**: boolean that indicates if synergy weights are tracked. Default is *0* (no weights tracking).
 	- **S.subject.TrackSynW_side**: indicates if weights are tracked for one or both legs. Possible options are: 'onlyLeft', 'onlyRight' or 'RightLeft'. Use this variable only if a full cycle is predicted (S.misc.gaitmotion_type = 'FullGaitCycle'). Default is *'RightLeft'* [char];
 	- **S.subject.knownSynW_r**: synergy weights to be tracked are specified here, using the following form: {'muscleName1', weightArray1, {'muscleName2a', 'muscleName2b'}, weightArray2, etc.}. The 'weightArray' is an horizontal vector containing the muscle weight (between 0 and 1) on each synergy.

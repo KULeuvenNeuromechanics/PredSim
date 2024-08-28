@@ -411,6 +411,14 @@ else
     end
 end
 
+% initial guess for synergy variables
+if ~isfield(S.subject,'SynH_guess')
+    S.subject.SynH_guess = 0.1;
+end
+if ~isfield(S.subject,'SynW_guess')
+    S.subject.SynW_guess = 0.2;
+end
+
 % type of mtp joint used in the model
 if ~isfield(S.subject,'mtp_type')
     S.subject.mtp_type = ''; 
