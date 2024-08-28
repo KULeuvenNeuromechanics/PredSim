@@ -59,5 +59,9 @@ if ~isempty(S.bounds.SLL.upper) || ~isempty(S.bounds.SLR.upper)
         createCasadi_StepLength(S,model_info);
 end
 
+%% Create Casadi function for Synergy weight tracking term
+if (S.subject.synergies) && (S.subject.TrackSynW)
+    [f_casadi.TrackSynW] = createCasadi_TrackSynW(S,model_info);
+end
 
 end
