@@ -117,7 +117,7 @@ Hill-type muscle
 | strain | ligament strain | mesh x ligaments | [%] |
 | stress | ligament stress | mesh x ligaments | [MPa] |
 | moment | coordinate moment (or force) due to ligaments | mesh x coordinates | [Nm or N] |
-| moment | coordinate power due to ligaments | mesh x coordinates | [W] |
+| power | coordinate power due to ligaments | mesh x coordinates | [W] |
 
 ### R.spatiotemp
 | Field | Description | Dimension | Unit |
