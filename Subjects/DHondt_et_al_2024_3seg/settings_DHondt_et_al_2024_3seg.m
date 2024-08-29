@@ -29,7 +29,7 @@ S.subject.set_stiffness_coefficient_selected_dofs = {'mtp_angle',25};
 S.subject.set_damping_coefficient_selected_dofs = {'mtp_angle',2};
 
 S.subject.muscle_pass_stiff_shift =...
-    {{'soleus','_gas','per_','tib_','_dig_','_hal_','FDB'},0.9};
+    {{'soleus','_gas','per_','tib_','_dig_','_hal_'},0.9};
 S.subject.tendon_stiff_scale = {{'soleus','_gas'},0.5};
 
 
