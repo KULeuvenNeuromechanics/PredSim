@@ -36,12 +36,6 @@ osim_path = fullfile(pathRepo,'Subjects',S.subject.name,[S.subject.name '.osim']
 
 %% Run predictive simulations
 
-% warning wrt pelvis heigt for IG
-if S.subject.adapt_IG_pelvis_y == 0 && S.solver.IG_selection ~= "quasi-random"
-    uiwait(msgbox(["Pelvis height of the IG will not be changed.";"Set S.subject.adapt_IG_pelvis_y to 1 if you want to use the model's pelvis height."],"Warning","warn"));
-end
-
-% Start simulation
 [savename] = runPredSim(S, osim_path);
 
 
