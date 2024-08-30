@@ -19,7 +19,7 @@ The order of *coordinates*, *muscles*, and *ligaments* is given in R.colheaders.
 
 
 ### R.S: settings used to generate these results
-See the [overview of settings](../README.md) for more information about the settings.
+See the [overview of settings](../README.md#Required-Settings) for more information about the settings.
 
 ### R.objective
 | Field | Description | Dimension | Unit |
