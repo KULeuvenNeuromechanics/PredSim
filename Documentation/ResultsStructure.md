@@ -31,9 +31,9 @@ See the [overview of settings](../README.md) for more information about the sett
 ### R.time
 | Field | Description | Dimension | Unit |
 |------ | ----------- | ---- | ---- |
-| mesh | timestamps of mesh points of simulation | 1 x (mesh + 1) | [s] |
-| coll | timestamps of mesh and collocation points of simulation | 1 x (mesh*collocation_order + 1) | [s] |
-| mesh_GC | timestamps of mesh points of gait cycle | 1 x mesh | [s] |
+| mesh | timestamps of mesh points of simulation | 1 x (*S.solver.N_meshes* + 1) | [s] |
+| coll | timestamps of mesh and collocation points of simulation | 1 x (*S.solver.N_meshes*\*(collocation_order + 1) + 1) | [s] |
+| mesh_GC | timestamps of mesh points of gait cycle | 1 x (mesh + 1) | [s] |
 
 ### R.colheaders
 | Field | Description | Dimension | Unit |
