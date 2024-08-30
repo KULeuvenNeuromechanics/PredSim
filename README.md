@@ -50,9 +50,9 @@ To run this code you need to have the following softwares on your machine:
 
 - MATLAB. [Statistics and Machine Learning Toolbox](https://nl.mathworks.com/products/statistics.html) is required. [Parallel Computing Toolbox](https://nl.mathworks.com/products/parallel-computing.html) is optional. The code has mainly been developed and tested on MATLAB 2021b, but is expected to run on any recent version.
 - [OpenSim](https://simtk.org/projects/opensim) 4.3 or later. Older versions do not work.
-- [CasADi](https://web.casadi.org/get/). The code has been tested on CasADi 3.5.5.
+- [CasADi](https://web.casadi.org/get/). The code has been tested on CasADi 3.5.5 and later.
 - [Microsoft Visual Studio](https://visualstudio.microsoft.com/). In Visual Studio Installer, [select to include Desktop development with C++](/FiguresForDocumentation/fig_MSVS.png). The code has been tested on MSVS Community 2015, 2017, 2019, and 2022.
-- [CMake](https://cmake.org/download/). The code has been tested on CMake 3.22.0.
+- [CMake](https://cmake.org/download/). The code has been tested on CMake 3.22.0. 
 - [Git](https://git-scm.com/download/win). The code has been tested on Git 2.40.0.windows.1. Add Git to your system Path.
 
 
@@ -63,11 +63,11 @@ To run this code you need to have the following softwares on your machine:
 2. Clone the fork to your machine. If you have a computer with restricted permissions, make sure you have permission to run executables from the selected folder (For computers with KU Leuven BioMed Group policies, this is C:\GBW_MyPrograms\ ).
 *Do not download the code as zip.*
 3. Get the OpenSim API running on MATLAB. See [Setting up your Matlab Scripting Environment](https://simtk-confluence.stanford.edu:8443/display/OpenSim/Scripting+with+Matlab#ScriptingwithMatlab-MatlabSetupSettingupyourMatlabScriptingEnvironment).
-4. In main.m, change [S.solver.CasADi_path](https://github.com/KULeuvenNeuromechanics/PredSim/blob/9fbbd43cf83617620e428d2c91f222c909a1349c/main.m#L84) to reflect the location where you installed CasADi. 
+4. Add the location where you installed CasADi to the matlab search path (`addpath(genpath('C:/path/to/casadi'))`), or use S.solver.CasADi_path. 
 5. Make sure the opensimAD submodule is installed. If PredSim\opensimAD\ is empty, open git command prompt, go to ...\PredSim\ , and run `git submodule update --init`.
 
 
-After perfoming these steps, run the main script. (Expected run time is 40 minutes, depending on hardware.) If you don't receive any errors, your results should be the same as https://github.com/KULeuvenNeuromechanics/PredSim/tree/master/Tests/Falisse_et_al_2022_Results. If that is the case, you have succesfully intalled and set up the code. You are ready to do your own simulations.
+After perfoming these steps, run the main script. (Expected run time is 40 minutes, depending on hardware.) If you don't receive any errors, your results should be the same as [the reference result](./Tests//ReferenceResults//Falisse_et_al_2022/Falisse_et_al_2022_paper.mat). If that is the case, you have succesfully intalled and set up the code. You are ready to do your own simulations.
 
 ## How to use the code
 
@@ -78,7 +78,6 @@ All user-defined settings are stored in structure *S*. In main.m you have to spe
 ### Before running a simulations
 
 This code can automatically convert an OpenSim model to the external function used in the simulations. This greatly simplifies the process of going from a subject-specific model to a predictive simulation. Nevertheless, you should take care of the model you use since **not all OpenSim models are suported**: 
-- Model should be 3D.
 - Your model should not have locked joints. Locked joints would technically require having kinematic constraints, which is possible but makes the problem more complicated. Replace them with weld joints instead.
 - Constraints on coordinates will be ignored (eg, coupling constraints).
 - Using SimmSplines to describe coordinates (e.g. Yamaguchi knee model) is not supported as the implementation in OpenSim is not really compatible with algorithmic differentiation. Change them to Polynomials instead. GeometryPaths can contain SimmSplines. [_AdaptOpenSimModel.m_](https://github.com/KULeuvenNeuromechanics/PredSim/blob/master/AdaptOpenSimModel/AdaptOpenSimModel.m) takes care of changing present SimmSplines to polynomials.
@@ -87,22 +86,22 @@ This code can automatically convert an OpenSim model to the external function us
 - Torque/force actuators of the class *ActivationCoordinateActuator* are supported. You can add actuators by running [_AdaptOpenSimModel.m_](./AdaptOpenSimModel/AdaptOpenSimModel.m). Actuators are not required.
 
 
+
+
 ### Required Settings
 
 - **S.subject.name**: 
-	- the name or code of the subject you are simulating.
+	- The name or code of the subject you are simulating. 
 - **osim_path**: 
-	- path to the scaled opensim model of the subject.	
-- **S.subject.save_folder**: 
-	- path to the folder where you want to store the results of the OCP. If the folder does not exist yet on your machine, it will be created automatically.
-- **S.subject.IG_selection**: 
-	- either choose 'quasi-random' or give the path to a .mot file you want to use as initial guess.
-- **S.subject.IG_selection_gaitCyclePercent**: 
-	- if S.subject.IG_selection is a .mot file, S.subject.IG_selection_gaitCyclePercent is required. Here, specify what percent of gait cycle does the .mot file contain. For example, if the .mot file has 2 gait cycles, S.subject.IG_selection_gaitCyclePercent is 200.
-- **S.solver.run_as_batch_job**: 
-	- specify if the OCP is to be solved as a batch job (0: no, 1: yes). Batch processing requires the [Parallel Computing Toolbox](https://nl.mathworks.com/products/parallel-computing.html).
+	- Path to the scaled opensim model of the subject.	
+- **S.misc.save_folder**: 
+	- Path to the folder where you want to store the simulation results. If the folder does not exist yet on your machine, it will be created automatically.
+- **S.solver.IG_selection**: 
+	- Either choose 'quasi-random' or give the path to a .mot file you want to use as initial guess. In a quasi-random initial guess, the model is translated forward at the imposed velocity while all other coordinates are kept constant (vertical position of floating base is S.subject.IG_pelvis_y, others are 0). 
+- **S.solver.IG_selection_gaitCyclePercent**: 
+	- If S.solver.IG_selection is a .mot file, S.solver.IG_selection_gaitCyclePercent is required. Here, specify what percent of gait cycle does the .mot file contain. For example, if the .mot file has 2 gait cycles, S.solver.IG_selection_gaitCyclePercent is 200.
 
-### OptionalSettings
+### Optional Settings
 
 #### S.bounds
 
@@ -171,6 +170,8 @@ This code can automatically convert an OpenSim model to the external function us
 
 #### S.misc - miscellanious
 
+- **S.misc.forward_velocity**:
+	- Imposed forward velocity. Forward velocity is calculated as the average velocity in the coordinate that translates the floating base along the x-axis. Default is *1.25* [double].
 - **S.misc.gaitmotion_type**: 
 	- type of gait simulation. Default is *HalfGaitCycle* [char]. Other option is *FullGaitCycle* [char]. Simulating a half gait cycle reduces computation time, but is limited to symmetric models. Post-processing will always reconstruct a full gait cycle starting at right heel strike.
 - **S.misc.msk_geom_eq**: 
@@ -219,38 +220,48 @@ This code can automatically convert an OpenSim model to the external function us
 	- hash of the last commit on the remote [char]. This is the identifier of the latest version on the remote, i.e. GitHub. You cannot change this setting.
 - **S.misc.computername**: 
 	- name of the computer on which the simulation was run [char]. You cannot change this setting.
+- **S.misc.save_folder**: 
+	- path to folder to store the results. If the folder does not exist, it is created automatically. [char]
+- **S.misc.result_filename**: 
+	- File name for results. Used for the name of .mat file that saves the results, diary of the OCP, and name of the .mot file of the output motion. When rerunning post-processing of an existing result, giving this file name is required. Default value is empty.
+- **S.misc.savename**: 
+	- Type of savename to use if S.misc.result_filename is empty. Default is *structured* [char]. This sets S.misc.result_filename = <S.subject.name>_v\<n>. Where <S.subject.name> is defined in S.subject.name. n = 1 if <S.subject.name>_v1.mat does not exist. n is increased until n is found such that <S.subject.name>_v\<n>.mat does not exist. To change this structuring process, change its implementation in [run_pred_sim.m file](./run_pred_sim.m). An alternative option is *datetime* [char], this uses <S.subject.name>\_\<yyyymmddTHHMMSS>. Where \<yyyymmddTHHMMSS> is the system date and time when creating the savename.
 
 
 #### S.post_process
 
-- **S.post_process.make_plot**: 
-	- boolean to plot post processing results (0 or 1). Default is *0*.
 - **S.post_process.rerun**: 
-	- boolean to rerun post-processing without solving OCP (0 or 1). Default is *0*. If this option is set to 1, one should specify the S.post_process.result_filename.
-- **S.post_process.result_filename**: 
-	- File name for results. Used for the name of .mat file that saves the results, diary of the OCP, and name of the .mot file of the output motion. When rerunning post-processing of an existing result, giving this file name is required. Default value is 
-- **S.post_process.savename**: 
-	- Type of savename to use if S.post_process.result_filename is empty. Defaults is *structured* [char]. This uses the name of the .mat file of results is used as <S.subject.name>_v\<n>. Where <S.subject.name> is defined in S.subject.name. n = 1 if <S.subject.name>_v1.mat does not exist. n is increased until n is found such that <S.subject.name>_v\<n>.mat does not exist. To change this structuring process, change its implementation in [run_pred_sim.m file](./run_pred_sim.m). An alternative option is *datetime* [char], this uses <S.subject.name>\_\<yyyymmddTHHMMSS>. Where \<yyyymmddTHHMMSS> is the system date and time when creating the savename.
+	- boolean to rerun post-processing without solving OCP (0 or 1). Default is *0*. If this option is set to 1, one should specify the S.misc.result_filename.
+- **S.post_process.load_prev_opti_vars**:
+	- load w_opt and reconstruct R before rerunning the post-processing. Advanced feature, for debugging only, you should not need this.
 
 #### S.solver
 
-- **S.solver.linear_solver**: 
-	- solver algorithm used for the OCP. Default is *mumps* [char].
-- **S.solver.tol_ipopt**: 
-	- the power (10^-x) the tolerance ipopt has to reach before the OCP can be regarded as solved; a higher number gives a more precise answer. Default is *4* [double]
-- **S.solver.max_iter**: 
-	- maximal amount of iterations after wich the solver will stop. Default is *10000* [double]
-- **S.solver.parallel_mode**: 
-	- type of parallel computing. Default is *thread* [char].
-- **S.solver.N_threads**: 
-	- number of threads in parallel mode. Default is *4* [double]. When using batch computing, this value is overwritten with the number of threads assigned to each worker in you parallel cluster.
+- **S.solver.CasADi_path**:
+	- Path to CasADi installation (top folder). By default, this will use the CasADi installation that is in the matlab search path.
 - **S.solver.N_meshes**: 
-	- number of mesh intervals. Default is *50* [double] for S.misc.gaitmotion_type = HalfGaitCycle and *100* for FullGaitCycle
+	- number of mesh intervals. Default is *50* [double] for S.misc.gaitmotion_type = HalfGaitCycle and *100* for FullGaitCycle	
+- **S.solver.run_as_batch_job**: 
+	- specify if the OCP is to be solved as a batch job. Default is *false* [bool]. Batch processing requires the [Parallel Computing Toolbox](https://nl.mathworks.com/products/parallel-computing.html).
+- **S.solver.parallel_mode**: 
+	- type of parallel computing. Default is *thread* [char]. Other types are not supported.
+- **S.solver.N_threads**: 
+	- number of threads in parallel mode. Default is *4* [double]. When using batch computing, this value is overwritten with the number of threads assigned to each worker in your parallel cluster.
+- **S.solver.nlpsol_options**:
+	- Options to be passed to [CasADi's nonlinear program solver](https://web.casadi.org/api/html/d4/d89/group__nlpsol.html). Default is *[]* [struct].
+- **S.solver.ipopt_options**:
+	- Options to be passed to [ipopt](https://coin-or.github.io/Ipopt/OPTIONS.html#OPTIONS_REF). Default is *[]* [struct]. Overwrites S.solver.nlpsol_options.ipopt.
+- **S.solver.linear_solver**: 
+	- linear solver algorithm used by ipopt. Default is *mumps* [char]. Overwrites S.solver.ipopt_options.linear_solver.
+- **S.solver.tol_ipopt**: 
+	- the [ipopt convergence tolerance](https://coin-or.github.io/Ipopt/OPTIONS.html#OPT_tol) is set to 10^(-S.solver.tol_ipopt). A higher number gives a more precise answer, but takes more time. Default is *4* [double]. Overwrites S.solver.ipopt_options.tol.
+- **S.solver.constr_viol_tol_ipopt**: 
+	- the [ipopt constraint violation tolerance](https://coin-or.github.io/Ipopt/OPTIONS.html#OPT_constr_viol_tol) is set to 10^(-S.solver.constr_viol_tol_ipopt). A higher number gives a more precise answer, but takes more time. Default is *6* [double]. Overwrites S.solver.ipopt_options.constr_viol_tol.
+- **S.solver.max_iter**: 
+	- maximal amount of iterations after wich the solver will stop. Default is *10000* [double]. Overwrites S.solver.ipopt_options.max_iter.
 
 #### S.subject
 
-- **S.subject.save_folder**: 
-	- folder path to store the intermediate subject specific results (e.g. external function with skeletal dynamics, CasADi function with musculoskeletal geometry polynomials). If the folder does not exist, it is created automatically.
 - **S.subject.mass**: 
 	- mass of the subject in kilograms. Default is *[]* kilograms [double]. Default is empty, it will be overwritten by the mass extracted from the OpenSim model.
 - **S.subject.IG_pelvis_y**: 
@@ -259,9 +270,7 @@ This code can automatically convert an OpenSim model to the external function us
     - used for data-informed initial guess when `S.subject.adapt_IG_pelvis_y = 1;`
 	- S.subject.IG_pelvis_y is also used to establish bounds on vertical pelvis position.
 - **S.subject.adapt_IG_pelvis_y**: 
-	- boolean to adjust the trajectory of height of pelvis from the ground for data-informed initial guess. Default is *0*. 0 means the trajectory will not be changed. If 1, the trajectory will be changed such that the average value of the trajectory is equal to s.subject.IG_pelvis_y.
-- **S.subject.v_pelvis_x_trgt**: 
-	- average velocity you want the model to have, in meters per second. Default is *1.25* m/s [double]
+	- boolean to adjust the trajectory of height of pelvis from the ground for data-informed initial guess. Default is *0*. 0 means the trajectory will not be changed. If 1, the trajectory will be changed such that the average value of the trajectory is equal to S.subject.IG_pelvis_y.
 - **S.subject.muscle_strength**: 
 	- structure with [scaling factors for muscle strength](/FiguresForDocumentation/fig_muscle_tendon_properties_scaling.png). This scales the max muscle force of the active muscle force. Default is *[]*, that is, no scaling. Input as a cell array where 1st input is the muscle(s) name, 2nd is the scale factor. If more than one scaling is to be performed, add 2 more inputs. For example, S.subject.muscle_strength = {{'soleus_l','soleus_r'},0.9,{'tib_ant_l'},1.1} will scale both soleus by a factor of 0.9 and tibialis anterior left by a scale of 1.1.
 - **S.subject.muscle_pass_stiff_scale**: 
@@ -314,14 +323,16 @@ This code can automatically convert an OpenSim model to the external function us
 	- exponent for the metabolic energy rate. Default is *2* [double]
 - **S.weights.q_dotdot**: 
 	- weight on joint accelerations. Default is *50000* [double]
-- **S.weights.e_arm**: 
-	- weight on arm excitations. Default is *10^6* [double]
+- **S.weights.e_torqAct**: 
+	- weight on torque actuator excitations. Default is *10^6* [double]
 - **S.weights.pass_torq**: 
-	- weight on passive torques. Default is *1000* [double]
+	- weight on passive torques. Default is *1000* [double]. The passive torques term includes the coordinate limit torques, and potentially the coordinate damping torque.
 - **S.weights.pass_torq_includes_damping**: 
 	- specify if damping torque = damping coefficient * coordinate velocity is to be included in the cost function (0 or 1). Default is 0 [double].
 - **S.weights.a**: 
 	- weight on muscle activations. Default is *2000* [double]
+- **S.weights.a_exp**: 
+	- exponent for the muscle activation. Default is *2* [double]
 - **S.weights.slack_ctrl**: 
 	- weight on slack controls. Default is *0.001* [double]
 
@@ -337,7 +348,7 @@ These settings are passed to OpenSimAD.
        - Visual studio 2017: 'Visual Studio 16 2019'
        - Visual studio 2017: 'Visual Studio 17 2022'
 - **S.OpenSimADOptions.verbose_mode**:
-	- print outputs from windows command prompt to matlab command window (and log file). Default is *true* [bool].
+	- print outputs from windows command prompt to matlab command window (and log file). Default is *false* [bool].
 - **S.OpenSimADOptions.verify_ID**:
 	- verify the generated function versus the inverse dynamics tool in OpenSim. Default is *false* [bool].
 - **S.OpenSimADOptions.jointsOrder**: 
@@ -361,6 +372,7 @@ These settings are passed to OpenSimAD.
 	- Export total ground reaction moments of left and right side. Default is *true* [bool]
 - **S.OpenSimADOptions.exportContactPowers**: 
 	- Export power due to vertical compression of each contact element. Default is *true* [bool]
+
 
 #### S.orthosis
 Interface to add custom orthoses to the simulation model.

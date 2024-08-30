@@ -12,11 +12,11 @@
 
 S.subject.name = 'DHondt_et_al_2024_4seg';
 
-S.subject.v_pelvis_x_trgt   = 1.33;
+S.misc.forward_velocity = 1.33;
 
 S.solver.N_meshes = 100;
 
-S.subject.IG_selection = 'quasi-random';
+S.solver.IG_selection = 'quasi-random';
 S.subject.IG_pelvis_y = 0.9385;
 S.subject.adapt_IG_pelvis_y = 0;
 

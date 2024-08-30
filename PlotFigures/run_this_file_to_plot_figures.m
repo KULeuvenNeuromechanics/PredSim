@@ -1,10 +1,5 @@
 
-%% Clear workspace
-if exist('result_paths','var')
-    clearvars -Except result_paths
-else
-    clear
-end
+clear
 close all
 clc
 
