@@ -15,7 +15,7 @@ If *S.misc.gaitmotion_type* is *HalfGaitCycle*, the results use *2\*S.solver.N_m
 - actuators: the number of (coordinate) torque actuators.
 
 The order of *mesh* represents 1 gait cycle, starting at the right side initial contact.
-The order of *coordinates*, *muscles*, and *ligaments* is given in R.colheaders.
+The order of *coordinates*, *muscles*, and *ligaments* is given in *R.colheaders*.
 
 
 ### R.S: settings used to generate these results
