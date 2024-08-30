@@ -3,16 +3,28 @@
 
 ## R: results
 
-Results are ordered such that they represent 1 gait cycle, starting at the right side initial contact.
+The results are organised in a struct *R* that contains matrices for the different variables. 
+The dimensions of the matrices depend on the model and settings that were used. 
+In the overview below, the dimensions are expressed in function of:
+- mesh: the number of meshpoints used to express the result.
 If *S.misc.gaitmotion_type* is *FullGaitCycle*, the results use *S.solver.N_meshes* meshpoints.
-If *S.misc.gaitmotion_type* is *HalfGaitCycle*, the results use *2\*S.solver.N_meshes meshpoints*.
+If *S.misc.gaitmotion_type* is *HalfGaitCycle*, the results use *2\*S.solver.N_meshes* meshpoints.
+- coordinates: the number of coordinates.
+- muscles: the number of muscles.
+- ligaments: the number of ligaments.
+- actuators: the number of (coordinate) torque actuators.
+
+The order of *mesh* represents 1 gait cycle, starting at the right side initial contact.
+The order of *coordinates*, *muscles*, and *ligaments* is given in R.colheaders.
+
 
 ### R.S: settings used to generate these results
+See the [overview of settings](../README.md) for more information about the settings.
 
 ### R.objective
 | Field | Description | Dimension | Unit |
 |------ | ----------- | ---- | ---- |
-|absoluteValues| values of the objective function terms, evaluated at the solution | 1 x 8 | [a.u.] |
+| absoluteValues | values of the objective function terms, evaluated at the solution | 1 x 8 | [a.u.] |
 | relativeValues | relative contribution of the objective function terms | 1 x 8 | [%] |
 | labels | names of the objective function terms | 1 x 8 | [text] |
 
@@ -52,7 +64,7 @@ If *S.misc.gaitmotion_type* is *HalfGaitCycle*, the results use *2\*S.solver.N_m
 | e | muscle excitation | mesh x muscles | [-] |
 | lMT | muscle-tendon length | mesh x muscles | [m] |
 | vMT | muscle-tendon lengthening velocity | mesh x muscles | [m/s] |
-| dM | muscle-tendon length | mesh x muscles x coordinates | [m] |
+| dM | muscle-tendon moment arm | mesh x muscles x coordinates | [m] |
 | FT | force at the tendon  | mesh x muscles | [N] |
 | Fce | force of the contractile element (CE)  | mesh x muscles | [N] |
 | Fpass | force of the parallel elasticity (PE)  | mesh x muscles | [N] |
@@ -77,7 +89,7 @@ Hill-type muscle
 |------ | ----------- | ---- | ---- |
 | a | actuator activation | mesh x actuators | [-] |
 | e | actuator excitation | mesh x actuators | [-] |
-| T | actuator torque | mesh x actuators | [-] |
+| T | actuator torque | mesh x actuators | [Nm] |
 
 
 ### R.ground_reaction
@@ -93,6 +105,7 @@ Hill-type muscle
 | COP_l | centre of pressure left side (in ground frame) | mesh x 3 | [m] |
 | idx_stance_r | indices of meshpoints with ground contact on right side | <mesh x 1 | [-] |
 | idx_stance_l | indices of meshpoints with ground contact on left side | <mesh x 1 | [-] |
+| idx_double_support | indices of meshpoints with ground contact on both sides | <mesh x 1 | [-] |
 
 ### R.misc
 | Field | Description | Dimension | Unit |
@@ -122,8 +135,6 @@ Hill-type muscle
 ### R.spatiotemp
 | Field | Description | Dimension | Unit |
 |------ | ----------- | ---- | ---- |
-| step_length_r | step length of right leg | 1 x 1 | [m] |
-| step_length_l | step length of left leg | 1 x 1 | [m] |
 | stance_r | duration of stance phase of right leg, relative to gait cycle | 1 x 1 | [%] |
 | swing_r | duration of swing phase of right leg, relative to gait cycle | 1 x 1 | [%] |
 | stance_l | duration of stance phase of left leg, relative to gait cycle | 1 x 1 | [%] |
