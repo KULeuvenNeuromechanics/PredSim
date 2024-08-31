@@ -1,4 +1,16 @@
 
+Quickly navigate to:
+* [Required Settings](SettingsOverview.md#required-settings)
+* [Optional Settings](SettingsOverview.md#optional-settings)
+  * [S.bounds](SettingsOverview.md#sbounds)
+  * [S.metabolicE - metabolic-energy](SettingsOverview.md#smetabolice---metabolic-energy)
+  * [S.misc - miscellanious](SettingsOverview.md#smisc---miscellanious)
+  * [S.post_process](SettingsOverview.md#spost_process)
+  * [S.solver](SettingsOverview.md#ssolver)
+  * [Ssubject](SettingsOverview.md#ssubject)
+  * [S.weights](SettingsOverview.md#sweights)
+  * [S.OpenSimADOptions](SettingsOverview.md#sopensimadoptions)
+  * [S.orthosis](SettingsOverview.md#sorthosis)
 
 ### Required Settings
 
