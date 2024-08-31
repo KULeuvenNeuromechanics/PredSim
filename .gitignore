@@ -4,7 +4,7 @@
 *.sto
 *.log
 *.png
-!/FiguresForDocumentation/*.png
+!/Documentation/FiguresForDocumentation/*.png
 *.jpg
 *.eps
 
