@@ -7,7 +7,7 @@ Quickly navigate to:
   * [S.misc - miscellanious](SettingsOverview.md#smisc---miscellanious)
   * [S.post_process](SettingsOverview.md#spost_process)
   * [S.solver](SettingsOverview.md#ssolver)
-  * [Ssubject](SettingsOverview.md#ssubject)
+  * [S.subject](SettingsOverview.md#ssubject)
   * [S.weights](SettingsOverview.md#sweights)
   * [S.OpenSimADOptions](SettingsOverview.md#sopensimadoptions)
   * [S.orthosis](SettingsOverview.md#sorthosis)
