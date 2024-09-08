@@ -33,9 +33,6 @@ if isfield(f_casadi,'f_getStepLength')
         R.kinematics.Qs_rad(end,:));
     R.spatiotemp.step_length_r = full(step_length_r);
     R.spatiotemp.step_length_l = full(step_length_l);
-else
-    R.spatiotemp.step_length_r = [];
-    R.spatiotemp.step_length_l = [];
 end
 
 % percentage stance and swing phase

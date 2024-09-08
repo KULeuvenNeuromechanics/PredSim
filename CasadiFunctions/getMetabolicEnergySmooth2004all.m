@@ -1,6 +1,6 @@
 function [energy_total,Adot,Mdot,Sdot,Wdot,energy_model] = ...
     getMetabolicEnergySmooth2004all(exc,act,lMtilde,vM,Fce,Fpass,...
-        musclemass,pctst,Fiso,Fmax,modelmass,b)
+        musclemass,pctst,Fiso,Fmax,modelmass,b,strength)
 % --------------------------------------------------------------------------
 % getMetabolicEnergySmooth2004all
 %    This function computes the muscle energy expenditure based on the model
@@ -56,6 +56,9 @@ function [energy_total,Adot,Mdot,Sdot,Wdot,energy_model] = ...
 %   - b -
 %   * parameter determining transition smoothness for tanh approximations
 %
+%   - strength -
+%   * muscle strength scaling factor
+%
 % OUTPUT:
 %   - energy_total -
 %   * total metabolic energy rate
@@ -86,6 +89,9 @@ function [energy_total,Adot,Mdot,Sdot,Wdot,energy_model] = ...
 % Last edit date: 
 % --------------------------------------------------------------------------
 
+%% scale the muscle mass to strength
+musclemass=musclemass.*strength;
+
 %% Parameters
 % Ratio of slow twitch (st) and fast twitch (ft) fibers
 pctft = 1-pctst;      
@@ -114,7 +120,7 @@ Mdot = musclemass.*fiber_length_dep.*((maintenance_constant_st*st_e)+...
 % Fiso is getActiveForceLengthMultiplier in OpenSim. To minimize the
 % difference between the models, we keep the same input, i.e., Fiso, that is
 % used in the models of Umberger and Uchida.
-F_iso = act.*Fiso.*Fmax; 
+F_iso = act.*Fiso.*Fmax.*strength;
 fiber_force_total = Fce + Fpass;
 alpha = (0.16 * F_iso) + (0.18 * fiber_force_total);
 % vM is positive (muscle lengthening)

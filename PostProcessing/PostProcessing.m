@@ -22,7 +22,7 @@ function [] = PostProcessing(S,model_info,f_casadi)
 % --------------------------------------------------------------------------
 
 % load results
-Outname = fullfile(S.subject.save_folder,[S.post_process.result_filename '.mat']);
+Outname = fullfile(S.misc.save_folder,[S.misc.result_filename '.mat']);
 load(Outname,'R');
 
 % kinematics in radians
@@ -48,7 +48,7 @@ R.misc.body_weight = model_info.mass*9.81;
 % OpenSim GUI.
 [R] = PostProcess_write_motion_file(model_info,f_casadi,R);
 
-% Get Inverse Dynamic torque (or force) for each cordinate.
+% Get Inverse Dynamic torque (or force) for each coordinate.
 [R] = PostProcess_get_ID(model_info,f_casadi,R);
 
 % Compute variables related to foot-ground contact.
@@ -66,6 +66,9 @@ R.misc.body_weight = model_info.mass*9.81;
 % Reconstruct all force- and length components of muscle fiber and tendon.
 [R] = PostProcess_muscletendon_dynamics(model_info,f_casadi,R);
 
+% Evaluate ligament lengths, forces, powers
+[R] = PostProcessing_ligaments(model_info,f_casadi,R);
+
 % Calculate all terms of the passive coordinate moments.
 [R] = PostProcess_passive_moments(model_info,f_casadi,R);
 
@@ -76,14 +79,15 @@ R.misc.body_weight = model_info.mass*9.81;
 % models.
 [R] = PostProcess_metabolic_energy(model_info,f_casadi,R);
 
+% Calculate orthosis forces
+[R] = PostProcess_orthosis(model_info,f_casadi,R);
+
 % Please implement additional post-processing steps as functions following
 % the template, and call them from here.
 % [R] = PostProcessing_subfunction_template(model_info,f_casadi,R);
 
 
 %%
-Outname = fullfile(S.subject.save_folder,[S.post_process.result_filename '.mat']);
-load(Outname,'w_opt','stats','setup','model_info');
-save(Outname,'w_opt','stats','setup','R','model_info');
+save(Outname,'R','-append');
 
 
