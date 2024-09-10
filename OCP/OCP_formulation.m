@@ -526,7 +526,7 @@ end % End loop over collocation points
 % (there are no conditions/constraints applied to the other weights)
 if (S.subject.synergies) && (S.subject.TrackSynW)
     J_TrackSynW = f_casadi.TrackSynW(SynW_rk, SynW_lk);
-    J = J + W.TrackSynW * J_TrackSynW;
+    J = J + W.TrackSynW*J_TrackSynW;
 end
 
 % Synergies: a - WH = 0
@@ -1078,8 +1078,8 @@ for k=1:N
 end
 
 if (S.subject.synergies) && (S.subject.TrackSynW)
-    TrackSyn_cost = f_casadi.TrackSynW(SynW_r_opt', SynW_l_opt');
-    J_opt = J_opt + W.TrackSynW*TrackSyn_cost;
+    TrackSyn_cost = W.TrackSynW*f_casadi.TrackSynW(SynW_r_opt', SynW_l_opt');
+    J_opt = J_opt + 1/(dist_trav_opt)*TrackSyn_cost;
 end
 
 J_optf = full(J_opt);
@@ -1109,7 +1109,6 @@ contributionCost.labels = {'metabolic energy','muscle activation',...
 % assertCost should be 0
 assertCost = abs(J_optf - 1/(dist_trav_opt)*(E_costf+A_costf + Arm_costf + ...
     Qdotdot_costf + Pass_costf + vA_costf + dFTtilde_costf + QdotdotArm_costf + Syn_costf + TrackSyn_costf));
-
 assertCost2 = abs(stats.iterations.obj(end) - J_optf);
 
 if assertCost > 1*10^(-S.solver.tol_ipopt)
