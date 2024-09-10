@@ -1056,7 +1056,7 @@ for k=1:N
         if (S.subject.synergies)
             syn_constr_k_r = a_opt(k,idx_m_r) - SynH_r_opt(k,:)*SynW_r_opt;
             syn_constr_k_l = a_opt(k,idx_m_l) - SynH_l_opt(k,:)*SynW_l_opt;
-            J_opt = J_opt + W.SynConstr * B(j+1) *(f_casadi.J_muscles([syn_constr_k_r,syn_constr_k_l]))*h_opt;
+            J_opt = J_opt + 1/(dist_trav_opt)*W.SynConstr * B(j+1) *(f_casadi.J_muscles([syn_constr_k_r,syn_constr_k_l]))*h_opt;
 
             Syn_cost = Syn_cost + W.SynConstr * B(j+1) *(f_casadi.J_muscles([syn_constr_k_r,syn_constr_k_l]))*h_opt;
         end
@@ -1079,7 +1079,7 @@ end
 
 if (S.subject.synergies) && (S.subject.TrackSynW)
     TrackSyn_cost = f_casadi.TrackSynW(SynW_r_opt', SynW_l_opt');
-    J_opt = J_opt + W.TrackSynW * TrackSyn_cost;
+    J_opt = J_opt + 1/(dist_trav_opt)*W.TrackSynW*TrackSyn_cost;
 end
 
 J_optf = full(J_opt);
