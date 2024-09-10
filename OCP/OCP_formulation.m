@@ -1079,7 +1079,7 @@ end
 
 if (S.subject.synergies) && (S.subject.TrackSynW)
     TrackSyn_cost = f_casadi.TrackSynW(SynW_r_opt', SynW_l_opt');
-    J_opt = J_opt + 1/(dist_trav_opt)*W.TrackSynW*TrackSyn_cost;
+    J_opt = J_opt + W.TrackSynW*TrackSyn_cost;
 end
 
 J_optf = full(J_opt);
