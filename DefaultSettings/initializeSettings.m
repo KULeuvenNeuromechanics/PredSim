@@ -57,6 +57,12 @@ S.misc.main_path = pathRepo;
 % do not run as batch job (parallel computing toolbox)
 S.solver.run_as_batch_job = false;
 
+% parallel cluster
+S.solver.par_cluster_name = [];
+
+% batch job additional paths
+S.solver.batch_job_paths = {};
+
 %%
 if ~isempty(varargin)
 

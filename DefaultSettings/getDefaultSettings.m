@@ -341,16 +341,6 @@ if ~isfield(S.solver,'N_meshes')
     end
 end
 
-% parallel cluster
-if ~isfield(S.solver,'par_cluster_name')
-    S.solver.par_cluster_name = [];
-end
-
-% batch job additional paths
-if ~isfield(S.solver,'batch_job_paths')
-    S.solver.batch_job_paths = {};
-end
-
 % initial guess inputs
 % input should be a string: "quasi-random" or the path to a .mot file
 if ~isfield(S.solver,'IG_selection')
