@@ -521,14 +521,6 @@ for j=1:d
 
 end % End loop over collocation points
 
-% Add tracking terms in the cost function if synergy weights are tracked
-% Here we select the weights that we want to impose/track 
-% (there are no conditions/constraints applied to the other weights)
-if (S.subject.synergies) && (S.subject.TrackSynW)
-    J_TrackSynW = f_casadi.TrackSynW(SynW_rk, SynW_lk);
-    J = J + W.TrackSynW*J_TrackSynW;
-end
-
 % Synergies: a - WH = 0
 % Only applied for mesh points
 if (S.subject.synergies)
@@ -715,8 +707,17 @@ elseif strcmp(S.misc.gaitmotion_type,'FullGaitCycle')
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Add tracking terms in the cost function if synergy weights are tracked
+% Here we select the weights that we want to impose/track 
+% (there are no conditions/constraints applied to the other weights)
+if (S.subject.synergies) && (S.subject.TrackSynW)
+    J_TrackSynW = W.TrackSynW*f_casadi.TrackSynW(SynW_r, SynW_l);
+else
+    J_TrackSynW = 0;
+end
+
 % Scale cost function
-Jall_sc = sum(Jall)/dist_trav_tot;
+Jall_sc = sum(Jall)/dist_trav_tot + J_TrackSynW;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 disp(' ')
@@ -1079,7 +1080,7 @@ end
 
 if (S.subject.synergies) && (S.subject.TrackSynW)
     TrackSyn_cost = W.TrackSynW*f_casadi.TrackSynW(SynW_r_opt', SynW_l_opt');
-    J_opt = J_opt + 1/(dist_trav_opt)*TrackSyn_cost;
+    J_opt = J_opt + TrackSyn_cost;
 end
 
 J_optf = full(J_opt);
@@ -1107,8 +1108,8 @@ contributionCost.labels = {'metabolic energy','muscle activation',...
     'arm accelerations','synergy constraints','synergy weights tracking'};
 
 % assertCost should be 0
-assertCost = abs(J_optf - 1/(dist_trav_opt)*(E_costf+A_costf + Arm_costf + ...
-    Qdotdot_costf + Pass_costf + vA_costf + dFTtilde_costf + QdotdotArm_costf + Syn_costf + TrackSyn_costf));
+assertCost = abs(J_optf - ( 1/(dist_trav_opt)*(E_costf+A_costf + Arm_costf + ...
+    Qdotdot_costf + Pass_costf + vA_costf + dFTtilde_costf + QdotdotArm_costf + Syn_costf) + TrackSyn_costf ));
 assertCost2 = abs(stats.iterations.obj(end) - J_optf);
 
 if assertCost > 1*10^(-S.solver.tol_ipopt)
@@ -1308,7 +1309,7 @@ else
 end
 R.ground_reaction.threshold = HS_threshold;
 R.ground_reaction.initial_contact_side = HS1;
-
+R.ground_reaction.idx_GC = idx_GC;
 
 % save results
 Outname = fullfile(S.subject.save_folder,[S.post_process.result_filename '.mat']);
