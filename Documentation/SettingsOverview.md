@@ -169,6 +169,10 @@ Quickly navigate to:
     - number of mesh intervals. Default is *50* [double] for S.misc.gaitmotion_type = HalfGaitCycle and *100* for FullGaitCycle	
 - **S.solver.run_as_batch_job**: 
     - specify if the OCP is to be solved as a batch job. Default is *false* [bool]. Batch processing requires the [Parallel Computing Toolbox](https://nl.mathworks.com/products/parallel-computing.html).
+- **S.solver.batch_job_paths**:
+    - if your simulation requires functions that are not inside the PredSim repo and you want to run this simulation as a batch job, then you have to include the path to the folder with these functions. Default is *{}* [cell array of char].
+- **S.solver.par_cluster_name**:
+    - name of the parallel cluster used to run batch jobs. Run `parallel.clusterProfiles` to see your available clusters. Default is *[]* [char] and will use your default cluster.
 - **S.solver.parallel_mode**: 
     - type of parallel computing. Default is *thread* [char]. Other types are not supported.
 - **S.solver.N_threads**: 
