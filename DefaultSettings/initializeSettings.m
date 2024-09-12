@@ -16,6 +16,10 @@ function [S] = initializeSettings(varargin)
 % Original date: 01/12/2021
 % --------------------------------------------------------------------------
 
+% get path to repo
+[pathHere,~,~] = fileparts(mfilename('fullpath'));
+[pathRepo,~,~] = fileparts(pathHere);
+
 S = struct;
 
 S.metabolicE   = [];
@@ -41,7 +45,7 @@ S.misc.poly_order = [];
 S.orthosis.settings = {};
 
 % save the git hash
-[S.misc.git.local_hash,S.misc.git.branch_name, S.misc.git.remote_hash] = get_git_hash;
+[S.misc.git.local_hash,S.misc.git.branch_name, S.misc.git.remote_hash] = get_git_hash(pathRepo);
 
 % initiate for warning
 S.subject.adapt_IG_pelvis_y = 0;
@@ -50,8 +54,6 @@ S.subject.adapt_IG_pelvis_y = 0;
 S.misc.computername = getenv('COMPUTERNAME');
 
 % save path to repo
-[pathHere,~,~] = fileparts(mfilename('fullpath'));
-[pathRepo,~,~] = fileparts(pathHere);
 S.misc.main_path = pathRepo;
 
 % do not run as batch job (parallel computing toolbox)
