@@ -341,8 +341,6 @@ if ~isfield(S.solver,'N_meshes')
     end
 end
 
-
-
 % initial guess inputs
 % input should be a string: "quasi-random" or the path to a .mot file
 if ~isfield(S.solver,'IG_selection')
