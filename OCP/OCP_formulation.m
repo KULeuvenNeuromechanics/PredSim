@@ -521,6 +521,16 @@ for j=1:d
 
 end % End loop over collocation points
 
+% Add tracking terms in the cost function if synergy weights are tracked
+% Here we select the weights that we want to impose/track 
+% (there are no conditions/constraints applied to the other weights)
+if (S.subject.synergies) && (S.subject.TrackSynW)
+    J_TrackSynW = W.TrackSynW*f_casadi.TrackSynW(SynW_rk, SynW_lk);
+    J = J + J_TrackSynW;
+else
+    J_TrackSynW = 0;
+end
+
 % Synergies: a - WH = 0
 % Only applied for mesh points
 if (S.subject.synergies)
@@ -641,9 +651,6 @@ if strcmp(S.misc.gaitmotion_type,'HalfGaitCycle')
         opti.subject_to(a_a(model_info.ExtFunIO.symQs.ActOpp,end) + a_a(model_info.ExtFunIO.symQs.ActOpp,1) == 0);
     end
     % Symmetry constraints for synergies
-    % TO DO: check if this is needed. It may help having these constraints,
-    % but we are imposing symmetry for activations, and weights are the
-    % same for right and left
     if (S.subject.synergies)
         opti.subject_to(SynH_r(:,end) - SynH_l(:,1) == 0);
         opti.subject_to(SynH_l(:,end) - SynH_r(:,1) == 0);
@@ -707,17 +714,9 @@ elseif strcmp(S.misc.gaitmotion_type,'FullGaitCycle')
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Add tracking terms in the cost function if synergy weights are tracked
-% Here we select the weights that we want to impose/track 
-% (there are no conditions/constraints applied to the other weights)
-if (S.subject.synergies) && (S.subject.TrackSynW)
-    J_TrackSynW = W.TrackSynW*f_casadi.TrackSynW(SynW_r, SynW_l);
-else
-    J_TrackSynW = 0;
-end
 
 % Scale cost function
-Jall_sc = sum(Jall)/dist_trav_tot + J_TrackSynW;
+Jall_sc = sum(Jall)/dist_trav_tot;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 disp(' ')
@@ -1080,7 +1079,7 @@ end
 
 if (S.subject.synergies) && (S.subject.TrackSynW)
     TrackSyn_cost = W.TrackSynW*f_casadi.TrackSynW(SynW_r_opt', SynW_l_opt');
-    J_opt = J_opt + TrackSyn_cost;
+    J_opt = J_opt + N/dist_trav_opt*TrackSyn_cost;
 end
 
 J_optf = full(J_opt);
@@ -1097,10 +1096,10 @@ TrackSyn_costf = full(TrackSyn_cost);
 
 contributionCost.absoluteValues = 1/(dist_trav_opt)*[E_costf,A_costf,...
     Arm_costf,Qdotdot_costf,Pass_costf,vA_costf,dFTtilde_costf,...
-    QdotdotArm_costf,Syn_costf,TrackSyn_costf];
+    QdotdotArm_costf,Syn_costf,N*TrackSyn_costf];
 contributionCost.relativeValues = 1/(dist_trav_opt)*[E_costf,A_costf,...
     Arm_costf,Qdotdot_costf,Pass_costf,vA_costf,dFTtilde_costf,...
-    QdotdotArm_costf,Syn_costf,TrackSyn_costf]./J_optf*100;
+    QdotdotArm_costf,Syn_costf,N*TrackSyn_costf]./J_optf*100;
 contributionCost.relativeValuesRound2 = ...
     round(contributionCost.relativeValues,2);
 contributionCost.labels = {'metabolic energy','muscle activation',...
@@ -1108,8 +1107,8 @@ contributionCost.labels = {'metabolic energy','muscle activation',...
     'arm accelerations','synergy constraints','synergy weights tracking'};
 
 % assertCost should be 0
-assertCost = abs(J_optf - ( 1/(dist_trav_opt)*(E_costf+A_costf + Arm_costf + ...
-    Qdotdot_costf + Pass_costf + vA_costf + dFTtilde_costf + QdotdotArm_costf + Syn_costf) + TrackSyn_costf ));
+assertCost = abs(J_optf - 1/(dist_trav_opt)*(E_costf+A_costf + Arm_costf + ...
+    Qdotdot_costf + Pass_costf + vA_costf + dFTtilde_costf + QdotdotArm_costf + Syn_costf + N*TrackSyn_costf ));
 assertCost2 = abs(stats.iterations.obj(end) - J_optf);
 
 if assertCost > 1*10^(-S.solver.tol_ipopt)
