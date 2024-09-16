@@ -63,10 +63,6 @@ R_ref = res_ref.R;
 % Initialize S
 S = R_ref.S;
 
-% Handle case where reference results where run with old OpenSimAD integration
-if ~isfield(S,'OpenSimADOptions') && isfield(S,'Cpp2Dll')
-    S.OpenSimADOptions = S.Cpp2Dll;
-end
 
 % Store result of test simulation in Debug folder
 if ~isfolder(fullfile(pathRepo,'Debug'))
@@ -75,22 +71,30 @@ end
 if ~isfolder(fullfile(pathRepo,'Debug','TestResults'))
     mkdir(fullfile(pathRepo,'Debug','TestResults'));
 end
-S.subject.save_folder  = fullfile(pathRepo,'Debug','TestResults'); 
+S.misc.save_folder  = fullfile(pathRepo,'Debug','TestResults'); 
 result_filename = [model_name '_test_' datestr(datetime,30)];
-S.post_process.result_filename = result_filename;
+S.misc.result_filename = result_filename;
 
 % update paths
-S.subject.IG_selection = replace(S.subject.IG_selection, S.misc.main_path, pathRepo);
+S.solver.IG_selection = replace(S.solver.IG_selection, S.misc.main_path, pathRepo);
 osim_path = replace(res_ref.model_info.osim_path, S.misc.main_path, pathRepo);
 
 S.misc.main_path = pathRepo;
 
 
-if ~isempty(options.CasADi_path)
-    S.solver.CasADi_path = options.CasADi_path;
-else
-    S.solver = rmfield(S.solver,'CasADi_path');
+% Make sure casadi path is set up correctly
+if isempty(options.CasADi_path)
+    try
+        S.solver.CasADi_path = casadi.GlobalOptions.getCasadiPath();
+    catch
+        error("Please add CasADi to the matlab search path, or pass the path " + ...
+            "to your CasADi installation (top folder) to 'CasADi_path'.")
+    end
+elseif  ~isfolder(options.CasADi_path)
+    error("Unable to find the path assigned 'CasADi_path':" + ...
+        " \n\t%s",options.CasADi_path)
 end
+
 if ~isempty(options.OpenSimAD_compiler)
     S.OpenSimADOptions.compiler = options.OpenSimAD_compiler;
 else
