@@ -32,7 +32,6 @@ addpath(fullfile(pathRepo,'DefaultSettings'))
 addpath(pathRepo)
 
 %% Initialize S
-addpath(fullfile(pathRepo,'DefaultSettings'))
 
 [S] = initializeSettings('DHondt_et_al_2024_3seg');
 
@@ -42,7 +41,7 @@ addpath(fullfile(pathRepo,'DefaultSettings'))
 S.subject.name = 'DHondt_et_al_2024_3seg';
 
 % path to folder where you want to store the results of the OCP
-S.misc.save_folder  = fullfile(pathRepoFolder,'PredSimResults',S.subject.name); 
+S.misc.save_folder  = fullfile(pathExDir,'ExampleResults','AnkleExo');  
 
 % either choose "quasi-random" or give the path to a .mot file you want to use as initial guess
 S.solver.IG_selection = fullfile(S.misc.main_path,'OCP','IK_Guess_Full_GC.mot');
