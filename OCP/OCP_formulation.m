@@ -86,7 +86,7 @@ bounds_nsc = getBounds(S,model_info);
 scaling = getScaleFactor(S,model_info,bounds_nsc);
 bounds = scaleBounds(S,model_info,bounds_nsc,scaling);
 
-if strcmp(S.subject.IG_selection,'quasi-random')
+if strcmp(S.solver.IG_selection,'quasi-random')
     guess = getGuess_QR_opti(S,model_info,scaling,d);
 else
     guess = getGuess_DI_opti(S,model_info,scaling,d);
@@ -354,15 +354,15 @@ for j=1:d
 
     % Add contribution to the cost function
     J = J + ...
-        W.E          * B(j+1) *(f_casadi.J_muscles_exp(e_totj,W.E_exp))/model_info.mass*h + ...
-        W.a          * B(j+1) *(f_casadi.J_muscles(akj(:,j+1)'))*h + ...
+        W.E          * B(j+1) *(f_casadi.J_muscles_exp(e_totj, W.E_exp))/model_info.mass*h + ...
+        W.a          * B(j+1) *(f_casadi.J_muscles_exp(akj(:,j+1)', W.a_exp))*h + ...
         W.q_dotdot   * B(j+1) *(f_casadi.J_not_arms_dof(Aj(model_info.ExtFunIO.jointi.noarmsi,j)))*h + ...
         W.pass_torq  * B(j+1) *(f_casadi.J_lim_torq(Tau_passj_cost))*h + ...
         W.slack_ctrl * B(j+1) *(f_casadi.J_muscles(vAk))*h + ...
         W.slack_ctrl * B(j+1) *(f_casadi.J_muscles(dFTtildej(:,j)))*h;
 
     if nq.torqAct > 0
-        J = J + W.e_arm      * B(j+1) *(f_casadi.J_torq_act(e_ak))*h;
+        J = J + W.e_torqAct      * B(j+1) *(f_casadi.J_torq_act(e_ak))*h;
     end
     if nq.arms > 0
         J = J + W.slack_ctrl * B(j+1) *(f_casadi.J_arms_dof(Aj(model_info.ExtFunIO.jointi.armsi,j)))*h;
@@ -604,7 +604,7 @@ Qs_nsc = Qs.*(scaling.Qs'*ones(1,N+1));
 dist_trav_tot = Qs_nsc(model_info.ExtFunIO.jointi.base_forward,end) - ...
     Qs_nsc(model_info.ExtFunIO.jointi.base_forward,1);
 vel_aver_tot = dist_trav_tot/tf;
-opti.subject_to(vel_aver_tot - S.subject.v_pelvis_x_trgt == 0)
+opti.subject_to(vel_aver_tot - S.misc.forward_velocity == 0)
 
 % optional constraints
 if strcmp(S.misc.gaitmotion_type,'HalfGaitCycle')
@@ -642,6 +642,7 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Scale cost function
 Jall_sc = sum(Jall)/dist_trav_tot;
+opti.minimize(Jall_sc);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 disp(' ')
@@ -652,13 +653,14 @@ disp(' ')
 
 if ~S.post_process.load_prev_opti_vars
     % Create NLP solver
-    opti.minimize(Jall_sc);
+    options = S.solver.nlpsol_options;
+    options.ipopt = S.solver.ipopt_options;
     options.ipopt.hessian_approximation = 'limited-memory';
     options.ipopt.mu_strategy           = 'adaptive';
     options.ipopt.max_iter              = S.solver.max_iter;
     options.ipopt.linear_solver         = S.solver.linear_solver;
     options.ipopt.tol                   = 1*10^(-S.solver.tol_ipopt);
-    options.ipopt.constr_viol_tol       = 1*10^(-S.solver.tol_ipopt);
+    options.ipopt.constr_viol_tol       = 1*10^(-S.solver.constr_viol_tol_ipopt);
     opti.solver('ipopt', options);
     % timer
     
@@ -683,13 +685,13 @@ if ~S.post_process.load_prev_opti_vars
     setup.scaling = scaling;
     setup.guess = guess;
     
-    Outname = fullfile(S.subject.save_folder,[S.post_process.result_filename '.mat']);
+    Outname = fullfile(S.misc.save_folder,[S.misc.result_filename '.mat']);
     save(Outname,'w_opt','stats','setup','model_info','S');
 
 else % S.post_process.load_prev_opti_vars = true
     
     % Advanced feature, for debugging only: load w_opt and reconstruct R before rerunning the post-processing.
-    Outname = fullfile(S.subject.save_folder,[S.post_process.result_filename '.mat']);
+    Outname = fullfile(S.misc.save_folder,[S.misc.result_filename '.mat']);
     disp(['Loading vector with optimization variables from previous solution: ' Outname])
     clear 'S'
     load(Outname,'w_opt','stats','setup','model_info','R','S');
@@ -877,7 +879,7 @@ dist_trav_opt = q_opt_unsc_all.rad(end,model_info.ExtFunIO.jointi.base_forward) 
 time_elaps_opt = tf_opt; % time elapsed
 vel_aver_opt = dist_trav_opt/time_elaps_opt;
 % assert_v_tg should be 0
-assert_v_tg = abs(vel_aver_opt-S.subject.v_pelvis_x_trgt);
+assert_v_tg = abs(vel_aver_opt-S.misc.forward_velocity);
 if assert_v_tg > 1*10^(-S.solver.tol_ipopt)
     disp('Issue when reconstructing average speed')
 end
@@ -931,16 +933,16 @@ for k=1:N
         % objective function
         J_opt = J_opt + 1/(dist_trav_opt)*(...
             W.E*B(j+1)          *(f_casadi.J_muscles_exp(e_tot_opt_all,W.E_exp))/model_info.mass*h_opt + ...
-            W.a*B(j+1)          *(f_casadi.J_muscles(a_col_opt(count,:)))*h_opt + ...
+            W.a*B(j+1)          *(f_casadi.J_muscles_exp(a_col_opt(count,:), W.a_exp))*h_opt + ...
             W.q_dotdot*B(j+1)   *(f_casadi.J_not_arms_dof(qdotdot_col_opt(count,model_info.ExtFunIO.jointi.noarmsi)))*h_opt + ...
             W.pass_torq*B(j+1)  *(f_casadi.J_lim_torq(Tau_passkj))*h_opt + ... 
             W.slack_ctrl*B(j+1) *(f_casadi.J_muscles(vA_opt(k,:)))*h_opt + ...
             W.slack_ctrl*B(j+1) *(f_casadi.J_muscles(dFTtilde_col_opt(count,:)))*h_opt);
             
         if nq.torqAct > 0
-            J_opt = J_opt + 1/(dist_trav_opt)*(W.e_arm*B(j+1)      *(f_casadi.J_torq_act(e_a_opt(k,:)))*h_opt);
+            J_opt = J_opt + 1/(dist_trav_opt)*(W.e_torqAct*B(j+1)      *(f_casadi.J_torq_act(e_a_opt(k,:)))*h_opt);
 
-            Actu_cost = Actu_cost + W.e_arm*B(j+1)*(f_casadi.J_torq_act(e_a_opt(k,:)))*h_opt;
+            Actu_cost = Actu_cost + W.e_torqAct*B(j+1)*(f_casadi.J_torq_act(e_a_opt(k,:)))*h_opt;
         end
         if nq.arms > 0
             J_opt = J_opt + 1/(dist_trav_opt)*(W.slack_ctrl*B(j+1) *(f_casadi.J_arms_dof(qdotdot_col_opt(count,model_info.ExtFunIO.jointi.armsi)))*h_opt);
@@ -1168,7 +1170,7 @@ R.ground_reaction.initial_contact_side = HS1;
 R.ground_reaction.idx_GC = idx_GC;
 
 % save results
-Outname = fullfile(S.subject.save_folder,[S.post_process.result_filename '.mat']);
+Outname = fullfile(S.misc.save_folder,[S.misc.result_filename '.mat']);
 disp(['Saving results as: ' Outname])
 save(Outname,'w_opt','stats','setup','R','model_info');
 

@@ -12,11 +12,11 @@
 
 S.subject.name = 'DHondt_et_al_2024_3seg';
 
-S.subject.v_pelvis_x_trgt   = 1.33;
+S.misc.forward_velocity = 1.33;
 
 S.solver.N_meshes = 100;
 
-S.subject.IG_selection = 'quasi-random';
+S.solver.IG_selection = 'quasi-random';
 S.subject.IG_pelvis_y = 0.9385;
 S.subject.adapt_IG_pelvis_y = 0;
 
@@ -29,7 +29,7 @@ S.subject.set_stiffness_coefficient_selected_dofs = {'mtp_angle',25};
 S.subject.set_damping_coefficient_selected_dofs = {'mtp_angle',2};
 
 S.subject.muscle_pass_stiff_shift =...
-    {{'soleus','_gas','per_','tib_','_dig_','_hal_','FDB'},0.9};
+    {{'soleus','_gas','per_','tib_','_dig_','_hal_'},0.9};
 S.subject.tendon_stiff_scale = {{'soleus','_gas'},0.5};
 
 
