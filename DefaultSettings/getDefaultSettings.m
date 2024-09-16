@@ -120,6 +120,12 @@ if ~isfield(S.bounds,'distanceConstraints')
     S.bounds.distanceConstraints = [];
 end
 
+% bounds on synergy constraints, (a-WH)^2
+if ~isfield(S.bounds,'SynConstr')
+    S.bounds.SynConstr.lower = -0.001;
+    S.bounds.SynConstr.upper = 0.001;
+end
+
 %% metabolicE
 if ~isfield(S,'metabolicE')
     S.metabolicE = [];
@@ -557,6 +563,14 @@ if S.subject.synergies
             S.subject.TrackSynW_NSyn_l = 0;
         end
 
+        % initial guess for synergy variables
+        if ~isfield(S.subject,'SynH_guess')
+            S.subject.SynH_guess = 0.1;
+        end
+        if ~isfield(S.subject,'SynW_guess')
+            S.subject.SynW_guess = 0.2;
+        end
+
     end % end of synergy weight tracking defaults
 
 end % end of synergy defaults
@@ -605,6 +619,16 @@ end
 % exponent for the muscle activations
 if ~isfield(S.weights,'a_exp')
     S.weights.a_exp = 2; 
+end
+
+% weight on synergy constraint, (a-WH)^2
+if ~isfield(S.weights,'SynConstr')
+    S.weights.SynConstr = 1e4; 
+end
+
+% weight on synergy weights tracking
+if ~isfield(S.weights,'TrackSynW')
+    S.weights.TrackSynW = 1e2; 
 end
 
 % weight on slack controls
