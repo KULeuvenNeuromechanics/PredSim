@@ -1,7 +1,7 @@
 
 *Use the table of contensts to easily navigate this README. Click on the three lines next to README.md just above this sentence.*
 
-Predictive Simulations of Human Movement
+Predictive Simulations of Locomotion
 ============
 
 <p align="center">
