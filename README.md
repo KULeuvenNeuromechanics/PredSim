@@ -8,8 +8,8 @@ Predictive Simulations of Locomotion
 <img src="./Documentation/FiguresForDocumentation/PredSim%20logo.png" width="500" height="auto">
 </p>
 
-This repository contains code and data to generate three-dimensional muscle-driven predictive simulations of human gait. The simulation framework is [developed by Falisse *et al.*](#references). The implementation in this repo is aimed at letting you run simulations with your customized musculoskeletal models[*](#before-running-a-simulation).
-If you want to reproduce specific published results, you are adviced to visit the [repo corresponding to the paper](#references).
+This repository contains code and data to generate three-dimensional muscle-driven predictive simulations of locomotion. The simulation framework is [developed by Falisse *et al.*](#references). The implementation in this repo is aimed at letting you run simulations with your customized musculoskeletal models[*](#before-running-a-simulation).
+If you want to reproduce specific published results, see [Replicate results](#replicate-results).
 
 If you use PredSim for research, please cite 
 > Falisse A, Serrancoli G, Dembia C, Gillis J, Jonkers J, De Groote F. 2019 Rapid predictive simulations with complex musculoskeletal models suggest that diverse healthy and pathological human gaits can emerge from similar control strategies. Journal of the Royal Society Interface 16: 20190402. http://dx.doi.org/10.1098/rsif.2019.0402.
