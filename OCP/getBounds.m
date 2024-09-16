@@ -153,6 +153,17 @@ if ~isempty(S.bounds.activation_selected_muscles)
     end 
 end
 
+%% Muscle synergy activations
+% Number of synergies will depend on the simulation.
+% We can just have a number "large" enough (= NMuscle), and we read the
+% number of synergies per leg in OCP_formulation.m
+bounds_nsc.SynH.lower = zeros(1,NMuscle);
+bounds_nsc.SynH.upper = ones(1,NMuscle);
+
+%% Muscle synergy weights
+bounds_nsc.SynW.lower = 0;
+bounds_nsc.SynW.upper = 1;
+
 %% Final time
 bounds_nsc.tf.lower = S.bounds.t_final.lower;
 bounds_nsc.tf.upper = S.bounds.t_final.upper;

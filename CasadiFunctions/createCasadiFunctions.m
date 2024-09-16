@@ -60,6 +60,10 @@ if ~isempty(S.bounds.SLL.upper) || ~isempty(S.bounds.SLR.upper)
         createCasadi_StepLength(S,model_info);
 end
 
+%% Create Casadi function for Synergy weight tracking term
+if (S.subject.synergies) && (S.subject.TrackSynW)
+    [f_casadi.TrackSynW] = createCasadi_TrackSynW(S,model_info);
+end
 %% Create Casadi functions for orthoses
 [f_casadi.f_orthosis_mesh_k, f_casadi.f_orthosis_mesh_all,...
     f_casadi.separate_orthoses] = createCasadi_orthosis(S,model_info);
