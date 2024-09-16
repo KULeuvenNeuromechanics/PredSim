@@ -24,3 +24,20 @@
 - muscle activation and deactivation time constants - [0.015s and 0.060s resp.]
 - [ratio of slow twitch fibres for each muscle](../PreProcessing/getSlowTwitchRatios.m) - used for metabolic energy model
 - [specific tension of each muscle](../PreProcessing/getSpecificTensions.m) - used to calculate muscle mass for metabolic energy model
+
+
+## using a very different model
+- non-human
+- with different joint definitions than the example models (e.g. knee flexion is positive)
+
+Required changes w.r.t. default settings
+- S.bounds.default_coordinate_bounds: create different table, or set to empty to use coordinate bounds from opensim model
+- S.misc.default_msk_geom_bounds: create different table, or set to empty to use coordinate bounds from opensim model
+- S.subject.default_coord_lim_torq_coeff: create different table
+- S.bounds.distanceConstraints: prevent limbs from clipping through eachother/torso
+- S.subject.base_joints_legs and S.subject.base_joints_arms: identify limbs
+
+Changes in hardcoded parts might be required
+- muscle activation and deactivation time constants - [0.015s and 0.060s resp.]
+- [ratio of slow twitch fibres for each muscle](../PreProcessing/getSlowTwitchRatios.m) - used for metabolic energy model
+- [specific tension of each muscle](../PreProcessing/getSpecificTensions.m) - used to calculate muscle mass for metabolic energy model
