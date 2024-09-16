@@ -10,6 +10,7 @@
 
 Debug/*
 opensimAD/*
+Examples/ExampleResults
 App
 Subjects/*
 !Subjects/README.md
