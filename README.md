@@ -16,9 +16,15 @@ If you use PredSim for research, please cite
 
 > Lars D’Hondt, Antoine Falisse, Dhruv Gupta, Bram Van Den Bosch, Tom J. W. Buurke, Míriam Febrer-Nafría, Ines Vandekerckhove, Maarten Afschrift, and Friedl De Groote, PredSim: A Framework for Rapid Predictive Simulations of Locomotion, 10th IEEE RAS/EMBS International Conference for Biomedical Robotics and Biomechatronics (BioRob), Heidelberg, Germany, 2024
 
-This repository is a work in progress
-- If you encounter an error or get an unexpected output, [check the issues](https://github.com/KULeuvenNeuromechanics/PredSim/issues). Please look at the existing issues before creating a new one, you might not be the first person to have this problem. Include the error messages in the issue.
-- Feel free to suggest improvements. Submit a pull request with the changes, or create an issue with a desciption of the proposed change.
+This repository is a work in progress.
+1. ⚠️ **Troubleshooting Issues**:
+   - If you encounter an error or get an unexpected output, let us know. Does the answer to your question/remark probably require code changes?
+     - Yes -> use the [issues](https://github.com/KULeuvenNeuromechanics/PredSim/issues). Please look at the existing issues before creating a new one; you might not be the first person to have this problem.
+     - No -> use the [discussions](https://github.com/KULeuvenNeuromechanics/PredSim/discussions). 
+2. 🚧 **Suggesting Improvements**:
+   - Feel free to suggest improvements. Submit a pull request with the changes, or create an issue with a description of the proposed change.
+3. 📯❔ **Sharing Best Practices and General Questions**:
+   - To share best practices, publications, or more general questions, we encourage you to use the Discussions section.
 
 
 
