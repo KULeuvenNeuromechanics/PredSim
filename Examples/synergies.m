@@ -87,8 +87,8 @@ S.subject.knownSynW_r = {'rect_fem_r', [0 0.28 0 0.75],...
 if ~S.solver.run_as_batch_job
 
     % set path to reference result
-    result_paths{1} = fullfile(pathRepo,'Tests','ReferenceResults',...
-        'Falisse_et_al_2022','Falisse_et_al_2022_paper.mat');
+    result_paths{1} = fullfile(pathRepo,'Subjects','gait1018',...
+        'gait1018_v1.mat');
     
     % set path to saved result
     result_paths{2} = fullfile(S.misc.save_folder,[savename '.mat']);

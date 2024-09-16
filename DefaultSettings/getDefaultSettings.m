@@ -509,6 +509,14 @@ if ~isfield(S.subject,'TrackSynW')
     S.subject.TrackSynW = 0;
 end
 
+% initial guess for synergy variables
+if ~isfield(S.subject,'SynH_guess')
+    S.subject.SynH_guess = 0.1;
+end
+if ~isfield(S.subject,'SynW_guess')
+    S.subject.SynW_guess = 0.2;
+end
+
 % Settings to configure synergies
 if S.subject.synergies
 
@@ -561,14 +569,6 @@ if S.subject.synergies
         end
         if ~isfield(S.subject,'TrackSynW_NSyn_l')
             S.subject.TrackSynW_NSyn_l = 0;
-        end
-
-        % initial guess for synergy variables
-        if ~isfield(S.subject,'SynH_guess')
-            S.subject.SynH_guess = 0.1;
-        end
-        if ~isfield(S.subject,'SynW_guess')
-            S.subject.SynW_guess = 0.2;
         end
 
     end % end of synergy weight tracking defaults
