@@ -88,7 +88,7 @@ A [full overview of settings](./Documentation/SettingsOverview.md) is available 
 
 ## Replicate results
 
-Results of previous publications can be replicated by specifying one of the inputs for [initializeSettings](main.m#L18) and [S.subject.name](main.m#23):
+Results of previous publications can be replicated by specifying one of the inputs for [initializeSettings](main.m#L18) and [S.subject.name](main.m#L23):
 - `'Falisse_et_al_2022'`, see [reference 3](#references)
 - `'DHondt_et_al_2024_3seg'`, see [reference 4](#references)
 - `'DHondt_et_al_2024_4seg'`, see [reference 4](#references)
