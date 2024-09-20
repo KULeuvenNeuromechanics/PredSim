@@ -53,24 +53,12 @@ The code is written such that as a user you only have to interact with [*main.m*
 
 All user-defined [settings](./Documentation/SettingsOverview.md) are stored in structure *S*. In main.m you have to specify the required settings and are free to change/add the optional settings. 
 
-### Before running a simulations
-
-This code can automatically convert an OpenSim model to the external function used in the simulations. This greatly simplifies the process of going from a subject-specific model to a predictive simulation. Nevertheless, you should take care of the model you use since **not all OpenSim models are suported**: 
-- Your model should not have locked joints. Locked joints would technically require having kinematic constraints, which is possible but makes the problem more complicated. Replace them with weld joints instead.
-- Constraints on coordinates will be ignored (eg, coupling constraints).
-- Using SimmSplines to describe coordinates (e.g. Yamaguchi knee model) is not supported as the implementation in OpenSim is not really compatible with algorithmic differentiation. Change them to Polynomials instead. GeometryPaths can contain SimmSplines. [_AdaptOpenSimModel.m_](https://github.com/KULeuvenNeuromechanics/PredSim/blob/master/AdaptOpenSimModel/AdaptOpenSimModel.m) takes care of changing present SimmSplines to polynomials.
-- Your model needs to have contact elements that interact with the ground. Only *SmoothSphereHalfSpaceForce* contact forces are supported. You can use [_AdaptOpenSimModel.m_](./AdaptOpenSimModel/AdaptOpenSimModel.m) to add contact geometries and forces to your model. You can also scale the radius, stiffness and dissipation of the contact spheres.
-- Your model can have any Hill-type muscle model, but it will be implemented as a [DeGroote-Fregly muscle](https://doi.org/10.1007/s10439-016-1591-9).
-- Torque/force actuators of the class *ActivationCoordinateActuator* are supported. You can add actuators by running [_AdaptOpenSimModel.m_](./AdaptOpenSimModel/AdaptOpenSimModel.m). Actuators are not required.
-
-
-
 ### Required Settings
 
+- **osim_path**: 
+	- Path to the scaled opensim model of the subject. This code can automatically convert an OpenSim model to the external function used in the simulations. This greatly simplifies the process of going from a subject-specific model to a predictive simulation. Nevertheless, you should take care of the model you use since [**not all OpenSim models are suported**](./Documentation/ModelPreparation.md). 
 - **S.subject.name**: 
 	- The name or code of the subject you are simulating. 
-- **osim_path**: 
-	- Path to the scaled opensim model of the subject.	
 - **S.misc.save_folder**: 
 	- Path to the folder where you want to store the simulation results. If the folder does not exist yet on your machine, it will be created automatically.
 - **S.solver.IG_selection**: 
