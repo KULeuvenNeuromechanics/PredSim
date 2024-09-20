@@ -1,4 +1,4 @@
-classdef Vitruvian_Man_NL_exported < matlab.apps.AppBase
+classdef Vitruvian_Man_NL_2024_exported < matlab.apps.AppBase
 
     % Properties that correspond to app components
     properties (Access = public)
@@ -208,7 +208,7 @@ classdef Vitruvian_Man_NL_exported < matlab.apps.AppBase
         
         function [total_distance, avg_vel] = calcDistance(app,savepath)
             %% get distance
-            E_metab = 460e3; % 460 kJ = 1 stella beer
+            E_metab = 778e3; % 778 kJ = 1 pancake
             load(savepath,'R');
             COT = R.metabolics.Bhargava2004.COT;
             total_distance = round(E_metab/(COT*R.misc.body_mass));
@@ -357,9 +357,9 @@ classdef Vitruvian_Man_NL_exported < matlab.apps.AppBase
             %     ' ' dist ' ' vel ' ' llen ' ' mass ' ' shoulders ' ' arm_upper...
             %     ' ' arm_lower ' ' leg_upper ' ' leg_lower ' ' foot ' ' strength];
             % pyrunfile(cmd);
-            % 
-            % % add result to table
-            % loadResultsTable(app)
+
+            % add result to table
+            loadResultsTable(app)
 
         end
 
@@ -506,7 +506,7 @@ classdef Vitruvian_Man_NL_exported < matlab.apps.AppBase
             app.UIFigure = uifigure('Visible', 'off');
             app.UIFigure.AutoResizeChildren = 'off';
             app.UIFigure.Color = [0.9216 0.8706 0.6706];
-            app.UIFigure.Position = [1 41 1920 963];
+            app.UIFigure.Position = [1 41 1536 814];
             app.UIFigure.Name = 'MATLAB App';
 
             % Create UIAxes
@@ -516,14 +516,14 @@ classdef Vitruvian_Man_NL_exported < matlab.apps.AppBase
             app.UIAxes.YColor = 'none';
             app.UIAxes.Color = 'none';
             app.UIAxes.NextPlot = 'add';
-            app.UIAxes.Position = [564 157 846 627];
+            app.UIAxes.Position = [461 77 726 555];
 
             % Create GroepEditFieldLabel
             app.GroepEditFieldLabel = uilabel(app.UIFigure);
             app.GroepEditFieldLabel.FontName = 'Blackadder ITC';
             app.GroepEditFieldLabel.FontSize = 30;
             app.GroepEditFieldLabel.FontColor = [0.5412 0.2706 0.0706];
-            app.GroepEditFieldLabel.Position = [88 798 83 42];
+            app.GroepEditFieldLabel.Position = [87 648 83 42];
             app.GroepEditFieldLabel.Text = 'Groep';
 
             % Create GroepEditField
@@ -534,14 +534,14 @@ classdef Vitruvian_Man_NL_exported < matlab.apps.AppBase
             app.GroepEditField.FontColor = [0.5412 0.2706 0.0706];
             app.GroepEditField.BackgroundColor = [1 0.9725 0.8627];
             app.GroepEditField.Placeholder = '(Geef de naam van jouw groepje)';
-            app.GroepEditField.Position = [172 796 344 44];
+            app.GroepEditField.Position = [171 646 344 44];
 
             % Create LichaamslengteEditFieldLabel
             app.LichaamslengteEditFieldLabel = uilabel(app.UIFigure);
             app.LichaamslengteEditFieldLabel.FontName = 'Blackadder ITC';
             app.LichaamslengteEditFieldLabel.FontSize = 30;
             app.LichaamslengteEditFieldLabel.FontColor = [0.5412 0.2706 0.0706];
-            app.LichaamslengteEditFieldLabel.Position = [88 683 159 42];
+            app.LichaamslengteEditFieldLabel.Position = [88 590 159 42];
             app.LichaamslengteEditFieldLabel.Text = 'Lichaamslengte';
 
             % Create LichaamslengteEditField
@@ -554,7 +554,7 @@ classdef Vitruvian_Man_NL_exported < matlab.apps.AppBase
             app.LichaamslengteEditField.FontSize = 30;
             app.LichaamslengteEditField.FontColor = [0.5412 0.2706 0.0706];
             app.LichaamslengteEditField.BackgroundColor = [1 0.9725 0.8627];
-            app.LichaamslengteEditField.Position = [388 684 74 41];
+            app.LichaamslengteEditField.Position = [388 591 74 41];
             app.LichaamslengteEditField.Value = 180;
 
             % Create AfstandvanvingertoptotelleboogLabel
@@ -562,7 +562,7 @@ classdef Vitruvian_Man_NL_exported < matlab.apps.AppBase
             app.AfstandvanvingertoptotelleboogLabel.FontName = 'Blackadder ITC';
             app.AfstandvanvingertoptotelleboogLabel.FontSize = 30;
             app.AfstandvanvingertoptotelleboogLabel.FontColor = [0.5412 0.2706 0.0706];
-            app.AfstandvanvingertoptotelleboogLabel.Position = [88 423 303 42];
+            app.AfstandvanvingertoptotelleboogLabel.Position = [88 330 303 42];
             app.AfstandvanvingertoptotelleboogLabel.Text = 'Afstand elleboog tot vingertop';
 
             % Create AfstandelleboogtotvingertopEditField
@@ -574,7 +574,7 @@ classdef Vitruvian_Man_NL_exported < matlab.apps.AppBase
             app.AfstandelleboogtotvingertopEditField.FontSize = 30;
             app.AfstandelleboogtotvingertopEditField.FontColor = [0.5412 0.2706 0.0706];
             app.AfstandelleboogtotvingertopEditField.BackgroundColor = [1 0.9725 0.8627];
-            app.AfstandelleboogtotvingertopEditField.Position = [388 424 74 41];
+            app.AfstandelleboogtotvingertopEditField.Position = [388 331 74 41];
             app.AfstandelleboogtotvingertopEditField.Value = 45;
 
             % Create AfstandschoudertotelleboogEditFieldLabel
@@ -582,7 +582,7 @@ classdef Vitruvian_Man_NL_exported < matlab.apps.AppBase
             app.AfstandschoudertotelleboogEditFieldLabel.FontName = 'Blackadder ITC';
             app.AfstandschoudertotelleboogEditFieldLabel.FontSize = 30;
             app.AfstandschoudertotelleboogEditFieldLabel.FontColor = [0.5412 0.2706 0.0706];
-            app.AfstandschoudertotelleboogEditFieldLabel.Position = [88 488 297 42];
+            app.AfstandschoudertotelleboogEditFieldLabel.Position = [88 395 297 42];
             app.AfstandschoudertotelleboogEditFieldLabel.Text = 'Afstand schouder tot elleboog';
 
             % Create AfstandschoudertotelleboogEditField
@@ -594,7 +594,7 @@ classdef Vitruvian_Man_NL_exported < matlab.apps.AppBase
             app.AfstandschoudertotelleboogEditField.FontSize = 30;
             app.AfstandschoudertotelleboogEditField.FontColor = [0.5412 0.2706 0.0706];
             app.AfstandschoudertotelleboogEditField.BackgroundColor = [1 0.9725 0.8627];
-            app.AfstandschoudertotelleboogEditField.Position = [388 489 74 41];
+            app.AfstandschoudertotelleboogEditField.Position = [388 396 74 41];
             app.AfstandschoudertotelleboogEditField.Value = 22.5;
 
             % Create AfstandheuptotknieEditFieldLabel
@@ -602,7 +602,7 @@ classdef Vitruvian_Man_NL_exported < matlab.apps.AppBase
             app.AfstandheuptotknieEditFieldLabel.FontName = 'Blackadder ITC';
             app.AfstandheuptotknieEditFieldLabel.FontSize = 30;
             app.AfstandheuptotknieEditFieldLabel.FontColor = [0.5412 0.2706 0.0706];
-            app.AfstandheuptotknieEditFieldLabel.Position = [88 358 224 42];
+            app.AfstandheuptotknieEditFieldLabel.Position = [88 265 224 42];
             app.AfstandheuptotknieEditFieldLabel.Text = 'Afstand heup tot knie';
 
             % Create AfstandheuptotknieEditField
@@ -614,7 +614,7 @@ classdef Vitruvian_Man_NL_exported < matlab.apps.AppBase
             app.AfstandheuptotknieEditField.FontSize = 30;
             app.AfstandheuptotknieEditField.FontColor = [0.5412 0.2706 0.0706];
             app.AfstandheuptotknieEditField.BackgroundColor = [1 0.9725 0.8627];
-            app.AfstandheuptotknieEditField.Position = [388 359 74 41];
+            app.AfstandheuptotknieEditField.Position = [388 266 74 41];
             app.AfstandheuptotknieEditField.Value = 45;
 
             % Create AfstandknietotgrondEditFieldLabel
@@ -622,7 +622,7 @@ classdef Vitruvian_Man_NL_exported < matlab.apps.AppBase
             app.AfstandknietotgrondEditFieldLabel.FontName = 'Blackadder ITC';
             app.AfstandknietotgrondEditFieldLabel.FontSize = 30;
             app.AfstandknietotgrondEditFieldLabel.FontColor = [0.5412 0.2706 0.0706];
-            app.AfstandknietotgrondEditFieldLabel.Position = [88 294 231 42];
+            app.AfstandknietotgrondEditFieldLabel.Position = [88 201 231 42];
             app.AfstandknietotgrondEditFieldLabel.Text = 'Afstand knie tot grond';
 
             % Create AfstandknietotgrondEditField
@@ -634,7 +634,7 @@ classdef Vitruvian_Man_NL_exported < matlab.apps.AppBase
             app.AfstandknietotgrondEditField.FontSize = 30;
             app.AfstandknietotgrondEditField.FontColor = [0.5412 0.2706 0.0706];
             app.AfstandknietotgrondEditField.BackgroundColor = [1 0.9725 0.8627];
-            app.AfstandknietotgrondEditField.Position = [388 295 74 41];
+            app.AfstandknietotgrondEditField.Position = [388 202 74 41];
             app.AfstandknietotgrondEditField.Value = 45;
 
             % Create AfstandtussenschoudersEditFieldLabel
@@ -642,7 +642,7 @@ classdef Vitruvian_Man_NL_exported < matlab.apps.AppBase
             app.AfstandtussenschoudersEditFieldLabel.FontName = 'Blackadder ITC';
             app.AfstandtussenschoudersEditFieldLabel.FontSize = 30;
             app.AfstandtussenschoudersEditFieldLabel.FontColor = [0.5412 0.2706 0.0706];
-            app.AfstandtussenschoudersEditFieldLabel.Position = [88 554 262 42];
+            app.AfstandtussenschoudersEditFieldLabel.Position = [88 461 262 42];
             app.AfstandtussenschoudersEditFieldLabel.Text = 'Afstand tussen schouders';
 
             % Create AfstandtussenschoudersEditField
@@ -654,7 +654,7 @@ classdef Vitruvian_Man_NL_exported < matlab.apps.AppBase
             app.AfstandtussenschoudersEditField.FontSize = 30;
             app.AfstandtussenschoudersEditField.FontColor = [0.5412 0.2706 0.0706];
             app.AfstandtussenschoudersEditField.BackgroundColor = [1 0.9725 0.8627];
-            app.AfstandtussenschoudersEditField.Position = [388 555 74 41];
+            app.AfstandtussenschoudersEditField.Position = [388 462 74 41];
             app.AfstandtussenschoudersEditField.Value = 45;
 
             % Create cmLabel
@@ -662,7 +662,7 @@ classdef Vitruvian_Man_NL_exported < matlab.apps.AppBase
             app.cmLabel.FontName = 'Blackadder ITC';
             app.cmLabel.FontSize = 30;
             app.cmLabel.FontColor = [0.5412 0.2706 0.0706];
-            app.cmLabel.Position = [487 683 31 42];
+            app.cmLabel.Position = [487 590 31 42];
             app.cmLabel.Text = 'cm';
 
             % Create cmLabel_2
@@ -670,7 +670,7 @@ classdef Vitruvian_Man_NL_exported < matlab.apps.AppBase
             app.cmLabel_2.FontName = 'Blackadder ITC';
             app.cmLabel_2.FontSize = 30;
             app.cmLabel_2.FontColor = [0.5412 0.2706 0.0706];
-            app.cmLabel_2.Position = [487 554 31 42];
+            app.cmLabel_2.Position = [487 461 31 42];
             app.cmLabel_2.Text = 'cm';
 
             % Create cmLabel_3
@@ -678,7 +678,7 @@ classdef Vitruvian_Man_NL_exported < matlab.apps.AppBase
             app.cmLabel_3.FontName = 'Blackadder ITC';
             app.cmLabel_3.FontSize = 30;
             app.cmLabel_3.FontColor = [0.5412 0.2706 0.0706];
-            app.cmLabel_3.Position = [487 488 31 42];
+            app.cmLabel_3.Position = [487 395 31 42];
             app.cmLabel_3.Text = 'cm';
 
             % Create cmLabel_4
@@ -686,7 +686,7 @@ classdef Vitruvian_Man_NL_exported < matlab.apps.AppBase
             app.cmLabel_4.FontName = 'Blackadder ITC';
             app.cmLabel_4.FontSize = 30;
             app.cmLabel_4.FontColor = [0.5412 0.2706 0.0706];
-            app.cmLabel_4.Position = [487 423 31 42];
+            app.cmLabel_4.Position = [487 330 31 42];
             app.cmLabel_4.Text = 'cm';
 
             % Create cmLabel_5
@@ -694,7 +694,7 @@ classdef Vitruvian_Man_NL_exported < matlab.apps.AppBase
             app.cmLabel_5.FontName = 'Blackadder ITC';
             app.cmLabel_5.FontSize = 30;
             app.cmLabel_5.FontColor = [0.5412 0.2706 0.0706];
-            app.cmLabel_5.Position = [487 358 31 42];
+            app.cmLabel_5.Position = [487 265 31 42];
             app.cmLabel_5.Text = 'cm';
 
             % Create cmLabel_6
@@ -702,7 +702,7 @@ classdef Vitruvian_Man_NL_exported < matlab.apps.AppBase
             app.cmLabel_6.FontName = 'Blackadder ITC';
             app.cmLabel_6.FontSize = 30;
             app.cmLabel_6.FontColor = [0.5412 0.2706 0.0706];
-            app.cmLabel_6.Position = [487 294 31 42];
+            app.cmLabel_6.Position = [487 201 31 42];
             app.cmLabel_6.Text = 'cm';
 
             % Create cmLabel_9
@@ -710,7 +710,7 @@ classdef Vitruvian_Man_NL_exported < matlab.apps.AppBase
             app.cmLabel_9.FontName = 'Blackadder ITC';
             app.cmLabel_9.FontSize = 30;
             app.cmLabel_9.FontColor = [0.5412 0.2706 0.0706];
-            app.cmLabel_9.Position = [487 230 31 42];
+            app.cmLabel_9.Position = [487 137 31 42];
             app.cmLabel_9.Text = 'cm';
 
             % Create LengtevanvoetEditFieldLabel
@@ -718,7 +718,7 @@ classdef Vitruvian_Man_NL_exported < matlab.apps.AppBase
             app.LengtevanvoetEditFieldLabel.FontName = 'Blackadder ITC';
             app.LengtevanvoetEditFieldLabel.FontSize = 30;
             app.LengtevanvoetEditFieldLabel.FontColor = [0.5412 0.2706 0.0706];
-            app.LengtevanvoetEditFieldLabel.Position = [88 229 159 42];
+            app.LengtevanvoetEditFieldLabel.Position = [88 136 159 42];
             app.LengtevanvoetEditFieldLabel.Text = 'Lengte van voet';
 
             % Create LengtevanvoetEditField
@@ -730,7 +730,7 @@ classdef Vitruvian_Man_NL_exported < matlab.apps.AppBase
             app.LengtevanvoetEditField.FontSize = 30;
             app.LengtevanvoetEditField.FontColor = [0.5412 0.2706 0.0706];
             app.LengtevanvoetEditField.BackgroundColor = [1 0.9725 0.8627];
-            app.LengtevanvoetEditField.Position = [388 230 74 41];
+            app.LengtevanvoetEditField.Position = [388 137 74 41];
             app.LengtevanvoetEditField.Value = 30;
 
             % Create MaaktekeningButton
@@ -740,7 +740,7 @@ classdef Vitruvian_Man_NL_exported < matlab.apps.AppBase
             app.MaaktekeningButton.FontName = 'Blackadder ITC';
             app.MaaktekeningButton.FontSize = 30;
             app.MaaktekeningButton.FontColor = [0.5412 0.2706 0.0706];
-            app.MaaktekeningButton.Position = [590 59 314 61];
+            app.MaaktekeningButton.Position = [528 17 314 61];
             app.MaaktekeningButton.Text = 'Maak tekening';
 
             % Create DeManvanVitruviusLabel
@@ -749,7 +749,7 @@ classdef Vitruvian_Man_NL_exported < matlab.apps.AppBase
             app.DeManvanVitruviusLabel.FontName = 'Blackadder ITC';
             app.DeManvanVitruviusLabel.FontSize = 80;
             app.DeManvanVitruviusLabel.FontColor = [0.5412 0.2706 0.0706];
-            app.DeManvanVitruviusLabel.Position = [335 832 1295 111];
+            app.DeManvanVitruviusLabel.Position = [214 676 1295 111];
             app.DeManvanVitruviusLabel.Text = 'De Man van Vitruvius';
 
             % Create StartsimulatieButton
@@ -759,7 +759,7 @@ classdef Vitruvian_Man_NL_exported < matlab.apps.AppBase
             app.StartsimulatieButton.FontName = 'Blackadder ITC';
             app.StartsimulatieButton.FontSize = 30;
             app.StartsimulatieButton.FontColor = [0.5412 0.2706 0.0706];
-            app.StartsimulatieButton.Position = [1022 59 314 61];
+            app.StartsimulatieButton.Position = [859 17 314 61];
             app.StartsimulatieButton.Text = 'Start simulatie';
 
             % Create NaamEditField
@@ -771,14 +771,14 @@ classdef Vitruvian_Man_NL_exported < matlab.apps.AppBase
             app.NaamEditField.FontColor = [0.5412 0.2706 0.0706];
             app.NaamEditField.BackgroundColor = [1 0.9725 0.8627];
             app.NaamEditField.Placeholder = '(Jouw naam)';
-            app.NaamEditField.Position = [857 796 244 44];
+            app.NaamEditField.Position = [702 633 244 44];
 
             % Create kgLabel
             app.kgLabel = uilabel(app.UIFigure);
             app.kgLabel.FontName = 'Blackadder ITC';
             app.kgLabel.FontSize = 30;
             app.kgLabel.FontColor = [0.5412 0.2706 0.0706];
-            app.kgLabel.Position = [487 618 28 42];
+            app.kgLabel.Position = [487 525 28 42];
             app.kgLabel.Text = 'kg';
 
             % Create MassaEditFieldLabel
@@ -786,7 +786,7 @@ classdef Vitruvian_Man_NL_exported < matlab.apps.AppBase
             app.MassaEditFieldLabel.FontName = 'Blackadder ITC';
             app.MassaEditFieldLabel.FontSize = 30;
             app.MassaEditFieldLabel.FontColor = [0.5412 0.2706 0.0706];
-            app.MassaEditFieldLabel.Position = [88 618 124 42];
+            app.MassaEditFieldLabel.Position = [88 525 124 42];
             app.MassaEditFieldLabel.Text = 'Massa';
 
             % Create MassaEditField
@@ -798,7 +798,7 @@ classdef Vitruvian_Man_NL_exported < matlab.apps.AppBase
             app.MassaEditField.FontSize = 30;
             app.MassaEditField.FontColor = [0.5412 0.2706 0.0706];
             app.MassaEditField.BackgroundColor = [1 0.9725 0.8627];
-            app.MassaEditField.Position = [388 619 74 41];
+            app.MassaEditField.Position = [388 526 74 41];
             app.MassaEditField.Value = 75;
 
             % Create Label
@@ -806,7 +806,7 @@ classdef Vitruvian_Man_NL_exported < matlab.apps.AppBase
             app.Label.FontName = 'Blackadder ITC';
             app.Label.FontSize = 30;
             app.Label.FontColor = [0.5412 0.2706 0.0706];
-            app.Label.Position = [487 163 25 42];
+            app.Label.Position = [487 70 25 42];
             app.Label.Text = '%';
 
             % Create SpierkrachtEditFieldLabel
@@ -814,7 +814,7 @@ classdef Vitruvian_Man_NL_exported < matlab.apps.AppBase
             app.SpierkrachtEditFieldLabel.FontName = 'Blackadder ITC';
             app.SpierkrachtEditFieldLabel.FontSize = 30;
             app.SpierkrachtEditFieldLabel.FontColor = [0.5412 0.2706 0.0706];
-            app.SpierkrachtEditFieldLabel.Position = [88 163 127 42];
+            app.SpierkrachtEditFieldLabel.Position = [88 70 127 42];
             app.SpierkrachtEditFieldLabel.Text = 'Spierkracht';
 
             % Create SpierkrachtEditField
@@ -826,7 +826,7 @@ classdef Vitruvian_Man_NL_exported < matlab.apps.AppBase
             app.SpierkrachtEditField.FontSize = 30;
             app.SpierkrachtEditField.FontColor = [0.5412 0.2706 0.0706];
             app.SpierkrachtEditField.BackgroundColor = [1 0.9725 0.8627];
-            app.SpierkrachtEditField.Position = [388 164 74 41];
+            app.SpierkrachtEditField.Position = [388 71 74 41];
             app.SpierkrachtEditField.Value = 100;
 
             % Create SpeelvideoButton
@@ -836,7 +836,7 @@ classdef Vitruvian_Man_NL_exported < matlab.apps.AppBase
             app.SpeelvideoButton.FontName = 'Blackadder ITC';
             app.SpeelvideoButton.FontSize = 30;
             app.SpeelvideoButton.FontColor = [0.5412 0.2706 0.0706];
-            app.SpeelvideoButton.Position = [1481 59 314 61];
+            app.SpeelvideoButton.Position = [1199 17 314 61];
             app.SpeelvideoButton.Text = 'Speel video';
 
             % Create SluitvideoButton
@@ -848,7 +848,7 @@ classdef Vitruvian_Man_NL_exported < matlab.apps.AppBase
             app.SluitvideoButton.FontColor = [0.5412 0.2706 0.0706];
             app.SluitvideoButton.Enable = 'off';
             app.SluitvideoButton.Visible = 'off';
-            app.SluitvideoButton.Position = [1481 59 314 61];
+            app.SluitvideoButton.Position = [1199 17 314 61];
             app.SluitvideoButton.Text = 'Sluit video';
 
             % Create NaamAfstandLabel
@@ -857,8 +857,8 @@ classdef Vitruvian_Man_NL_exported < matlab.apps.AppBase
             app.NaamAfstandLabel.FontName = 'Blackadder ITC';
             app.NaamAfstandLabel.FontSize = 30;
             app.NaamAfstandLabel.FontColor = [0.5412 0.2706 0.0706];
-            app.NaamAfstandLabel.Position = [1430 798 384 42];
-            app.NaamAfstandLabel.Text = 'Naam              Afstand         Snelheid';
+            app.NaamAfstandLabel.Position = [1186 646 327 40];
+            app.NaamAfstandLabel.Text = 'Naam        Afstand        Snelheid';
 
             % Create NaamAfstandSnelheidListBox
             app.NaamAfstandSnelheidListBox = uilistbox(app.UIFigure);
@@ -868,7 +868,7 @@ classdef Vitruvian_Man_NL_exported < matlab.apps.AppBase
             app.NaamAfstandSnelheidListBox.FontSize = 30;
             app.NaamAfstandSnelheidListBox.FontColor = [0.5412 0.2706 0.0706];
             app.NaamAfstandSnelheidListBox.BackgroundColor = [0.9216 0.8706 0.6706];
-            app.NaamAfstandSnelheidListBox.Position = [1430 157 384 644];
+            app.NaamAfstandSnelheidListBox.Position = [1186 96 323 542];
             app.NaamAfstandSnelheidListBox.Value = {};
 
             % Create SnelheidSliderLabel
@@ -876,7 +876,7 @@ classdef Vitruvian_Man_NL_exported < matlab.apps.AppBase
             app.SnelheidSliderLabel.FontName = 'Blackadder ITC';
             app.SnelheidSliderLabel.FontSize = 25;
             app.SnelheidSliderLabel.FontColor = [0.5412 0.2706 0.0706];
-            app.SnelheidSliderLabel.Position = [88 88 123 42];
+            app.SnelheidSliderLabel.Position = [88 15 123 42];
             app.SnelheidSliderLabel.Text = 'Snelheid';
 
             % Create SnelheidSlider
@@ -889,7 +889,7 @@ classdef Vitruvian_Man_NL_exported < matlab.apps.AppBase
             app.SnelheidSlider.FontName = 'Blackadder ITC';
             app.SnelheidSlider.FontSize = 25;
             app.SnelheidSlider.FontColor = [0.5412 0.2706 0.0706];
-            app.SnelheidSlider.Position = [226 119 224 3];
+            app.SnelheidSlider.Position = [210 46 224 3];
             app.SnelheidSlider.Value = 5;
 
             % Create kmuLabel
@@ -897,21 +897,21 @@ classdef Vitruvian_Man_NL_exported < matlab.apps.AppBase
             app.kmuLabel.FontName = 'Blackadder ITC';
             app.kmuLabel.FontSize = 30;
             app.kmuLabel.FontColor = [0.5412 0.2706 0.0706];
-            app.kmuLabel.Position = [474 86 58 42];
+            app.kmuLabel.Position = [457 17 58 42];
             app.kmuLabel.Text = 'km/u';
 
             % Create Image
             app.Image = uiimage(app.UIFigure);
             app.Image.Enable = 'off';
             app.Image.Visible = 'off';
-            app.Image.Position = [1082 687 254 210];
+            app.Image.Position = [880 500 214 177];
             app.Image.ImageSource = 'balloon.png';
 
             % Create Image2
             app.Image2 = uiimage(app.UIFigure);
             app.Image2.Enable = 'off';
             app.Image2.Visible = 'off';
-            app.Image2.Position = [1140 744 138 100];
+            app.Image2.Position = [938 553 98 71];
             app.Image2.ImageSource = 'allgifs.gif';
 
             % Show the figure after all components are created
@@ -923,7 +923,7 @@ classdef Vitruvian_Man_NL_exported < matlab.apps.AppBase
     methods (Access = public)
 
         % Construct app
-        function app = Vitruvian_Man_NL_exported
+        function app = Vitruvian_Man_NL_2024_exported
 
             % Create UIFigure and components
             createComponents(app)

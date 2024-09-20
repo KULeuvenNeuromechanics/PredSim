@@ -8,9 +8,11 @@ clear
 close all
 clc
 % path to the repository folder
-[pathRepo,~,~] = fileparts(mfilename('fullpath'));
+% [pathRepo,~,~] = fileparts(mfilename('fullpath'));
+pathRepo = 'C:\GBW_MyPrograms\PredSim';
 % path to the folder that contains the repository folder
-[pathRepoFolder,~,~] = fileparts(pathRepo);
+% [pathRepoFolder,~,~] = fileparts(pathRepo);
+pathRepoFolder = 'C:\GBW_MyPrograms';
 
 %% Initialize S
 pathDefaultSettings = fullfile(pathRepo,'DefaultSettings');
@@ -23,7 +25,7 @@ addpath(fullfile(S.misc.main_path,'VariousFunctions'))
 
 %% Required inputs
 % name of the subject
-S.subject.name = 'gait1018';
+S.subject.name = 'Vitruvian_Man';
 
 % give the path to the osim model of your subject
 osim_path = fullfile(pathRepo,'Subjects',S.subject.name,...
