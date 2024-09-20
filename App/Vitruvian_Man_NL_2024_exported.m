@@ -208,7 +208,8 @@ classdef Vitruvian_Man_NL_2024_exported < matlab.apps.AppBase
         
         function [total_distance, avg_vel] = calcDistance(app,savepath)
             %% get distance
-            E_metab = 778e3; % 778 kJ = 1 pancake
+            % E_metab = 778e3; % 778 kJ = 1 pancake
+            E_metab = 460e3; % 778 kJ = 1 pancake
             load(savepath,'R');
             COT = R.metabolics.Bhargava2004.COT;
             total_distance = round(E_metab/(COT*R.misc.body_mass));
