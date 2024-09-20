@@ -22,9 +22,9 @@ This repository is a work in progress.
      - Yes -> use the [issues](https://github.com/KULeuvenNeuromechanics/PredSim/issues). Please look at the existing issues before creating a new one; you might not be the first person to have this problem.
      - No -> use the [discussions](https://github.com/KULeuvenNeuromechanics/PredSim/discussions). 
 2. 🚧 **Suggesting Improvements**:
-   - Feel free to suggest improvements. Submit a pull request with the changes, or create an issue with a description of the proposed change.
+   - Feel free to suggest improvements. Submit a pull request with the changes, or post it in the discussion section on [Feature requests & Suggestions](https://github.com/KULeuvenNeuromechanics/PredSim/discussions/categories/feature-requests-suggestions).
 3. 📯❔ **Sharing Best Practices and General Questions**:
-   - To share best practices, publications, or more general questions, we encourage you to use the Discussions section.
+   - To share best practices, publications, or more general questions, we encourage you to use the discussions section.
 
 
 
@@ -88,10 +88,10 @@ A [full overview of settings](./Documentation/SettingsOverview.md) is available 
 
 ## Replicate results
 
-Results of previous publications can be replicated by specifying one of the inputs for [initializeSettings](main.m#L18):
-- `'Falisse_et_al_2022'`
-- `'DHondt_et_al_2024_3seg'`
-- `'DHondt_et_al_2024_4seg'`
+Results of previous publications can be replicated by specifying one of the inputs for [initializeSettings](main.m#L18) and [S.subject.name](main.m#23):
+- `'Falisse_et_al_2022'`, see [reference 3](#references)
+- `'DHondt_et_al_2024_3seg'`, see [reference 4](#references)
+- `'DHondt_et_al_2024_4seg'`, see [reference 4](#references)
 
 ## References
 
