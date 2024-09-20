@@ -59,6 +59,12 @@ The code is written such that as a user you only have to interact with [*main.m*
 
 All user-defined [settings](./Documentation/SettingsOverview.md) are stored in structure *S*. In main.m you have to specify the required settings and are free to change/add the optional settings. 
 
+The [examples folder](./Examples/) contains scripts illustrating how to use settings to:
+- Predict a gait pattern resulting from a limited number of muscle synergies.
+- Predict gait with assistance from an ankle exoskeleton.
+- Run a sensitivity analysis.
+
+
 ### Before running a simulation
 
 This code can automatically convert an OpenSim model to the external function used in the simulations. This greatly simplifies the process of going from a subject-specific model to a predictive simulation. Nevertheless, you should take care of the model you use since **not all OpenSim models are suported**: 

@@ -23,8 +23,8 @@ function [exo] = ankleExoZhang2017(init, settings_orthosis)
 %       - dependencies_path path to dependencies
 %       - isFullGaitCycle   assistance profile for full stride when true,
 %       half stride when false. Default is false.
-%       - peak_torque:      peak torque in Nm/rad
-%       - peak_time:      timing of peak as % of stride
+%       - peak_torque:      peak torque in Nm
+%       - peak_time:        timing of peak as % of stride
 %       - rise_time:        rise time as % of stride
 %       - fall_time:        fall time as % of stride
 %   Values are set via S.orthosis.settings{i} in main.m, with i the index
