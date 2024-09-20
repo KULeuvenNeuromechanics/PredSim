@@ -120,6 +120,12 @@ if ~isfield(S.bounds,'distanceConstraints')
     S.bounds.distanceConstraints = [];
 end
 
+% bounds on synergy constraints, (a-WH)^2
+if ~isfield(S.bounds,'SynConstr')
+    S.bounds.SynConstr.lower = -0.001;
+    S.bounds.SynConstr.upper = 0.001;
+end
+
 %% metabolicE
 if ~isfield(S,'metabolicE')
     S.metabolicE = [];
@@ -341,8 +347,6 @@ if ~isfield(S.solver,'N_meshes')
     end
 end
 
-
-
 % initial guess inputs
 % input should be a string: "quasi-random" or the path to a .mot file
 if ~isfield(S.solver,'IG_selection')
@@ -495,6 +499,82 @@ if ~isfield(S.subject,'base_joints_arms')
     S.subject.base_joints_arms = 'acromial';
 end
 
+% If synergies are implemented in the simulation
+if ~isfield(S.subject,'synergies')
+    S.subject.synergies = 0;
+end
+
+% If synergy weights are tracked in the simulation
+if ~isfield(S.subject,'TrackSynW')
+    S.subject.TrackSynW = 0;
+end
+
+% initial guess for synergy variables
+if ~isfield(S.subject,'SynH_guess')
+    S.subject.SynH_guess = 0.1;
+end
+if ~isfield(S.subject,'SynW_guess')
+    S.subject.SynW_guess = 0.2;
+end
+
+% Settings to configure synergies
+if S.subject.synergies
+
+    % number of synergies for right side
+    if ~isfield(S.subject,'NSyn_r')
+        error(['Synergies are enabled (S.subject.synergies = true),',...
+            ' but number of right side synergies (S.subject.NSyn_r) is not given.'])
+    end
+
+    % number of synergies for left side
+    if ~isfield(S.subject,'NSyn_l')
+        S.subject.NSyn_l = S.subject.NSyn_r;
+    end
+
+    % for half gait cycle simulations, synergies are also symmetric
+    if strcmp(S.misc.gaitmotion_type,'HalfGaitCycle') ...
+            && S.subject.NSyn_l ~= S.subject.NSyn_r
+        sprintf("Selected S.misc.gaitmotion_type = 'HalfGaitCycle', " + ...
+            "but S.subject.NSyn_r and S.subject.NSyn_l have different values. " + ...
+            "NSyn_l will be set equal to NSyn_r (%i)", S.subject.NSyn_r);
+
+        S.subject.NSyn_l = S.subject.NSyn_r;
+    end
+    
+    % Settings to configure synergy weights tracking
+    if S.subject.TrackSynW
+
+        % track weights for one or both sides
+        if isfield(S.subject,'TrackSynW_side')
+            if ~any(strcmp({'onlyLeft', 'onlyRight', 'RightLeft'}, S.subject.TrackSynW_side))
+                error("Possible options for S.subject.TrackSynW_side are " + ...
+                    "'onlyLeft', 'onlyRight', 'RightLeft'. Current option '%s' is invalid",...
+                    S.subject.TrackSynW_side)
+            end
+        else
+            S.subject.TrackSynW_side = 'RightLeft';
+        end
+
+        % synergy weights to be tracked
+        if ~isfield(S.subject,'knownSynW_r')
+            S.subject.knownSynW_r = [];
+        end
+        if ~isfield(S.subject,'knownSynW_l')
+            S.subject.knownSynW_l = [];
+        end
+
+        % number of synergies that are tracked
+        if ~isfield(S.subject,'TrackSynW_NSyn_r')
+            S.subject.TrackSynW_NSyn_r = 0;
+        end
+        if ~isfield(S.subject,'TrackSynW_NSyn_l')
+            S.subject.TrackSynW_NSyn_l = 0;
+        end
+
+    end % end of synergy weight tracking defaults
+
+end % end of synergy defaults
+
 %% weights
 if ~isfield(S,'weights')
     S.weights = [];
@@ -539,6 +619,16 @@ end
 % exponent for the muscle activations
 if ~isfield(S.weights,'a_exp')
     S.weights.a_exp = 2; 
+end
+
+% weight on synergy constraint, (a-WH)^2
+if ~isfield(S.weights,'SynConstr')
+    S.weights.SynConstr = 1e4; 
+end
+
+% weight on synergy weights tracking
+if ~isfield(S.weights,'TrackSynW')
+    S.weights.TrackSynW = 1e2; 
 end
 
 % weight on slack controls

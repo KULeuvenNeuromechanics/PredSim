@@ -34,7 +34,7 @@ else
 end
 % Running a function as part of batch needs all paths that are called inside
 % the function
-additional_paths = {};
+additional_paths = S.solver.batch_job_paths;
 [pathOsim,~,~] = fileparts(osim_path);
 additional_paths{end+1} = pathOsim;
 additional_paths{end+1} = fullfile(S.misc.main_path,'DefaultSettings');
