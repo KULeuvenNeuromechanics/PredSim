@@ -26,6 +26,12 @@ function [S,model_info] = PreProcessing(S,osim_path)
 % Last edit date: 
 % --------------------------------------------------------------------------
 
+% Update settings about points that need to be exported from external function
+[S] = updateExport3DPositionsVelocities(S,osim_path);
+
+% Test the user-defined orthosis functions and add the required OpenSimAD
+% options
+[S] = finaliseOrthosisDefinitions(S,osim_path);
 
 % Create external function to describe the rigid-body skeletal dynamics and
 % foot-ground contact dynamics.

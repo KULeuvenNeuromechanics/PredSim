@@ -13,7 +13,7 @@ function [f_PassiveStiffnessMoments,f_PassiveDampingMoments,f_LimitTorques,...
 % 
 % OUTPUT:
 %   - f_PassiveStiffnessMoments -
-%   * M = -K*q
+%   * M = -K*(q-q_offset)
 %
 %   - f_PassiveDampingMoments -
 %   * M = -d*qdot
@@ -64,14 +64,21 @@ tau_lim = SX(n_coord,1);
 
 for i=1:n_coord
     if model_info.passive_moment_info.parameters(i).stiffness_coeff~=0
-        tau_k(i) = -model_info.passive_moment_info.parameters(i).stiffness_coeff*q(i);
+        if model_info.passive_moment_info.parameters(i).stiffness_offset==0
+            tau_k(i) = -model_info.passive_moment_info.parameters(i).stiffness_coeff*q(i);
+        else
+            tau_k(i) = -model_info.passive_moment_info.parameters(i).stiffness_coeff...
+                *(q(i)-model_info.passive_moment_info.parameters(i).stiffness_offset);
+        end
     end
     if model_info.passive_moment_info.parameters(i).damping_coeff~=0
         tau_d(i) = -model_info.passive_moment_info.parameters(i).damping_coeff*qdot(i);
     end
 
-    if ~isempty(model_info.passive_moment_info.parameters(i).K_pass) && ~isempty(model_info.passive_moment_info.parameters(i).theta_pass)
-        tau_lim(i) = f_limit_torque(model_info.passive_moment_info.parameters(i).K_pass,model_info.passive_moment_info.parameters(i).theta_pass,q(i));
+    if ~isempty(model_info.passive_moment_info.parameters(i).K_pass) &&...
+            ~isempty(model_info.passive_moment_info.parameters(i).theta_pass)
+        tau_lim(i) = f_limit_torque(model_info.passive_moment_info.parameters(i).K_pass,...
+            model_info.passive_moment_info.parameters(i).theta_pass,q(i));
 
     end
 end

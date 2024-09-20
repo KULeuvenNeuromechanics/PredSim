@@ -1,10 +1,5 @@
 
-%% Clear workspace
-if exist('result_paths','var')
-    clearvars -Except result_paths
-else
-    clear
-end
+clear
 close all
 clc
 
@@ -19,8 +14,9 @@ clc
 % Construct a cell array with full paths to files with saved results for
 % which you want to appear on the plotted figures.
 results_folder = fullfile(pathRepoFolder,'PredSimResults');
-result_paths{1} = fullfile(pathRepo,'Tests','Falisse_et_al_2022_Results','Falisse_et_al_2022_v1.mat');
+result_paths{1} = fullfile(pathRepo,'Tests','ReferenceResults','Falisse_et_al_2022','Falisse_et_al_2022_paper.mat');
 % result_paths{2} = fullfile(results_folder,'Falisse_et_al_2022_Results','Falisse_et_al_2022_v1.mat');
+
 
 % Cell array with legend name for each result
 legend_names = {'Reference result', 'Your first simulation'};
