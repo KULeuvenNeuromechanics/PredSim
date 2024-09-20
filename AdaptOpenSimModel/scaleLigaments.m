@@ -13,7 +13,7 @@ function [] = scaleLigaments(osim_path_scaled, bodymass_generic)
 %   from this model, scaled, and written back to this model.
 % 
 %   - bodymass_generic -
-%   * body mass of the generic (unsclaed) model. Used to determine the mass
+%   * body mass of the generic (unscaled) model. Used to determine the mass
 %   ratio for the scaling factor. Alternatively, pass the path to the
 %   generic OpenSim model.
 %
