@@ -6,8 +6,8 @@
 %   which can be downloaded from
 %   https://www.science.org/doi/suppl/10.1126/science.aal5054/suppl_file/aal5054_zhang_sm_data_s2.zip.
 %   Note that using the downloaded function will throw an error related to
-%   the variable prev_stride_time. To fix this, set it equal to
-%   stride_period.
+%   the variable prev_stride_time. To fix this, set `prev_stride_time = stride_time;`
+%   in the beginning of the function desired_torque_actuator.
 %
 %   References
 %   [1] J. Zhang et al., “Human-in-the-loop optimization of exoskeleton 
