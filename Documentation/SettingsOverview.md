@@ -244,6 +244,18 @@ Quickly navigate to:
     - Default stiffness model (i.e. force-length) used for ligaments. Default is [*ligamentGefen2002*](../ModelComponents/ligamentGefen2002.m) [char]
 - **S.subject.set_stiffness_selected_ligaments**:
     - Use name-value pairs to use different stiffness models for specific ligaments. Default is *{'PlantarFascia',['plantarFasciaNatali2010'](../ModelComponents/plantarFasciaNatali2010.m)}* 
+- **S.subject.synergies**:
+	- boolean that indicates if muscle activations are controlled by synergies. Default is *0* (no synergies implemented).
+	- When synergies are implemented, different variables need to be defined:
+	- **S.subject.NSyn_r**: number of synergies for the right leg. This value needs to be defined.
+	- **S.subject.NSyn_l**: number of synergies for the left leg. Default is equal to S.subject.NSyn_r. When simulating symmetric gait (i.e. S.misc.gaitmotion_type = 'FullGaitCycle'), this is also set equal to S.subject.NSyn_r.
+	- **S.subject.SynH_guess**: . Default is *0.1* [double]
+	- **S.subject.SynW_guess**: . Default is *0.2* [double]
+	- **S.subject.TrackSynW**: boolean that indicates if synergy weights are tracked. Default is *0* (no weights tracking).
+	- **S.subject.TrackSynW_side**: indicates if weights are tracked for one or both legs. Possible options are: 'onlyLeft', 'onlyRight' or 'RightLeft'. Use this variable only if a full cycle is predicted (S.misc.gaitmotion_type = 'FullGaitCycle'). Default is *'RightLeft'* [char];
+	- **S.subject.knownSynW_r**: synergy weights to be tracked are specified here, using the following form: {'muscleName1', weightArray1, {'muscleName2a', 'muscleName2b'}, weightArray2, etc.}. The 'weightArray' is an horizontal vector containing the muscle weight (between 0 and 1) on each synergy.
+	- **S.subject.knownSynW_l**: same as 'S.subject.knownSynW_r' but for the left leg. Use this variable only if a full cycle is predicted (S.misc.gaitmotion_type = 'FullGaitCycle')
+	- **S.subject.TrackSynW_NSyn_r**, **S.subject.TrackSynW_NSyn_l**: number of right and left synergy weights that are tracked for the muscles defined in 'S.subject.knownSynW_r' and 'S.subject.knownSynW_l'. This number may be different from 'S.subject.NSyn_r' or 'S.subject.NSyn_l'.
 
 #### S.weights
 
