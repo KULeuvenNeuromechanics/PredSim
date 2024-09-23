@@ -22,7 +22,7 @@ This repository is a work in progress.
      - Yes -> use the [issues](https://github.com/KULeuvenNeuromechanics/PredSim/issues). Please look at the existing issues before creating a new one; you might not be the first person to have this problem.
      - No -> use the [discussions](https://github.com/KULeuvenNeuromechanics/PredSim/discussions). 
 2. 🚧 **Suggesting Improvements**:
-   - Feel free to suggest improvements. Submit a pull request with the changes, or post it in the discussion section on [Feature requests & Suggestions](https://github.com/KULeuvenNeuromechanics/PredSim/discussions/categories/feature-requests-suggestions).
+   - Feel free to suggest improvements. Submit a pull request with the changes ([See Guidelines for contributing](https://github.com/KULeuvenNeuromechanics/PredSim/wiki/Guidelines-for-contributing-code)), or post it in the discussion section on [Feature requests & Suggestions](https://github.com/KULeuvenNeuromechanics/PredSim/discussions/categories/feature-requests-suggestions).
 3. 📯❔ **Sharing Best Practices and General Questions**:
    - To share best practices, publications, or more general questions, we encourage you to use the discussions section.
 
