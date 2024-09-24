@@ -19,8 +19,8 @@ function [] = OCP_formulation(S,model_info,f_casadi)
 % Original author: Dhruv Gupta and Lars D'Hondt
 % Original date: January-May/2022
 %
-% Last edit by:
-% Last edit date:
+% Last edit by: Bram Van Den Bosch
+% Last edit date: 23/Sept/2024
 % --------------------------------------------------------------------------
 
 disp('Start formulating OCP...')
@@ -1311,6 +1311,7 @@ end
 R.ground_reaction.threshold = HS_threshold;
 R.ground_reaction.initial_contact_side = HS1;
 R.ground_reaction.idx_GC = idx_GC;
+R.spatiotemp.dist_trav = dist_trav_opt;
 
 % save results
 Outname = fullfile(S.misc.save_folder,[S.misc.result_filename '.mat']);
