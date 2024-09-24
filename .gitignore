@@ -14,11 +14,6 @@ Examples/ExampleResults
 App
 Subjects/*
 !Subjects/README.md
-!Subjects/Hamner_modified/
-Subjects/Hamner_modified/*
-!Subjects/Hamner_modified/*.osim
-!Subjects/Hamner_modified/*.txt
-!Subjects/Hamner_modified/*.md
 
 !Subjects/Falisse_et_al_2022/
 Subjects/Falisse_et_al_2022/*
