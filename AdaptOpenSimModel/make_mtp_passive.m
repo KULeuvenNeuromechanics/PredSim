@@ -20,7 +20,6 @@ clc
 import org.opensim.modeling.*;
 [pathHere,~,~] = fileparts(mfilename('fullpath'));
 
-% osim_filename = 'Hamner_modified';
 osim_filename = 'Fal_s1';
 
 model = Model([pathHere '\' osim_filename '.osim']);
