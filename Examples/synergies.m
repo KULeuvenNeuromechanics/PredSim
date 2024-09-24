@@ -52,6 +52,9 @@ S.solver.IG_selection_gaitCyclePercent = 100;
 % give the path to the osim model of your subject
 osim_path = fullfile(pathRepo,'Subjects',S.subject.name,[S.subject.name '.osim']);
 
+%% Run predictive simulation without synergies
+
+[savename1] = runPredSim(S, osim_path);
 
 %% Synergy settings
 % Use muscle synergies
@@ -77,9 +80,9 @@ S.subject.knownSynW_r = {'rect_fem_r', [0 0.28 0 0.75],...
     'soleus_r', [1 0.05 0 0.05],...
     'glut_max_r', [0.15 0 0.04 1]};
 
-%% Run predictive simulations
+%% Run predictive simulation with synergies
 
-[savename] = runPredSim(S, osim_path);
+[savename2] = runPredSim(S, osim_path);
 
 %% Plot results
 % see .\PlotFigures\run_this_file_to_plot_figures.m for more
@@ -87,11 +90,10 @@ S.subject.knownSynW_r = {'rect_fem_r', [0 0.28 0 0.75],...
 if ~S.solver.run_as_batch_job
 
     % set path to reference result
-    result_paths{1} = fullfile(pathRepo,'Tests','ReferenceResults',...
-        'Falisse_et_al_2022','Falisse_et_al_2022_paper.mat');
+    result_paths{1} = fullfile(S.misc.save_folder,[savename1 '.mat']);
     
     % set path to saved result
-    result_paths{2} = fullfile(S.misc.save_folder,[savename '.mat']);
+    result_paths{2} = fullfile(S.misc.save_folder,[savename2 '.mat']);
     
     % Cell array with legend name for each result
     legend_names = {'Reference result',...

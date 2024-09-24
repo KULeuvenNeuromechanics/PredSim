@@ -226,7 +226,7 @@ elseif strcmp(fl_b,'PlanarJoint')
 
     % translation along y
     crd_ty = char(floating_base.get_coordinates(2).getName());
-    jointi.base_forward = model_info.ExtFunIO.coordi.(crd_tx);
+    jointi.base_vertical = model_info.ExtFunIO.coordi.(crd_ty);
     jointi.floating_base(end+1) = model_info.ExtFunIO.coordi.(crd_ty);
 
 end

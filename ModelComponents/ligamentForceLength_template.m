@@ -18,7 +18,7 @@ function [force] = ligamentForceLength_template(cross_section_area,slack_length,
 %   - slack_length -
 %   * ligament length at zero force, in m
 %
-%   - PF_length -
+%   - lig_length -
 %   * ligament length, in m
 %
 %

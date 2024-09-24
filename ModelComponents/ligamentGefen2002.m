@@ -8,10 +8,11 @@ function [force] = ligamentGefen2002(cross_section_area,slack_length,lig_length,
 % 
 %   We approximated the polynomial stress-strain curve with an exponential
 %   expression, to prevent a drop in force when extrapolating. See
-%   supplementary material of L. D’Hondt, F. D. Groote, and M. Afschrift, 
-%   “A dynamic foot model for predictive simulations of gait reveals causal 
-%   relations between foot structure and whole body mechanics.” bioRxiv, 
-%   p. 2023.03.22.533790, Mar. 24, 2023. doi: 10.1101/2023.03.22.533790.
+%   supplementary material of D’Hondt, L., De Groote, F., & Afschrift, M. 
+%   2024 A dynamic foot model for predictive simulations of human gait 
+%   reveals causal relations between foot structure and whole-body mechanics. 
+%   PLOS Computational Biology, 20(6), e1012219. 
+%   https://doi.org/10.1371/journal.pcbi.1012219.
 %
 % 
 % INPUT:
