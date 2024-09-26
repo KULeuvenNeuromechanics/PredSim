@@ -607,7 +607,7 @@ f_coll_map = f_coll.map(N,S.solver.parallel_mode,S.solver.N_threads);
 % evaluate function with opti variables
 coll_input_vars_eval = {tf,a(:,1:end-1), a_col, FTtilde(:,1:end-1), FTtilde_col,...
     Qs(:,1:end-1), Qs_col, Qdots(:,1:end-1), Qdots_col, vA, dFTtilde_col, A_col,...
-     M_ort_coord_opti, M_ort_body_opt};
+     M_ort_coord_opti, M_ort_body_opti};
 if nq.torqAct > 0
     coll_input_vars_eval = [coll_input_vars_eval, {a_a(:,1:end-1), a_a_col, e_a}];
 end
