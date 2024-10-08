@@ -248,7 +248,7 @@ Quickly navigate to:
 	- boolean that indicates if muscle activations are controlled by synergies. Default is *0* (no synergies implemented).
 	- When synergies are implemented, different variables need to be defined:
 	- **S.subject.NSyn_r**: number of synergies for the right leg. This value needs to be defined.
-	- **S.subject.NSyn_l**: number of synergies for the left leg. Default is equal to S.subject.NSyn_r. When simulating symmetric gait (i.e. S.misc.gaitmotion_type = 'FullGaitCycle'), this is also set equal to S.subject.NSyn_r.
+	- **S.subject.NSyn_l**: number of synergies for the left leg. Default is equal to S.subject.NSyn_r. When simulating symmetric gait (i.e. S.misc.gaitmotion_type = 'HalfGaitCycle'), this is also set equal to S.subject.NSyn_r.
 	- **S.subject.SynH_guess**: . Default is *0.1* [double]
 	- **S.subject.SynW_guess**: . Default is *0.2* [double]
 	- **S.subject.TrackSynW**: boolean that indicates if synergy weights are tracked. Default is *0* (no weights tracking).
