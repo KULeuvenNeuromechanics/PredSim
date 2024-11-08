@@ -78,7 +78,7 @@ See the [overview of settings](../README.md#Required-Settings) for more informat
 
 
 
-<img src="./Hill-type%20muscle%20model.svg" width="400" height="auto">
+<img src="./FiguresForDocumentation/Hill-type%20muscle%20model.svg" width="400" height="auto">
 
 Hill-type muscle
 
