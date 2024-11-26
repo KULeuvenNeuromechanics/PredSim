@@ -226,7 +226,7 @@ elseif strcmp(fl_b,'PlanarJoint')
 
     % translation along y
     crd_ty = char(floating_base.get_coordinates(2).getName());
-    jointi.base_forward = model_info.ExtFunIO.coordi.(crd_tx);
+    jointi.base_vertical = model_info.ExtFunIO.coordi.(crd_ty);
     jointi.floating_base(end+1) = model_info.ExtFunIO.coordi.(crd_ty);
 
 end
@@ -343,20 +343,62 @@ symmetry = symQs;
 end
 %%
 function [joints_chain, coords_chain] = getKinematicChain(joint_table,starting_joint)
+% --------------------------------------------------------------------------
+% getKinematicChain
+%   Get the names of the joints and coordinates that belong to the
+%   kinematic chain starting at a given joint.
+% 
+%
+%   See also identify_kinematic_chains
+%
+% INPUT:
+%   - joint_table -
+%   * Table with a row for each joint and columns:
+%       - joint: name of the joint
+%       - child: name of the body that has the child frame of the joint
+%       - parent: name of the body that has the paret frame of the joint
+%       - coordinates: cell array with names of all coordinates of the joint
+% 
+%   - starting_joint -
+%   * Name of the joint that acts as the start of the kinematic chain.
+%
+%
+% OUTPUT:
+%   - joints_chain -
+%   * Cell array with names of the joints of the kinematic chain.
+%
+%   - coords_chain -
+%   * Cell array with names of the coordinates of the kinematic chain.
+% 
+% Original author: Lars D'Hondt
+% Original date: May/2024
+% --------------------------------------------------------------------------
+
     joints_chain = [];
     coords_chain = [];
     has_next_joint = true;
-    next_joint = {starting_joint};
-    if ~contains(joint_table.joint,next_joint)
+    next_joints_array = {starting_joint};
+    if ~contains(joint_table.joint,next_joints_array)
         return
     end
     while has_next_joint
-        joints_chain{end+1,1} = next_joint{1};
+        % take joint to analyse from FIFO array
+        next_joint = next_joints_array{1};
+        % add joint to kinematic chain
+        joints_chain{end+1,1} = next_joint;
+        % add coordinates to kinematic chain
         coords_i = joint_table.coordinates(strcmp(joint_table.joint,next_joint));
         coords_chain = [coords_chain(:); coords_i{:}];
+        % get the child frame of this joint
         next_frame = joint_table.child(strcmp(joint_table.joint,next_joint));
-        next_joint = joint_table.joint(strcmp(joint_table.parent,next_frame));
-        if isempty(next_joint)
+        % get joints that have this frame as their parent frame and add
+        % them to FIFO array
+        next_joint_i = joint_table.joint(strcmp(joint_table.parent,next_frame));
+        next_joints_array = [next_joints_array(:); next_joint_i(:)];
+        % remove 1st joint from array, since that one is done
+        next_joints_array = next_joints_array(2:end);
+        % set stop criterion if there ar no more joints to analyse
+        if isempty(next_joints_array)
             has_next_joint = false;
         end
     end

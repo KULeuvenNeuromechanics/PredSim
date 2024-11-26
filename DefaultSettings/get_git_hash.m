@@ -1,4 +1,4 @@
-function [local_hash, branch_name, remote_hash] = get_git_hash
+function [local_hash, branch_name, remote_hash] = get_git_hash(pathRepo)
 % --------------------------------------------------------------------------
 %get_git_hash 
 %   Gets the hash of the current github code used. The git hash is used to
@@ -6,7 +6,9 @@ function [local_hash, branch_name, remote_hash] = get_git_hash
 %   version's code on GitHub by pasting the hash at 'commit-hash':
 %   https://github.com/KULeuvenNeuromechanics/PredSim/tree/commit-hash
 % 
-% INPUT: none
+% INPUT:
+%   -pathRepo-
+%   * path to the repository
 % 
 % OUTPUT:
 %   -local_hash-
@@ -24,6 +26,11 @@ function [local_hash, branch_name, remote_hash] = get_git_hash
 % Last edit by: Bram Van Den Bosch
 % Last edit date: 26/05/2023
 % --------------------------------------------------------------------------
+
+% save current working directory
+pathInitDir = pwd;
+% move to PredSim
+cd(pathRepo)
 
 % get hash of the local instance
 command = ['git rev-parse HEAD'];
@@ -49,5 +56,8 @@ if status == 0
         warning(['There is a more recent version of this branch on the remote: https://github.com/KULeuvenNeuromechanics/PredSim/tree/' remote_hash]);
     end
 end
+
+% return to initial directory
+cd(pathInitDir)
 
 end

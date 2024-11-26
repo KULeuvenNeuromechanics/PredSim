@@ -21,8 +21,8 @@ function [R] = PostProcess_spatio_temporal(model_info,f_casadi,R)
 % Original author: Lars D'Hondt
 % Original date: 19/May/2022
 %
-% Last edit by: 
-% Last edit date: 
+% Last edit by: Bram Van Den Bosch
+% Last edit date: 23/Sept/2024
 % --------------------------------------------------------------------------
 
 
@@ -33,9 +33,6 @@ if isfield(f_casadi,'f_getStepLength')
         R.kinematics.Qs_rad(end,:));
     R.spatiotemp.step_length_r = full(step_length_r);
     R.spatiotemp.step_length_l = full(step_length_l);
-else
-    R.spatiotemp.step_length_r = [];
-    R.spatiotemp.step_length_l = [];
 end
 
 % percentage stance and swing phase
@@ -54,9 +51,6 @@ R.spatiotemp.stride_freq = 1/R.time.mesh_GC(end);
 R.spatiotemp.step_width_COP = abs(mean(R.ground_reaction.COP_r(R.ground_reaction.idx_stance_r,3)) ...
     - mean(R.ground_reaction.COP_l(R.ground_reaction.idx_stance_l,3)));
 
-% distance traveled
-R.spatiotemp.dist_trav = R.kinematics.Qs(end,model_info.ExtFunIO.jointi.base_forward) ...
-    - R.kinematics.Qs(1,model_info.ExtFunIO.jointi.base_forward);
 
 
 

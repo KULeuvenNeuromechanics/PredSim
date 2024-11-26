@@ -20,8 +20,8 @@ function [R] = PostProcess_write_motion_file(model_info,f_casadi,R)
 % Original author: Lars D'Hondt
 % Original date: 12/May/2022
 %
-% Last edit by: 
-% Last edit date: 
+% Last edit by: Bram Van Den Bosch
+% Last edit date: 23/Sept/2024
 % --------------------------------------------------------------------------
 
 % Two gait cycles
@@ -31,7 +31,7 @@ q_opt_GUI_GC_1 = [R.kinematics.Qs];
 q_opt_GUI_GC_2 = q_opt_GUI_GC_1;
 q_opt_GUI_GC_2(:,model_info.ExtFunIO.jointi.base_forward) =...
     q_opt_GUI_GC_2(:,model_info.ExtFunIO.jointi.base_forward) +...
-    q_opt_GUI_GC_1(end,model_info.ExtFunIO.jointi.base_forward);
+    R.spatiotemp.dist_trav;
 JointAngle.labels = [{'time'},model_info.ExtFunIO.coord_names.all(:)'];
 
 q_opt_GUI_GC = [t_mesh',[q_opt_GUI_GC_1;q_opt_GUI_GC_2]];
@@ -47,6 +47,7 @@ for i = 1:model_info.muscle_info.NMuscle
         [model_info.muscle_info.muscle_names{i},'/activation'];
 end
 JointAngleMuscleAct.inDeg = 'yes';
-filenameJointAngles = fullfile(R.S.subject.save_folder,[R.S.post_process.result_filename '.mot']);
+filenameJointAngles = fullfile(R.S.misc.save_folder,...
+    [R.S.misc.result_filename '.mot']);
 write_motionFile_v40(JointAngleMuscleAct, filenameJointAngles);
 
