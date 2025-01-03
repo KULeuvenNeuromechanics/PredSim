@@ -14,7 +14,8 @@ If you want to reproduce specific published results, see [Replicate results](#re
 If you use PredSim for research, please cite 
 > Falisse A, Serrancoli G, Dembia C, Gillis J, Jonkers J, De Groote F. 2019 Rapid predictive simulations with complex musculoskeletal models suggest that diverse healthy and pathological human gaits can emerge from similar control strategies. Journal of the Royal Society Interface 16: 20190402. http://dx.doi.org/10.1098/rsif.2019.0402.
 
-> Lars D’Hondt, Antoine Falisse, Dhruv Gupta, Bram Van Den Bosch, Tom J. W. Buurke, Míriam Febrer-Nafría, Ines Vandekerckhove, Maarten Afschrift, and Friedl De Groote, PredSim: A Framework for Rapid Predictive Simulations of Locomotion, 10th IEEE RAS/EMBS International Conference for Biomedical Robotics and Biomechatronics (BioRob), Heidelberg, Germany, 2024
+> Lars D’Hondt, Antoine Falisse, Dhruv Gupta, Bram Van Den Bosch, Tom J. W. Buurke, Míriam Febrer-Nafría, Ines Vandekerckhove, Maarten Afschrift, and Friedl De Groote, PredSim: A Framework for Rapid Predictive Simulations of Locomotion, 10th IEEE RAS/EMBS International Conference for Biomedical Robotics and Biomechatronics (BioRob), Heidelberg, Germany, 2024, pp. 1208-1213, [doi: 10.1109/BioRob60516.2024.10719735](http://dx.doi.org/10.1109/BioRob60516.2024.10719735).
+
 
 This repository is a work in progress.
 1. ⚠️ **Troubleshooting Issues**:
