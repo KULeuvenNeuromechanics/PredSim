@@ -21,9 +21,6 @@ function [] = add_actuators(osim_path,torq_act)
 %
 % Original author: Lars D'Hondt
 % Original date: 27/May/2022
-%
-% Last edit by: 
-% Last edit date: 
 % --------------------------------------------------------------------------
 
 
@@ -65,7 +62,4 @@ model.print(osim_path);
 
 
 
-
-
-
-
+end % end of function
