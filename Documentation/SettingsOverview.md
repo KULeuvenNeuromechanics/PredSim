@@ -287,8 +287,8 @@ These settings are passed to OpenSimAD.
     If you get an error about not finding a compiler, use this setting to specify your compiler:
        - Visual studio 2015: 'Visual Studio 14 2015 Win64'
        - Visual studio 2017: 'Visual Studio 15 2017 Win64'
-       - Visual studio 2017: 'Visual Studio 16 2019'
-       - Visual studio 2017: 'Visual Studio 17 2022'
+       - Visual studio 2019: 'Visual Studio 16 2019'
+       - Visual studio 2022: 'Visual Studio 17 2022'
 - **S.OpenSimADOptions.verbose_mode**:
     - print outputs from windows command prompt to matlab command window (and log file). Default is *false* [bool].
 - **S.OpenSimADOptions.verify_ID**:
