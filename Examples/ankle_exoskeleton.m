@@ -57,7 +57,7 @@ osim_path = fullfile(pathRepo,'Subjects',S.subject.name,[S.subject.name '.osim']
 exo1.function_name = 'ankleExoZhang2017';
 
 % set path to downloaded function - CHANGE THIS
-exo1.dependencies_path = 'c:/path/to/oaal5054_zhang_sm_data_s2';
+exo1.dependencies_path = 'C:\Users\mat950\Documents\Software\Control\Caplex_ControlSoftware\controllers\MATLAB\Zhang2017';
 
 % set parameters of assistance profile
 exo1.peak_torque = 20; % [Nm]
