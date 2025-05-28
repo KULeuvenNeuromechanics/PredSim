@@ -12,8 +12,8 @@ function [] = completeModelScaling(osim_scaleTool, osim_generic, osim_scaled,...
 %   | muscle max isometric force | mass^(2/3)    | osim_scaleTool       |
 %   | ligament max force         | mass^(2/3)    | osim_scaleTool       |
 %   | actuator max torque        | mass*height   | osim_generic         |
-%   | contact sphere radius      | foot          | osim_generic         |
-%   | contact sphere position    | foot          | osim_generic         |
+%   | contact sphere radius      | foot size     | osim_generic         |
+%   | contact sphere position    | foot size     | osim_generic         |
 %   | contact sphere stiffness   | mass/height^2 | osim_generic         |
 %   | contact sphere dissipation | height        | osim_generic         |
 % 
