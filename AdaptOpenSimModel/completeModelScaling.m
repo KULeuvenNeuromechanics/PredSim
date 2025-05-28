@@ -14,7 +14,7 @@ function [] = completeModelScaling(osim_scaleTool, osim_generic, osim_scaled,...
 %   | actuator max torque        | mass*height   | osim_generic         |
 %   | contact sphere radius      | foot          | osim_generic         |
 %   | contact sphere position    | foot          | osim_generic         |
-%   | contact sphere stiffness   | mass*height^2 | osim_generic         |
+%   | contact sphere stiffness   | mass/height^2 | osim_generic         |
 %   | contact sphere dissipation | height        | osim_generic         |
 % 
 %
@@ -91,7 +91,7 @@ sf_mass = mass_subject/mass_generic;
 sf_length = height_subject/height_generic;
 
 sf_moment = sf_mass * sf_length;
-sf_contact_stiffness = sf_mass*sf_length^2;
+sf_contact_stiffness = sf_mass/sf_length^2;
 sf_contact_dissipation = sf_length;
 
 scale_factors.mass = sf_mass;
