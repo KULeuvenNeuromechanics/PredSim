@@ -92,7 +92,7 @@ sf_length = height_subject/height_generic;
 
 sf_moment = sf_mass * sf_length;
 sf_contact_stiffness = sf_mass/sf_length^2;
-sf_contact_dissipation = sf_length;
+sf_contact_dissipation = 1/sf_length;
 
 scale_factors.mass = sf_mass;
 scale_factors.length = sf_length;
