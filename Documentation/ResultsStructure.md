@@ -84,7 +84,7 @@ Optional, if muscle synergies are implemented:
 | SynW_r | synergy weights, right muscles | synergies_right x muscles_right | [-] |
 | SynW_l | synergy weights, left muscles | synergies_left x muscles_left | [-] |
 
-<img src="./Hill-type%20muscle%20model.svg" width="400" height="auto">
+<img src="./FiguresForDocumentation/Hill-type%20muscle%20model.svg" width="400" height="auto">
 
 Hill-type muscle
 
