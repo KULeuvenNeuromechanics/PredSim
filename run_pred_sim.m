@@ -23,8 +23,8 @@ function [varargout] = run_pred_sim(S,osim_path)
 % Last edit date: 
 % --------------------------------------------------------------------------
 
-addpath([S.misc.main_path '\VariousFunctions'])
-addpath([S.misc.main_path '\WearableDevices'])
+addpath(fullfile(S.misc.main_path, 'VariousFunctions'))
+addpath(fullfile(S.misc.main_path, 'WearableDevices'))
 
 % Settings that are not specified get their default value
 S = getDefaultSettings(S,osim_path);
@@ -105,7 +105,7 @@ disp(' ')
 disp(' ')
 
 %% PreProcessing
-addpath([S.misc.main_path '\PreProcessing'])
+addpath(fullfile(S.misc.main_path, 'PreProcessing'))
 disp('Start PreProcessing...')
 disp(' ')
 t0 = tic;
@@ -116,8 +116,8 @@ disp(' ')
 disp(' ')
 
 %% Creating casadi functions
-addpath([S.misc.main_path '\CasadiFunctions'])
-addpath([S.misc.main_path '\ModelComponents'])
+addpath(fullfile(S.misc.main_path, 'CasadiFunctions'))
+addpath(fullfile(S.misc.main_path, 'ModelComponents'))
 
 disp('Start creating CasADi functions...')
 disp(' ')
@@ -129,7 +129,7 @@ disp(' ')
 disp(' ')
 
 %% Formulating OCP
-addpath([S.misc.main_path '\OCP'])
+addpath(fullfile(S.misc.main_path, 'OCP'))
 if ~S.post_process.rerun
     OCP_formulation(S,model_info,f_casadi);
     disp(' ')
@@ -137,7 +137,7 @@ if ~S.post_process.rerun
 end
 
 %% PostProcessing
-addpath([S.misc.main_path '\PostProcessing'])
+addpath(fullfile(S.misc.main_path, 'PostProcessing'))
 disp('Start PostProcessing...')
 disp(' ')
 t0 = tic;
