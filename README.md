@@ -70,6 +70,12 @@ an overview of upcoming runs of these courses, see the [VSC Training](https://ww
 calendar. Extensive documentation on how to use the HPC clusters in general is
 available at https://docs.vscentrum.be/
 
+> **_NOTE:_** In order to use MATLAB on the KU Leuven HPC clusters, you need
+to be a member of the `lli_matlab` group because it is licensed software. After
+creating your VSC account, you can request membership of this group by visiting
+https://account.vscentrum.be/django/group/new and typing `lli_matlab` in the
+text box of the "Join group" paragraph.
+
 In order to get a copy of the PredSim repository on the cluster, the following
 commands can be used:
 
