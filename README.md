@@ -93,8 +93,10 @@ present.
 
 Typically simulations are run in batch mode on the cluster, meaning you prepare
 a so-called job script including all commands that need to be executed to run
-a simulation. Below is an example of such a job script; for debugging or test
-runs you can also execute the commands from a terminal on the cluster.
+a simulation. Below is an example of such a job script, which is also included
+as the `run_simulation.slurm` file in the repository. For debugging or test
+runs you can also execute the commands from the job script in a terminal on
+the cluster.
 
 ```bash
 #!/bin/bash -l
@@ -124,9 +126,14 @@ matlab -nodisplay -nosplash -singleCompThread -r "main"
 
 Replace the `<credit_account>` entry with your own (you can check to which
 credit accounts you have access by running the `sam-balance` command) and
-submit the job script from your PredSim directory with `sbatch job.slurm`.
+submit the job script from your PredSim directory with `sbatch run_simulation.slurm`.
 To see the status of your job, execute `squeue -M ALL`, terminal output will
 be written to the job output file (by default looking like `slurm-<jobid>.out`.
+
+> [!NOTE]
+> If you upload files from a Windows machine to the Linux cluster, you might
+> receive errors saying your file contains DOS line breaks instead of UNIX
+> line breaks. You can rectify this by running `dos2unix <fn>` on the cluster.
 
 ## How to use the code
 
