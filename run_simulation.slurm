@@ -17,7 +17,14 @@ module load CasADi/3.7.0-gfbf-2024a
 
 # See https://simtk.org/plugins/phpBB/viewtopicPhpbb.php?f=91&t=7165&p=36596
 export LD_PRELOAD="${EBROOTGCCCORE}/lib64/libstdc++.so.6"
+
 # Update the Java library path in order enable using the OpenSim Java bindings
 export _JAVA_OPTIONS="${_JAVA_OPTIONS} -Djava.library.path=$EBROOTOPENSIM/sdk/lib"
+
+# Let MATLAB pick up OpenBLAS from a module
+export BLAS_VERSION=${EBROOTOPENBLAS}/lib64/libopenblas.so
+export LAPACK_VERSION=${EBROOTOPENBLAS}/lib64/libopenblas.so
+
 # TODO Figure out if it useful to use more than a single thread
+export OMP_NUM_THREADS=1
 matlab -nodisplay -nosplash -singleCompThread -r "main"
