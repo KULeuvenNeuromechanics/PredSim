@@ -62,7 +62,10 @@ elseif S.post_process.rerun
     R.S = S;
 
 elseif isempty(S.misc.result_filename)
-    if strcmp(S.misc.savename,'structured')
+    if isenv('SLURM_JOB_ID')
+        % use job_id from slurm
+        S.misc.result_filename = [S.subject.name '_' getenv('SLURM_JOB_ID')];
+    elseif strcmp(S.misc.savename,'structured')
         % use a structured savename
         if S.solver.run_as_batch_job
             result_filename = [S.subject.name '_job' num2str(S.solver.job_id)];
