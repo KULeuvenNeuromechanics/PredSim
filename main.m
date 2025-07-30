@@ -7,6 +7,15 @@
 clear
 close all
 clc
+
+% Check BLAS/LAPACK version; add functions from LinearAlgebra subdirectory
+% to path in case Intel is *not* used
+blas_version = version('-blas')
+lapack_version = version('-lapack')
+if ~startsWith(lapack_version, 'Intel')
+    addpath(fullfile(getenv('PWD'), 'LinearAlgebra'))
+end
+
 % path to the repository folder
 [pathRepo,~,~] = fileparts(mfilename('fullpath'));
 % path to the folder that contains the repository folder
