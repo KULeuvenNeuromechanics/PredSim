@@ -1,5 +1,5 @@
 
-*Use the table of contensts to easily navigate this README. Click on the three lines next to README.md just above this sentence.*
+*Use the table of contents to easily navigate this README. Click on the three lines next to README.md just above this sentence.*
 
 Predictive Simulations of Locomotion
 ============
@@ -88,6 +88,11 @@ Results of previous publications can be replicated by specifying one of the inpu
 - `'Falisse_et_al_2022'`, see [reference 3](#references)
 - `'DHondt_et_al_2024_3seg'`, see [reference 4](#references)
 - `'DHondt_et_al_2024_4seg'`, see [reference 4](#references)
+
+## Publications
+
+For an overview of publications using PredSim, please check out the [publication list](./Documentation/PUBLICATIONS.md). 
+Add your own references to highlight your work.
 
 ## References
 
