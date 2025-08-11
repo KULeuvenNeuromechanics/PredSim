@@ -24,8 +24,8 @@ See the [overview of settings](../README.md#Required-Settings) for more informat
 ### R.objective
 | Field | Description | Dimension | Unit |
 |------ | ----------- | ---- | ---- |
-| absoluteValues | values of the objective function terms, evaluated at the solution | 1 x 8 | [a.u.] |
-| relativeValues | relative contribution of the objective function terms | 1 x 8 | [%] |
+| absoluteValues | values of the objective function terms, evaluated at the solution | 1 x 10 | [a.u.] |
+| relativeValues | relative contribution of the objective function terms | 1 x 10 | [%] |
 | labels | names of the objective function terms | 1 x 8 | [text] |
 
 ### R.time
@@ -40,7 +40,7 @@ See the [overview of settings](../README.md#Required-Settings) for more informat
 |------ | ----------- | ---- | ---- |
 | coordinates | names of the coordinates, in the order that they are stored in the matrices with results | 1 x coordinates | [text] |
 | muscles | names of the muscles, in the order that they are stored in the matrices with results | 1 x muscles | [text] |
-| objective | names of the objective terms, in the order that they are stored in the matrices with results | 1 x 8 | [text] |
+| objective | names of the objective terms, in the order that they are stored in the matrices with results | 1 x 10 | [text] |
 | GRF | names of the ground reaction forces directions, in the order that they are stored in the matrices with results | 1 x 3 | [text] |
 | ligaments | names of the ligaments, in the order that they are stored in the matrices with results | 1 x ligaments | [text] |
 
@@ -76,7 +76,13 @@ See the [overview of settings](../README.md#Required-Settings) for more informat
 | lT | tendon length | mesh x muscles | [m] |
 | vT | tendon lengthening velocity | mesh x muscles | [m/s] |
 
-
+Optional, if muscle synergies are implemented:
+| Field | Description | Dimension | Unit |
+|------ | ----------- | ---- | ---- |
+| SynH_r | synergy activation, right muscles | mesh x synergies_right | [-] |
+| SynH_l | synergy activation, left muscles | mesh x synergies_left | [-] |
+| SynW_r | synergy weights, right muscles | synergies_right x muscles_right | [-] |
+| SynW_l | synergy weights, left muscles | synergies_left x muscles_left | [-] |
 
 <img src="./Hill-type%20muscle%20model.svg" width="400" height="auto">
 

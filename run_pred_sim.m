@@ -82,6 +82,10 @@ elseif isempty(S.misc.result_filename)
     elseif strcmp(S.misc.savename,'datetime')
         % use system date and time
         S.misc.result_filename = [S.subject.name '_' datestr(datetime,30)];
+    
+    elseif strcmp(S.misc.savename,'datetime_job')
+        % use system date and time + job number to prevent creation of duplicates
+        S.misc.result_filename = [S.subject.name '_' datestr(datetime,30),'_job', num2str(S.solver.job_id)];
         
     end   
 end

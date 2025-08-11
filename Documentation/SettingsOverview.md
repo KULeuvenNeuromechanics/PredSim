@@ -151,7 +151,7 @@ Quickly navigate to:
 - **S.misc.result_filename**: 
     - File name for results. Used for the name of .mat file that saves the results, diary of the OCP, and name of the .mot file of the output motion. When rerunning post-processing of an existing result, giving this file name is required. Default value is empty.
 - **S.misc.savename**: 
-    - Type of savename to use if S.misc.result_filename is empty. Default is *structured* [char]. This sets S.misc.result_filename = <S.subject.name>_v\<n>. Where <S.subject.name> is defined in S.subject.name. n = 1 if <S.subject.name>_v1.mat does not exist. n is increased until n is found such that <S.subject.name>_v\<n>.mat does not exist. To change this structuring process, change its implementation in [run_pred_sim.m file](../run_pred_sim.m). An alternative option is *datetime* [char], this uses <S.subject.name>\_\<yyyymmddTHHMMSS>. Where \<yyyymmddTHHMMSS> is the system date and time when creating the savename.
+    - Type of savename to use if S.misc.result_filename is empty. Default is *structured* [char]. This sets S.misc.result_filename = <S.subject.name>_v\<n>. Where <S.subject.name> is defined in S.subject.name. n = 1 if <S.subject.name>_v1.mat does not exist. n is increased until n is found such that <S.subject.name>_v\<n>.mat does not exist. To change this structuring process, change its implementation in [run_pred_sim.m file](../run_pred_sim.m). An alternative option is *datetime* [char], this uses <S.subject.name>\_\<yyyymmddTHHMMSS>. Where \<yyyymmddTHHMMSS> is the system date and time when creating the savename. When running simulations in batch, sometimes non-unique *datetime* savenames are created with overwritten files as a result. To prevent this from happening, you can use *datetime_job* [char] with simulations in batch.
 
 
 #### S.post_process
@@ -248,7 +248,7 @@ Quickly navigate to:
 	- boolean that indicates if muscle activations are controlled by synergies. Default is *0* (no synergies implemented).
 	- When synergies are implemented, different variables need to be defined:
 	- **S.subject.NSyn_r**: number of synergies for the right leg. This value needs to be defined.
-	- **S.subject.NSyn_l**: number of synergies for the left leg. Default is equal to S.subject.NSyn_r. When simulating symmetric gait (i.e. S.misc.gaitmotion_type = 'FullGaitCycle'), this is also set equal to S.subject.NSyn_r.
+	- **S.subject.NSyn_l**: number of synergies for the left leg. Default is equal to S.subject.NSyn_r. When simulating symmetric gait (i.e. S.misc.gaitmotion_type = 'HalfGaitCycle'), this is also set equal to S.subject.NSyn_r.
 	- **S.subject.SynH_guess**: . Default is *0.1* [double]
 	- **S.subject.SynW_guess**: . Default is *0.2* [double]
 	- **S.subject.TrackSynW**: boolean that indicates if synergy weights are tracked. Default is *0* (no weights tracking).
@@ -287,8 +287,8 @@ These settings are passed to OpenSimAD.
     If you get an error about not finding a compiler, use this setting to specify your compiler:
        - Visual studio 2015: 'Visual Studio 14 2015 Win64'
        - Visual studio 2017: 'Visual Studio 15 2017 Win64'
-       - Visual studio 2017: 'Visual Studio 16 2019'
-       - Visual studio 2017: 'Visual Studio 17 2022'
+       - Visual studio 2019: 'Visual Studio 16 2019'
+       - Visual studio 2022: 'Visual Studio 17 2022'
 - **S.OpenSimADOptions.verbose_mode**:
     - print outputs from windows command prompt to matlab command window (and log file). Default is *false* [bool].
 - **S.OpenSimADOptions.verify_ID**:
