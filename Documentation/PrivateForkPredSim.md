@@ -1,6 +1,8 @@
 The [PredSim repository](https://github.com/KULeuvenNeuromechanics/PredSim) is public and Github does not allow the creation of private forks for public repositories.
 If you want to have a private version that can still fetch updates from the public repository, you can use this workaround.
 
+## Creating the private repository
+
 Workflow below is adapted from [here](https://gist.github.com/0xjac/85097472043b697ab57ba1b1c7530274).
 
 The correct way of creating a private frok by duplicating the repo is documented [here](https://help.github.com/articles/duplicating-a-repository/).
@@ -34,8 +36,8 @@ For this repository the Git Bash commands are:
     cd C:/GBW_MyPrograms
     git clone https://github.com/<your_username>/PredSim_private.git
     ```
-   
- 6. If you want, add the original repo as remote to fetch (potential) future changes.
+
+ 6. If you want, add the original repo as remote to fetch (potential) future changes. 
     ```bash
     cd PredSim_private
     git remote add upstream https://github.com/KULeuvenNeuromechanics/PredSim.git
@@ -47,15 +49,7 @@ For this repository the Git Bash commands are:
     upstream	https://github.com/KULeuvenNeuromechanics/PredSim_private.git (fetch)
     upstream	https://github.com/KULeuvenNeuromechanics/PredSim_private.git (push)
     ```
-    > When you push, do so on `origin` with `git push origin`.
-   
-    > When you want to pull changes from `upstream` you can just fetch the remote and merge on top of your work.
-    ```bash
-    git fetch upstream
-	git checkout local_branch_to_update
-    git merge upstream/upstream_branch_to_update_from
-    ```
-    And solve the conflicts if any. You can also opt to do rebase instead of a merge, but this rewrites the git history. For more details on the difference between merge and rebase, see e.g.  https://stackoverflow.com/questions/16666089/whats-the-difference-between-Git-merge-and-git-rebase
+   This creates the diagonal link in the figure below.
 
  7. If you use GitHub Desktop, you have to add PredSim_private to the list of repositories:
    - Current repository
@@ -66,4 +60,124 @@ For this repository the Git Bash commands are:
    
  8. Your fork might have a different default branch. Set `master` or your own branch as default.
 
- 
+
+After completing these steps, you have created 2 linked PredSim repositories: 
+- private remote (orange, top right), to which you can invite others to collaborate
+- private local (green, bottom right)
+The public local repository can be obtained by simply cloning the [public remote repository](https://github.com/KULeuvenNeuromechanics/PredSim).
+
+<p align="center">
+<img src="./FiguresForDocumentation/PredSim_private-public_link.jpg" width="500" height="auto" label="fig1">
+</p>
+
+
+## Updating PredSim_private based on the public PredSim repository
+
+
+<p align="center">
+<img src="./FiguresForDocumentation/update_private.JPG" width="500" height="auto" title="fig2">
+</p>
+
+### Automated
+
+In File Explorer, go to the directory with the private PredSim code, e.g.  `C:\GBW_MyPrograms\PredSim_private`
+In `.\VariousFunctions`, run [update_from_public.bat](../VariousFunctions/update_from_public.bat) (double-click in File Explorer).
+
+### Manual
+
+0. In File Explorer, go to the directory with the private PredSim code, e.g. `C:\GBW_MyPrograms\PredSim_private`
+
+   Right-click and choose *Git Bash here*. You might need to right-click > more > Git Bash here on windows 11.
+This will open the git command window.
+
+In this command window, run the following commands:
+
+1. Download the changes made to the online public PredSim repository (= *upstream*) to your computer.
+
+    `git fetch upstream`
+2. In the private repository on your computer, make *master_public* the active branch.
+
+    `git checkout master_public`
+
+3. Copy the master branch of the public PredSim repository on your computer into the branch selected in step 4.
+
+    `git merge upstream/master -m "update from master"`
+
+    In some cases it is not necessary to include a commit message, and a shorter command can be used:
+
+    `git merge upstream/master`
+
+4. Update the branch *master_public* in the online repository with the local changes from *master_public*
+
+    `git push origin`
+
+5. Create a pull request from *master_public* into *master* (via github desktop, or the github website)
+
+6. After the pull request has been approved and merged, use *fetch origin* and *pull origin* to get your local repository up to date
+
+
+
+
+## Contribute from PredSim_private to the public PredSim repository
+
+If you have developer access to the public PredSim repository, creating a pull request with code from a private repository is [relatively easy](#predsim-dev). Otherwise, [you need a few extra steps](#general-contributer).
+
+### PredSim dev
+
+
+<p align="center">
+<img src="./FiguresForDocumentation/push_to_public.JPG" width="500" height="auto" title="fig3">
+</p>
+
+
+0. In File Explorer, go to the directory with the private PredSim code, e.g. `C:\GBW_MyPrograms\PredSim_private`
+
+   Right-click and choose *Git Bash here*. You might need to right-click > more > Git Bash here on windows 11.
+This will open the git command window.
+
+1. Copy the branch with code you want to contribute from the private to the public PredSim repository.
+
+   `git push upstream amazing_new_code`
+
+   If you want your public branch to have a different name, do this instead:
+
+      1.1. Create a new branch *amazing_new_code* in the public PredSim repository
+
+      1.2. `git push upstream tmp_3-final2:amazing_new_code`
+
+
+2. Create a pull request from *amazing_new_code* into *master* (via github desktop, or the github website)
+
+### General contributer
+
+<p align="center">
+<img src="./FiguresForDocumentation/push_to_public_fork.JPG" width="500" height="auto" title="fig4">
+</p>
+
+If you already have a (public) fork of PredSim, skip steps 1 and 2.
+
+0. In File Explorer, go to the directory with the private PredSim code, e.g. `C:\GBW_MyPrograms\PredSim_private`
+
+   Right-click and choose *Git Bash here*. You might need to right-click > more > Git Bash here on windows 11.
+This will open the git command window.
+
+1. [Fork the PredSim repository](https://github.com/KULeuvenNeuromechanics/PredSim/fork)
+
+2. In your local private repository: add the new fork as a remote
+
+   `git remote add fork https://github.com/<your_username>/PredSim.git`
+
+3. Copy the branch with code you want to contribute from the private repository to your public fork.
+
+   `git push fork amazing_new_code`
+
+   If you want your public branch to have a different name, do this instead:
+
+      3.1. Create a new branch *amazing_new_code* in your public fork
+
+      3.2. `git push fork tmp_3-final2:amazing_new_code`
+
+4. Create a pull request from *amazing_new_code* into *master* (via github desktop, or the github website)
+
+
+
