@@ -37,7 +37,7 @@ For this repository the Git Bash commands are:
     git clone https://github.com/<your_username>/PredSim_private.git
     ```
 
- 6. If you want, add the original repo as remote to fetch (potential) future changes. 
+ 6. If you want, add the original repo as remote to fetch (potential) future changes. This creates the diagonal link in the figure below.
     ```bash
     cd PredSim_private
     git remote add upstream https://github.com/KULeuvenNeuromechanics/PredSim.git
@@ -49,7 +49,7 @@ For this repository the Git Bash commands are:
     upstream	https://github.com/KULeuvenNeuromechanics/PredSim_private.git (fetch)
     upstream	https://github.com/KULeuvenNeuromechanics/PredSim_private.git (push)
     ```
-   This creates the diagonal link in the figure below.
+   
 
  7. If you use GitHub Desktop, you have to add PredSim_private to the list of repositories:
    - Current repository
@@ -60,15 +60,16 @@ For this repository the Git Bash commands are:
    
  8. Your fork might have a different default branch. Set `master` or your own branch as default.
 
+<p align="center">
+<img src="./FiguresForDocumentation/PredSim_private-public_link.jpg" width="500" height="auto" label="fig1">
+</p>
+
 
 After completing these steps, you have created 2 linked PredSim repositories: 
 - private remote (orange, top right), to which you can invite others to collaborate
 - private local (green, bottom right)
-The public local repository can be obtained by simply cloning the [public remote repository](https://github.com/KULeuvenNeuromechanics/PredSim).
 
-<p align="center">
-<img src="./FiguresForDocumentation/PredSim_private-public_link.jpg" width="500" height="auto" label="fig1">
-</p>
+The public local repository (dark blue, bottom left) can be obtained by simply cloning the [public remote repository](https://github.com/KULeuvenNeuromechanics/PredSim).
 
 
 ## Updating PredSim_private based on the public PredSim repository
