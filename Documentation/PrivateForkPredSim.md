@@ -96,13 +96,22 @@ In this command window, run the following commands:
 1. Download the changes made to the online public PredSim repository (= *upstream*) to your computer.
 
     `git fetch upstream`
+
 2. In the private repository on your computer, make *master_public* the active branch.
 
     `git checkout master_public`
+    
+    If this branch does not yet exist, create the branch locally
 
-3. Copy the master branch of the public PredSim repository on your computer into the branch selected in step 4.
+    `git checkout -b master_public`
 
-    `git merge upstream/master -m "update from master"`
+    and add it to the online repo
+
+    `git push -u origin master_public`
+
+3. Copy the master branch of the public PredSim repository on your computer into the branch selected in step 2.
+
+    `git merge upstream/master -m "update from public master"`
 
     In some cases it is not necessary to include a commit message, and a shorter command can be used:
 
