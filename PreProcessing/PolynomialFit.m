@@ -33,7 +33,6 @@ function [MuscleInfo] = PolynomialFit(S,MuscleData,muscle_spanning_joint_info)
 %% Construct the polynomials for the moment arms and muscle length
 
 muscle_sel=[];
-
 for m_nr = 1:length(MuscleData.muscle_names)
     if strcmp(MuscleData.muscle_names{m_nr}(end-1:end), '_r')...
             || strcmp(MuscleData.muscle_names{m_nr}(end-1:end), '_l') % was _l before
@@ -65,7 +64,7 @@ for m_nr=1:length(muscle_sel)
     for dof_nr = 1:nr_dof_crossing
         dM(:,dof_nr) = MuscleData.dM(:,muscle_index,index_dof_crossing(dof_nr));
     end
-    
+
     criterion_full_filled = 0;
     order = S.misc.poly_order.lower;
     while criterion_full_filled==0
@@ -77,8 +76,28 @@ for m_nr=1:length(muscle_sel)
             diff_mat_q_all(nr_samples*(dof_nr-1)+1:nr_samples*dof_nr,:) =...
                 -squeeze(diff_mat_q(:,:,dof_nr));
         end
-        
-        coeff=[mat ; diff_mat_q_all]\[lMT; dM(:)];
+
+        lapack_version = version('-lapack');
+        if startsWith(lapack_version, 'Intel')
+            coeff=[mat ; diff_mat_q_all]\[lMT; dM(:)];
+        else
+            % When using OpenBLAS as BLAS/LAPACK libraries, the built-in mldivide
+            % leads to segmentation violations. The current workaround is to provide
+            % a custom function in the LinearAlgebra subdirectory that directly calls
+            % LAPACK, which is compiled below if not yet done.
+            Amat = [mat ; diff_mat_q_all];
+            Bvec = [lMT; dM(:)];
+            % Compile if not yet done
+            if (exist('mldivide_lapack') == 0)
+                currentFolder = pwd;
+                cd(fullfile(S.misc.main_path, 'LinearAlgebra'))
+                mex mldivide_lapack.c -lopenblas
+                cd(currentFolder)
+            end
+            coeff = mldivide_lapack(Amat, Bvec);
+            coeff = coeff(1:size(mat, 2));
+        end
+
         dM_recon = zeros(nr_samples, nr_dof_crossing);
         for dof_nr = 1:nr_dof_crossing
             dM_recon(:,dof_nr) = (-squeeze(diff_mat_q(:,:,dof_nr)))*coeff;

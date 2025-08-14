@@ -7,10 +7,29 @@
 clear
 close all
 clc
+
+% Check BLAS/LAPACK version; add functions from LinearAlgebra subdirectory
+% to path in case Intel is *not* used
+blas_version = version('-blas')
+lapack_version = version('-lapack')
+if ~startsWith(lapack_version, 'Intel')
+    addpath(fullfile(getenv('PWD'), 'LinearAlgebra'))
+end
+
 % path to the repository folder
 [pathRepo,~,~] = fileparts(mfilename('fullpath'));
 % path to the folder that contains the repository folder
 [pathRepoFolder,~,~] = fileparts(pathRepo);
+
+% if the OpenSim module is loaded, make its Java library available
+if isenv('EBROOTOPENSIM')
+    javaclasspath(fullfile(getenv('EBROOTOPENSIM'), 'sdk', 'Java', 'org-opensim-modeling.jar'));
+end
+
+% if the CasADi-MATLAB module is loaded, expose its matlab bindings
+if isenv('EBROOTCASADIMINMATLAB')
+    addpath(fullfile(getenv('EBROOTCASADIMINMATLAB'), 'matlab'))
+end
 
 %% Initialize S
 addpath(fullfile(pathRepo,'DefaultSettings'))
@@ -42,7 +61,11 @@ osim_path = fullfile(pathRepo,'Subjects',S.subject.name,[S.subject.name '.osim']
 %% Plot results
 % see .\PlotFigures\run_this_file_to_plot_figures.m for more
 
-if ~S.solver.run_as_batch_job
+% If SLURM_JOB_ID is set, this means we are inside a Slurm job context and the
+% default way to plot figures will not work. That is probably fixable, but in
+% the meantime, skip the plotting in this case.
+
+if (~S.solver.run_as_batch_job) && (~isenv('SLURM_JOB_ID'))
 
     % set path to reference result
     result_paths{1} = fullfile(pathRepo,'Tests','ReferenceResults',...

@@ -45,7 +45,7 @@ pathmain = pwd;
 % Loading external functions.
 setup.derivatives =  'AD'; % Algorithmic differentiation
 cd(S.misc.subject_path)
-F  = external('F',S.misc.external_function);
+F  = external('F', fullfile(S.misc.subject_path, S.misc.external_function));
 cd(pathmain);
 
 %% Collocation Scheme

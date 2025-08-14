@@ -2,3 +2,6 @@
 	path = opensimAD
 	url = https://github.com/KULeuvenNeuromechanics/opensimAD
 	branch = matlab_implementation
+[submodule "opensimAD_linux"]
+	path = opensimAD_linux
+	url = https://github.com/stevenvdb/opensimAD_linux
