@@ -42,7 +42,7 @@ for i=1:length(result_paths)
     load(result_paths{i},'R','model_info');
 
     if length(legend_names)<i
-        legend_names{i} = replace(R.S.post_process.result_filename,'_',' ');
+        legend_names{i} = replace(R.S.misc.result_filename,'_',' ');
     end
     
     % loop over figures
