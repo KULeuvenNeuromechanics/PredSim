@@ -712,5 +712,10 @@ if ~isfield(S.OpenSimADOptions,'verify_ID')
     S.OpenSimADOptions.verify_ID = false;
 end 
 
+%% Flow control
+
+if ~isfield(S.flow_control,'pre_processing_only')
+    S.flow_control.pre_processing_only = False;
+end
 
 end

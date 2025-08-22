@@ -128,31 +128,34 @@ disp(['...CasADi functions created. Time elapsed ' num2str(toc(t0),'%.2f') ' s']
 disp(' ')
 disp(' ')
 
-%% Formulating OCP
-addpath([S.misc.main_path '\OCP'])
-if ~S.post_process.rerun
-    OCP_formulation(S,model_info,f_casadi);
+if ~S.flow_control.pre_processing_only
+
+    %% Formulating OCP
+    addpath([S.misc.main_path '\OCP'])
+    if ~S.post_process.rerun
+        OCP_formulation(S,model_info,f_casadi);
+        disp(' ')
+        disp(' ')
+    end
+
+    %% PostProcessing
+    addpath([S.misc.main_path '\PostProcessing'])
+    disp('Start PostProcessing...')
+    disp(' ')
+    t0 = tic;
+    PostProcessing(S,model_info,f_casadi);
+    disp(' ')
+    disp(['...PostProcessing done. Time elapsed ' num2str(toc(t0),'%.2f') ' s'])
+    disp(' ')
+    disp(' ')
+
+    %% Conclude diary
+    disp(['Total time elapsed ' num2str(toc(t00),'%.2f') ' s'])
+    disp(' ')
+    disp(['Diary saved as ' Outname])
     disp(' ')
     disp(' ')
 end
-
-%% PostProcessing
-addpath([S.misc.main_path '\PostProcessing'])
-disp('Start PostProcessing...')
-disp(' ')
-t0 = tic;
-PostProcessing(S,model_info,f_casadi);
-disp(' ')
-disp(['...PostProcessing done. Time elapsed ' num2str(toc(t0),'%.2f') ' s'])
-disp(' ')
-disp(' ')
-
-%% Conclude diary
-disp(['Total time elapsed ' num2str(toc(t00),'%.2f') ' s'])
-disp(' ')
-disp(['Diary saved as ' Outname])
-disp(' ')
-disp(' ')
 diary off
 
 
