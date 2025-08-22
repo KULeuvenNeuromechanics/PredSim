@@ -56,30 +56,24 @@ fext.r_origin = [0, 0, 0]';
 
 %% Run predictive simulations
 
-F_pelvis = 0:10:100;
+% F_pelvis = 0:10:100;
+F_pelvis = 110:10:200;
+
 for i = 1:length(F_pelvis)
     fext.extForce = [F_pelvis(i), 0, 0]';
     S.orthosis.settings{1} = fext;
     [savename] = runPredSim(S, osim_path);
 end
-
-
-
-
-
 % 
-% %% plot results
-% R = load(fullfile(S.misc.save_folder,[savename '.mat']));
 % 
-% % plot results
-% result_paths{1} = fullfile(S.misc.save_folder, 'gait1018_v1.mat');
-% result_paths{2} = fullfile(S.misc.save_folder, 'gait1018_v2.mat');
-% result_paths{3} = fullfile(S.misc.save_folder, 'gait1018_v3.mat');
-% result_paths{4} = fullfile(S.misc.save_folder, 'gait1018_v4.mat');
-% result_paths{5} = fullfile(S.misc.save_folder, 'gait1018_v5.mat');
-% result_paths{6} = fullfile(S.misc.save_folder, 'gait1018_v6.mat');
+% %% Plot results
 % 
-% legend_names = {'damper','motor','sin','emg-sol','emg-tibant','defaultsim'};
+% legend_names ={};
+% for i = 1:length(F_pelvis)
+%     result_paths{i} = fullfile(S.misc.save_folder, ['gait1018_v' num2str(i) '.mat']);
+%     legend_names{i} = ['F ' num2str(F_pelvis(i)) ];
+% end
+% 
 % figure_settings(1).name = 'all_angles';
 % figure_settings(1).dofs = {'all_coords'};
 % figure_settings(1).variables = {'Qs'};
@@ -99,6 +93,43 @@ end
 % figure();
 % for i =1:length(result_paths)
 %     R = load(result_paths{i});
-%     bar(i, R.R.metabolics.Bhargava2004.COT); hold on;
+%     Fpelvis = nanmean(R.R.orthosis.separate{1}.Fpelvis(:,1));
+%     bar(Fpelvis, R.R.metabolics.Bhargava2004.COT); hold on;
 %     legend(legend_names)
 % end
+% 
+% % 
+% % %% plot results
+% % R = load(fullfile(S.misc.save_folder,[savename '.mat']));
+% % 
+% % % plot results
+% % result_paths{1} = fullfile(S.misc.save_folder, 'gait1018_v1.mat');
+% % result_paths{2} = fullfile(S.misc.save_folder, 'gait1018_v2.mat');
+% % result_paths{3} = fullfile(S.misc.save_folder, 'gait1018_v3.mat');
+% % result_paths{4} = fullfile(S.misc.save_folder, 'gait1018_v4.mat');
+% % result_paths{5} = fullfile(S.misc.save_folder, 'gait1018_v5.mat');
+% % result_paths{6} = fullfile(S.misc.save_folder, 'gait1018_v6.mat');
+% % 
+% % legend_names = {'damper','motor','sin','emg-sol','emg-tibant','defaultsim'};
+% % figure_settings(1).name = 'all_angles';
+% % figure_settings(1).dofs = {'all_coords'};
+% % figure_settings(1).variables = {'Qs'};
+% % figure_settings(1).savepath = [];
+% % figure_settings(1).filetype = {};
+% % 
+% % figure_settings(2).name = 'all_activations';
+% % figure_settings(2).dofs = {'muscles_r'};
+% % figure_settings(2).variables = {'a'};
+% % figure_settings(2).savepath = [];
+% % figure_settings(2).filetype = {};
+% % 
+% % % call plotting function
+% % plot_figures(result_paths, legend_names, figure_settings);
+% % 
+% % % plot metabolic energy consumption
+% % figure();
+% % for i =1:length(result_paths)
+% %     R = load(result_paths{i});
+% %     bar(i, R.R.metabolics.Bhargava2004.COT); hold on;
+% %     legend(legend_names)
+% % end
