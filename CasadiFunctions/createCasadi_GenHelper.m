@@ -29,6 +29,7 @@ N_noarms_dof = model_info.ExtFunIO.jointi.nq.noArms;
 N_torq_act = model_info.ExtFunIO.jointi.nq.torqAct;
 N_pass_dof = model_info.ExtFunIO.jointi.nq.limTorq;
 
+
 %% Normalized sum of squared values
 if N_arms_dof > 0
     e_temp_arms_dof = SX.sym('e_temp_arms_dof',N_arms_dof);
@@ -125,5 +126,26 @@ for i = 1:length(N_musc_cross)
         J_sp_temp_musc_cross = J_sp_temp_musc_cross + ma_temp_musc_cross(j,1)*ft_temp_musc_cross(j,1);
     end
     f_casadi.(['musc_cross_' num2str(N_musc_cross(i))]) = Function(['musc_cross_' num2str(N_musc_cross(i))],{ma_temp_musc_cross,ft_temp_musc_cross},{J_sp_temp_musc_cross});
+end
+
+%% Kinematics Tracking
+% Function for the number of joints to track
+if S.subject.TrackSim
+    % check joints to track
+    if(strcmp(S.subject.TrackingJoints,'all'))                      
+        desir_coo_names = string(fieldnames(model_info.ExtFunIO.coordi));   % if tracking all joints
+    else
+        desir_coo_names = string(S.subject.TrackingJoints);                 % if tracking only selected joints
+    end
+    
+    % compute error
+    NtrackJoints = length(desir_coo_names);                                 % number of joints to track
+    e_temp_kin = SX.sym('NtrackJoints',NtrackJoints);                       % symbolic variable to store error (1xN joints to track)
+    J_temp_kin = 0;                                                         % initialize cost 
+    for i=1:length(e_temp_kin)                                              % loop over joints to track
+        J_temp_kin = J_temp_kin + e_temp_kin(i).^2;
+    end
+    J_temp_kin = J_temp_kin/NtrackJoints;                                   % take average 
+    f_casadi.J_kin = Function('f_J_kin',{e_temp_kin},{J_temp_kin});         % create Casadi function
 end
 end
