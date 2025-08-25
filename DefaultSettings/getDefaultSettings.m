@@ -715,7 +715,7 @@ end
 %% Flow control
 
 if ~isfield(S.flow_control,'pre_processing_only')
-    S.flow_control.pre_processing_only = False;
+    S.flow_control.pre_processing_only = false;
 end
 
 end

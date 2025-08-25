@@ -10,10 +10,23 @@ function [] = benchmark_predsim(S,osim_path,S_benchmark)
 %       (3) S_benchmark: specific settings for benchmarking (see readme)
 
 
+% get casadi path
+if ~isfield(S.solver,'CasADi_path')
+    try
+        S.solver.CasADi_path = casadi.GlobalOptions.getCasadiPath();
+    catch
+        error("Please add CasADi to the matlab search path, or pass the path " + ...
+            "to your CasADi installation (top folder) to S.solver.CasADi_path.")
+    end
+elseif ~isempty(S.solver.CasADi_path) && ~isfolder(S.solver.CasADi_path)
+    error("Unable to find the path assigned to S.solver.CasADi_path:" + ...
+        " \n\t%s",S.solver.CasADi_path)
+end
+
 
 % The only input is S and osim_path, maybe additional input S_benchmark
 S_input = S; % make copy of S
-osim_path_input = osim_path;
+osim_path_default = osim_path;
 
 % save all settings for the benchmark procedure in the output folder. We
 % will use this settings once all simulations are finished to benchmark the
@@ -23,6 +36,8 @@ if ~isfolder(S_benchmark.out_folder)
 end
 save(fullfile(S_benchmark.out_folder,'benchmark_settings.mat'),'S',...
     'S_benchmark','osim_path');
+S.misc.save_folder = S_benchmark.out_folder;
+
 
 % get path information
 
@@ -31,9 +46,9 @@ save(fullfile(S_benchmark.out_folder,'benchmark_settings.mat'),'S',...
 % 0. pre-processing default model
 %       I think the most clean way is to add additional settings to control
 %       the flow in the run_pred_sim script
-S.pre_processing_only = True; 
+S.flow_control.pre_processing_only = true; 
+S.solver.run_as_batch_job = false;
 run_pred_sim(S,osim_path);
-S.pre_processing_only = False;
 
 %
 % 1. check if we have to make multiple .dll files
@@ -58,14 +73,17 @@ if isfield(S_benchmark,'studies') && ~isempty(S_benchmark.studies)
         % these are the trials with speeds and id:
         gait_speeds = [0.7 0.9 1.1 1.6 1.8 2 1.4];
         id_trials = [2 5 8 11 14 16 32]; % see publication
-        for ispeed = 1:length(gait_speeds)
+        for i_speed = 1:length(gait_speeds)
             % start from default input settings
             S = S_input;
             % set forward velocity
             S.misc.forward_velocity = gait_speeds(i_speed);
             % adapt folder to save results
             S.misc.save_folder  = fullfile(S_benchmark.out_folder,'vanderzee2022',...
-                ['speed_' num2str(round(gait_speeds(i_speed)*100)) '_id_' num2str(id_trials)]);
+                ['speed_' num2str(round(gait_speeds(i_speed)*100)) '_id_' num2str(id_trials(i_speed))]);
+            % run predsim
+            runPredSim(S, osim_path_default)
+
         end
     end
 end

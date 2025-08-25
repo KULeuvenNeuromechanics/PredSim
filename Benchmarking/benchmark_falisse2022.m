@@ -11,13 +11,16 @@
 
 %----------     Path information ----------------------
 % path to the repository folder
-[pathRepo,~,~] = fileparts(mfilename('fullpath'));
+[pathRepo_temp,~,~] = fileparts(mfilename('fullpath'));
+[pathRepo,~,~] = fileparts(pathRepo_temp);
 % path to the folder that contains the repository folder
 [pathRepoFolder,~,~] = fileparts(pathRepo);
+addpath(pathRepo);
 
 %----------     Model settings ----------------------
 % add folder with default settings and initialise settings for Falisse 2022
-addpath(fullfile(pathRepo,'DefaultSettings'))
+addpath(fullfile(pathRepo,'DefaultSettings'));
+
 [S] = initializeSettings('Falisse_et_al_2022');
 % model name
 S.subject.name = 'Falisse_et_al_2022';
@@ -36,7 +39,7 @@ S.solver.N_meshes       = 100;
 
 %% Information for batch processing simulations
 %----------     Solver information ------------------
-S.solver.run_as_batch_job = True;
+S.solver.run_as_batch_job = true;
 S.solver.N_threads      = 2;
 S.solver.par_cluster_name = 'Cores4';
 
@@ -56,17 +59,17 @@ S_benchmark.studies = {'vanderzee2022'};
 
 
 % benchmark gait speed simulations
-S_benchmark.gait_speeds = True;
+S_benchmark.gait_speeds = false;
 S_benchmark.gait_speed_range = [0.6 2];
 S_benchmark.gait_speeds_selection = 0.6:0.2:2;
 
 % benchmark walking on a slope
-S_benchmark.slope = True;
+S_benchmark.slope = false;
 S_benchmark.slope_range = [0 24]; % in %
 S_benchmark.slope_range_selection = 0:2:24;
 
 % benchmarking walking with added mass
-S_benchmark.added_mass = True;
+S_benchmark.added_mass = false;
 S_benchmark.added_mass_studies = {'Browning','Schertzer','Huang'}; % add studies you want to replicate here
 
 % option to replicate specific studies ?. THis is a bit harder as I have to
