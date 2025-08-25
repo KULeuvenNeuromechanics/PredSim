@@ -25,10 +25,10 @@ addpath(pathRepo)
 %% Settings
 
 % name of the subject
-S.subject.name = 'Falisse_et_al_2022';
+S.subject.name = 'Falisse_et_al_2022_Ftorso';
 
 % path to folder where you want to store the results of the OCP
-S.misc.save_folder  = fullfile(pathExDir,'ExampleResults','PelvisForce_Bumpm3D_vSpeeds');  
+S.misc.save_folder  = fullfile(pathExDir,'ExampleResults','TorsoForce_v2');  
 
 % either choose "quasi-random" or give the path to a .mot file you want to use as initial guess
 % S.solver.IG_selection = fullfile(S.misc.main_path,'OCP','IK_Guess_Full_GC.mot');
@@ -51,25 +51,24 @@ S.solver.CasADi_path = 'C:\Users\Maarten\Documents\Software\downloads\casadi_363
 
 %% Add external force at pelvis
 
-% proportional to muscle activity
-fext.function_name = 'Fext_pelvis_bumpm';
-fext.extForce = [0, 0, 0]'; % 100 N in x-direction
-fext.r_origin = [0, 0, 0]';
+% % proportional to muscle activity
+% S.solver.run_as_batch_job = 0;
+fext.function_name = 'Fext_torso_bumpm';
+% fext.extForce = [100, 0, 0]'; % 100 N in x-direction
+fext.r_origin = [0, 0.2, 0]';
 % S.orthosis.settings{1} = fext;
 % [savename] = runPredSim(S, osim_path);
 
 %% Run predictive simulations
 
-VSpeeds = 0.6:0.2:1.6; 
-for j =1:length(VSpeeds)
-    S.misc.save_folder  = fullfile(pathExDir,'ExampleResults',...
-        ['PelvisForce_Bumpm3D_' num2str(VSpeeds(j)* ...
-        10)]); 
-    S.misc.forward_velocity   = VSpeeds(j);
-    F_pelvis = 0:20:200;
-    for i = 1:length(F_pelvis)
-        fext.extForce = [F_pelvis(i), 0, 0]';
-        S.orthosis.settings{1} = fext;
-        [savename] = runPredSim(S, osim_path);
-    end
+S.misc.save_folder  = fullfile(pathExDir,'ExampleResults',...
+    'TorsoForce_Bumpm3D_v2');
+S.misc.forward_velocity   = 1.25;
+F_torso = 0:10:120;
+fext.function_name = 'Fext_torso_bumpm';
+fext.r_origin = [0, 0.2, 0]';
+for i = 1:length(F_torso)
+    fext.extForce = [F_torso(i), 0, 0]';
+    S.orthosis.settings{1} = fext;
+    [savename] = runPredSim(S, osim_path);
 end
