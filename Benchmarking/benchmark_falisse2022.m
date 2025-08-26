@@ -34,7 +34,7 @@ S.solver.IG_selection = fullfile(S.misc.main_path,'OCP','IK_Guess_Full_GC.mot');
 S.solver.IG_selection_gaitCyclePercent = 100;
 
 %----------     Collocation -------------------------
-S.solver.N_meshes       = 100;
+S.solver.N_meshes       = 50;
 
 
 %% Information for batch processing simulations

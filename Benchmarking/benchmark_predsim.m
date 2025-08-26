@@ -27,15 +27,9 @@ end
 % The only input is S and osim_path, maybe additional input S_benchmark
 S_input = S; % make copy of S
 osim_path_default = osim_path;
-
-% save all settings for the benchmark procedure in the output folder. We
-% will use this settings once all simulations are finished to benchmark the
-% simulation results / compare it to experimental data
 if ~isfolder(S_benchmark.out_folder)
     mkdir(S_benchmark.out_folder)
 end
-save(fullfile(S_benchmark.out_folder,'benchmark_settings.mat'),'S',...
-    'S_benchmark','osim_path');
 S.misc.save_folder = S_benchmark.out_folder;
 
 
@@ -73,6 +67,9 @@ if isfield(S_benchmark,'studies') && ~isempty(S_benchmark.studies)
         % these are the trials with speeds and id:
         gait_speeds = [0.7 0.9 1.1 1.6 1.8 2 1.4];
         id_trials = [2 5 8 11 14 16 32]; % see publication
+        S_benchmark.vanderzee.gait_speeds = gait_speeds;
+        S_benchmark.vanderzee.id_trials = id_trials;
+        S_benchmark.vanderzee.names = cell(length(id_trials,1));
         for i_speed = 1:length(gait_speeds)
             % start from default input settings
             S = S_input;
@@ -80,10 +77,14 @@ if isfield(S_benchmark,'studies') && ~isempty(S_benchmark.studies)
             S.misc.forward_velocity = gait_speeds(i_speed);
             % adapt folder to save results
             S.misc.save_folder  = fullfile(S_benchmark.out_folder,'vanderzee2022',...
-                ['speed_' num2str(round(gait_speeds(i_speed)*100)) '_id_' num2str(id_trials(i_speed))]);
+                ['speed_' num2str(round(gait_speeds(i_speed)*100))...
+                '_id_' num2str(id_trials(i_speed))]);
             % run predsim
-            runPredSim(S, osim_path_default)
-
+            runPredSim(S, osim_path_default);
+            % append name
+            S_benchmark.vanderzee.names{i_speed} = ['speed_' ...
+                num2str(round(gait_speeds(i_speed)*100)) '_id_' ...
+                num2str(id_trials(i_speed))];
         end
     end
 end
@@ -108,6 +109,8 @@ if S_benchmark.gait_speeds
     end
 
     % run predictive simulations
+    S_benchmark.gaitspeed.gait_speeds = gait_speeds;
+    S_benchmark.gaitspeed.names = cell(length(gait_speeds,1));
     for i_speed = 1:length(gait_speeds)  
         % start from default input settings
         S = S_input;
@@ -116,8 +119,17 @@ if S_benchmark.gait_speeds
         % adapt folder to save results
         S.misc.save_folder  = fullfile(S_benchmark.out_folder,'gait_speeds',...
             ['speed_' num2str(round(gait_speeds(i_speed)*100))]); 
+        S_benchmark.gaitspeed.names{i_speed} = ...
+            ['speed_' num2str(round(gait_speeds(i_speed)*100))];
     end
 end
+
+% save all settings for the benchmark procedure in the output folder. We
+% will use this settings once all simulations are finished to benchmark the
+% simulation results / compare it to experimental data
+S = S_input;
+save(fullfile(S_benchmark.out_folder,'benchmark_settings.mat'),'S',...
+    'S_benchmark','osim_path');
 
 
 end
