@@ -11,7 +11,7 @@ The goal is to showcase the variety of studies using PredSim, provide reading ma
 2. **Edit** this file (`PUBLICATIONS.md`) and add your publication to the list below.
 3. Use the [APA reference style](https://apastyle.apa.org/style-grammar-guidelines/references/examples). Please do add the DOI or URL.
 4. **Submit a pull request** with your addition.
-
+5. Congrats, you are now a contributor to PredSim! 
 ---
 
 ## 📄 Publication List
