@@ -69,7 +69,7 @@ if isfield(S_benchmark,'studies') && ~isempty(S_benchmark.studies)
         id_trials = [2 5 8 11 14 16 32]; % see publication
         S_benchmark.vanderzee.gait_speeds = gait_speeds;
         S_benchmark.vanderzee.id_trials = id_trials;
-        S_benchmark.vanderzee.names = cell(length(id_trials,1));
+        S_benchmark.vanderzee.names = cell(length(id_trials),1);
         for i_speed = 1:length(gait_speeds)
             % start from default input settings
             S = S_input;
@@ -110,7 +110,7 @@ if S_benchmark.gait_speeds
 
     % run predictive simulations
     S_benchmark.gaitspeed.gait_speeds = gait_speeds;
-    S_benchmark.gaitspeed.names = cell(length(gait_speeds,1));
+    S_benchmark.gaitspeed.names = cell(length(gait_speeds),1);
     for i_speed = 1:length(gait_speeds)  
         % start from default input settings
         S = S_input;
