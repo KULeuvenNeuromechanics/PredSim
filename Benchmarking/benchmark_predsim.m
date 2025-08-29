@@ -151,6 +151,12 @@ end
 
 % add check if simulation result already exists, if this is the case do not
 % run the simulation
+disp('')
+disp('preprocessing of all models finished')
+disp(' ')
+disp('start simulations');
+disp(' ')
+
 
 % batch replication of specific studies
 if isfield(S_benchmark,'studies') && ~isempty(S_benchmark.studies)
@@ -179,7 +185,7 @@ if isfield(S_benchmark,'studies') && ~isempty(S_benchmark.studies)
                 '_id_' num2str(id_trials(i_speed))]);
             % check if save_folder already exists and contains a matfile,
             % if this is the case do not run the simulation
-            mat_files = dir(S.misc.save_folder,'*.mat');
+            mat_files = dir(fullfile(S.misc.save_folder,'*.mat'));
             if isempty(mat_files)
                 % run predsim
                 runPredSim(S, osim_path_default);
@@ -205,7 +211,7 @@ if isfield(S_benchmark,'studies') && ~isempty(S_benchmark.studies)
             % name of the model (model on slope ?
             model_name = S_benchmark.converted_models.koelewijn2019.modelnames{imodel};
             osim_path_sel = S_benchmark.converted_models.koelewijn2019.osim_path{imodel};
-            for ispeed = 1:length(S_benchmark.koelewijn.gait_speeds)
+            for i_speed = 1:length(S_benchmark.koelewijn.gait_speeds)
                 % copy input settings
                 S = S_input;
                 % set forward velocity
@@ -218,7 +224,7 @@ if isfield(S_benchmark,'studies') && ~isempty(S_benchmark.studies)
                 S.subject.name = model_name;
                 % check if save_folder already exists and contains a matfile,
                 % if this is the case do not run the simulation
-                mat_files = dir(S.misc.save_folder,'*.mat');
+                mat_files = dir(fullfile(S.misc.save_folder,'*.mat'));
                 if isempty(mat_files)                
                     % run predsim
                     runPredSim(S, osim_path_sel);
@@ -253,7 +259,7 @@ if isfield(S_benchmark,'studies') && ~isempty(S_benchmark.studies)
             S.subject.name = model_name;
             % check if save_folder already exists and contains a matfile,
             % if this is the case do not run the simulation
-            mat_files = dir(S.misc.save_folder,'*.mat');
+            mat_files = dir(fullfile(S.misc.save_folder,'*.mat'));
             if isempty(mat_files)
                 % run predsim
                 runPredSim(S, osim_path_sel);
@@ -302,10 +308,10 @@ if isfield(S_benchmark,'gait_speeds') && S_benchmark.gait_speeds
             ['speed_' num2str(round(gait_speeds(i_speed)*100))];
         % check if save_folder already exists and contains a matfile,
         % if this is the case do not run the simulation
-        mat_files = dir(S.misc.save_folder,'*.mat');
+        mat_files = dir(fullfile(S.misc.save_folder,'*.mat'));
         if isempty(mat_files)
             % run predsim
-            runPredSim(S, osim_path_sel);
+            runPredSim(S, osim_path_default);
         end
 
     end
