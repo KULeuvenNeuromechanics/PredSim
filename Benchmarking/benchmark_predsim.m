@@ -189,6 +189,7 @@ if isfield(S_benchmark,'studies') && ~isempty(S_benchmark.studies)
             if isempty(mat_files)
                 % run predsim
                 runPredSim(S, osim_path_default);
+                disp(['added sim vanderzee number ' num2str(i_speed) ' to batch' ])
             end
             % append name
             S_benchmark.vanderzee.names{i_speed} = ['speed_' ...
@@ -207,7 +208,7 @@ if isfield(S_benchmark,'studies') && ~isempty(S_benchmark.studies)
         % the idea is always to run for all models associated with the
         % study the range of gait speeds
         ct_sim = 1;
-        for imodel = length(S_benchmark.converted_models.koelewijn2019.modelnames)
+        for imodel = 1:length(S_benchmark.converted_models.koelewijn2019.modelnames)
             % name of the model (model on slope ?
             model_name = S_benchmark.converted_models.koelewijn2019.modelnames{imodel};
             osim_path_sel = S_benchmark.converted_models.koelewijn2019.osim_path{imodel};
@@ -228,6 +229,7 @@ if isfield(S_benchmark,'studies') && ~isempty(S_benchmark.studies)
                 if isempty(mat_files)                
                     % run predsim
                     runPredSim(S, osim_path_sel);
+                    disp(['added sim koelewijn number ' num2str(ct_sim) ' to batch' ])
                 end
                 % append name
                 S_benchmark.koelewijn.names{ct_sim} = save_name;
@@ -243,7 +245,7 @@ if isfield(S_benchmark,'studies') && ~isempty(S_benchmark.studies)
         S_benchmark.browning.slopes = 0;
         S_benchmark.browning.addedmass = 0;
         ct_sim = 1;
-        for imodel = length(S_benchmark.converted_models.browning2008.modelnames)
+        for imodel = 1:length(S_benchmark.converted_models.browning2008.modelnames)
             % name of the model (model on slope ?
             model_name = S_benchmark.converted_models.browning2008.modelnames{imodel};
             osim_path_sel = S_benchmark.converted_models.browning2008.osim_path{imodel};
@@ -263,13 +265,13 @@ if isfield(S_benchmark,'studies') && ~isempty(S_benchmark.studies)
             if isempty(mat_files)
                 % run predsim
                 runPredSim(S, osim_path_sel);
+                disp(['added sim browning number ' num2str(ct_sim) ' to batch' ])
             end
             % append name
             S_benchmark.browning2008.names{ct_sim} = save_name;
             ct_sim = ct_sim+1;
 
         end
-
 
     end
 end
@@ -312,6 +314,7 @@ if isfield(S_benchmark,'gait_speeds') && S_benchmark.gait_speeds
         if isempty(mat_files)
             % run predsim
             runPredSim(S, osim_path_default);
+            disp(['added sim gaitspeeds number ' num2str(i_speed) ' to batch' ])
         end
 
     end

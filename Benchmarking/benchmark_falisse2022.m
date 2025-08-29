@@ -60,9 +60,9 @@ S_benchmark.studies = {'vanderzee2022','browning2008','koelewijn2019'};
 
 
 % % benchmark gait speed simulations
-% S_benchmark.gait_speeds = false;
-% S_benchmark.gait_speed_range = [0.6 2];
-% S_benchmark.gait_speeds_selection = 0.6:0.2:2;
+S_benchmark.gait_speeds = true;
+S_benchmark.gait_speed_range = [0.6 2];
+S_benchmark.gait_speeds_selection = 0.6:0.2:2;
 % 
 % % benchmark walking on a slope
 % S_benchmark.slope = false;
