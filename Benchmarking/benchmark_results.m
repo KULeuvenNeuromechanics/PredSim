@@ -52,19 +52,17 @@ end
 
 % general data
 % check if we have to download the data
+% a bit unclear how we want to handle this.
+% osf doesnt work anymore so I think that I will create a zenodo project
+% once I'm happy with all the data from my benchmarking paper.
 if ~isfolder(fullfile(benchmarking_folder,'exp_data','general_exp_data'))
     % download data as in Afschrift et al. 2025
-    LinkZipFile = ['https://zenodo.org/records/14524620/files/',...
-        'PredSim_gait_conditions-master_19_12_2024.zip?download=1'];
-    websave(fullfile(data_exp_path,'githubrepo_data.zip'),LinkZipFile);
-    unzip(fullfile(data_exp_path,'githubrepo_data.zip'),...
-        fullfile(data_exp_path,'github_repo_temp'));
-    delete(fullfile(data_exp_path,'githubrepo_data.zip'));
-    %       change data format a bit here, we don't need everything
-    copyfile(fullfile(data_exp_path,'github_repo_temp',...
-        'PredSim_gait_conditions-master','ExperimentalData'),...
-        fullfile(data_exp_path,'general_exp_data'))
-    rmdir(fullfile(data_exp_path,'github_repo_temp'),'s');
+    LinkZipFile = ['https://zenodo.org/records/16995320/files/' ...
+        'general_exp_data.zip?download=1'];
+    websave(fullfile(data_exp_path,'general_exp_data.zip'),LinkZipFile);
+    unzip(fullfile(data_exp_path,'general_exp_data.zip'),...
+        fullfile(data_exp_path,'general_exp_data'));
+    delete(fullfile(data_exp_path,'general_exp_data.zip'));
 end
 
 % Van Der Zee kinematic data
@@ -72,8 +70,8 @@ if isfield(S_benchmark,'studies') && ~isempty(S_benchmark.studies)
     if any(strcmp(S_benchmark.studies,'vanderzee2022'))
         if ~isfolder(fullfile(benchmarking_folder,'exp_data','vanderzee2022'))
             % url to datafile
-            LinkZipFile = ['https://zenodo.org/records/14524620/files/',...
-                'VanDerZee_Averages_Addbiomech.zip?download=1'];
+            LinkZipFile = ['https://zenodo.org/records/16995320/files/' ...
+                'vanderzee2022_nondim.zip?download=1'];
             % download data
             websave(fullfile(data_exp_path,'vanderzee2022.zip'),LinkZipFile);
             % unzip and delete zip file
@@ -106,23 +104,23 @@ if isfield(S_benchmark,'studies') && ~isempty(S_benchmark.studies)
     if any(strcmp(S_benchmark.studies,'vanderzee2022'))
         % load the sf datafile, this contains unfortunatly all conditions
         % todo: see in script of benchmarking paper to select correct ones
-        sf_datafile = fullfile(data_exp_path,'vanderzee2022_nondim','stridefreq.csv');
+        sf_datafile = fullfile(data_exp_path,'vanderzee2022','stridefreq.csv');
         % loop over simulations
         n_sim = length(S_benchmark.vanderzee.names);
         for isim = 1:n_sim
             % path to experimental data
             speed = S_benchmark.vanderzee.gait_speeds(isim);
-            grf_datafile = fullfile(data_exp_path,'vanderzee2022_nondim',...
+            grf_datafile = fullfile(data_exp_path,'vanderzee2022',...
                 ['mean_' num2str(speed*10) '_GRF.csv']);
-            grf_datafile_std = fullfile(data_exp_path,'vanderzee2022_nondim',...
+            grf_datafile_std = fullfile(data_exp_path,'vanderzee2022',...
                 ['mean_' num2str(speed*10) '_GRF_std.csv']);
-            id_datafile = fullfile(data_exp_path,'vanderzee2022_nondim',...
+            id_datafile = fullfile(data_exp_path,'vanderzee2022',...
                 ['mean_' num2str(speed*10) '_ID.csv']);
-            id_datafile_std = fullfile(data_exp_path,'vanderzee2022_nondim',...
+            id_datafile_std = fullfile(data_exp_path,'vanderzee2022',...
                 ['mean_' num2str(speed*10) '_ID_std.csv']);
-            ik_datafile = fullfile(data_exp_path,'vanderzee2022_nondim',...
+            ik_datafile = fullfile(data_exp_path,'vanderzee2022',...
                 ['mean_' num2str(speed*10) '_IK.csv']);
-            ik_datafile_std = fullfile(data_exp_path,'vanderzee2022_nondim',...
+            ik_datafile_std = fullfile(data_exp_path,'vanderzee2022',...
                 ['mean_' num2str(speed*10) '_IK_std.csv']);
 
 
@@ -166,7 +164,7 @@ if isfield(S_benchmark,'studies') && ~isempty(S_benchmark.studies)
             % we can compute average subject properties here from a file
             % Lexp = Exp_SubjProp.height(strcmp(Exp_SubjProp.Study,'vanderzee2022'));
             % mexp = Exp_SubjProp.mass(strcmp(Exp_SubjProp.Study,'vanderzee2022'));
-            file_subj_prop = fullfile(data_exp_path,'vanderzee2022_nondim',...
+            file_subj_prop = fullfile(data_exp_path,'vanderzee2022',...
                 'subj_prop.csv');
             subj_prop_all = readtable(file_subj_prop);
             mexp = nanmean(subj_prop_all.mass);
