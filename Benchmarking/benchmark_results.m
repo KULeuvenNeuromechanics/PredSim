@@ -12,6 +12,14 @@ function [] = benchmark_results(benchmarking_folder,varargin)
 % benchmarking the study of Van Der Zee with variations in gait speed. I
 % will discuss this example at a PredSim meeting
 
+% ToDO:
+%
+%       Change datastorage to osf instead of zenodo:
+% I decided to move to osf framework to store data. The main reason is that
+% the store of data of vanderzee is now a bit weird on zenode (I did the
+% normalisation wrong, forgot to divided by g and so. I don't want this
+% here because it is ugly and unclear)
+
 
 %% input parser
 p = inputParser;
@@ -30,7 +38,8 @@ nsubplot_dofs = length(dofs_plot);
 
 %% load benchmarking settings
 
-load(fullfile(benchmarking_folder,'benchmark_settings.mat'),'S','osim_path','S_benchmark');
+load(fullfile(benchmarking_folder,'benchmark_settings.mat'),...
+    'S','osim_path','S_benchmark');
 
 
 %% load experimental data
@@ -82,13 +91,13 @@ if isfield(S_benchmark,'studies') && ~isempty(S_benchmark.studies)
     % subject properties
     Studyname = {'Gomenuka','Browning','Schertzer','Huang','Koelewijn',...
         'vanderzee2022','McDonald','Abe2015','Strutzenberger'};
-    prop_leg_length = 0.55;
+    prop_leg_length = 0.5; % assumes leg length is half of model
     Mass = [71.6, 74.16, 74.88, 71.1, 70, 73.5, 69.6, 58.9, 73.1];
     Height = [1.78, 1.82, 1.78, 0.99/prop_leg_length, 1.73, 1.76, 1.70, 1.70, 1.77];
     LegLength = Height.*prop_leg_length;
     Exp_SubjProp = table(Studyname',Mass',Height',LegLength','VariableNames',{'Study','mass','height','LegLength'});
-    msim = 62;
-    Height_Sim = 1.70;
+    msim = 62; % should read this from the model in the future
+    Height_Sim = 1.70; % I should read this from the model in the future
     Lsim = Height_Sim.*prop_leg_length;
     g = 9.81;
 
@@ -97,32 +106,31 @@ if isfield(S_benchmark,'studies') && ~isempty(S_benchmark.studies)
     if any(strcmp(S_benchmark.studies,'vanderzee2022'))
         % load the sf datafile, this contains unfortunatly all conditions
         % todo: see in script of benchmarking paper to select correct ones
-        sf_datafile = fullfile(data_exp_path,'vanderzee2022','stridefreq.csv');
+        sf_datafile = fullfile(data_exp_path,'vanderzee2022_nondim','stridefreq.csv');
         % loop over simulations
         n_sim = length(S_benchmark.vanderzee.names);
         for isim = 1:n_sim
             % path to experimental data
             speed = S_benchmark.vanderzee.gait_speeds(isim);
-            grf_datafile = fullfile(data_exp_path,'vanderzee2022',...
+            grf_datafile = fullfile(data_exp_path,'vanderzee2022_nondim',...
                 ['mean_' num2str(speed*10) '_GRF.csv']);
-            grf_datafile_std = fullfile(data_exp_path,'vanderzee2022',...
+            grf_datafile_std = fullfile(data_exp_path,'vanderzee2022_nondim',...
                 ['mean_' num2str(speed*10) '_GRF_std.csv']);
-            id_datafile = fullfile(data_exp_path,'vanderzee2022',...
+            id_datafile = fullfile(data_exp_path,'vanderzee2022_nondim',...
                 ['mean_' num2str(speed*10) '_ID.csv']);
-            id_datafile_std = fullfile(data_exp_path,'vanderzee2022',...
+            id_datafile_std = fullfile(data_exp_path,'vanderzee2022_nondim',...
                 ['mean_' num2str(speed*10) '_ID_std.csv']);
-            ik_datafile = fullfile(data_exp_path,'vanderzee2022',...
+            ik_datafile = fullfile(data_exp_path,'vanderzee2022_nondim',...
                 ['mean_' num2str(speed*10) '_IK.csv']);
-            ik_datafile_std = fullfile(data_exp_path,'vanderzee2022',...
+            ik_datafile_std = fullfile(data_exp_path,'vanderzee2022_nondim',...
                 ['mean_' num2str(speed*10) '_IK_std.csv']);
 
 
             % attach to simulation results
             % store everything in a matlab datastruture with the fields
+            % everything should be nondim
             %   - grf           OR: GRF_r and GRF_l
             %   - grf_std       OR: GRF_r_std and GRF_l_std
-            %   -
-            %
             %   - ik
             %   - ik_std
             %   - id
@@ -135,8 +143,13 @@ if isfield(S_benchmark,'studies') && ~isempty(S_benchmark.studies)
             % for experiment and predictive simulation. The generalized coordinates
             % should at least have the same name between both models if you want that
             % the code runs.
-            % I decided to have everything here with units (so not non-dim or normalised)
-            % lets hope I don't regret this decision.
+            %
+            % to nondim:
+            %   frequency:  sqrt(g/l)
+            %   moments:    m*g*l
+            %   forces:     m*g
+            %   Pmetab:     m*g^1.5*sqrt(l)
+
 
             sim_res_folder = fullfile(benchmarking_folder,'vanderzee2022',...
                 S_benchmark.vanderzee.names{isim});
@@ -149,45 +162,33 @@ if isfield(S_benchmark,'studies') && ~isempty(S_benchmark.studies)
             end
             sim_res_file = fullfile(mat_files(1).folder, mat_files(1).name);
 
-            benchmark.grf = readtable(grf_datafile); % check if already norm to mass
-            benchmark.grf_std = readtable(grf_datafile_std); % check if already norm to mass
-            benchmark.id = readtable(id_datafile); % check if already norm to mass
-            benchmark.id_std = readtable(id_datafile_std);
-            benchmark.ik= readtable(ik_datafile);
-            benchmark.ik_std = readtable(ik_datafile_std);
-            benchmark.Pmetab_mean = NaN; % no data
-            Lexp = Exp_SubjProp.height(strcmp(Exp_SubjProp.Study,'vanderzee2022'));
-            mexp = Exp_SubjProp.mass(strcmp(Exp_SubjProp.Study,'vanderzee2022'));
-            benchmark.subject_height = Lexp;
-            benchmark.subject_mass = mexp; % to do check in publication
-
-            % get average stride frequency across subjects (not yet done in
-            % datafile)
-
-            sf_all = readtable(sf_datafile);
+            % get average subject properties
+            % we can compute average subject properties here from a file
+            % Lexp = Exp_SubjProp.height(strcmp(Exp_SubjProp.Study,'vanderzee2022'));
+            % mexp = Exp_SubjProp.mass(strcmp(Exp_SubjProp.Study,'vanderzee2022'));
+            file_subj_prop = fullfile(data_exp_path,'vanderzee2022_nondim',...
+                'subj_prop.csv');
+            subj_prop_all = readtable(file_subj_prop);
+            mexp = nanmean(subj_prop_all.mass);
+            Lexp = nanmean(subj_prop_all.height);
+            
+            % compute average stride frequency
+            sf_all                      = readtable(sf_datafile);
             sf_mean = nanmean(sf_all.stridefreq(sf_all.walkspeed == speed));
-            sf_mean = sf_mean*(Lexp*0.5); % neede because we exported norm stride frequency with a weird norm for some reason
-            benchmark.stride_frequency = sf_mean;
 
-            % adapt some data as grf and moments are in N/kg
-            % adapt all cols expect the time col
-            id_names = benchmark.id.Properties.VariableNames;
-            for idof = 1:length(id_names)
-                if ~any(strcmp(id_names{idof},{'time','Time'}))
-                    benchmark.id.(id_names{idof}) = ...
-                        benchmark.id.(id_names{idof})*benchmark.subject_mass;
-                    benchmark.id_std.(id_names{idof}) = ...
-                        benchmark.id_std.(id_names{idof})*benchmark.subject_mass;
-                end
-            end
-
-            grf_names = benchmark.grf.Properties.VariableNames;
-            for igrf = 1:length(grf_names)
-                if ~any(strcmp(grf_names{igrf},{'time','Time'}))
-                    benchmark.grf.(grf_names{igrf}) = ...
-                        benchmark.grf.(grf_names{igrf}) * benchmark.subject_mass;
-                end
-            end
+            % add all data to benchmark structure
+            % note that we expact that all data in benchmark is nondim
+            benchmark.subject_height    = Lexp;
+            benchmark.subject_mass      = mexp; % to do check in publication
+            benchmark.prop_leg_length   = prop_leg_length;
+            benchmark.grf               = readtable(grf_datafile); % check if already norm to mass
+            benchmark.grf_std           = readtable(grf_datafile_std); % check if already norm to mass
+            benchmark.id                = readtable(id_datafile); % check if already norm to mass
+            benchmark.id_std            = readtable(id_datafile_std);
+            benchmark.ik                = readtable(ik_datafile);
+            benchmark.ik_std            = readtable(ik_datafile_std);
+            benchmark.Pmetab_mean       = []; % no data
+            benchmark.stride_frequency  = sf_mean;
 
             % note I decide here on grf headers like this:
             %  Flx         Fly        Flz         Frx       Fry        Frz
@@ -218,11 +219,20 @@ if BoolPlot
     set(0,'defaultLineMarkerSize',4);
     set(0,'defaultAxesBox','off');
 
+
+    % the idea is here to make a function that works for all studies
+    % to do so I need to provide some input arguments such as
+    %  1. how to loop over different simulations / gait conditions ?
+    %  2. study name as input
+    %  3. angles in rad to deg ?
+    %  4. add options to handle ik, id and grf input as imported mot files
+    %     or matlab tables
+
     if any(strcmp(S_benchmark.studies,'vanderzee2022'))
         % default function to plot van der zee results
         % to do: add this to a function
         %
-        speeds = S_benchmark.vanderzee.gait_speeds;        
+        speeds = S_benchmark.vanderzee.gait_speeds;
         [speeds_sort,isort] = sort(speeds);
         for i= 1:length(speeds_sort)
             WalkSpeed_legend{i} = [num2str(speeds_sort(i)) 'ms^{-1}'];
@@ -232,7 +242,7 @@ if BoolPlot
         %     238,202,102;...% 1.1
         %     125,162,197;...% 1.6
         %     238,202,102;...% 1.8
-        %     125,162,197;...% 2.0            
+        %     125,162,197;...% 2.0
         %     238,202,102]./255 % 1.4; % these colors are pretty bad, also in paper ?
         % Colors_Speeds = flipud(Colors_Speeds);
         Colors_Speeds = copper(length(speeds)+2);
@@ -254,151 +264,179 @@ if BoolPlot
             Dat(ispeed_sort).R = R;
         end
 
-        % scale factors to nondim everything
-        Lexp = Exp_SubjProp.LegLength(strcmp(Exp_SubjProp.Study,'vanderzee2022'));
-        mexp = Exp_SubjProp.mass(strcmp(Exp_SubjProp.Study,'vanderzee2022'));
-        % Step frequency was normalized by \sqrt{g/l}, 
-        % joint moments by mgl, ground reaction forces by mg, 
-        % and (metabolic) power by mg^{1.5}l^{0.5}.
-
         % plot kinematics
-        figure('Name','vanderzee: kinematics','Color',[1 1 1]);
-        
-        for ispeed = 1: length(speeds_sort)
-            for idof = 1:length(dofs_plot)
-                % plot experimental data
-                subplot(2, nsubplot_dofs, idof)
-                plot(Dat(ispeed).benchmark.ik.(dofs_plot{idof})*180/pi,...
-                    'Color',Colors_Speeds(ispeed,:)); hold on;
+        if ~isempty(Dat(1).benchmark.ik)
+            figure('Name','vanderzee: kinematics','Color',[1 1 1]);
 
-
-                % plot simulation data
-                subplot(2, nsubplot_dofs, idof+nsubplot_dofs)
-                icol = strcmp(dofs_plot{idof},Dat(ispeed).R.colheaders.coordinates);
-                dsel = Dat(ispeed).R.kinematics.Qs(:,icol);
-                dsel_int = interp1(1:length(dsel),dsel,linspace(1,length(dsel),100));
-                l(ispeed) = plot(dsel_int,'Color',Colors_Speeds(ispeed,:)); hold on;
+            for ispeed = 1: length(speeds_sort)
+                for idof = 1:length(dofs_plot)
+                    % plot experimental data
+                    subplot(2, nsubplot_dofs, idof)
+                    plot(Dat(ispeed).benchmark.ik.(dofs_plot{idof})*180/pi,...
+                        'Color',Colors_Speeds(ispeed,:)); hold on;
+                    % plot simulation data
+                    subplot(2, nsubplot_dofs, idof+nsubplot_dofs)
+                    icol = strcmp(dofs_plot{idof},Dat(ispeed).R.colheaders.coordinates);
+                    dsel = Dat(ispeed).R.kinematics.Qs(:,icol);
+                    dsel_int = interp1(1:length(dsel),dsel,linspace(1,length(dsel),100));
+                    l(ispeed) = plot(dsel_int,'Color',Colors_Speeds(ispeed,:)); hold on;
+                end
             end
-        end
-        legend(l,WalkSpeed_legend,'Interpreter','tex');
-        legend boxoff;
-        for isubpl =1:length(dofs_plot)*2
-            subplot(2, nsubplot_dofs,isubpl)
-            set(gca,'box','off');
-            set(gca,'FontSize',10);
-            if isubpl<=length(dofs_plot)
-                title(dofs_plot{isubpl},'interpreter','none');
-            else
-                xlabel('% gait cycle');
-            end
-            if isubpl == 1
-                ylabel({'experiment','joint angle [deg]'});
-            elseif isubpl == (length(dofs_plot)+1)
-                ylabel({'simulation','joint angle [deg]'});
+            legend(l,WalkSpeed_legend,'Interpreter','tex');
+            legend boxoff;
+            for isubpl =1:length(dofs_plot)*2
+                subplot(2, nsubplot_dofs,isubpl)
+                set(gca,'box','off');
+                set(gca,'FontSize',10);
+                if isubpl<=length(dofs_plot)
+                    title(dofs_plot{isubpl},'interpreter','none');
+                else
+                    xlabel('% gait cycle');
+                end
+                if isubpl == 1
+                    ylabel({'experiment','joint angle [deg]'});
+                elseif isubpl == (length(dofs_plot)+1)
+                    ylabel({'simulation','joint angle [deg]'});
+                end
             end
         end
 
         % plot joint moments
-        figure('Name','vanderzee: kinetics','Color',[1 1 1]);
-        
-        for ispeed = 1: length(speeds_sort)
-            for idof = 1:length(dofs_plot)
-                % plot experimental data
-                subplot(2, nsubplot_dofs, idof)
-                id_exp = Dat(ispeed).benchmark.id.(dofs_plot{idof});
-                id_exp = id_exp./(mexp*g*Lexp).*(msim*g*Lsim); % scale to subject
-                plot(id_exp,'Color',Colors_Speeds(ispeed,:)); hold on;
+        if ~isempty(Dat(1).benchmark.id)
+            figure('Name','vanderzee: kinetics','Color',[1 1 1]);
+
+            for ispeed = 1: length(speeds_sort)
+                for idof = 1:length(dofs_plot)
+                    % plot experimental data
+                    subplot(2, nsubplot_dofs, idof)
+                    id_exp = Dat(ispeed).benchmark.id.(dofs_plot{idof});
+                    id_exp = id_exp.*(msim*g*Lsim); % scale to subject
+                    plot(id_exp,'Color',Colors_Speeds(ispeed,:)); hold on;
 
 
-                % plot simulation data
-                subplot(2, nsubplot_dofs, idof+nsubplot_dofs)
-                icol = strcmp(dofs_plot{idof},Dat(ispeed).R.colheaders.coordinates);
-                dsel = Dat(ispeed).R.kinetics.T_ID(:,icol);
-                dsel_int = interp1(1:length(dsel),dsel,linspace(1,length(dsel),100));
-                l(ispeed) = plot(dsel_int,'Color',Colors_Speeds(ispeed,:)); hold on;
+                    % plot simulation data
+                    subplot(2, nsubplot_dofs, idof+nsubplot_dofs)
+                    icol = strcmp(dofs_plot{idof},Dat(ispeed).R.colheaders.coordinates);
+                    dsel = Dat(ispeed).R.kinetics.T_ID(:,icol);
+                    dsel_int = interp1(1:length(dsel),dsel,linspace(1,length(dsel),100));
+                    l(ispeed) = plot(dsel_int,'Color',Colors_Speeds(ispeed,:)); hold on;
+                end
             end
-        end
-        legend(l,WalkSpeed_legend,'Interpreter','tex');
-        legend boxoff;
-        for isubpl =1:length(dofs_plot)*2
-            subplot(2, nsubplot_dofs,isubpl)
-            set(gca,'box','off');
-            set(gca,'FontSize',10);
-            if isubpl<=length(dofs_plot)
-                title(dofs_plot{isubpl},'interpreter','none');
-            else
-                xlabel('% gait cycle');
-            end
-            if isubpl == 1
-                ylabel({'experiment','joint moment [Nm]'});
-            elseif isubpl == (length(dofs_plot)+1)
-                ylabel({'simulation','joint moment [Nm]'});
+            legend(l,WalkSpeed_legend,'Interpreter','tex');
+            legend boxoff;
+            for isubpl =1:length(dofs_plot)*2
+                subplot(2, nsubplot_dofs,isubpl)
+                set(gca,'box','off');
+                set(gca,'FontSize',10);
+                if isubpl<=length(dofs_plot)
+                    title(dofs_plot{isubpl},'interpreter','none');
+                else
+                    xlabel('% gait cycle');
+                end
+                if isubpl == 1
+                    ylabel({'experiment','joint moment [Nm]'});
+                elseif isubpl == (length(dofs_plot)+1)
+                    ylabel({'simulation','joint moment [Nm]'});
+                end
             end
         end
 
 
         % plot ground reaction forces
-        figure('Name','vanderzee: grf','Color',[1 1 1]);
-        for ispeed = 1: length(speeds_sort)
-            for coord = 1:3
-                subplot(2,3,coord)
-                % experimental grf                
-                Fsel = Dat(ispeed).benchmark.GRF_r(:,coord); 
-                Fsel = Fsel./mexp.*msim;
-                plot(Fsel,'Color',Colors_Speeds(ispeed,:));hold on;
+        if ~isempty(Dat(1).benchmark.GRF_r)
+            figure('Name','vanderzee: grf','Color',[1 1 1]);
+            for ispeed = 1: length(speeds_sort)
+                for coord = 1:3
+                    subplot(2,3,coord)
+                    % experimental grf
+                    Fsel = Dat(ispeed).benchmark.GRF_r(:,coord);
+                    Fsel = Fsel.*msim*g;
+                    plot(Fsel,'Color',Colors_Speeds(ispeed,:));hold on;
 
-                % simulated grf
-                subplot(2,3,coord+3)
-                dsel = Dat(ispeed).R.ground_reaction.GRF_r(:,coord);
-                dsel_int = interp1(1:length(dsel),dsel,linspace(1,length(dsel),100));
-                l(ispeed) =plot(dsel_int,'Color',Colors_Speeds(ispeed,:));hold on;
+                    % simulated grf
+                    subplot(2,3,coord+3)
+                    dsel = Dat(ispeed).R.ground_reaction.GRF_r(:,coord);
+                    dsel_int = interp1(1:length(dsel),dsel,linspace(1,length(dsel),100));
+                    l(ispeed) =plot(dsel_int,'Color',Colors_Speeds(ispeed,:));hold on;
 
 
+                end
             end
-        end
-        legend(l,WalkSpeed_legend,'Interpreter','tex');
-        legend boxoff;
-        title_grf = {'GRFx','GRFy','GRFz'};
-        for isubpl =1:6
-            subplot(2, 3,isubpl)
-            set(gca,'box','off');
-            set(gca,'FontSize',10);
-            if isubpl<=3
-                title(title_grf{isubpl},'interpreter','none');
-            else
-                xlabel('% gait cycle');
-            end
-            if isubpl == 1
-                ylabel({'experiment','force [N]'});
-            elseif isubpl == 4
-                ylabel({'simulation','force [N]'});
+            legend(l,WalkSpeed_legend,'Interpreter','tex');
+            legend boxoff;
+            title_grf = {'GRFx','GRFy','GRFz'};
+            for isubpl =1:6
+                subplot(2, 3,isubpl)
+                set(gca,'box','off');
+                set(gca,'FontSize',10);
+                if isubpl<=3
+                    title(title_grf{isubpl},'interpreter','none');
+                else
+                    xlabel('% gait cycle');
+                end
+                if isubpl == 1
+                    ylabel({'experiment','force [N]'});
+                elseif isubpl == 4
+                    ylabel({'simulation','force [N]'});
+                end
             end
         end
 
         % plot stride frequency
-        figure('Name','vanderzee: stride frequency','Color',[1 1 1]);
+        if ~isempty(Dat(1).benchmark.stride_frequency)
+            figure('Name','vanderzee: stride frequency','Color',[1 1 1]);
 
-        % experimental stride frequency
-        exp_freq = nan(length(speeds),1);
-        sim_freq = nan(length(speeds),1);
-        for ispeed = 1:length(speeds)
-            exp_freq(ispeed) = Dat(ispeed).benchmark.stride_frequency ...
-                ./(sqrt(g/Lexp)) .* (sqrt(g/Lsim)); % exp frequency looks weird here compared to other studies
-            sim_freq(ispeed) = Dat(ispeed).R.spatiotemp.stride_freq;
+            % experimental stride frequency
+            exp_freq = nan(length(speeds),1);
+            sim_freq = nan(length(speeds),1);
+            for ispeed = 1:length(speeds)
+                exp_freq(ispeed) = Dat(ispeed).benchmark.stride_frequency .* (sqrt(g/Lsim));
+                sim_freq(ispeed) = Dat(ispeed).R.spatiotemp.stride_freq;
+            end
+            Cs = [0 0 0];
+            mk = 4;
+            plot([min(exp_freq) max(exp_freq)], [min(exp_freq) max(exp_freq)],'--','Color',[0 0 0],'LineWidth',1.3); hold on;
+            plot(exp_freq,sim_freq,'ok','Color',Cs,'MarkerFaceColor',Cs,...
+                'MarkerSize',mk);
+            set(gca,'box','off');
+            set(gca,'FontSize',10);
+            xlabel('measured stride frequency');
+            ylabel('simulated stride frequency');
         end
-        Cs = [0 0 0];
-        mk = 4;
-        plot([min(exp_freq) max(exp_freq)], [min(exp_freq) max(exp_freq)],'--','Color',[0 0 0],'LineWidth',1.3); hold on;
-        plot(exp_freq,sim_freq,'ok','Color',Cs,'MarkerFaceColor',Cs,...
-            'MarkerSize',mk);        
-        set(gca,'box','off');
-        set(gca,'FontSize',10);
-        xlabel('measured stride frequency');
-        ylabel('simulated stride frequency');
 
 
 
         % plot metabolic power
+        if ~isempty(Dat(1).benchmark.Pmetab_mean)
+            figure('Name','vanderzee: metabolic power','Color',[1 1 1]);
+
+            % experimental stride frequency
+            exp_metab = nan(length(speeds),1);
+            sim_metab = nan(length(speeds),1);
+            for ispeed = 1:length(speeds)
+                % measured metabolic power
+                exp_metab(ispeed) = Dat(ispeed).benchmark.Pmetab_mean ...
+                    .* (m*sqrt(Lsim)*g^1.5);
+
+                % simulated metabolic power
+                t = Dat(ispeed).R.time.mesh_GC;
+                dt = t(end)-t(1);
+                Pmetab = Dat(ispeed).R.metabolics.Bhargava2004.Edot_gait;
+                metab_work  = trapz(t(1:end-1)',Pmetab);
+                P_mean = sum(metab_work)./dt;
+                sim_metab(ispeed) = P_mean;
+            end
+            Cs = [0 0 0];
+            mk = 4;
+            plot([min(exp_metab) max(exp_metab)], [min(exp_metab) max(exp_metab)],'--','Color',[0 0 0],'LineWidth',1.3); hold on;
+            plot(exp_metab,sim_metab,'ok','Color',Cs,'MarkerFaceColor',Cs,...
+                'MarkerSize',mk);
+            set(gca,'box','off');
+            set(gca,'FontSize',10);
+            xlabel('measured metab. power');
+            ylabel('simulated metab. power');
+
+        end
 
         clear Dat
     end

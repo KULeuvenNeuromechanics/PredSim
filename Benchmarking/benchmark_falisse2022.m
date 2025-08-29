@@ -16,6 +16,7 @@
 % path to the folder that contains the repository folder
 [pathRepoFolder,~,~] = fileparts(pathRepo);
 addpath(pathRepo);
+addpath(fullfile(pathRepo,'Benchmarking'));
 
 %----------     Model settings ----------------------
 % add folder with default settings and initialise settings for Falisse 2022
@@ -50,27 +51,27 @@ S.solver.par_cluster_name = 'Cores4';
 % walking with added mass).
 
 % benchmark specific studies
-S_benchmark.studies = {'vanderzee2022'};
+S_benchmark.studies = {'vanderzee2022','browning2008','koelewijn2019'};
 % options are:
 %   vanderzee2022: variations in gait speed
 %   koelewijn2019: variation in gait speed and slope
-%   browning: added mass to body segments
-%   schertzer: added mass to body segments and variations in gait speed
+%   browning2008: added mass to body segments
+%   schertzer2014: added mass to body segments and variations in gait speed
 
 
-% benchmark gait speed simulations
-S_benchmark.gait_speeds = false;
-S_benchmark.gait_speed_range = [0.6 2];
-S_benchmark.gait_speeds_selection = 0.6:0.2:2;
-
-% benchmark walking on a slope
-S_benchmark.slope = false;
-S_benchmark.slope_range = [0 24]; % in %
-S_benchmark.slope_range_selection = 0:2:24;
-
-% benchmarking walking with added mass
-S_benchmark.added_mass = false;
-S_benchmark.added_mass_studies = {'Browning','Schertzer','Huang'}; % add studies you want to replicate here
+% % benchmark gait speed simulations
+% S_benchmark.gait_speeds = false;
+% S_benchmark.gait_speed_range = [0.6 2];
+% S_benchmark.gait_speeds_selection = 0.6:0.2:2;
+% 
+% % benchmark walking on a slope
+% S_benchmark.slope = false;
+% S_benchmark.slope_range = [0 24]; % in %
+% S_benchmark.slope_range_selection = 0:2:24;
+% 
+% % benchmarking walking with added mass
+% S_benchmark.added_mass = false;
+% S_benchmark.added_mass_studies = {'Browning','Schertzer','Huang'}; % add studies you want to replicate here
 
 % option to replicate specific studies ?. THis is a bit harder as I have to
 % compile specific models for each study (e.g. schertzer has walking at
