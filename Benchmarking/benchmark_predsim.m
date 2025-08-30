@@ -218,7 +218,7 @@ if isfield(S_benchmark,'studies') && ~isempty(S_benchmark.studies)
                 % set forward velocity
                 S.misc.forward_velocity = S_benchmark.koelewijn.gait_speeds(i_speed);
                 % adapt folder to save results
-                save_name  =[model_name, '_speed_' num2str(round(gait_speeds(i_speed)*100))];
+                save_name  =[model_name, '_speed_' num2str(round(S_benchmark.koelewijn.gait_speeds(i_speed)*100))];
                 S.misc.save_folder  = fullfile(S_benchmark.out_folder,'koelewijn2019',...
                     save_name);
                 % adapt subject
@@ -240,10 +240,10 @@ if isfield(S_benchmark,'studies') && ~isempty(S_benchmark.studies)
 
     % run simulations as in browning 2008
     if any(strcmp(S_benchmark.studies,'browning2008'))        
-        S_benchmark.browning.gait_speeds = [0.8 1.3];
+        S_benchmark.browning.gait_speeds = 1.25;
         S_benchmark.browning.names = cell(length(id_trials),1);
         S_benchmark.browning.slopes = 0;
-        S_benchmark.browning.addedmass = 0;
+        S_benchmark.browning.addedmass = 0; % adapt
         ct_sim = 1;
         for imodel = 1:length(S_benchmark.converted_models.browning2008.modelnames)
             % name of the model (model on slope ?
@@ -252,7 +252,7 @@ if isfield(S_benchmark,'studies') && ~isempty(S_benchmark.studies)
             % copy input settings
             S = S_input;
             % set forward velocity
-            S.misc.forward_velocity = 1.25;
+            S.misc.forward_velocity = S_benchmark.browning.gait_speeds;
             % adapt folder to save results
             save_name  = model_name;
             S.misc.save_folder  = fullfile(S_benchmark.out_folder,'browning2008',...
