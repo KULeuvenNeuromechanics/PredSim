@@ -285,6 +285,31 @@ if (S.subject.synergies)
     end
 end
 
+%% If Tracking: Assign Tracking Data
+if(S.subject.TrackSim)
+    Qref_tot = getIK(S.subject.TrackingFile,model_info);                        % load .mot file with tracking data
+    Qref_time = Qref_tot.time;                                                  % extract tracking data time
+    Nmeshes = S.solver.N_meshes;                                                % define number of meshes
+    
+    % check joints to track
+    if(strcmp(S.subject.TrackingJoints,'all'))                      
+        desir_coo_names = string(fieldnames(model_info.ExtFunIO.coordi));       % if tracking all joints, 
+    else
+        desir_coo_names = string(S.subject.TrackingJoints);                     % if tracking only selected joints
+    end
+    
+    % create reference data
+    NtrackJoints = length(desir_coo_names);                                     % number of joints to track
+    Ndata = length(Qref_time);                                                  % size of the experimental data
+    Qref = zeros(Ndata,NtrackJoints);                                           % matrix to store tracking data  
+    for jointIdx = 1:NtrackJoints
+        Qref(:,jointIdx) = Qref_tot.(desir_coo_names(jointIdx));                % fill matrix with data
+    end
+    
+    % resample to be ( Nmeshes + 1 ) x ( number of joints to track )
+    Qrefsync = interp1(linspace(1,Nmeshes,Ndata),Qref,linspace(1,Nmeshes,Nmeshes),'spline','extrap');
+end
+
 %% OCP: collocation equations
 % Define CasADi variables for static parameters
 tfk         = MX.sym('tfk'); % MX variable for final time
@@ -295,7 +320,7 @@ akj         = [ak aj];
 FTtildek    = MX.sym('FTtildek',NMuscle);
 FTtildej    = MX.sym('FTtildej',NMuscle,d);
 FTtildekj   = [FTtildek FTtildej];
-Qsk         = MX.sym('Qsk',nq.all);
+Qsk         = MX.sym('Qsk',nq.all);                                         % joint coordinates
 Qsj         = MX.sym('Qsj',nq.all,d);
 Qskj        = [Qsk Qsj];
 Qdotsk      = MX.sym('Qdotsk',nq.all);
@@ -326,6 +351,10 @@ if (S.subject.synergies)
     SynH_lk         = MX.sym('SynH_lk',S.subject.NSyn_l);
     SynW_rk         = MX.sym('SynW_rk',length(idx_m_r),S.subject.NSyn_r);
     SynW_lk         = MX.sym('SynW_lk',length(idx_m_l),S.subject.NSyn_l);
+end
+
+if S.subject.TrackSim
+    Qsk_track = MX.sym('Qsk_track', NtrackJoints);
 end
 
 J           = 0; % Initialize cost function
@@ -574,6 +603,19 @@ else
     J_TrackSynW = 0;
 end
 
+% Add tracking terms in the cost function if kinematics tracking is enabled
+if S.subject.TrackSim
+    Qsk_nsc = Qsk.*scaling.Qs';                                             % unscale kinematics
+    model_coo_names = fieldnames(model_info.ExtFunIO.coordi);               % get the names of the coordinates
+    [~,desir_joint_idx] = ismember(model_coo_names,desir_coo_names);        % get desired joint indices  
+    Qsk_des = Qsk_nsc(desir_joint_idx(desir_joint_idx > 0));                % only interested in data to track
+    track_err = Qsk_track-Qsk_des;                                          % compute the tracking error
+    J_TrackKin = W.kinematicsTracking*f_casadi.J_kin(track_err)*h;          % compute tracking cost
+    J = J + J_TrackKin;
+else
+    J_TrackKin = 0;
+end
+
 % Synergies: a - WH = 0
 % Only applied for mesh points
 if (S.subject.synergies)
@@ -596,6 +638,9 @@ end
 if (S.subject.synergies)
     coll_input_vars_def = [coll_input_vars_def,{SynH_rk,SynH_lk,SynW_rk,SynW_lk}];
 end
+if S.subject.TrackSim
+    coll_input_vars_def = [coll_input_vars_def,{Qsk_track}];
+end
 
 f_coll = Function('f_coll',coll_input_vars_def,...
         {eq_constr, ineq_constr_deact, ineq_constr_act,...
@@ -613,6 +658,9 @@ if nq.torqAct > 0
 end
 if (S.subject.synergies)    
     coll_input_vars_eval = [coll_input_vars_eval,{SynH_r(:,1:end-1), SynH_l(:,1:end-1), SynW_r,SynW_l}];
+end
+if S.subject.TrackSim
+    coll_input_vars_eval = [coll_input_vars_eval,{Qrefsync'}];
 end
 
 coll_ineq_constr_distance = cell(1,length(ineq_constr_distance));
@@ -1042,6 +1090,7 @@ dFTtilde_cost   = 0;
 QdotdotArm_cost = 0;
 Syn_cost        = 0;
 TrackSyn_cost   = 0;
+TrackKin_cost   = 0;    
 count           = 1;
 h_opt           = tf_opt/N;
 for k=1:N
@@ -1128,6 +1177,14 @@ if (S.subject.synergies) && (S.subject.TrackSynW)
     J_opt = J_opt + N/dist_trav_opt*TrackSyn_cost;
 end
 
+% If tracking: reconstruct tracking cost
+if S.subject.TrackSim
+    q_opt_des = q_opt_unsc.rad(:,desir_joint_idx(desir_joint_idx > 0));     % only interested in data to track 
+    track_err = q_opt_des-Qrefsync;                                         % compute tracking error
+    TrackKin_cost = W.kinematicsTracking*sum(f_casadi.J_kin(track_err'))*h_opt;
+    J_opt = J_opt + 1/dist_trav_opt*TrackKin_cost;                          % compute tracking cost
+end
+
 J_optf = full(J_opt);
 E_costf = full(E_cost);
 A_costf = full(A_cost);
@@ -1139,22 +1196,26 @@ dFTtilde_costf = full(dFTtilde_cost);
 QdotdotArm_costf = full(QdotdotArm_cost);
 Syn_costf = full(Syn_cost);
 TrackSyn_costf = full(TrackSyn_cost);
+TrackKin_costf = full(TrackKin_cost);                                       % kinematics tracking cost 
 
 contributionCost.absoluteValues = 1/(dist_trav_opt)*[E_costf,A_costf,...
     Arm_costf,Qdotdot_costf,Pass_costf,vA_costf,dFTtilde_costf,...
-    QdotdotArm_costf,Syn_costf,N*TrackSyn_costf];
+    QdotdotArm_costf,Syn_costf,N*TrackSyn_costf,TrackKin_costf];            % added kinematics tracking cost
 contributionCost.relativeValues = 1/(dist_trav_opt)*[E_costf,A_costf,...
     Arm_costf,Qdotdot_costf,Pass_costf,vA_costf,dFTtilde_costf,...
-    QdotdotArm_costf,Syn_costf,N*TrackSyn_costf]./J_optf*100;
+    QdotdotArm_costf,Syn_costf,N*TrackSyn_costf,...
+    TrackKin_costf]./J_optf*100;                                            % added kinematics tracking cost
 contributionCost.relativeValuesRound2 = ...
     round(contributionCost.relativeValues,2);
 contributionCost.labels = {'metabolic energy','muscle activation',...
     'actuator excitation','joint accelerations','limit torques','dadt','dFdt',...
-    'arm accelerations','synergy constraints','synergy weights tracking'};
+    'arm accelerations','synergy constraints','synergy weights tracking'...
+    'kinematics data tracking'};                                            % added kinematics tracking
 
 % assertCost should be 0
 assertCost = abs(J_optf - 1/(dist_trav_opt)*(E_costf+A_costf + Arm_costf + ...
-    Qdotdot_costf + Pass_costf + vA_costf + dFTtilde_costf + QdotdotArm_costf + Syn_costf + N*TrackSyn_costf ));
+    Qdotdot_costf + Pass_costf + vA_costf + dFTtilde_costf + ...
+    QdotdotArm_costf + Syn_costf + N*TrackSyn_costf + TrackKin_costf));     % added kinematics tracking
 assertCost2 = abs(stats.iterations.obj(end) - J_optf);
 
 if assertCost > 1*10^(-S.solver.tol_ipopt)
@@ -1361,7 +1422,6 @@ R.spatiotemp.dist_trav = dist_trav_opt;
 Outname = fullfile(S.misc.save_folder,[S.misc.result_filename '.mat']);
 disp(['Saving results as: ' Outname])
 save(Outname,'w_opt','stats','setup','R','model_info');
-
 
 end
 
