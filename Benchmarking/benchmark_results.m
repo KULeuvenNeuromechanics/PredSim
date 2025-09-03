@@ -86,7 +86,7 @@ end
 
 if isfield(S_benchmark,'studies') && ~isempty(S_benchmark.studies)
 
-    % subject properties
+    % subject properties for all experimental studies
     Studyname = {'Gomenuka','Browning','Schertzer','Huang','Koelewijn',...
         'vanderzee2022','McDonald','Abe2015','Strutzenberger'};
     prop_leg_length = 0.5; % assumes leg length is half of model
@@ -100,7 +100,32 @@ if isfield(S_benchmark,'studies') && ~isempty(S_benchmark.studies)
     g = 9.81;
 
 
+    % attach to simulation results
+    % store everything in a matlab datastruture with the fields
+    % everything should be nondim
+    %   - grf           OR: GRF_r and GRF_l
+    %   - grf_std       OR: GRF_r_std and GRF_l_std
+    %   - ik
+    %   - ik_std
+    %   - id
+    %   - id_std
+    %   - stride_frequency
+    %   - Pmetab_mean
+    %   - subject_height: (average) height of participant
+    %   - subject_mass: (average) mass of participant
+    % note that for ik and id it is important that the same model is used
+    % for experiment and predictive simulation. The generalized coordinates
+    % should at least have the same name between both models if you want that
+    % the code runs.
+    %
+    % to nondim:
+    %   frequency:  sqrt(g/l)
+    %   moments:    m*g*l
+    %   forces:     m*g
+    %   Pmetab:     m*g^1.5*sqrt(l)
 
+
+    % ----- Van Der Zee
     if any(strcmp(S_benchmark.studies,'vanderzee2022'))
         % load the sf datafile, this contains unfortunatly all conditions
         % todo: see in script of benchmarking paper to select correct ones
@@ -123,32 +148,6 @@ if isfield(S_benchmark,'studies') && ~isempty(S_benchmark.studies)
             ik_datafile_std = fullfile(data_exp_path,'vanderzee2022',...
                 ['mean_' num2str(speed*10) '_IK_std.csv']);
 
-
-            % attach to simulation results
-            % store everything in a matlab datastruture with the fields
-            % everything should be nondim
-            %   - grf           OR: GRF_r and GRF_l
-            %   - grf_std       OR: GRF_r_std and GRF_l_std
-            %   - ik
-            %   - ik_std
-            %   - id
-            %   - id_std
-            %   - stride_frequency
-            %   - Pmetab_mean
-            %   - subject_height: (average) height of participant
-            %   - subject_mass: (average) mass of participant
-            % note that for ik and id it is important that the same model is used
-            % for experiment and predictive simulation. The generalized coordinates
-            % should at least have the same name between both models if you want that
-            % the code runs.
-            %
-            % to nondim:
-            %   frequency:  sqrt(g/l)
-            %   moments:    m*g*l
-            %   forces:     m*g
-            %   Pmetab:     m*g^1.5*sqrt(l)
-
-
             sim_res_folder = fullfile(benchmarking_folder,'vanderzee2022',...
                 S_benchmark.vanderzee.names{isim});
             mat_files = dir(fullfile(sim_res_folder,'*.mat'));
@@ -169,9 +168,9 @@ if isfield(S_benchmark,'studies') && ~isempty(S_benchmark.studies)
             subj_prop_all = readtable(file_subj_prop);
             mexp = nanmean(subj_prop_all.mass);
             Lexp = nanmean(subj_prop_all.height);
-            
+
             % compute average stride frequency
-            sf_all                      = readtable(sf_datafile);
+            sf_all  = readtable(sf_datafile);
             sf_mean = nanmean(sf_all.stridefreq(sf_all.walkspeed == speed));
 
             % add all data to benchmark structure
@@ -179,8 +178,9 @@ if isfield(S_benchmark,'studies') && ~isempty(S_benchmark.studies)
             benchmark.subject_height    = Lexp;
             benchmark.subject_mass      = mexp; % to do check in publication
             benchmark.prop_leg_length   = prop_leg_length;
-            benchmark.grf               = readtable(grf_datafile); % check if already norm to mass
-            benchmark.grf_std           = readtable(grf_datafile_std); % check if already norm to mass
+            benchmark.leglength         = benchmark.subject_height *  benchmark.prop_leg_length;
+            benchmark.grf               = readtable(grf_datafile);
+            benchmark.grf_std           = readtable(grf_datafile_std);
             benchmark.id                = readtable(id_datafile); % check if already norm to mass
             benchmark.id_std            = readtable(id_datafile_std);
             benchmark.ik                = readtable(ik_datafile);
@@ -200,7 +200,181 @@ if isfield(S_benchmark,'studies') && ~isempty(S_benchmark.studies)
             benchmark.GRF_l_std = [benchmark.grf_std.Flx, benchmark.grf_std.Fly, benchmark.grf_std.Flz];
 
             % add benchmark to .mat file
-            save(sim_res_file, 'benchmark', "-append")
+            save(sim_res_file, 'benchmark', "-append");
+            clear benchmark;
+
+        end
+    end
+    
+    % attach data Koelewijn
+    % ToDo: check if we have to project measured GRFs on the slope ?
+    
+
+    % yes I have to project simulated GRF such that y points upwards again
+    % now y is perpendicular to the slope
+    if any(strcmp(S_benchmark.studies,'koelewijn2019'))
+
+        % load matlab structure with generic experimental data
+        if ~exist('ExperimentalData','var')
+            load(fullfile(benchmarking_folder,'exp_data',...
+                'ExperimentalData.mat'),'ExperimentalData');
+        end
+        sExp = 11; % selected subject Koelewijn
+        % names of experimental data associated with simulations
+        % be carefull that the order matters here
+        Names_ExpData = {['Koel2019_S' num2str(sExp) '_downhill_08'],...
+            ['Koel2019_S' num2str(sExp) '_downhill_13'],...
+            ['Koel2019_S' num2str(sExp) '_uphill_08'],...
+            ['Koel2019_S' num2str(sExp) '_uphill_13'],...
+            ['Koel2019_S' num2str(sExp) '_level_08'],...
+            ['Koel2019_S' num2str(sExp) '_Level_13']};
+
+        % read table with experimental data metabolic energy
+        % experimental data
+        Koel.Exp = importdata(fullfile(benchmarking_folder,'exp_data',...
+            'general_exp_data','Koelewijn2019','DataTableKoelewijn.mat'));
+        slopes_sim = [-8 -8, 8, 8, 0, 0];
+
+
+        for isim =1:6%length(S_benchmark.koelewijn.names)
+            % load sim file
+            sim_res_folder = fullfile(benchmarking_folder,'koelewijn2019',...
+                S_benchmark.koelewijn.names{isim});
+            mat_files = dir(fullfile(sim_res_folder,'*.mat'));
+            if length(mat_files) ~= 1
+                disp('warning mutiple mat files in folder')
+                disp(sim_res_folder);
+                disp(['assumes that file ' mat_files(1).name, ...
+                    'contains the simulation results'])
+            end
+            sim_res_file = fullfile(mat_files(1).folder, mat_files(1).name);
+            SimRes = load(sim_res_file);
+            % attach experimental data
+            name_exp_sel = Names_ExpData{isim};
+            benchmark.subject_height    = Exp_SubjProp.height(strcmp(Exp_SubjProp.Study,'Koelewijn'));
+            benchmark.subject_mass      = Exp_SubjProp.mass(strcmp(Exp_SubjProp.Study,'Koelewijn')); % to do check in publication
+            benchmark.prop_leg_length   = prop_leg_length;
+            benchmark.leglength         = benchmark.subject_height *  benchmark.prop_leg_length;
+            benchmark.grf = array2table(ExperimentalData.GRFs.(name_exp_sel).mean,...
+                'VariableNames',{'Fx','Fy','Fz'});
+            benchmark.grf_std = array2table(ExperimentalData.GRFs.(name_exp_sel).std,...
+                'VariableNames',{'Fx','Fy','Fz'});
+            benchmark.id = array2table(ExperimentalData.Torques.(name_exp_sel).mean,...
+                'VariableNames',ExperimentalData.Torques.(name_exp_sel).colheaders);
+            benchmark.id_std = array2table(ExperimentalData.Torques.(name_exp_sel).std,...
+                'VariableNames',ExperimentalData.Torques.(name_exp_sel).colheaders);;
+            benchmark.ik = array2table(ExperimentalData.Q.(name_exp_sel).Qs.mean,...
+                'VariableNames',ExperimentalData.Q.(name_exp_sel).Qs.colheaders);
+            benchmark.ik_std = array2table(ExperimentalData.Q.(name_exp_sel).Qs.std,...
+                'VariableNames',ExperimentalData.Q.(name_exp_sel).Qs.colheaders);            
+            benchmark.stride_frequency  = ExperimentalData.StrideFreq.(name_exp_sel).mean;
+
+            % metabolic energy
+            %   find correct data
+            metab = squeeze(Koel.Exp.DatKoel(:,strcmp(Koel.Exp.HeaderKoel,'Pmetab'),:));
+            speed = squeeze(Koel.Exp.DatKoel(:,strcmp(Koel.Exp.HeaderKoel,'speed'),1));
+            slope = squeeze(Koel.Exp.DatKoel(:,strcmp(Koel.Exp.HeaderKoel,'slope'),1));
+            irow = speed == SimRes.R.S.misc.forward_velocity & slope == slopes_sim(isim);
+            cot_mean = nanmean(metab,2); % to do: check unit here
+            metab= cot_mean(irow) * SimRes.R.S.misc.forward_velocity * benchmark.subject_mass ;
+            benchmark.Pmetab_mean       = metab./(benchmark.subject_mass* ...
+                9.81^1.5*sqrt(benchmark.leglength));
+
+            % nondim id
+            benchmark.id.Variables = benchmark.id.Variables / ...
+                (benchmark.leglength * 9.81 * benchmark.subject_mass);
+            benchmark.id_std.Variables = benchmark.id_std.Variables / ...
+                (benchmark.leglength  * 9.81 * benchmark.subject_mass);
+
+            % nondim sf
+            benchmark.stride_frequency = benchmark.stride_frequency./ ...
+                sqrt(9.81/benchmark.leglength);
+
+            % non grf: weird unit in Antoines experimental data structure
+            %   it is expressed there as a % of body weight
+            %   todo: adapt this in the paper (adapt unit of ylabel)
+            benchmark.grf.Variables = benchmark.grf.Variables/100;
+            benchmark.grf_std.Variables = benchmark.grf_std.Variables/100;
+
+            % adapt simulated GRF such that y-axis points in vertical
+            % direction
+            % problem is that like this you can only do this once. not
+            % desired
+            slope =slopes_sim(isim)/100;
+            fi = atan(slope);
+            Rotm = rotz(fi);
+            GRF_rot = SimRes.R.ground_reaction.GRF_r*Rotm(1:3,1:3)';
+            SimRes.R.ground_reaction.GRF_r_rot =  GRF_rot;
+            GRF_rot = SimRes.R.ground_reaction.GRF_l*Rotm(1:3,1:3)';
+            SimRes.R.ground_reaction.GRF_l_rot =  GRF_rot;
+            
+
+            % add benchmark to .mat file
+            R = SimRes.R;
+            save(sim_res_file, 'benchmark','R', "-append");
+            clear benchmark;
+
+        end
+    end
+
+    % -- Browning 2008
+    if any(strcmp(S_benchmark.studies,'browning2008'))
+        % no experimental kinematics and kinetics
+        % load experimental data from table
+        Browning.Tab = importdata(fullfile(benchmarking_folder,...
+            'exp_data','general_exp_data','Browning2008','Browning_COT.csv'));
+        Browning.Fr = [ NaN, NaN, 0.92, ...
+            0.85, 0.81, NaN, NaN, NaN, 0.9, ...
+            NaN, 0.87, 0.91];
+        Browning.IndexExpTable =[NaN, 6, 7, ...
+            2, 3, 8 9 NaN 10,...
+            4, 5, 1]; % index SubjName in exp data table
+        Browning.walkspeed = 1.25;
+        % temp fix for a bug
+        if isfield(S_benchmark,'browning2008')
+            S_benchmark.browning.names = S_benchmark.browning2008.names;
+        end
+        nsim = length(S_benchmark.browning.names);
+        for isim = 1:nsim
+            sim_res_folder = fullfile(benchmarking_folder,'browning2008',...
+                S_benchmark.browning.names{isim});
+            mat_files = dir(fullfile(sim_res_folder,'*.mat'));
+            if length(mat_files) ~= 1
+                disp('warning mutiple mat files in folder')
+                disp(sim_res_folder);
+                disp(['assumes that file ' mat_files(1).name, ...
+                    'contains the simulation results'])
+            end
+            sim_res_file = fullfile(mat_files(1).folder, mat_files(1).name);
+            SimRes = load(sim_res_file);
+            % attach data to benchmarking
+
+            benchmark.subject_height    = Exp_SubjProp.height(strcmp(Exp_SubjProp.Study,'Browning'));
+            benchmark.subject_mass      = Exp_SubjProp.mass(strcmp(Exp_SubjProp.Study,'Browning')); % to do check in publication
+            benchmark.prop_leg_length   = prop_leg_length;
+            benchmark.leglength         = benchmark.subject_height *  benchmark.prop_leg_length;
+            benchmark.grf               = [];
+            benchmark.grf_std           = [];
+            benchmark.id                = []; % check if already norm to mass
+            benchmark.id_std            = [];
+            benchmark.ik                = [];
+            benchmark.ik_std            = [];
+
+            % load COT and frequency data
+            % read the experimental data
+            if ~isnan(Browning.IndexExpTable(isim))
+                cot = Browning.Tab(Browning.IndexExpTable(isim),2); % no data
+                Pmetab= cot*Browning.walkspeed*benchmark.subject_mass;
+                benchmark.Pmetab_mean       = Pmetab./(benchmark.subject_mass* ...
+                    9.81^1.5*sqrt(benchmark.leglength));
+            else
+                benchmark.Pmetab_mean       = [];
+            end
+            benchmark.stride_frequency  = Browning.Fr(isim)./(sqrt(g/benchmark.leglength));
+
+            save(sim_res_file, 'benchmark', "-append");
+            clear benchmark;
+
 
         end
     end
@@ -437,6 +611,68 @@ if BoolPlot
         end
 
         clear Dat
+    end
+
+
+    % Plot results Koelewijn
+    if any(strcmp(S_benchmark.studies,'koelewijn2019'))
+        
+
+        % read all the data
+        for isim =1:6%length(S_benchmark.koelewijn.names)
+            for idof = 1:length(dofs_plot)
+                % load sim file
+                sim_res_folder = fullfile(benchmarking_folder,'koelewijn2019',...
+                    S_benchmark.koelewijn.names{isim});
+                mat_files = dir(fullfile(sim_res_folder,'*.mat'));
+                if length(mat_files) ~= 1
+                    disp('warning mutiple mat files in folder')
+                    disp(sim_res_folder);
+                    disp(['assumes that file ' mat_files(1).name, ...
+                        'contains the simulation results'])
+                end
+                sim_res_file = fullfile(mat_files(1).folder, mat_files(1).name);
+                load(sim_res_file,'R','benchmark');
+                Dat(isim).benchmark = benchmark;
+                Dat(isim).R = R;
+            end
+        end
+
+        % default plot function for koelewijn
+        bool_rot_grf = true;
+        default_plot_benchmarking(Dat, dofs_plot, 'Koelewijn',msim,Lsim,bool_rot_grf);        
+        clear Dat
+    end
+
+    % Plot results Koelewijn
+    if any(strcmp(S_benchmark.studies,'browning2008'))
+
+
+        % read all the data
+        nsim = length(S_benchmark.browning.names);
+        for isim =1:nsim
+            for idof = 1:length(dofs_plot)
+                % load sim file
+                sim_res_folder = fullfile(benchmarking_folder,'browning2008',...
+                    S_benchmark.browning.names{isim});
+                mat_files = dir(fullfile(sim_res_folder,'*.mat'));
+                if length(mat_files) ~= 1
+                    disp('warning mutiple mat files in folder')
+                    disp(sim_res_folder);
+                    disp(['assumes that file ' mat_files(1).name, ...
+                        'contains the simulation results'])
+                end
+                sim_res_file = fullfile(mat_files(1).folder, mat_files(1).name);
+                load(sim_res_file,'R','benchmark');
+                Dat(isim).benchmark = benchmark;
+                Dat(isim).R = R;
+            end
+        end
+
+        % default plot for Browning
+        bool_rot_grf = false;
+        default_plot_benchmarking(Dat, dofs_plot, 'Browning',msim,Lsim,bool_rot_grf);        
+        clear Dat    
     end
 end
 

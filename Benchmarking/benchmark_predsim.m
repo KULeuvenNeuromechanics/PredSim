@@ -202,7 +202,7 @@ if isfield(S_benchmark,'studies') && ~isempty(S_benchmark.studies)
     if any(strcmp(S_benchmark.studies,'koelewijn2019'))
         % specify all conditions
         S_benchmark.koelewijn.gait_speeds = [0.8 1.3];
-        S_benchmark.koelewijn.names = cell(length(id_trials),1);
+        S_benchmark.koelewijn.names = cell(6,1);
         S_benchmark.koelewijn.slopes = [-8 0 8];
         S_benchmark.koelewijn.addedmass = 0;
         % the idea is always to run for all models associated with the
@@ -268,7 +268,7 @@ if isfield(S_benchmark,'studies') && ~isempty(S_benchmark.studies)
                 disp(['added sim browning number ' num2str(ct_sim) ' to batch' ])
             end
             % append name
-            S_benchmark.browning2008.names{ct_sim} = save_name;
+            S_benchmark.browning.names{ct_sim} = save_name;
             ct_sim = ct_sim+1;
 
         end
