@@ -30,7 +30,7 @@ function [fig_hand] = plot_figure_grf(R,varargin)
 % default color is blue
 colr = [0 0.4470 0.7410];
 % legend name
-legName = R.S.post_process.result_filename;
+legName = R.S.misc.result_filename;
 % use no interpreter for legend
 lgInt = 'none';
 
