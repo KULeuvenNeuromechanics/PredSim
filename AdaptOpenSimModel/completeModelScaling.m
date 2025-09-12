@@ -30,7 +30,11 @@ function [] = completeModelScaling(osim_scaleTool, osim_generic, osim_scaled,...
 %   References
 %   [1] A. L. Hof, “Scaling gait data to body size,” Gait & Posture, 
 %   vol. 4, no. 3, pp. 222–223, May 1996, doi: 10.1016/0966-6362(95)01057-2.
-%   [2] I. Vandekerckhove et al (unpublished)
+%   [2] I. Vandekerckhove et al., “Muscle weakness but also contractures 
+%   contribute to the progressive gait pathology in children with Duchenne 
+%   muscular dystrophy: a simulation study,” J NeuroEngineering Rehabil, 
+%   vol. 22, no. 1, p. 103, May 2025, doi: 10.1186/s12984-025-01631-x.
+%
 %
 %   See also 
 %   AdaptOpenSimModel
