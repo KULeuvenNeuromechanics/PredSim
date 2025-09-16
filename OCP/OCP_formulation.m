@@ -44,9 +44,12 @@ pathmain = pwd;
 % addpath(genpath(pathRepo));
 % Loading external functions.
 setup.derivatives =  'AD'; % Algorithmic differentiation
-cd(S.misc.subject_path)
-F  = external('F', fullfile(S.misc.subject_path, S.misc.external_function));
-cd(pathmain);
+
+if S.OpenSimADOptions.useSerialisedFunction
+    F = Function.load(fullfile(S.misc.subject_path, S.misc.external_function));
+else
+    F = external('F',fullfile(S.misc.subject_path, S.misc.external_function));
+end
 
 %% Collocation Scheme
 % We use a pseudospectral direct collocation method, i.e. we use Lagrange

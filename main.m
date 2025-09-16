@@ -8,28 +8,28 @@ clear
 close all
 clc
 
-% Check BLAS/LAPACK version; add functions from LinearAlgebra subdirectory
-% to path in case Intel is *not* used
-blas_version = version('-blas')
-lapack_version = version('-lapack')
-if ~startsWith(lapack_version, 'Intel')
-    addpath(fullfile(getenv('PWD'), 'LinearAlgebra'))
-end
-
+% % Check BLAS/LAPACK version; add functions from LinearAlgebra subdirectory
+% % to path in case Intel is *not* used
+% blas_version = version('-blas');
+% lapack_version = version('-lapack');
+% if ~startsWith(lapack_version, 'Intel')
+%     addpath(fullfile(getenv('PWD'), 'LinearAlgebra'))
+% end
+% 
 % path to the repository folder
 [pathRepo,~,~] = fileparts(mfilename('fullpath'));
 % path to the folder that contains the repository folder
 [pathRepoFolder,~,~] = fileparts(pathRepo);
-
-% if the OpenSim module is loaded, make its Java library available
-if isenv('EBROOTOPENSIM')
-    javaclasspath(fullfile(getenv('EBROOTOPENSIM'), 'sdk', 'Java', 'org-opensim-modeling.jar'));
-end
-
-% if the CasADi-MATLAB module is loaded, expose its matlab bindings
-if isenv('EBROOTCASADIMINMATLAB')
-    addpath(fullfile(getenv('EBROOTCASADIMINMATLAB'), 'matlab'))
-end
+% 
+% % if the OpenSim module is loaded, make its Java library available
+% if isenv('EBROOTOPENSIM')
+%     javaclasspath(fullfile(getenv('EBROOTOPENSIM'), 'sdk', 'Java', 'org-opensim-modeling.jar'));
+% end
+% 
+% % if the CasADi-MATLAB module is loaded, expose its matlab bindings
+% if isenv('EBROOTCASADIMINMATLAB')
+%     addpath(fullfile(getenv('EBROOTCASADIMINMATLAB'), 'matlab'))
+% end
 
 %% Initialize S
 addpath(fullfile(pathRepo,'DefaultSettings'))
@@ -52,6 +52,7 @@ S.solver.IG_selection_gaitCyclePercent = 100;
 % give the path to the osim model of your subject
 osim_path = fullfile(pathRepo,'Subjects',S.subject.name,[S.subject.name '.osim']);
 
+S.OpenSimADOptions.useSerialisedFunction = true;
 
 %% Run predictive simulations
 
