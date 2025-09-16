@@ -207,11 +207,6 @@ if isfield(S_benchmark,'studies') && ~isempty(S_benchmark.studies)
     end
     
     % attach data Koelewijn
-    % ToDo: check if we have to project measured GRFs on the slope ?
-    
-
-    % yes I have to project simulated GRF such that y points upwards again
-    % now y is perpendicular to the slope
     if any(strcmp(S_benchmark.studies,'koelewijn2019'))
 
         % load matlab structure with generic experimental data
@@ -275,7 +270,7 @@ if isfield(S_benchmark,'studies') && ~isempty(S_benchmark.studies)
             speed = squeeze(Koel.Exp.DatKoel(:,strcmp(Koel.Exp.HeaderKoel,'speed'),1));
             slope = squeeze(Koel.Exp.DatKoel(:,strcmp(Koel.Exp.HeaderKoel,'slope'),1));
             irow = speed == SimRes.R.S.misc.forward_velocity & slope == slopes_sim(isim);
-            cot_mean = nanmean(metab,2); % to do: check unit here
+            cot_mean = nanmean(metab,2); % this is J/kg/m
             metab= cot_mean(irow) * SimRes.R.S.misc.forward_velocity * benchmark.subject_mass ;
             benchmark.Pmetab_mean       = metab./(benchmark.subject_mass* ...
                 9.81^1.5*sqrt(benchmark.leglength));
@@ -321,15 +316,22 @@ if isfield(S_benchmark,'studies') && ~isempty(S_benchmark.studies)
     if any(strcmp(S_benchmark.studies,'browning2008'))
         % no experimental kinematics and kinetics
         % load experimental data from table
-        Browning.Tab = importdata(fullfile(benchmarking_folder,...
-            'exp_data','general_exp_data','Browning2008','Browning_COT.csv'));
-        Browning.Fr = [ NaN, NaN, 0.92, ...
-            0.85, 0.81, NaN, NaN, NaN, 0.9, ...
-            NaN, 0.87, 0.91];
-        Browning.IndexExpTable =[NaN, 6, 7, ...
-            2, 3, 8 9 NaN 10,...
-            4, 5, 1]; % index SubjName in exp data table
-        Browning.walkspeed = 1.25;
+        % create table here manually, in same order as in the predictive
+        % simulations
+        tab_browning = {
+            'femur4', NaN, NaN;...
+            'femur8', NaN, 3.04;...
+            'femur16', 0.89, 3.56;...
+            'foot4', 0.84, 3.15;...
+            'foot8', 0.80, 3.94;...
+            'pelvis4', NaN, 2.53;...
+            'pelvis8', NaN, 2.67; ...
+            'pelvis12', NaN, 2.67; ...
+            'pelvis16', 0.88, 3.10;...
+            'tibia4', NaN, 2.73;...
+            'tibia8', 0.87, 2.89;...     
+            'level', 0.88, 2.34};
+        browning_walkspeed = 1.25;
         % temp fix for a bug
         if isfield(S_benchmark,'browning2008')
             S_benchmark.browning.names = S_benchmark.browning2008.names;
@@ -359,22 +361,13 @@ if isfield(S_benchmark,'studies') && ~isempty(S_benchmark.studies)
             benchmark.id_std            = [];
             benchmark.ik                = [];
             benchmark.ik_std            = [];
-
-            % load COT and frequency data
-            % read the experimental data
-            if ~isnan(Browning.IndexExpTable(isim))
-                cot = Browning.Tab(Browning.IndexExpTable(isim),2); % no data
-                Pmetab= cot*Browning.walkspeed*benchmark.subject_mass;
-                benchmark.Pmetab_mean       = Pmetab./(benchmark.subject_mass* ...
-                    9.81^1.5*sqrt(benchmark.leglength));
-            else
-                benchmark.Pmetab_mean       = [];
-            end
-            benchmark.stride_frequency  = Browning.Fr(isim)./(sqrt(g/benchmark.leglength));
-
+            % metabolic power
+            benchmark.Pmetab_mean       = tab_browning{isim,3}*benchmark.subject_mass./...
+                (benchmark.subject_mass*9.81^1.5*sqrt(benchmark.leglength));
+            % stride frequency
+            benchmark.stride_frequency  =  tab_browning{isim,2}./(sqrt(g/benchmark.leglength));
             save(sim_res_file, 'benchmark', "-append");
             clear benchmark;
-
 
         end
     end
@@ -399,6 +392,8 @@ if BoolPlot
     %  3. angles in rad to deg ?
     %  4. add options to handle ik, id and grf input as imported mot files
     %     or matlab tables
+
+    ct_sim = 1;
 
     if any(strcmp(S_benchmark.studies,'vanderzee2022'))
         % default function to plot van der zee results
@@ -609,6 +604,11 @@ if BoolPlot
             ylabel('simulated metab. power');
 
         end
+        
+        % store results in a table
+        
+
+
 
         clear Dat
     end
@@ -616,8 +616,6 @@ if BoolPlot
 
     % Plot results Koelewijn
     if any(strcmp(S_benchmark.studies,'koelewijn2019'))
-        
-
         % read all the data
         for isim =1:6%length(S_benchmark.koelewijn.names)
             for idof = 1:length(dofs_plot)
@@ -674,6 +672,80 @@ if BoolPlot
         default_plot_benchmarking(Dat, dofs_plot, 'Browning',msim,Lsim,bool_rot_grf);        
         clear Dat    
     end
+
+
+    %% Plot figure with stride frequency and metabolic power for all datapoints
+    % the approach is quite simple here, we load all .mat files with
+    % simulations results and plot the datapoints.
+    
+    disp('work in progress');
+
+        % also store table with all results
+    headers_table = {'sim_stride_frequency','sim_metabolic_power','speed',...
+        'slope','id_study','exp_stride_frequency','exp_metabolic_power'};
+    data_table = nan(1000, length(headers_table));
+    ct_sim = 1;
+    % id_study: 1 = vanderzee
+    %           2 = koelewijn
+    %           3 = browning
+    if any(strcmp(S_benchmark.studies,'browning2008'))
+        % read all the data
+        nsim = length(S_benchmark.browning.names);
+        for isim =1:nsim
+            % load sim file
+            sim_res_folder = fullfile(benchmarking_folder,'browning2008',...
+                S_benchmark.browning.names{isim});
+            slope = 0;
+            id_study = 3;
+            [data_table, ct_sim] = add_benchmark_to_table(ct_sim,...
+                sim_res_folder, headers_table, data_table, slope, id_study,...
+                Lsim, msim);
+        end
+    end
+    if any(strcmp(S_benchmark.studies,'vanderzee2022'))
+        % read all the data
+        nsim = length(S_benchmark.vanderzee.names);
+        for isim =1:nsim
+            % load sim file
+            sim_res_folder = fullfile(benchmarking_folder,'vanderzee2022',...
+                S_benchmark.vanderzee.names{isim});
+            slope = 0;
+            id_study = 1;
+            [data_table, ct_sim] = add_benchmark_to_table(ct_sim,...
+                sim_res_folder, headers_table, data_table, slope, id_study,...
+                Lsim, msim);
+        end
+    end
+
+    % Plot results Koelewijn
+    if any(strcmp(S_benchmark.studies,'koelewijn2019'))
+        % read all the data
+        slopes = [-8, -8, 8, 8, 0, 0];
+        for isim =1:6%length(S_benchmark.koelewijn.names)
+            % load sim file
+            sim_res_folder = fullfile(benchmarking_folder,'koelewijn2019',...
+                S_benchmark.koelewijn.names{isim});
+            slope = slopes(isim);
+            id_study = 2;
+            [data_table, ct_sim] = add_benchmark_to_table(ct_sim,...
+                sim_res_folder, headers_table, data_table, slope, id_study,...
+                Lsim, msim);
+        end
+    end
+
+    data_table(ct_sim,:) = [];
+    table_all = array2table(data_table,...
+    'VariableNames',headers_table);
+
+    
+    
+
+
+
+
+
+
+
 end
 
 
