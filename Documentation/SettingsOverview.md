@@ -236,14 +236,21 @@ Quickly navigate to:
     - Set limit torque coefficients for a coordinate. Default is empty [cell array] with pattern {coordinate name(s) [char, cell array of chars], K [4x1 double], theta [2x1 double]}.
     For the specified coordinates, the coefficients from this setting take priority over the coefficients from the file with defaults (*S.subject.default_coord_lim_torq_coeff*).
     Note: Setting `K(1) = nan` will cause the limit torque for that coordinate to be excluded, even if it was given in the defaults.
-- **S.subject.base_joints_legs**:
-    - Joint name that is the base of a leg, left and right. Default is 'hip' [char]. Inputs of the form 'hip_r', {'hip_l'}, {'hip_r','hip_l'} are equivalent.
-- **S.subject.base_joints_arms**:
-    - Joint name that is the base of an arm, left and right. Default is 'acromial' [char]. Inputs of the form 'acromial_r', {'acromial_l'}, {'acromial_r','acromial_l'} are equivalent. Set to empty [] if the model does not have arms.
 - **S.subject.stiffness_all_ligaments**:
     - Default stiffness model (i.e. force-length) used for ligaments. Default is [*ligamentGefen2002*](../ModelComponents/ligamentGefen2002.m) [char]
 - **S.subject.set_stiffness_selected_ligaments**:
     - Use name-value pairs to use different stiffness models for specific ligaments. Default is *{'PlantarFascia',['plantarFasciaNatali2010'](../ModelComponents/plantarFasciaNatali2010.m)}* 
+- **S.subject.default_specific_tension**:
+    - file with default value for the specific tension of each muscle. Default is *'default_specific_tension.csv'* [char].
+    The provided file should be compatible with [`readtable`](https://mathworks.com/help/matlab/ref/readtable.html). The table should contain a column with coordinate names (header: name) and a column with specific tension values (header: specific_tension). Default values are taken from *Uchida et al. (2016).* 
+    If the model contains muscles that are not included in the file, their default specific tension will be set to 0.70.
+    If a scalar value is passed instead of a file, that value will be used for all muscles.
+- **S.subject.set_specific_tension_selected_muscles**:
+    - Use name-value pairs to use different specific tension values for specific muscles. Has priority over values from *S.subject.default_specific_tension*.
+- **S.subject.base_joints_legs**:
+    - Joint name that is the base of a leg, left and right. Default is 'hip' [char]. Inputs of the form 'hip_r', {'hip_l'}, {'hip_r','hip_l'} are equivalent.
+- **S.subject.base_joints_arms**:
+    - Joint name that is the base of an arm, left and right. Default is 'acromial' [char]. Inputs of the form 'acromial_r', {'acromial_l'}, {'acromial_r','acromial_l'} are equivalent. Set to empty [] if the model does not have arms.
 - **S.subject.synergies**:
 	- boolean that indicates if muscle activations are controlled by synergies. Default is *0* (no synergies implemented).
 	- When synergies are implemented, different variables need to be defined:
