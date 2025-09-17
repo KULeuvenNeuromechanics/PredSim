@@ -147,7 +147,7 @@ if extFunOk
     end
 end
 
-if extFunOk
+if extFunOk && ~S.OpenSimADOptions.always_generate
     disp(['   Using existing external function: '])
     disp(['      ' external_function_dll])
 else

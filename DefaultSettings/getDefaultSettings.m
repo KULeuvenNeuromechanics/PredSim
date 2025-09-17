@@ -729,4 +729,8 @@ if ~isfield(S.OpenSimADOptions,'useSerialisedFunction')
     S.OpenSimADOptions.useSerialisedFunction = false;
 end
 
+if ~isfield(S.OpenSimADOptions,'always_generate')
+    S.OpenSimADOptions.always_generate = false;
+end
+
 end
