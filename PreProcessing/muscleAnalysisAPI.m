@@ -100,13 +100,18 @@ model.realizePosition(s);
 lMT = zeros(n_data_points,n_muscle);
 dM = zeros(n_data_points,n_muscle,n_coord);
 
+% names of states corresponding to coordinate position values
+for i=1:n_coord
+    state_names{i} = model.getCoordinateSet.get(coord_names{i}).getStateVariableNames().get(0);
+end
+
 % Loop through dummy states
 for j=1:n_data_points
     % Set each coordinate value
     for i=1:n_coord
-        state_vars.set(model_info.ExtFunIO.coordi_OpenSimAPIstate.(coord_names{i}),Qs(j,i));
+%         model.getCoordinateSet.get(coord_names{i}).setValue(s,Qs(j,i),false); % slow
+        model.setStateVariableValue(s,state_names{i},Qs(j,i));
     end
-    model.setStateVariableValues(s,state_vars);
     model.realizePosition(s);
 
     % Loop over muscles
