@@ -138,7 +138,7 @@ for i = 1:length(muscleNames)
     if isfield(pctst_data,muscleNames{i})
         slow_twitch_fiber_ratio(i,1) = pctst_data.(muscleNames{i});
     else
-        disp(['Default ratio of Slow twitch fibers for muscle ' muscleNames{i} ' selected (0.50)']);
+%         disp(['Default ratio of Slow twitch fibers for muscle ' muscleNames{i} ' selected (0.50)']);
         slow_twitch_fiber_ratio(i,1) = 0.5;
     end
 end

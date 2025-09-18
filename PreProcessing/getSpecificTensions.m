@@ -139,7 +139,7 @@ for i = 1:length(muscleNames)
     if isfield(sigma_data,muscleNames{i})
         specific_tension(i,1) = sigma_data.(muscleNames{i});
     else
-        disp(['Default specific tension for muscle ' muscleNames{i} ' selected (0.70)']);
+%         disp(['Default specific tension for muscle ' muscleNames{i} ' selected (0.70)']);
         specific_tension(i,1) = 0.7;
     end
 end
