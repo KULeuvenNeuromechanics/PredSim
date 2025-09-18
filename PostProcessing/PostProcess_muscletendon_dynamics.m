@@ -45,7 +45,7 @@ R.muscles.vT = FT;
 for i=1:N
 
     [~,FTj,Fcej,Fpassj,Fisoj] = f_casadi.forceEquilibrium_FtildeState_all_tendon(R.muscles.a(i,:)',...
-        R.muscles.FTtilde(i,:)',R.muscles.dFTtilde(i,:)',R.muscles.lMT(i,:)',R.muscles.vMT(i,:)',tensions);
+        R.muscles.FTtilde(i,:)',R.muscles.dFTtilde(i,:)',R.muscles.lMT(i,:)',R.muscles.vMT(i,:)');
 
     R.muscles.FT(i,:) = full(FTj);
     R.muscles.Fce(i,:) = full(Fcej);

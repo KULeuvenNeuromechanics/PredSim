@@ -50,15 +50,6 @@ d = 3; % degree of interpolating polynomial
 method = 'radau'; % collocation method
 [tau_root,C,D,B] = CollocationScheme(d,method);
 
-%% Metabolic energy model parameters
-% We extract the specific tensions and slow twitch rations.
-tensions = struct_array_to_double_array(model_info.muscle_info.parameters,'specific_tension');
-pctsts = struct_array_to_double_array(model_info.muscle_info.parameters,'slow_twitch_fiber_ratio');
-
-%% Function to compute muscle mass
-MuscleMass = struct_array_to_double_array(model_info.muscle_info.parameters,'muscle_mass');
-
-
 %% Get bounds and initial guess
 
 bounds_nsc = getBounds(S,model_info);
@@ -721,7 +712,7 @@ for k=1:N
             f_casadi.forceEquilibrium_FtildeState_all_tendon(...
             a_col_opt_unsc(count,:)',FTtilde_col_opt_unsc(count,:)',...
             dFTtilde_col_opt_unsc(count,:)',full(lMTkj_opt_all),...
-            full(vMTkj_opt_all),tensions);
+            full(vMTkj_opt_all));
         % muscle-tendon kinematics
         [~,lMtilde_opt_all] = f_casadi.FiberLength_TendonForce_tendon(...
             FTtilde_col_opt_unsc(count,:)',full(lMTkj_opt_all));
@@ -734,9 +725,8 @@ for k=1:N
         if strcmp(S.metabolicE.model,'Bhargava2004')
             [e_tot_all,~,~,~,~,~] = f_casadi.getMetabolicEnergySmooth2004all(...
             a_col_opt_unsc(count,:)',a_col_opt_unsc(count,:)',...
-            full(lMtilde_opt_all),...
-            full(vM_opt_all),full(Fce_opt_all),full(Fpass_opt_all),...
-            MuscleMass',pctsts,full(Fiso_opt_all),model_info.mass,S.metabolicE.tanh_b);
+            full(lMtilde_opt_all),full(vM_opt_all),full(Fce_opt_all),...
+            full(Fpass_opt_all),full(Fiso_opt_all));
         else
             error('No energy model selected');
         end

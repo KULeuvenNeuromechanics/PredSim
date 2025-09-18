@@ -55,8 +55,6 @@ method = 'radau'; % collocation method
 % Muscles from one leg and from the back
 muscleNames = model_info.muscle_info.muscle_names;
 
-
-
 [~,mai] = MomentArmIndices_asym(muscleNames,...
     model_info.muscle_info.muscle_spanning_joint_info);
 % calculate total number of joints that each muscle crosses (used later)
@@ -65,18 +63,6 @@ sumCross = sum(model_info.muscle_info.muscle_spanning_joint_info);
 % Parameters for activation dynamics
 tact = model_info.muscle_info.tact; % Activation time constant
 tdeact = model_info.muscle_info.tdeact; % Deactivation time constant
-
-
-
-%% Metabolic energy model parameters
-% We extract the specific tensions and slow twitch rations.
-tensions = struct_array_to_double_array(model_info.muscle_info.parameters,'specific_tension');
-pctsts = struct_array_to_double_array(model_info.muscle_info.parameters,'slow_twitch_fiber_ratio');
-
-%% Function to compute muscle mass
-MuscleMass = struct_array_to_double_array(model_info.muscle_info.parameters,'muscle_mass');
-
-
 
 
 %% OCP: collocation equations
@@ -159,7 +145,7 @@ for j=1:d
     [Hilldiffj,FTj,Fcej,Fpassj,Fisoj] = ...
         f_casadi.forceEquilibrium_FtildeState_all_tendon(akj(:,j+1),...
         FTtildekj_nsc(:,j+1),dFTtildej_nsc(:,j),...
-        lMTj,vMTj,tensions);
+        lMTj,vMTj);
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Get metabolic energy rate if in the cost function
     % Get muscle fiber lengths
@@ -172,8 +158,7 @@ for j=1:d
     if strcmp(S.metabolicE.model,'Bhargava2004')
         % Get metabolic energy rate Bhargava et al. (2004)
         [e_totj,~,~,~,~,~] = f_casadi.getMetabolicEnergySmooth2004all(...
-            akj(:,j+1),akj(:,j+1),lMtildej,vMj,Fcej,Fpassj,...
-            MuscleMass',pctsts,Fisoj,model_info.mass,S.metabolicE.tanh_b);
+            akj(:,j+1),akj(:,j+1),lMtildej,vMj,Fcej,Fpassj,Fisoj);
     else
         error('No energy model selected');
     end
