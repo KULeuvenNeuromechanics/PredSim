@@ -83,6 +83,7 @@ dM = zeros(n_data_points,n_muscle,n_coord);
 lMT = dM;
 
 %% Option 1: based on momentarms
+if nargout>=3
 % Loop through dummy states
 for j=1:n_data_points
     % Set each coordinate value
@@ -110,13 +111,14 @@ end
 muscle_spanning_joint_info_1 = squeeze(sum(abs(dM), 1));
 muscle_spanning_joint_info_1(muscle_spanning_joint_info_1<=0.0001 & muscle_spanning_joint_info_1>=-0.0001) = 0;
 muscle_spanning_joint_info_1(muscle_spanning_joint_info_1~=0) = 1;
+end
 
 %% option 2: based on lengths
 % reference lengths
 lMT0 = zeros(1,n_muscle);
-state_vars.setToZero();
-model.setStateVariableValues(s,state_vars);
-model.realizePosition(s);
+% state_vars.setToZero();
+% model.setStateVariableValues(s,state_vars);
+% model.realizePosition(s);
 for m=1:n_muscle
     muscle_m = force_set.get(muscle_names{m});
     if ligaments_bool
@@ -131,8 +133,9 @@ for j=1:n_data_points
     for i=1:n_coord
         state_vars.setToZero();
         model.setStateVariableValues(s,state_vars);
-        model.getCoordinateSet.get(coord_names{i}).setValue(s,Qs(j,i),false);
         model.realizePosition(s);
+        model.getCoordinateSet.get(coord_names{i}).setValue(s,Qs(j,i),false);
+        
     
         % Loop over muscles
         for m=1:n_muscle
