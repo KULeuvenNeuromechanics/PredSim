@@ -31,6 +31,7 @@ t0 = tic;
 N = S.solver.N_meshes; % number of mesh intervals
 W = S.weights; % weights optimization
 nq = model_info.ExtFunIO.jointi.nq; % lengths of coordinate subsets
+NMuscle = model_info.muscle_info.NMuscle; % Total number of muscles
 
 %% Load external functions
 import casadi.*
@@ -38,15 +39,7 @@ import casadi.*
 % OpenSim/Simbody C++ API. This external function is compiled as a dll from
 % which we create a Function instance using CasADi in MATLAB. More details
 % about the external function can be found in the documentation.
-pathmain = pwd;
-% [filepath,~,~] = fileparts(mfilename('fullpath'));
-% [pathRepo,~,~] = fileparts(filepath);
-% addpath(genpath(pathRepo));
-% Loading external functions.
-setup.derivatives =  'AD'; % Algorithmic differentiation
-cd(S.misc.subject_path)
 F  = external('F', fullfile(S.misc.subject_path, S.misc.external_function));
-cd(pathmain);
 
 %% Collocation Scheme
 % We use a pseudospectral direct collocation method, i.e. we use Lagrange
@@ -57,29 +50,6 @@ d = 3; % degree of interpolating polynomial
 method = 'radau'; % collocation method
 [tau_root,C,D,B] = CollocationScheme(d,method);
 
-%% Muscle information
-% Muscles from one leg and from the back
-muscleNames = model_info.muscle_info.muscle_names;
-
-% Total number of muscles
-NMuscle = model_info.muscle_info.NMuscle;
-[~,mai] = MomentArmIndices_asym(muscleNames,...
-    model_info.muscle_info.muscle_spanning_joint_info);
-% calculate total number of joints that each muscle crosses (used later)
-sumCross = sum(model_info.muscle_info.muscle_spanning_joint_info);
-
-% Parameters for activation dynamics
-tact = model_info.muscle_info.tact; % Activation time constant
-tdeact = model_info.muscle_info.tdeact; % Deactivation time constant
-
-% Muscles indices for reading synergies
-if (S.subject.synergies) 
-    idx_m_r = model_info.muscle_info.idx_right;
-    idx_m_l = model_info.muscle_info.idx_left;
-    muscleNames_r = muscleNames(idx_m_r);
-    muscleNames_l = muscleNames(idx_m_l);
-end
-
 %% Metabolic energy model parameters
 % We extract the specific tensions and slow twitch rations.
 tensions = struct_array_to_double_array(model_info.muscle_info.parameters,'specific_tension');
@@ -87,6 +57,7 @@ pctsts = struct_array_to_double_array(model_info.muscle_info.parameters,'slow_tw
 
 %% Function to compute muscle mass
 MuscleMass = struct_array_to_double_array(model_info.muscle_info.parameters,'muscle_mass');
+
 
 %% Get bounds and initial guess
 
@@ -104,6 +75,36 @@ end
 if (S.misc.visualize_bounds)
     visualizebounds
 end
+
+
+%% Helper function for orthoses
+% variables
+a_MX = MX.sym('a',NMuscle,N);
+Qs_MX = MX.sym('Qs',nq.all,N);
+Qdots_MX = MX.sym('Qdots',nq.all,N);
+Qddots_MX = MX.sym('Qddots',nq.all,N);
+
+% unscale variables
+Qs_MX_nsc = Qs_MX.*(scaling.Qs'*ones(1,size(Qs_MX,2)));
+Qdots_MX_nsc = Qdots_MX.*(scaling.Qdots'*ones(1,size(Qdots_MX,2)));
+Qddots_MX_nsc = Qddots_MX.*(scaling.Qdotdots'*ones(1,size(Qddots_MX,2)));
+
+% evaluate orthosis function
+[M_ort_coord_MX, M_ort_body_MX] = f_casadi.f_orthosis_mesh_all(Qs_MX_nsc, Qdots_MX_nsc,...
+    Qddots_MX_nsc, a_MX);
+
+% create function
+f_orthosis_mesh_all = Function('f_orthosis_mesh_all',{Qs_MX, Qdots_MX,...
+    Qddots_MX, a_MX},{M_ort_coord_MX, M_ort_body_MX});
+
+
+%%
+
+[f_coll] = create_f_coll(S,model_info,f_casadi,scaling);
+
+% Repeat function for each mesh interval and assign evaluation to multiple threads
+f_coll_map = f_coll.map(N,S.solver.parallel_mode,S.solver.N_threads);
+
 
 %% OCP create variables and bounds
 % using opti
@@ -204,31 +205,6 @@ opti.subject_to(bounds.Qdotdots.lower'*ones(1,d*N) < A_col < ...
     bounds.Qdotdots.upper'*ones(1,d*N));
 opti.set_initial(A_col, guess.Qdotdots_col');
 
-%% Helper function for orthoses
-% variables
-a_MX = MX.sym('a',NMuscle,N);
-Qs_MX = MX.sym('Qs',nq.all,N);
-Qdots_MX = MX.sym('Qdots',nq.all,N);
-Qddots_MX = MX.sym('Qddots',nq.all,N);
-
-% unscale variables
-Qs_MX_nsc = Qs_MX.*(scaling.Qs'*ones(1,size(Qs_MX,2)));
-Qdots_MX_nsc = Qdots_MX.*(scaling.Qdots'*ones(1,size(Qdots_MX,2)));
-Qddots_MX_nsc = Qddots_MX.*(scaling.Qdotdots'*ones(1,size(Qddots_MX,2)));
-
-% evaluate orthosis function
-[M_ort_coord_MX, M_ort_body_MX] = f_casadi.f_orthosis_mesh_all(Qs_MX_nsc, Qdots_MX_nsc,...
-    Qddots_MX_nsc, a_MX);
-
-% create function
-f_orthosis_mesh_all = Function('f_orthosis_mesh_all',{Qs_MX, Qdots_MX,...
-    Qddots_MX, a_MX},{M_ort_coord_MX, M_ort_body_MX});
-
-% evaluate helper function
-[M_ort_coord_opti, M_ort_body_opti] = f_orthosis_mesh_all(Qs(:,1:N), Qdots(:,1:N),...
-    A_col(:,1:3:3*N), a(:,1:N)); 
-    % note: A is at 1st collocation point of mesh interval instead of at 1st mesh point
-
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % If Muscle synergies, add additional variables:
@@ -251,9 +227,9 @@ if (S.subject.synergies)
         opti.set_initial(SynH_l, guess.SynH(:,1:S.subject.NSyn_l)');
 
         % Synergy weights
-        SynW_r = opti.variable(length(idx_m_r),S.subject.NSyn_r);
-        opti.subject_to(bounds.SynW.lower*ones(length(idx_m_r),S.subject.NSyn_r) < SynW_r < bounds.SynW.upper*ones(length(idx_m_r),S.subject.NSyn_r));
-        opti.set_initial(SynW_r,  guess.SynW*ones(length(idx_m_r),S.subject.NSyn_r));
+        SynW_r = opti.variable(length(model_info.muscle_info.idx_right),S.subject.NSyn_r);
+        opti.subject_to(bounds.SynW.lower*ones(length(model_info.muscle_info.idx_right),S.subject.NSyn_r) < SynW_r < bounds.SynW.upper*ones(length(model_info.muscle_info.idx_right),S.subject.NSyn_r));
+        opti.set_initial(SynW_r,  guess.SynW*ones(length(model_info.muscle_info.idx_right),S.subject.NSyn_r));
 
         SynW_l = SynW_r; 
 
@@ -274,335 +250,25 @@ if (S.subject.synergies)
         opti.set_initial(SynH_l, guess.SynH(:,1:S.subject.NSyn_l)');
 
         % Right synergy weights
-        SynW_r = opti.variable(length(idx_m_r),S.subject.NSyn_r);
-        opti.subject_to(bounds.SynW.lower*ones(length(idx_m_r),S.subject.NSyn_r) < SynW_r < bounds.SynW.upper*ones(length(idx_m_r),S.subject.NSyn_r));
-        opti.set_initial(SynW_r, guess.SynW*ones(length(idx_m_r),S.subject.NSyn_r));
+        SynW_r = opti.variable(length(model_info.muscle_info.idx_right),S.subject.NSyn_r);
+        opti.subject_to(bounds.SynW.lower*ones(length(model_info.muscle_info.idx_right),S.subject.NSyn_r) < SynW_r < bounds.SynW.upper*ones(length(model_info.muscle_info.idx_right),S.subject.NSyn_r));
+        opti.set_initial(SynW_r, guess.SynW*ones(length(model_info.muscle_info.idx_right),S.subject.NSyn_r));
         
         % Left synergy weights
-        SynW_l = opti.variable(length(idx_m_l),S.subject.NSyn_l);
-        opti.subject_to(bounds.SynW.lower*ones(length(idx_m_l),S.subject.NSyn_l) < SynW_l < bounds.SynW.upper*ones(length(idx_m_l),S.subject.NSyn_l));
-        opti.set_initial(SynW_l, guess.SynW*ones(length(idx_m_l),S.subject.NSyn_l));
+        SynW_l = opti.variable(length(model_info.muscle_info.idx_left),S.subject.NSyn_l);
+        opti.subject_to(bounds.SynW.lower*ones(length(model_info.muscle_info.idx_left),S.subject.NSyn_l) < SynW_l < bounds.SynW.upper*ones(length(model_info.muscle_info.idx_left),S.subject.NSyn_l));
+        opti.set_initial(SynW_l, guess.SynW*ones(length(model_info.muscle_info.idx_left),S.subject.NSyn_l));
     end
 end
 
-%% OCP: collocation equations
-% Define CasADi variables for static parameters
-tfk         = MX.sym('tfk'); % MX variable for final time
-% Define CasADi variables for states
-ak          = MX.sym('ak',NMuscle);
-aj          = MX.sym('akmesh',NMuscle,d);
-akj         = [ak aj];
-FTtildek    = MX.sym('FTtildek',NMuscle);
-FTtildej    = MX.sym('FTtildej',NMuscle,d);
-FTtildekj   = [FTtildek FTtildej];
-Qsk         = MX.sym('Qsk',nq.all);
-Qsj         = MX.sym('Qsj',nq.all,d);
-Qskj        = [Qsk Qsj];
-Qdotsk      = MX.sym('Qdotsk',nq.all);
-Qdotsj      = MX.sym('Qdotsj',nq.all,d);
-Qdotskj     = [Qdotsk Qdotsj];
-if nq.torqAct > 0
-    a_ak        = MX.sym('a_ak',nq.torqAct);
-    a_aj        = MX.sym('a_akmesh',nq.torqAct,d);
-    a_akj       = [a_ak a_aj];
-end
-% Define CasADi variables for controls
-vAk     = MX.sym('vAk',NMuscle);
-if nq.torqAct > 0
-    e_ak    = MX.sym('e_ak',nq.torqAct);
-end
+%%
 
-% Define CasADi variables for "slack" controls
-dFTtildej   = MX.sym('dFTtildej',NMuscle,d);
-Aj          = MX.sym('Aj',nq.all,d);
+% evaluate helper function
+[M_ort_coord_opti, M_ort_body_opti] = f_orthosis_mesh_all(Qs(:,1:N), Qdots(:,1:N),...
+    A_col(:,1:3:3*N), a(:,1:N)); 
+    % note: A is at 1st collocation point of mesh interval instead of at 1st mesh point
 
-% Define CasADi variables for orthosis moments (or forces)
-M_ort_coordk = MX.sym('M_ort_coord',nq.all,1); % moments on coordinates
-M_ort_bodyk = MX.sym('M_ort_body',model_info.ExtFunIO.input.nInputs,1); % moments on bodies
-
-% If muscle synergies, define CasADi variables for additional variables
-if (S.subject.synergies)
-    SynH_rk         = MX.sym('SynH_rk',S.subject.NSyn_r);
-    SynH_lk         = MX.sym('SynH_lk',S.subject.NSyn_l);
-    SynW_rk         = MX.sym('SynW_rk',length(idx_m_r),S.subject.NSyn_r);
-    SynW_lk         = MX.sym('SynW_lk',length(idx_m_l),S.subject.NSyn_l);
-end
-
-J           = 0; % Initialize cost function
-eq_constr   = {}; % Initialize equality constraint vector
-ineq_constr_deact = {}; % Initialize inequality constraint vector
-ineq_constr_act = {}; % Initialize inequality constraint vector
-ineq_constr_distance = cell(length(S.bounds.distanceConstraints),1);
-ineq_constr_syn = {}; % Initialize inequality constraint vector
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Time step
-h = tfk/N;
-% Loop over collocation points
-for j=1:d
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    % Unscale variables
-    Qskj_nsc = Qskj.*(scaling.Qs'*ones(1,size(Qskj,2)));
-    Qdotskj_nsc = Qdotskj.*(scaling.Qdots'*ones(1,size(Qdotskj,2)));
-    FTtildekj_nsc = FTtildekj.*(scaling.FTtilde'*ones(1,size(FTtildekj,2)));
-    dFTtildej_nsc = dFTtildej.*scaling.dFTtilde;
-    Aj_nsc = Aj.*(scaling.Qdotdots'*ones(1,size(Aj,2)));
-    vAk_nsc = vAk.*scaling.vA;
-    
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    % Get muscle-tendon lengths, velocities, and moment arms
-    qinj    = Qskj_nsc(:, j+1);
-    qdotinj = Qdotskj_nsc(:, j+1);
-    [lMTj,vMTj,MAj] =  f_casadi.lMT_vMT_dM(qinj',qdotinj');
-    % Derive the moment arms of all the muscles crossing each joint
-    for i=1:nq.musAct
-        MA_j.(model_info.ExtFunIO.coord_names.muscleActuated{i}) = ...
-            MAj(mai(model_info.ExtFunIO.jointi.muscleActuated(i)).mus',...
-            model_info.ExtFunIO.jointi.muscleActuated(i));
-    end
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    % Get muscle-tendon forces and derive Hill-equilibrium
-    [Hilldiffj,FTj,Fcej,Fpassj,Fisoj] = ...
-        f_casadi.forceEquilibrium_FtildeState_all_tendon(akj(:,j+1),...
-        FTtildekj_nsc(:,j+1),dFTtildej_nsc(:,j),...
-        lMTj,vMTj,tensions);
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    % Get metabolic energy rate if in the cost function
-    % Get muscle fiber lengths
-    [~,lMtildej] = f_casadi.FiberLength_TendonForce_tendon(...
-        FTtildekj_nsc(:,j+1),lMTj);
-    % Get muscle fiber velocities
-    [vMj,~] = f_casadi.FiberVelocity_TendonForce_tendon(...
-        FTtildekj_nsc(:,j+1),dFTtildej_nsc(:,j),...
-        lMTj,vMTj);
-    if strcmp(S.metabolicE.model,'Bhargava2004')
-        % Get metabolic energy rate Bhargava et al. (2004)
-        [e_totj,~,~,~,~,~] = f_casadi.getMetabolicEnergySmooth2004all(...
-            akj(:,j+1),akj(:,j+1),lMtildej,vMj,Fcej,Fpassj,...
-            MuscleMass',pctsts,Fisoj,model_info.mass,S.metabolicE.tanh_b);
-    else
-        error('No energy model selected');
-    end
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    % Get passive joint torques for dynamics
-    Tau_passj = f_casadi.AllPassiveTorques(Qskj_nsc(:,j+1),Qdotskj_nsc(:,j+1));
-    % Get passive joint torques for cost function
-    Tau_passj_cost = f_casadi.AllPassiveTorques_cost(Qskj_nsc(:,j+1),Qdotskj_nsc(:,j+1));
-    
-    % Expression for the state derivatives at the collocation points
-    Qsp_nsc      = Qskj_nsc*C(:,j+1);
-    Qdotsp_nsc   = Qdotskj_nsc*C(:,j+1);
-    FTtildep_nsc = FTtildekj_nsc*C(:,j+1);
-    ap           = akj*C(:,j+1);
-    if nq.torqAct > 0
-        a_ap         = a_akj*C(:,j+1);
-    end
-    % Append collocation equations
-    % Dynamic constraints are scaled using the same scale
-    % factors as the ones used to scale the states
-    % Activation dynamics (implicit formulation)
-    eq_constr{end+1} = (h*vAk_nsc - ap)./scaling.a;
-    % Contraction dynamics (implicit formulation)
-    eq_constr{end+1} = (h*dFTtildej_nsc(:,j) - FTtildep_nsc)./scaling.FTtilde';
-    % Skeleton dynamics (implicit formulation)
-    qdotj_nsc = Qdotskj_nsc(:,j+1); % velocity
-    eq_constr{end+1} = (h*qdotj_nsc - Qsp_nsc)./scaling.Qs';
-    eq_constr{end+1} = (h*Aj_nsc(:,j) - Qdotsp_nsc)./scaling.Qdots';
-    % Torque actuator activation dynamics (explicit formulation)
-    if nq.torqAct > 0
-        da_adtj = f_casadi.ActuatorActivationDynamics(e_ak,a_akj(:,j+1));
-        eq_constr{end+1} = (h*da_adtj - a_ap)./scaling.a_a;
-    end
-
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    % Orthosis moments on collocation point
-    [M_ort_coordj, M_ort_bodyj] = f_casadi.f_orthosis_mesh_k(Qskj_nsc(:,j+1),...
-        Qdotskj_nsc(:,j+1), Aj_nsc(:,j), akj(:,j+1));
-
-    % add orthosis moments from input variables
-    M_ort_coord_totj = M_ort_coordk + M_ort_coordj;
-    M_ort_body_totj = M_ort_bodyk + M_ort_bodyj;
-
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-    % Add contribution to the cost function
-    J = J + ...
-        W.E          * B(j+1) *(f_casadi.J_muscles_exp(e_totj, W.E_exp))/model_info.mass*h + ...
-        W.a          * B(j+1) *(f_casadi.J_muscles_exp(akj(:,j+1)', W.a_exp))*h + ...
-        W.q_dotdot   * B(j+1) *(f_casadi.J_not_arms_dof(Aj(model_info.ExtFunIO.jointi.noarmsi,j)))*h + ...
-        W.pass_torq  * B(j+1) *(f_casadi.J_lim_torq(Tau_passj_cost))*h + ...
-        W.slack_ctrl * B(j+1) *(f_casadi.J_muscles(vAk))*h + ...
-        W.slack_ctrl * B(j+1) *(f_casadi.J_muscles(dFTtildej(:,j)))*h;
-
-    if nq.torqAct > 0
-        J = J + W.e_torqAct      * B(j+1) *(f_casadi.J_torq_act(e_ak))*h;
-    end
-    if nq.arms > 0
-        J = J + W.slack_ctrl * B(j+1) *(f_casadi.J_arms_dof(Aj(model_info.ExtFunIO.jointi.armsi,j)))*h;
-    end
-
-    % If muscle synergies: Instead of a - WH = 0 as an equality constraint, have it as a
-        % term in the cost function to be minimized (+ inequality constraint)     
-    if (S.subject.synergies)        
-            syn_constr_k_r = ak(idx_m_r) - SynW_rk*SynH_rk;
-            syn_constr_k_l = ak(idx_m_l) - SynW_lk*SynH_lk;
-        J = J + W.SynConstr * B(j+1) *(f_casadi.J_muscles([syn_constr_k_r;syn_constr_k_l]))*h;   
-    end
-    
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    % Create zero (sparse) input vector for external function
-    F_ext_input = MX(model_info.ExtFunIO.input.nInputs,1);
-    % Assign Qs
-    F_ext_input(model_info.ExtFunIO.input.Qs.all,1) = Qskj_nsc(:,j+1);
-    % Assign Qdots
-    F_ext_input(model_info.ExtFunIO.input.Qdots.all,1) = Qdotskj_nsc(:,j+1);
-    % Assign Qdotdots (A)
-    F_ext_input(model_info.ExtFunIO.input.Qdotdots.all,1) = Aj_nsc(:,j);
-    % Assign forces and moments 
-    F_ext_input = F_ext_input + M_ort_body_totj; % body forces and body moments from orthoses
-
-    % Evaluate external function
-    [Tj] = F(F_ext_input);
-
-    % Evaluate ligament moment
-    M_lig_j = f_casadi.ligamentMoment(Qskj_nsc(:,j+1));
-
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    % Add path constraints
-    for i=1:nq.all
-        % total coordinate torque
-        Ti = 0;
-
-        % muscle moment
-        cond_special_mtp = strcmp(S.subject.mtp_type,'2022paper') &&...
-            contains(model_info.ExtFunIO.coord_names.all{i},'mtp');
-
-        if ismember(i,model_info.ExtFunIO.jointi.muscleActuated) && ~cond_special_mtp
-            % muscle forces
-            FTj_coord_i = FTj(mai(i).mus',1);
-            % total muscle moment
-            M_mus_i = f_casadi.(['musc_cross_' num2str(sumCross(i))])...
-            (MA_j.(model_info.ExtFunIO.coord_names.all{i}),FTj_coord_i);
-            % add to total moment
-            Ti = Ti + M_mus_i;
-        end
-        
-        % torque actuator
-        if nq.torqAct > 0 && ismember(i,model_info.ExtFunIO.jointi.torqueActuated)
-            idx_act_i = find(model_info.ExtFunIO.jointi.torqueActuated(:)==i);
-            T_act_i = a_akj(idx_act_i,j+1).*scaling.ActuatorTorque(idx_act_i);
-            Ti = Ti + T_act_i;
-        end
-
-        % ligament moment
-        Ti = Ti + M_lig_j(i);
-        
-        % passive moment
-        if ~ismember(i,model_info.ExtFunIO.jointi.floating_base)
-            Ti = Ti + Tau_passj(i);
-        end
-        
-        % orthosis
-        Ti = Ti + M_ort_coord_totj(i);
-
-        % total coordinate torque equals inverse dynamics torque
-        eq_constr{end+1} = (Tj(i,1) - Ti)./scaling.Moments(i);
-
-    end
-
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    % Activation dynamics (implicit formulation)
-    act1 = vAk_nsc + akj(:,j+1)./(ones(size(akj(:,j+1),1),1)*tdeact);
-    act2 = vAk_nsc + akj(:,j+1)./(ones(size(akj(:,j+1),1),1)*tact);
-    ineq_constr_deact{end+1} = act1;
-    ineq_constr_act{end+1} = act2;
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    % Contraction dynamics (implicit formulation)
-    eq_constr{end+1} = Hilldiffj;
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    % Constraints to prevent parts of the skeleton to penetrate each other.
-    for i_dc=1:length(S.bounds.distanceConstraints)
-        % get position of points
-        point1_i = S.bounds.points(strcmp({S.bounds.points.name},S.bounds.distanceConstraints(i_dc).point1));
-        if strcmpi(point1_i.body,'ground')
-            % position of point in ground is known
-            pos1j = point1_i.point_in_body;
-        else
-            % position of point in body is provided by external function
-            pos1j = Tj(model_info.ExtFunIO.position.(S.bounds.distanceConstraints(i_dc).point1),1);
-        end
-        point2_i = S.bounds.points(strcmp({S.bounds.points.name},S.bounds.distanceConstraints(i_dc).point2));
-        if strcmpi(point2_i.body,'ground')
-            % position of point in ground is known
-            pos2j = point2_i.point_in_body;
-        else
-            % position of point in body is provided by external function
-            pos2j = Tj(model_info.ExtFunIO.position.(S.bounds.distanceConstraints(i_dc).point2),1);
-        end
-
-        % calculate distance
-        if length(S.bounds.distanceConstraints(i_dc).directionVectorIdx)==3 % 3D
-            Qconstr = f_casadi.J_nn_3(pos1j(S.bounds.distanceConstraints(i_dc).directionVectorIdx) ...
-                - pos2j(S.bounds.distanceConstraints(i_dc).directionVectorIdx));
-
-            ineq_constr_distance{i_dc}{end+1} = Qconstr;
-
-        elseif length(S.bounds.distanceConstraints(i_dc).directionVectorIdx)==2 % 2D
-            Qconstr = f_casadi.J_nn_2(pos1j(S.bounds.distanceConstraints(i_dc).directionVectorIdx) ...
-                - pos2j(S.bounds.distanceConstraints(i_dc).directionVectorIdx));
-
-            ineq_constr_distance{i_dc}{end+1} = Qconstr;
-
-        elseif length(S.bounds.distanceConstraints(i_dc).directionVectorIdx)==1 % 1D
-            Qconstr = pos1j(S.bounds.distanceConstraints(i_dc).directionVectorIdx) ...
-                - pos2j(S.bounds.distanceConstraints(i_dc).directionVectorIdx);
-
-            ineq_constr_distance{i_dc}{end+1} = Qconstr;
-        end
-
-    end
-
-end % End loop over collocation points
-
-% Add tracking terms in the cost function if synergy weights are tracked
-% Here we select the weights that we want to impose/track 
-% (there are no conditions/constraints applied to the other weights)
-if (S.subject.synergies) && (S.subject.TrackSynW)
-    J_TrackSynW = W.TrackSynW*f_casadi.TrackSynW(SynW_rk, SynW_lk);
-    J = J + J_TrackSynW;
-else
-    J_TrackSynW = 0;
-end
-
-% Synergies: a - WH = 0
-% Only applied for mesh points
-if (S.subject.synergies)
-    ineq_constr_syn{end+1} =  [ak(idx_m_r);ak(idx_m_l)] - [SynW_rk*SynH_rk;SynW_lk*SynH_lk];
-end
-
-eq_constr = vertcat(eq_constr{:});
-ineq_constr_deact = vertcat(ineq_constr_deact{:});
-ineq_constr_act = vertcat(ineq_constr_act{:});
-for i_dc=1:length(ineq_constr_distance)
-    ineq_constr_distance{i_dc} = vertcat(ineq_constr_distance{i_dc}{:});
-end
-ineq_constr_syn = vertcat(ineq_constr_syn{:});
-
-% Casadi function to get constraints and objective
-coll_input_vars_def = {tfk,ak,aj,FTtildek,FTtildej,Qsk,Qsj,Qdotsk,Qdotsj,vAk,dFTtildej,Aj,M_ort_coordk,M_ort_bodyk};
-if nq.torqAct > 0
-    coll_input_vars_def = [coll_input_vars_def,{a_ak,a_aj,e_ak}];
-end
-if (S.subject.synergies)
-    coll_input_vars_def = [coll_input_vars_def,{SynH_rk,SynH_lk,SynW_rk,SynW_lk}];
-end
-
-f_coll = Function('f_coll',coll_input_vars_def,...
-        {eq_constr, ineq_constr_deact, ineq_constr_act,...
-        ineq_constr_distance{:}, ineq_constr_syn,J});
-
-% Repeat function for each mesh interval and assign evaluation to multiple threads
-f_coll_map = f_coll.map(N,S.solver.parallel_mode,S.solver.N_threads);
+%%
 
 % evaluate function with opti variables
 coll_input_vars_eval = {tf,a(:,1:end-1), a_col, FTtilde(:,1:end-1), FTtilde_col,...
@@ -615,10 +281,10 @@ if (S.subject.synergies)
     coll_input_vars_eval = [coll_input_vars_eval,{SynH_r(:,1:end-1), SynH_l(:,1:end-1), SynW_r,SynW_l}];
 end
 
-coll_ineq_constr_distance = cell(1,length(ineq_constr_distance));
+coll_ineq_constr_distance = cell(1,length(S.bounds.distanceConstraints));
 
 [coll_eq_constr, coll_ineq_constr_deact, coll_ineq_constr_act,...
-    coll_ineq_constr_distance{:}, coll_ineq_constr_syn,Jall] =...
+    coll_ineq_constr_distance{:}, coll_ineq_constr_syn, Jall] =...
     f_coll_map(coll_input_vars_eval{:});
 
 % equality constraints
@@ -626,9 +292,9 @@ opti.subject_to(coll_eq_constr == 0);
 
 % inequality constraints (logical indexing not possible in MX arrays)
 opti.subject_to(coll_ineq_constr_deact(:) >= 0);
-opti.subject_to(coll_ineq_constr_act(:) <= 1/tact);
+opti.subject_to(coll_ineq_constr_act(:) <= 1/model_info.muscle_info.tact);
 
-for i_dc=1:length(ineq_constr_distance)
+for i_dc=1:length(S.bounds.distanceConstraints)
     coll_ineq_constr_distance_i_dc = coll_ineq_constr_distance{i_dc};
 
     if ~isempty(S.bounds.distanceConstraints(i_dc).lower_bound) && ...
@@ -798,6 +464,7 @@ if ~S.post_process.load_prev_opti_vars
     disp(' ')
     disp(' ')
     % Create setup
+    setup.derivatives = 'AD'; % Algorithmic differentiation
     setup.tolerance.ipopt = S.solver.tol_ipopt;
     setup.bounds = bounds;
     setup.bounds_nsc = bounds_nsc;
@@ -1100,8 +767,8 @@ for k=1:N
         end
 
         if (S.subject.synergies)
-            syn_constr_k_r = a_opt(k,idx_m_r) - SynH_r_opt(k,:)*SynW_r_opt;
-            syn_constr_k_l = a_opt(k,idx_m_l) - SynH_l_opt(k,:)*SynW_l_opt;
+            syn_constr_k_r = a_opt(k,model_info.muscle_info.idx_right) - SynH_r_opt(k,:)*SynW_r_opt;
+            syn_constr_k_l = a_opt(k,model_info.muscle_info.idx_left) - SynH_l_opt(k,:)*SynW_l_opt;
             J_opt = J_opt + 1/(dist_trav_opt)*W.SynConstr * B(j+1) *(f_casadi.J_muscles([syn_constr_k_r,syn_constr_k_l]))*h_opt;
 
             Syn_cost = Syn_cost + W.SynConstr * B(j+1) *(f_casadi.J_muscles([syn_constr_k_r,syn_constr_k_l]))*h_opt;
