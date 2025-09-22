@@ -143,8 +143,8 @@ be written to the job output file (by default looking like `slurm-<jobid>.out`.
 > line breaks. You can rectify this by running `dos2unix <fn>` on the cluster.
 
 If you have already completed these setup steps, you can simply navigate to 
-your OnDemand Dashboard > Files (toolbar) > Login server shell access > start a simulation
-using the predefined settings
+your [OnDemand Dashboard](https://ondemand.hpc.kuleuven.be/) > Login Server Shell Access > start a simulation
+using the predefined settings:
 ```bash
 cd $VSC_DATA/PredSim
 sbatch run_simulation.slurm
