@@ -139,9 +139,31 @@ if bool_convertmodels
             S_temp.misc.save_folder = S_benchmark.out_folder;
             run_pred_sim(S_temp,browning2008.osim_path{imodel});
             diary(log_name);
-        end
-        
+        end        
     end
+
+    % Gomenuka 2014
+    if any(strcmp(S_benchmark.studies,'gomenuka2014'))
+        % create osim models for gomenuka2014
+        [gomenuka2014] = adapt_model_gomenuka2014(S,osim_path_default);
+        S_benchmark.converted_models.gomenuka2014 = gomenuka2014;
+        % create dlls
+        for imodel  = 1:length(gomenuka2014.osim_path)
+            % copy the muscle-tendon information
+            copy_musclegeom_information(osim_path_default,gomenuka2014.osim_path{imodel});
+            copy_modelsettingsfile(osim_path_default,gomenuka2014.osim_path{imodel})
+
+            % convert model
+            S_temp = S_input;
+            S_temp.flow_control.pre_processing_only = true;
+            S_temp.solver.run_as_batch_job = false;
+            S_temp.subject.name = gomenuka2014.modelnames{imodel};
+            S_temp.misc.save_folder = S_benchmark.out_folder;
+            run_pred_sim(S_temp,gomenuka2014.osim_path{imodel});
+            diary(log_name);
+        end   
+    end
+
 end
 
 
@@ -241,7 +263,7 @@ if isfield(S_benchmark,'studies') && ~isempty(S_benchmark.studies)
     % run simulations as in browning 2008
     if any(strcmp(S_benchmark.studies,'browning2008'))        
         S_benchmark.browning.gait_speeds = 1.25;
-        S_benchmark.browning.names = cell(length(id_trials),1);
+        S_benchmark.browning.names = cell(length(S_benchmark.converted_models.browning2008.modelnames),1);
         S_benchmark.browning.slopes = 0;
         S_benchmark.browning.addedmass = 0; % adapt
         ct_sim = 1;
@@ -270,9 +292,48 @@ if isfield(S_benchmark,'studies') && ~isempty(S_benchmark.studies)
             % append name
             S_benchmark.browning.names{ct_sim} = save_name;
             ct_sim = ct_sim+1;
+        end       
+    end
 
+    % run simulations as in gomenuka2014
+    if any(strcmp(S_benchmark.studies,'gomenuka2014'))
+        S_benchmark.gomenuka.gait_speeds = [2:7]./3.6;
+        S_benchmark.gomenuka.names = cell(1,1);
+        S_benchmark.browning.slopes = [0 7 15];
+        S_benchmark.browning.addedmass = [0 0.25]; % adapt
+        ct_sim = 1;
+        for i_speed = 1:length(S_benchmark.gomenuka.gait_speeds)
+            for i_mass = 1 :length(S_benchmark.browning.addedmass)
+                for i_slope = 1:length(S_benchmark.browning.slopes)
+                    % name of the model (model on slope and added mass?)
+                    imodel = (i_mass-1)*3 + i_slope; % check that adapt_model_gomenuka is in this order
+                    model_name = S_benchmark.converted_models.gomenuka2014.modelnames{imodel};
+                    osim_path_sel = S_benchmark.converted_models.gomenuka2014.osim_path{imodel};
+                    % start from default input settings
+                    S = S_input;
+                    % set forward velocity
+                    S.misc.forward_velocity = S_benchmark.gomenuka.gait_speeds(i_speed);
+                    % adapt folder to save results
+                    save_name  =[model_name, '_speed_' ,...
+                        num2str(round(S_benchmark.gomenuka.gait_speeds(i_speed)*100))];
+                    S.misc.save_folder  = fullfile(S_benchmark.out_folder,...
+                        'gomenuka2014', save_name);
+                    % adapt subject
+                    S.subject.name = model_name;
+                    % check if save_folder already exists and contains a matfile,
+                    % if this is the case do not run the simulation
+                    mat_files = dir(fullfile(S.misc.save_folder,'*.mat'));
+                    if isempty(mat_files)
+                        % run predsim
+                        runPredSim(S, osim_path_sel);
+                        disp(['added sim gomenuka number ' num2str(ct_sim) ' to batch' ])
+                    end
+                    % append name
+                    S_benchmark.gomenuka.names{ct_sim} = save_name;
+                    ct_sim = ct_sim+1;
+                end
+            end
         end
-
     end
 end
 

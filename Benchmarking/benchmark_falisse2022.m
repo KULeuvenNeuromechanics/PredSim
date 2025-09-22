@@ -51,12 +51,15 @@ S.solver.par_cluster_name = 'Cores4';
 % walking with added mass).
 
 % benchmark specific studies
-S_benchmark.studies = {'vanderzee2022','browning2008','koelewijn2019'};
+S_benchmark.studies = {'vanderzee2022','browning2008','koelewijn2019',...
+    'gomenuka2014'};
 % options are:
 %   vanderzee2022: variations in gait speed
 %   koelewijn2019: variation in gait speed and slope
 %   browning2008: added mass to body segments
 %   schertzer2014: added mass to body segments and variations in gait speed
+%   gomenuka2014: added mass to pelvis, walking on a slope and various
+%   speeds
 
 
 % % benchmark gait speed simulations

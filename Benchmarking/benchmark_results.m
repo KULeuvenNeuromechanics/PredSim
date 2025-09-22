@@ -369,6 +369,7 @@ if isfield(S_benchmark,'studies') && ~isempty(S_benchmark.studies)
             save(sim_res_file, 'benchmark', "-append");
             clear benchmark;
 
+
         end
     end
 end
@@ -602,14 +603,7 @@ if BoolPlot
             set(gca,'FontSize',10);
             xlabel('measured metab. power');
             ylabel('simulated metab. power');
-
-        end
-        
-        % store results in a table
-        
-
-
-
+        end        
         clear Dat
     end
 
@@ -688,6 +682,7 @@ if BoolPlot
     % id_study: 1 = vanderzee
     %           2 = koelewijn
     %           3 = browning
+    study_id_header = {};
     if any(strcmp(S_benchmark.studies,'browning2008'))
         % read all the data
         nsim = length(S_benchmark.browning.names);
@@ -701,6 +696,7 @@ if BoolPlot
                 sim_res_folder, headers_table, data_table, slope, id_study,...
                 Lsim, msim);
         end
+        study_id_header{3} = 'browning';
     end
     if any(strcmp(S_benchmark.studies,'vanderzee2022'))
         % read all the data
@@ -715,6 +711,7 @@ if BoolPlot
                 sim_res_folder, headers_table, data_table, slope, id_study,...
                 Lsim, msim);
         end
+        study_id_header{1} = 'vanderzee';
     end
 
     % Plot results Koelewijn
@@ -731,11 +728,68 @@ if BoolPlot
                 sim_res_folder, headers_table, data_table, slope, id_study,...
                 Lsim, msim);
         end
+        study_id_header{2} = 'koelewijn';
     end
-
-    data_table(ct_sim,:) = [];
+    
+    % create a table with all results
+    data_table(ct_sim:end,:) = [];
     table_all = array2table(data_table,...
     'VariableNames',headers_table);
+
+    % plot all data on one graph
+    h_figallp = figure('Name','All data','Color',[1 1 1]);
+    t_layout = tiledlayout(1,2,'TileSpacing','compact','Padding','compact');
+
+    % get study ids and assign colors
+    study_ids = unique(table_all.id_study);
+    n_studies = length(study_ids);
+    cols_sel = linspecer(n_studies);
+    mk = 4;
+
+    % plot stride frequency
+    nexttile(1);
+    plot([min(table_all.exp_stride_frequency) max(table_all.exp_stride_frequency)],...
+        [min(table_all.exp_stride_frequency) max(table_all.exp_stride_frequency)],...
+    '--','Color',[0 0 0],'LineWidth',1.3); hold on;
+    for istudy = 1:n_studies
+        Cs = cols_sel(istudy,:);
+        rows_sel = table_all.id_study == study_ids(istudy);
+        plot(table_all.exp_stride_frequency(rows_sel),...
+            table_all.sim_stride_frequency(rows_sel),...
+            'ok','Color',Cs,'MarkerFaceColor',Cs,'MarkerSize',mk)
+    end
+    set(gca,'box','off')
+    set(gca,'FontSize',10);
+    xlabel('measured stride frequency');
+    ylabel('simulated stride frequency');
+
+    % plot metabolic power
+    nexttile(2);
+    plot([min(table_all.exp_metabolic_power) max(table_all.exp_metabolic_power)],...
+        [min(table_all.exp_metabolic_power) max(table_all.exp_metabolic_power)],...
+        '--','Color',[0 0 0],'LineWidth',1.3); hold on;
+    legs = [];
+    for istudy = 1:n_studies
+        Cs = cols_sel(istudy,:);
+        rows_sel = table_all.id_study == study_ids(istudy);
+        legs(istudy) = plot(table_all.exp_metabolic_power(rows_sel),...
+            table_all.sim_metabolic_power(rows_sel),...
+            'ok','Color',Cs,'MarkerFaceColor',Cs,'MarkerSize',mk);
+    end
+    set(gca,'box','off')
+    set(gca,'FontSize',10);
+    xlabel('measured metab. power');
+    ylabel('simulated metab. power');
+
+
+    hL = legend(legs,study_id_header(study_ids),'NumColumns',3,'Box','off', ...
+        'FontSize',10,'Interpreter','none');
+    hL.Layout.Tile = 'North';
+
+
+
+
+
 
     
     
