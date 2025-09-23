@@ -570,8 +570,6 @@ end % End loop over collocation points
 if (S.subject.synergies) && (S.subject.TrackSynW)
     J_TrackSynW = W.TrackSynW*f_casadi.TrackSynW(SynW_rk, SynW_lk);
     J = J + J_TrackSynW;
-else
-    J_TrackSynW = 0;
 end
 
 % Synergies: a - WH = 0
