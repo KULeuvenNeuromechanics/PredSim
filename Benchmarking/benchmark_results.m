@@ -155,7 +155,7 @@ if isfield(S_benchmark,'studies') && ~isempty(S_benchmark.studies)
             if length(mat_files) ~= 1
                 disp('warning mutiple mat files in folder')
                 disp(sim_res_folder);
-                disp(['assumes that file ' mat_files(1).name, ...
+                disp([' assumes that file ' mat_files(1).name, ...
                     'contains the simulation results'])
             end
             sim_res_file = fullfile(mat_files(1).folder, mat_files(1).name);
@@ -240,7 +240,7 @@ if isfield(S_benchmark,'studies') && ~isempty(S_benchmark.studies)
             if length(mat_files) ~= 1
                 disp('warning mutiple mat files in folder')
                 disp(sim_res_folder);
-                disp(['assumes that file ' mat_files(1).name, ...
+                disp([' assumes that file ' mat_files(1).name, ...
                     'contains the simulation results'])
             end
             sim_res_file = fullfile(mat_files(1).folder, mat_files(1).name);
@@ -345,7 +345,7 @@ if isfield(S_benchmark,'studies') && ~isempty(S_benchmark.studies)
             if length(mat_files) ~= 1
                 disp('warning mutiple mat files in folder')
                 disp(sim_res_folder);
-                disp(['assumes that file ' mat_files(1).name, ...
+                disp([' assumes that file ' mat_files(1).name, ...
                     'contains the simulation results'])
             end
             sim_res_file = fullfile(mat_files(1).folder, mat_files(1).name);
@@ -404,7 +404,7 @@ if isfield(S_benchmark,'studies') && ~isempty(S_benchmark.studies)
                     if length(mat_files) ~= 1
                         disp('warning mutiple mat files in folder')
                         disp(sim_res_folder);
-                        disp(['assumes that file ' mat_files(1).name, ...
+                        disp([' assumes that file ' mat_files(1).name, ...
                             'contains the simulation results'])
                     end
                     sim_res_file = fullfile(mat_files(1).folder, mat_files(1).name);
@@ -510,7 +510,7 @@ if BoolPlot
             if length(mat_files) ~= 1
                 disp('warning mutiple mat files in folder')
                 disp(sim_res_folder);
-                disp(['assumes that file ' mat_files(1).name, ...
+                disp([' assumes that file ' mat_files(1).name, ...
                     'contains the simulation results'])
             end
             sim_res_file = fullfile(mat_files(1).folder, mat_files(1).name);
@@ -707,7 +707,7 @@ if BoolPlot
                 if length(mat_files) ~= 1
                     disp('warning mutiple mat files in folder')
                     disp(sim_res_folder);
-                    disp(['assumes that file ' mat_files(1).name, ...
+                    disp([' assumes that file ' mat_files(1).name, ...
                         'contains the simulation results'])
                 end
                 sim_res_file = fullfile(mat_files(1).folder, mat_files(1).name);
@@ -737,7 +737,7 @@ if BoolPlot
                 if length(mat_files) ~= 1
                     disp('warning mutiple mat files in folder')
                     disp(sim_res_folder);
-                    disp(['assumes that file ' mat_files(1).name, ...
+                    disp([' assumes that file ' mat_files(1).name, ...
                         'contains the simulation results'])
                 end
                 sim_res_file = fullfile(mat_files(1).folder, mat_files(1).name);
@@ -781,7 +781,7 @@ if BoolPlot
                 sim_res_folder, headers_table, data_table, slope, id_study,...
                 Lsim, msim);
         end
-        study_id_header{3} = 'browning';
+        study_id_header{3} = 'Browning';
     end
     if any(strcmp(S_benchmark.studies,'vanderzee2022'))
         % read all the data
@@ -796,7 +796,7 @@ if BoolPlot
                 sim_res_folder, headers_table, data_table, slope, id_study,...
                 Lsim, msim);
         end
-        study_id_header{1} = 'vanderzee';
+        study_id_header{1} = 'Vanderzee';
     end
 
     % Plot results Koelewijn
@@ -813,7 +813,7 @@ if BoolPlot
                 sim_res_folder, headers_table, data_table, slope, id_study,...
                 Lsim, msim);
         end
-        study_id_header{2} = 'koelewijn';
+        study_id_header{2} = 'Koelewijn';
     end
 
     % Plot results Gomenuka
@@ -838,7 +838,7 @@ if BoolPlot
                 end
             end
         end
-        study_id_header{4} = 'gomenuka';
+        study_id_header{4} = 'Gomenuka';
     end
 
     data_table(ct_sim:end,:) = [];
@@ -891,7 +891,7 @@ if BoolPlot
     ylabel('simulated metab. power');
 
 
-    hL = legend(legs,study_id_header(study_ids),'NumColumns',3,'Box','off', ...
+    hL = legend(legs,study_id_header(study_ids),'NumColumns',5,'Box','off', ...
         'FontSize',10,'Interpreter','none');
     hL.Layout.Tile = 'North';
 
