@@ -42,14 +42,15 @@ elseif strcmp(S.misc.msk_geom_eq,'polynomials')
     lMT     = SX(NMuscle_pol,1);
     vMT     = SX(NMuscle_pol,1);
     dM      = SX(NMuscle_pol,NJoint_pol);
-    load nCoeffMat
-    load expoVal_all
+%     load nCoeffMat
+%     load expoVal_all
     for i=1:NMuscle_pol      
         index_dof_crossing  = find(muscle_spanning_info_m(i,:)==1);
         nr_dof_crossing     = length(index_dof_crossing); 
         order               = MuscleInfo_m.muscle(i).order;
-        [mat,diff_mat_q]    = n_art_mat_3_cas_SX_7(qin(1,index_dof_crossing),...
-            nCoeffMat(order,nr_dof_crossing),expoVal_all{order,nr_dof_crossing});
+%         [mat,diff_mat_q]    = n_art_mat_3_cas_SX_7(qin(1,index_dof_crossing),...
+%             nCoeffMat(order,nr_dof_crossing),expoVal_all{order,nr_dof_crossing});
+        [mat,diff_mat_q]    = n_art_mat(qin(1,index_dof_crossing),order);
         lMT(i,1)            = mat'*MuscleInfo_m.muscle(i).coeff;
         vMT(i,1)            = 0;
         dM(i,1:NJoint_pol)  = 0;

@@ -58,13 +58,15 @@ end
 J_temp_noarms_dof = J_temp_noarms_dof/N_noarms_dof;
 f_casadi.J_not_arms_dof = Function('f_J_not_arms_dof',{e_temp_noarms_dof},{J_temp_noarms_dof});
 
-e_temp_pass_dof = SX.sym('e_temp_pass_dof',N_pass_dof);
-J_temp_pass_dof = 0;
-for i=1:length(e_temp_pass_dof)
-    J_temp_pass_dof = J_temp_pass_dof + e_temp_pass_dof(i).^2;
+if N_pass_dof > 0
+    e_temp_pass_dof = SX.sym('e_temp_pass_dof',N_pass_dof);
+    J_temp_pass_dof = 0;
+    for i=1:length(e_temp_pass_dof)
+        J_temp_pass_dof = J_temp_pass_dof + e_temp_pass_dof(i).^2;
+    end
+    J_temp_pass_dof = J_temp_pass_dof/N_pass_dof;
+    f_casadi.J_lim_torq = Function('f_J_lim_torq',{e_temp_pass_dof},{J_temp_pass_dof});
 end
-J_temp_pass_dof = J_temp_pass_dof/N_pass_dof;
-f_casadi.J_lim_torq = Function('f_J_lim_torq',{e_temp_pass_dof},{J_temp_pass_dof});
 
 % Function for 2 elements
 etemp2 = SX.sym('etemp2',2);

@@ -39,7 +39,7 @@ for m_nr = 1:length(MuscleData.muscle_names)
         muscle_sel = [muscle_sel m_nr];
     end
 end
-
+% muscle_sel = [1,2];
 q_all = MuscleData.q;
 
 max_order = S.misc.poly_order.upper;
@@ -68,7 +68,7 @@ for m_nr=1:length(muscle_sel)
     criterion_full_filled = 0;
     order = S.misc.poly_order.lower;
     while criterion_full_filled==0
-        [mat,diff_mat_q] = n_art_mat_3(q_all(:,index_dof_crossing), order);
+        [mat,diff_mat_q] = n_art_mat(q_all(:,index_dof_crossing), order);
         nr_coeffs = length(mat(1,:));
         
         diff_mat_q_all = zeros(nr_samples*nr_dof_crossing, nr_coeffs);
@@ -128,6 +128,9 @@ for m_nr=1:length(muscle_sel)
     DM_all_error(m_nr, index_dof_crossing) = dm_error_rms;
     order_all(m_nr) = order;            
 end
+
+% output_structure = PolynomialReduction(MuscleInfo, MuscleData,...
+%     muscle_spanning_joint_info, muscle_sel, S.misc.threshold_lMT_fit);
 
 % figure();
 % tiledlayout('flow')
