@@ -390,8 +390,8 @@ if isfield(S_benchmark,'studies') && ~isempty(S_benchmark.studies)
         exp_slope(1:15) = 1;
         % loop over all simulations
         for i_speed = 1:length(S_benchmark.gomenuka.gait_speeds)
-            for i_mass = 1 :length(S_benchmark.browning.addedmass)
-                for i_slope = 1:length(S_benchmark.browning.slopes)
+            for i_mass = 1 :length(S_benchmark.gomenuka.addedmass)
+                for i_slope = 1:length(S_benchmark.gomenuka.slopes)
                     % get path to simulation results file
                     imodel = (i_mass-1)*3 + i_slope; % check that adapt_model_gomenuka is in this order
                     model_name = S_benchmark.converted_models.gomenuka2014.modelnames{imodel};
@@ -424,6 +424,7 @@ if isfield(S_benchmark,'studies') && ~isempty(S_benchmark.studies)
                     benchmark.id_std            = [];
                     benchmark.ik                = [];
                     benchmark.ik_std            = [];
+                    benchmark.stride_frequency  = [];
 
 
                         
@@ -431,16 +432,25 @@ if isfield(S_benchmark,'studies') && ~isempty(S_benchmark.studies)
                     % metabolic power
                     % find experimental condition for this particular
                     % simulation
-                    isel = exp_speeds ==S_benchmark.gomenuka.gait_speeds(i_speed) && ...
-                        exp_boolmass == S_benchmark.browning.addedmass(i_mass) && ...
-                        exp_slope == S_benchmark.browning.slopes(i_slope)
+                    isel = exp_speeds == round(S_benchmark.gomenuka.gait_speeds(i_speed)*3.6) && ...
+                        exp_boolmass == S_benchmark.gomenuka.addedmass(i_mass) && ...
+                        exp_slope == S_benchmark.gomenuka.slopes(i_slope);
+                    if sum(isel)>1
+                        disp('problem with adding experimental data to gomenuka simulations');
+                    end
+                    if sum(isel)>1
+                        cot_sel = exp_cot(isel);
+                        speed = S_benchmark.gomenuka.gait_speeds(i_speed);
+                        pmetab = cot_sel * speed * benchmark.subject_mass;
+                        benchmark.Pmetab_mean= pmetab./(benchmark.subject_mass*9.81^1.5*sqrt(benchmark.leglength));
+                    else
+                        benchmark.Pmetab_mean = [];
+                    end
 
 
 
-                    benchmark.Pmetab_mean       = tab_browning{isim,3}*benchmark.subject_mass./...
-                        (benchmark.subject_mass*9.81^1.5*sqrt(benchmark.leglength));
-                    % stride frequency
-                    benchmark.stride_frequency  =  tab_browning{isim,2}./(sqrt(g/benchmark.leglength));
+
+                    benchmark.Pmetab_mean       
                     save(sim_res_file, 'benchmark', "-append");
                     clear benchmark;
                 end
@@ -468,6 +478,8 @@ if BoolPlot
     %  3. angles in rad to deg ?
     %  4. add options to handle ik, id and grf input as imported mot files
     %     or matlab tables
+    %   => ToDo: adapt custom code for vanderzee2022 to this default
+    %   function
 
     ct_sim = 1;
 
@@ -714,7 +726,6 @@ if BoolPlot
     % Plot results Koelewijn
     if any(strcmp(S_benchmark.studies,'browning2008'))
 
-
         % read all the data
         nsim = length(S_benchmark.browning.names);
         for isim =1:nsim
@@ -735,8 +746,7 @@ if BoolPlot
                 Dat(isim).R = R;
             end
         end
-
-        % default plot for Browning
+        % default plot for Koelewijn
         bool_rot_grf = false;
         default_plot_benchmarking(Dat, dofs_plot, 'Browning',msim,Lsim,bool_rot_grf);        
         clear Dat    
@@ -805,8 +815,32 @@ if BoolPlot
         end
         study_id_header{2} = 'koelewijn';
     end
-    
-    % create a table with all results
+
+    % Plot results Gomenuka
+    if any(strcmp(S_benchmark.studies,'Gomenuka2014'))
+                % loop over all simulations
+        for i_speed = 1:length(S_benchmark.gomenuka.gait_speeds)
+            for i_mass = 1 :length(S_benchmark.gomenuka.addedmass)
+                for i_slope = 1:length(S_benchmark.gomenuka.slopes)
+                    % get path to simulation results file
+                    imodel = (i_mass-1)*3 + i_slope; % check that adapt_model_gomenuka is in this order
+                    model_name = S_benchmark.converted_models.gomenuka2014.modelnames{imodel};
+                    osim_path_sel = S_benchmark.converted_models.gomenuka2014.osim_path{imodel};
+                    save_name  =[model_name, '_speed_' ,...
+                        num2str(round(S_benchmark.gomenuka.gait_speeds(i_speed)*100))];
+                    sim_res_folder  = fullfile(S_benchmark.out_folder, ...
+                        'gomenuka2014', save_name);
+                    slope = S_benchmark.gomenuka.slopes(i_slope);
+                    id_study = 4;
+                    [data_table, ct_sim] = add_benchmark_to_table(ct_sim,...
+                        sim_res_folder, headers_table, data_table, slope, id_study,...
+                        Lsim, msim);
+                end
+            end
+        end
+        study_id_header{4} = 'gomenuka';
+    end
+
     data_table(ct_sim:end,:) = [];
     table_all = array2table(data_table,...
     'VariableNames',headers_table);
