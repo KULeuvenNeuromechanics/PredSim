@@ -43,7 +43,7 @@ for imodels = 1:length(ModelOut)
     end
 
         % init the model (not sure if this is needed)
-    mSel.initSystem();
+    modSel.initSystem();
     
     % save model
     model_name = [S.subject.name ModelOut{imodels}];
@@ -52,7 +52,7 @@ for imodels = 1:length(ModelOut)
     if ~isfolder(out_folder)
         mkdir(out_folder)
     end
-    mSel.print(out_modelname);
+    modSel.print(out_modelname);
 
     % update output structure
     gomenuka2014.modelnames{ct} = model_name;

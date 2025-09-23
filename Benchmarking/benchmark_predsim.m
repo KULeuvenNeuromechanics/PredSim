@@ -93,23 +93,28 @@ if bool_convertmodels
             end
             out_folder =  fullfile(S.misc.main_path,'Subjects',model_name);
             out_modelname = fullfile(out_folder,[model_name '.osim']);
-            adapt_gravity_model(osim_path_default,slopes(islope),out_modelname);
-            S_benchmark.converted_models.koelewijn2019.modelnames{ct} = model_name;
-            S_benchmark.converted_models.koelewijn2019.osim_path{ct} = out_modelname;
+            % check if .osim model and associated .dll already exists, if
+            % this is the case do not run again
+            out_dllname = fullfile(out_folder,['F_' model_name '.dll']);
+            if ~exist(out_modelname,'file') || ~exist(out_dllname,'file')
+                adapt_gravity_model(osim_path_default,slopes(islope),out_modelname);
+                S_benchmark.converted_models.koelewijn2019.modelnames{ct} = model_name;
+                S_benchmark.converted_models.koelewijn2019.osim_path{ct} = out_modelname;
 
-            % copy model geometry file and settingsfile
-            copy_musclegeom_information(osim_path_default,out_modelname);
-            copy_modelsettingsfile(osim_path_default,out_modelname)
+                % copy model geometry file and settingsfile
+                copy_musclegeom_information(osim_path_default,out_modelname);
+                copy_modelsettingsfile(osim_path_default,out_modelname)
 
-            % convert model
-            S_temp = S_input;
-            S_temp.flow_control.pre_processing_only = true;
-            S_temp.solver.run_as_batch_job = false;
-            S_temp.subject.name = model_name;
-            S_temp.misc.save_folder = S_benchmark.out_folder;
-            run_pred_sim(S_temp,out_modelname);
-            diary(log_name);
-            ct = ct + 1;
+                % convert model
+                S_temp = S_input;
+                S_temp.flow_control.pre_processing_only = true;
+                S_temp.solver.run_as_batch_job = false;
+                S_temp.subject.name = model_name;
+                S_temp.misc.save_folder = S_benchmark.out_folder;
+                run_pred_sim(S_temp,out_modelname);
+                diary(log_name);
+                ct = ct + 1;
+            end
         end
         % add default model (level walking)
         S_benchmark.converted_models.koelewijn2019.modelnames{ct}= S_input.subject.name;
@@ -127,43 +132,53 @@ if bool_convertmodels
         S_benchmark.converted_models.browning2008.osim_path{ct}= osim_path_default;
         % create dlls
         for imodel  = 1:length(browning2008.osim_path)
-            % copy the muscle-tendon information
-            copy_musclegeom_information(osim_path_default,browning2008.osim_path{imodel});
-            copy_modelsettingsfile(osim_path_default,browning2008.osim_path{imodel})
+            [folder_temp, name_temp,~] = fileparts(browning2008.osim_path{imodel});
+            out_dllname =  fullfile(folder_temp,['F_' name_temp '.dll']);
+            if ~exist(browning2008.osim_path{imodel},'file') || ...
+                    ~exist(out_dllname,'file')
 
-            % convert model
-            S_temp = S_input;
-            S_temp.flow_control.pre_processing_only = true;
-            S_temp.solver.run_as_batch_job = false;
-            S_temp.subject.name = browning2008.modelnames{imodel};
-            S_temp.misc.save_folder = S_benchmark.out_folder;
-            run_pred_sim(S_temp,browning2008.osim_path{imodel});
-            diary(log_name);
-        end        
+                % copy the muscle-tendon information
+                copy_musclegeom_information(osim_path_default,browning2008.osim_path{imodel});
+                copy_modelsettingsfile(osim_path_default,browning2008.osim_path{imodel})
+
+                % convert model
+                S_temp = S_input;
+                S_temp.flow_control.pre_processing_only = true;
+                S_temp.solver.run_as_batch_job = false;
+                S_temp.subject.name = browning2008.modelnames{imodel};
+                S_temp.misc.save_folder = S_benchmark.out_folder;
+                run_pred_sim(S_temp,browning2008.osim_path{imodel});
+                diary(log_name);
+            end
+        end
     end
 
     % Gomenuka 2014
     if any(strcmp(S_benchmark.studies,'gomenuka2014'))
         % create osim models for gomenuka2014
-        [gomenuka2014] = adapt_model_gomenuka2014(S,osim_path_default);
+        [gomenuka2014] = adapt_model_Gomenuka(S,osim_path_default);
         S_benchmark.converted_models.gomenuka2014 = gomenuka2014;
         % create dlls
         for imodel  = 1:length(gomenuka2014.osim_path)
-            % copy the muscle-tendon information
-            copy_musclegeom_information(osim_path_default,gomenuka2014.osim_path{imodel});
-            copy_modelsettingsfile(osim_path_default,gomenuka2014.osim_path{imodel})
+            [folder_temp, name_temp,~] = fileparts(gomenuka2014.osim_path{imodel});
+            out_dllname =  fullfile(folder_temp,['F_' name_temp '.dll']);
+            if ~exist(gomenuka2014.osim_path{imodel},'file') || ...
+                    ~exist(out_dllname,'file')
+                % copy the muscle-tendon information
+                copy_musclegeom_information(osim_path_default,gomenuka2014.osim_path{imodel});
+                copy_modelsettingsfile(osim_path_default,gomenuka2014.osim_path{imodel})
 
-            % convert model
-            S_temp = S_input;
-            S_temp.flow_control.pre_processing_only = true;
-            S_temp.solver.run_as_batch_job = false;
-            S_temp.subject.name = gomenuka2014.modelnames{imodel};
-            S_temp.misc.save_folder = S_benchmark.out_folder;
-            run_pred_sim(S_temp,gomenuka2014.osim_path{imodel});
-            diary(log_name);
-        end   
+                % convert model
+                S_temp = S_input;
+                S_temp.flow_control.pre_processing_only = true;
+                S_temp.solver.run_as_batch_job = false;
+                S_temp.subject.name = gomenuka2014.modelnames{imodel};
+                S_temp.misc.save_folder = S_benchmark.out_folder;
+                run_pred_sim(S_temp,gomenuka2014.osim_path{imodel});
+                diary(log_name);
+            end
+        end
     end
-
 end
 
 
