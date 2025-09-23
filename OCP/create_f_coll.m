@@ -39,8 +39,11 @@ import casadi.*
 % OpenSim/Simbody C++ API. This external function is compiled as a dll from
 % which we create a Function instance using CasADi in MATLAB. More details
 % about the external function can be found in the documentation.
-F  = external('F', fullfile(S.misc.subject_path, S.misc.external_function));
-
+if S.OpenSimADOptions.useSerialisedFunction
+    F = Function.load(fullfile(S.misc.subject_path, S.misc.external_function));
+else
+    F = external('F',fullfile(S.misc.subject_path, S.misc.external_function));
+end
 
 %% Collocation Scheme
 % We use a pseudospectral direct collocation method, i.e. we use Lagrange
