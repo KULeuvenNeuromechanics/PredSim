@@ -35,8 +35,6 @@ NMuscle = model_info.muscle_info.NMuscle;
 
 %% Bhargava et al. (2004)
 % Get metabolic energy rate 
-pctsts = struct_array_to_double_array(model_info.muscle_info.parameters,'slow_twitch_fiber_ratio');
-MuscleMass = struct_array_to_double_array(model_info.muscle_info.parameters,'muscle_mass');
 
 R.metabolics.Bhargava2004.Edot_gait = zeros(N,NMuscle);
 R.metabolics.Bhargava2004.Adot = zeros(N,NMuscle);
@@ -48,8 +46,7 @@ R.metabolics.Bhargava2004.Edot_incl_basal = zeros(N,1);
 for i=1:N
     [Edot_tot_i,Adot_i,Mdot_i,Sdot_i,Wdot_i,Edot_b_i] = f_casadi.getMetabolicEnergySmooth2004all(...
             R.muscles.a(i,:)',R.muscles.a(i,:)',R.muscles.lMtilde(i,:)',R.muscles.vM(i,:)',...
-            R.muscles.Fce(i,:)',R.muscles.Fpass(i,:)',MuscleMass',pctsts,R.muscles.Fiso(i,:)',...
-            R.misc.body_mass,R.S.metabolicE.tanh_b);
+            R.muscles.Fce(i,:)',R.muscles.Fpass(i,:)',R.muscles.Fiso(i,:)');
 
     R.metabolics.Bhargava2004.Edot_gait(i,:) = full(Edot_tot_i)';
     R.metabolics.Bhargava2004.Adot(i,:) = full(Adot_i)';
