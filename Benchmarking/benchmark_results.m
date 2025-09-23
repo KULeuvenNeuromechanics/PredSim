@@ -93,7 +93,8 @@ if isfield(S_benchmark,'studies') && ~isempty(S_benchmark.studies)
     Mass = [71.6, 74.16, 74.88, 71.1, 70, 73.5, 69.6, 58.9, 73.1];
     Height = [1.78, 1.82, 1.78, 0.99/prop_leg_length, 1.73, 1.76, 1.70, 1.70, 1.77];
     LegLength = Height.*prop_leg_length;
-    Exp_SubjProp = table(Studyname',Mass',Height',LegLength','VariableNames',{'Study','mass','height','LegLength'});
+    Exp_SubjProp = table(Studyname',Mass',Height',LegLength','VariableNames',...
+        {'Study','mass','height','LegLength'});
     msim = 62; % should read this from the model in the future
     Height_Sim = 1.70; % I should read this from the model in the future
     Lsim = Height_Sim.*prop_leg_length;
@@ -370,6 +371,80 @@ if isfield(S_benchmark,'studies') && ~isempty(S_benchmark.studies)
             clear benchmark;
 
 
+        end
+    end
+
+    % add results Gomenuka
+    if any(strcmp(S_benchmark.studies,'gomenuka2014'))
+        % load experimental data with COT in J/kg/m
+        Dat = importdata(fullfile(data_exp_path,'general_exp_data',...
+            'Gomenuka2013','Gomenuka2013_b.csv'));
+        % get COT values
+        exp_speeds = round(Dat(2:end,1));
+        exp_cot = Dat(:,2);
+        i_addedmass = [2:5 11:15 26:30];
+        exp_cot(i_addedmass) = exp_cot(i_addedmass)*1.25; % times 1.25 because we want W/kg body mass and not total mass
+        exp_boolmass = zeros(size(exp_speeds));
+        exp_boolmass(i_addedmass) = 0.25;
+        exp_slope = zeros(size(exp_speeds));
+        exp_slope(1:15) = 1;
+        % loop over all simulations
+        for i_speed = 1:length(S_benchmark.gomenuka.gait_speeds)
+            for i_mass = 1 :length(S_benchmark.browning.addedmass)
+                for i_slope = 1:length(S_benchmark.browning.slopes)
+                    % get path to simulation results file
+                    imodel = (i_mass-1)*3 + i_slope; % check that adapt_model_gomenuka is in this order
+                    model_name = S_benchmark.converted_models.gomenuka2014.modelnames{imodel};
+                    osim_path_sel = S_benchmark.converted_models.gomenuka2014.osim_path{imodel};
+                    save_name  =[model_name, '_speed_' ,...
+                        num2str(round(S_benchmark.gomenuka.gait_speeds(i_speed)*100))];
+                    sim_res_folder  = fullfile(S_benchmark.out_folder, ...
+                        'gomenuka2014', save_name);
+                    mat_files = dir(fullfile(sim_res_folder,'*.mat'));
+                    if length(mat_files) ~= 1
+                        disp('warning mutiple mat files in folder')
+                        disp(sim_res_folder);
+                        disp(['assumes that file ' mat_files(1).name, ...
+                            'contains the simulation results'])
+                    end
+                    sim_res_file = fullfile(mat_files(1).folder, mat_files(1).name);
+
+                    % load simulation results file
+                    SimRes = load(sim_res_file);
+
+
+                    % append experiment data
+                    benchmark.subject_height    = Exp_SubjProp.height(strcmp(Exp_SubjProp.Study,'Gomenuka'));
+                    benchmark.subject_mass      = Exp_SubjProp.mass(strcmp(Exp_SubjProp.Study,'Gomenuka')); % to do check in publication
+                    benchmark.prop_leg_length   = prop_leg_length;
+                    benchmark.leglength         = benchmark.subject_height *  benchmark.prop_leg_length;
+                    benchmark.grf               = [];
+                    benchmark.grf_std           = [];
+                    benchmark.id                = []; % check if already norm to mass
+                    benchmark.id_std            = [];
+                    benchmark.ik                = [];
+                    benchmark.ik_std            = [];
+
+
+                        
+
+                    % metabolic power
+                    % find experimental condition for this particular
+                    % simulation
+                    isel = exp_speeds ==S_benchmark.gomenuka.gait_speeds(i_speed) && ...
+                        exp_boolmass == S_benchmark.browning.addedmass(i_mass) && ...
+                        exp_slope == S_benchmark.browning.slopes(i_slope)
+
+
+
+                    benchmark.Pmetab_mean       = tab_browning{isim,3}*benchmark.subject_mass./...
+                        (benchmark.subject_mass*9.81^1.5*sqrt(benchmark.leglength));
+                    % stride frequency
+                    benchmark.stride_frequency  =  tab_browning{isim,2}./(sqrt(g/benchmark.leglength));
+                    save(sim_res_file, 'benchmark', "-append");
+                    clear benchmark;
+                end
+            end
         end
     end
 end

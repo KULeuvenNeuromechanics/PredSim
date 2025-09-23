@@ -314,12 +314,12 @@ if isfield(S_benchmark,'studies') && ~isempty(S_benchmark.studies)
     if any(strcmp(S_benchmark.studies,'gomenuka2014'))
         S_benchmark.gomenuka.gait_speeds = [2:7]./3.6;
         S_benchmark.gomenuka.names = cell(1,1);
-        S_benchmark.browning.slopes = [0 7 15];
-        S_benchmark.browning.addedmass = [0 0.25]; % adapt
+        S_benchmark.gomenuka.slopes = [0 7 15];
+        S_benchmark.gomenuka.addedmass = [0 0.25]; % adapt
         ct_sim = 1;
         for i_speed = 1:length(S_benchmark.gomenuka.gait_speeds)
-            for i_mass = 1 :length(S_benchmark.browning.addedmass)
-                for i_slope = 1:length(S_benchmark.browning.slopes)
+            for i_mass = 1 :length(S_benchmark.gomenuka.addedmass)
+                for i_slope = 1:length(S_benchmark.gomenuka.slopes)
                     % name of the model (model on slope and added mass?)
                     imodel = (i_mass-1)*3 + i_slope; % check that adapt_model_gomenuka is in this order
                     model_name = S_benchmark.converted_models.gomenuka2014.modelnames{imodel};
