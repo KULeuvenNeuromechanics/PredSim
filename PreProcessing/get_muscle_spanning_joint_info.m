@@ -114,6 +114,10 @@ muscle_spanning_joint_info_1(muscle_spanning_joint_info_1~=0) = 1;
 end
 
 %% option 2: based on lengths
+% names of states corresponding to coordinate position values
+for i=1:n_coord
+    state_names{i} = model.getCoordinateSet.get(coord_names{i}).getStateVariableNames().get(0);
+end
 % reference lengths
 lMT0 = zeros(1,n_muscle);
 % state_vars.setToZero();
@@ -134,8 +138,9 @@ for j=1:n_data_points
         state_vars.setToZero();
         model.setStateVariableValues(s,state_vars);
         model.realizePosition(s);
-        model.getCoordinateSet.get(coord_names{i}).setValue(s,Qs(j,i),false);
-        
+%         model.getCoordinateSet.get(coord_names{i}).setValue(s,Qs(j,i),false);
+        model.setStateVariableValue(s,state_names{i},Qs(j,i));
+        model.realizePosition(s);
     
         % Loop over muscles
         for m=1:n_muscle

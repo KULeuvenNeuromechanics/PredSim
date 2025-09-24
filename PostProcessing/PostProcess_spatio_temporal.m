@@ -25,7 +25,9 @@ function [R] = PostProcess_spatio_temporal(model_info,f_casadi,R)
 % Last edit date: 23/Sept/2024
 % --------------------------------------------------------------------------
 
-
+if ~isfield(model_info.ExtFunIO,'GRFs')
+    return
+end
 
 % step length
 if isfield(f_casadi,'f_getStepLength')

@@ -59,15 +59,20 @@ end
 %% Qs
 % The model is moving forward but with a standing position (Qs=0)
 guess.Qs = zeros(N,nq.all);
-guess.Qs(:,model_info.ExtFunIO.jointi.base_forward) = linspace(0,guess.tf*S.misc.forward_velocity,N);
+if ~isempty(model_info.ExtFunIO.jointi.base_forward)
+    guess.Qs(:,model_info.ExtFunIO.jointi.base_forward) = linspace(0,guess.tf*S.misc.forward_velocity,N);
+end
 % The model is standing on the ground
-guess.Qs(:,model_info.ExtFunIO.jointi.base_vertical) = model_info.IG_pelvis_y;
+if ~isempty(model_info.ExtFunIO.jointi.base_vertical)
+    guess.Qs(:,model_info.ExtFunIO.jointi.base_vertical) = model_info.IG_pelvis_y;
+end
 
 %% Qdots
 guess.Qdots = zeros(N,nq.all);
 % The model is moving forward with a constant speed
-guess.Qdots(:,model_info.ExtFunIO.jointi.base_forward) = S.misc.forward_velocity;
-
+if ~isempty(model_info.ExtFunIO.jointi.base_forward)
+    guess.Qdots(:,model_info.ExtFunIO.jointi.base_forward) = S.misc.forward_velocity;
+end
 %% Qdotdots
 guess.Qdotdots = zeros(N,nq.all);
 

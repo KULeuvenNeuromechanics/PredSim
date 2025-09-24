@@ -26,6 +26,10 @@ function [R] = PostProcess_ground_reaction(model_info,f_casadi,R)
 % Last edit date: 
 % --------------------------------------------------------------------------
 
+if ~isfield(model_info.ExtFunIO,'GRFs')
+    return
+end
+
 N = size(R.kinematics.Qs,1);
 
 import casadi.*

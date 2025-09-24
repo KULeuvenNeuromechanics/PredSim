@@ -381,11 +381,15 @@ else
 end
 % Average speed
 % Provide expression for the distance traveled
-Qs_nsc = Qs.*(scaling.Qs'*ones(1,N+1));
-dist_trav_tot = Qs_nsc(model_info.ExtFunIO.jointi.base_forward,end) - ...
-    Qs_nsc(model_info.ExtFunIO.jointi.base_forward,1);
-vel_aver_tot = dist_trav_tot/tf;
-opti.subject_to(vel_aver_tot - S.misc.forward_velocity == 0)
+if ~isempty(model_info.ExtFunIO.jointi.base_forward)
+    Qs_nsc = Qs.*(scaling.Qs'*ones(1,N+1));
+    dist_trav_tot = Qs_nsc(model_info.ExtFunIO.jointi.base_forward,end) - ...
+        Qs_nsc(model_info.ExtFunIO.jointi.base_forward,1);
+    vel_aver_tot = dist_trav_tot/tf;
+    opti.subject_to(vel_aver_tot - S.misc.forward_velocity == 0)
+else
+    dist_trav_tot = 1;
+end
 
 % optional constraints
 if strcmp(S.misc.gaitmotion_type,'HalfGaitCycle')
@@ -418,6 +422,30 @@ elseif strcmp(S.misc.gaitmotion_type,'FullGaitCycle')
             opti.subject_to(step_length_r <= S.bounds.SLR.upper)
         end
     end
+
+elseif strcmp(S.misc.gaitmotion_type,'WaveHand')
+
+    % position of hand at t=0 (and t=t_final)
+    Qs_1_nsc = Qs(:,1).*scaling.Qs';
+    F_input_1 = MX(model_info.ExtFunIO.input.nInputs,1);
+    F_input_1(model_info.ExtFunIO.input.Qs.all,1) = Qs_1_nsc;
+    [F_out_1] = F(F_input_1);
+    pos_hand_1 = F_out_1(model_info.ExtFunIO.position.hand_or_r);
+
+    % position of hand at t=t_final/2
+    Qs_h_nsc = Qs(:,round((N+1)/2)).*scaling.Qs';
+    F_input_h = MX(model_info.ExtFunIO.input.nInputs,1);
+    F_input_h(model_info.ExtFunIO.input.Qs.all,1) = Qs_h_nsc;
+    [F_out_h] = F(F_input_h);
+    pos_hand_h = F_out_h(model_info.ExtFunIO.position.hand_or_r);
+
+    % impose hand movement along z-axis
+    opti.subject_to(pos_hand_1(3) - pos_hand_h(3) > 0.3)
+
+    % hand should be high enough
+    opti.subject_to(pos_hand_1(2) > 0.7)
+    opti.subject_to(pos_hand_h(2) > 0.7)
+
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -684,14 +712,18 @@ else
 end
 
 %% Assert average speed
-dist_trav_opt = q_opt_unsc_all.rad(end,model_info.ExtFunIO.jointi.base_forward) - ...
-    q_opt_unsc_all.rad(1,model_info.ExtFunIO.jointi.base_forward); % distance traveled
-time_elaps_opt = tf_opt; % time elapsed
-vel_aver_opt = dist_trav_opt/time_elaps_opt;
-% assert_v_tg should be 0
-assert_v_tg = abs(vel_aver_opt-S.misc.forward_velocity);
-if assert_v_tg > 1*10^(-S.solver.tol_ipopt)
-    disp('Issue when reconstructing average speed')
+if ~isempty(model_info.ExtFunIO.jointi.base_forward)
+    dist_trav_opt = q_opt_unsc_all.rad(end,model_info.ExtFunIO.jointi.base_forward) - ...
+        q_opt_unsc_all.rad(1,model_info.ExtFunIO.jointi.base_forward); % distance traveled
+    time_elaps_opt = tf_opt; % time elapsed
+    vel_aver_opt = dist_trav_opt/time_elaps_opt;
+    % assert_v_tg should be 0
+    assert_v_tg = abs(vel_aver_opt-S.misc.forward_velocity);
+    if assert_v_tg > 1*10^(-S.solver.tol_ipopt)
+        disp('Issue when reconstructing average speed')
+    end
+else
+    dist_trav_opt = 1;
 end
 
 %% Decompose optimal cost
@@ -746,10 +778,15 @@ for k=1:N
             W.E*B(j+1)          *(f_casadi.J_muscles_exp(e_tot_opt_all,W.E_exp))/model_info.mass*h_opt + ...
             W.a*B(j+1)          *(f_casadi.J_muscles_exp(a_col_opt(count,:), W.a_exp))*h_opt + ...
             W.q_dotdot*B(j+1)   *(f_casadi.J_not_arms_dof(qdotdot_col_opt(count,model_info.ExtFunIO.jointi.noarmsi)))*h_opt + ...
-            W.pass_torq*B(j+1)  *(f_casadi.J_lim_torq(Tau_passkj))*h_opt + ... 
             W.slack_ctrl*B(j+1) *(f_casadi.J_muscles(vA_opt(k,:)))*h_opt + ...
             W.slack_ctrl*B(j+1) *(f_casadi.J_muscles(dFTtilde_col_opt(count,:)))*h_opt);
             
+        if nq.limTorq > 0
+            J_opt = J_opt + W.pass_torq*B(j+1)  *(f_casadi.J_lim_torq(Tau_passkj))*h_opt;
+
+            Pass_cost = Pass_cost + W.pass_torq*B(j+1)*...
+            (f_casadi.J_lim_torq(Tau_passkj))*h_opt;
+        end
         if nq.torqAct > 0
             J_opt = J_opt + 1/(dist_trav_opt)*(W.e_torqAct*B(j+1)      *(f_casadi.J_torq_act(e_a_opt(k,:)))*h_opt);
 
@@ -776,8 +813,6 @@ for k=1:N
             (f_casadi.J_muscles(a_col_opt(count,:)))*h_opt;      
         Qdotdot_cost = Qdotdot_cost + W.q_dotdot*B(j+1)*...
             (f_casadi.J_not_arms_dof(qdotdot_col_opt(count,model_info.ExtFunIO.jointi.noarmsi)))*h_opt;
-        Pass_cost = Pass_cost + W.pass_torq*B(j+1)*...
-            (f_casadi.J_lim_torq(Tau_passkj))*h_opt;
         vA_cost = vA_cost + W.slack_ctrl*B(j+1)*...
             (f_casadi.J_muscles(vA_opt(k,:)))*h_opt;
         dFTtilde_cost = dFTtilde_cost + W.slack_ctrl*B(j+1)*...
@@ -927,27 +962,33 @@ qddot_opt_unsc.rad = [qddot_opt_unsc.rad(end,:); qddot_opt_unsc.rad(1:end-1,:)];
 dFTtilde_opt_unsc = [dFTtilde_opt_unsc(end,:); dFTtilde_opt_unsc(1:end-1,:)];
 
 %% Gait cycle starts at right side initial contact
+if isfield(model_info.ExtFunIO,'GRFs')
+    % Ground reaction forces at mesh points (1:N-1)
+    Foutk_opt                   = zeros(size(q_opt_unsc.rad,1),F.nnz_out);
+    for i = 1:size(q_opt_unsc.rad,1)
+        % Create zero input vector for external function
+        F_ext_input = zeros(model_info.ExtFunIO.input.nInputs,1);
+        % Assign Qs
+        F_ext_input(model_info.ExtFunIO.input.Qs.all,1) = q_opt_unsc.rad(i,:);
+        % Assign Qdots
+        F_ext_input(model_info.ExtFunIO.input.Qdots.all,1) = qdot_opt_unsc.rad(i,:);
+        % Assign Qdotdots (A)
+        F_ext_input(model_info.ExtFunIO.input.Qdotdots.all,1) = qddot_opt_unsc.rad(i,:);
+    
+        % Evaluate external function
+        res = F(F_ext_input);
+        Foutk_opt(i,:) = full(res);
+    end
+    GRFk_opt = Foutk_opt(:,[model_info.ExtFunIO.GRFs.right_total model_info.ExtFunIO.GRFs.left_total]);
+    [idx_GC,idx_GC_base_forward_offset,HS1,HS_threshold] = getStancePhaseSimulation(GRFk_opt,model_info.mass/3);
 
-% Ground reaction forces at mesh points (1:N-1)
-Foutk_opt                   = zeros(size(q_opt_unsc.rad,1),F.nnz_out);
-for i = 1:size(q_opt_unsc.rad,1)
-    % Create zero input vector for external function
-    F_ext_input = zeros(model_info.ExtFunIO.input.nInputs,1);
-    % Assign Qs
-    F_ext_input(model_info.ExtFunIO.input.Qs.all,1) = q_opt_unsc.rad(i,:);
-    % Assign Qdots
-    F_ext_input(model_info.ExtFunIO.input.Qdots.all,1) = qdot_opt_unsc.rad(i,:);
-    % Assign Qdotdots (A)
-    F_ext_input(model_info.ExtFunIO.input.Qdotdots.all,1) = qddot_opt_unsc.rad(i,:);
-
-    % Evaluate external function
-    res = F(F_ext_input);
-    Foutk_opt(i,:) = full(res);
+else
+    idx_GC = 1:size(q_opt_unsc.rad,1);
+    idx_GC_base_forward_offset = [];
+    HS1 = '';
+    HS_threshold = nan;
 end
-GRFk_opt = Foutk_opt(:,[model_info.ExtFunIO.GRFs.right_total model_info.ExtFunIO.GRFs.left_total]);
 
-
-[idx_GC,idx_GC_base_forward_offset,HS1,HS_threshold] = getStancePhaseSimulation(GRFk_opt,model_info.mass/3);
 
 Qs_GC = q_opt_unsc.deg(idx_GC,:);
 Qdots_GC = qdot_opt_unsc.deg(idx_GC,:);
@@ -967,8 +1008,14 @@ if(S.subject.synergies)
 end
 
 % adjust forward position to be continuous and start at 0
-Qs_GC(idx_GC_base_forward_offset,model_info.ExtFunIO.jointi.base_forward) = Qs_GC(idx_GC_base_forward_offset,model_info.ExtFunIO.jointi.base_forward) + dist_trav_opt;
-Qs_GC(:,model_info.ExtFunIO.jointi.base_forward) = Qs_GC(:,model_info.ExtFunIO.jointi.base_forward) - Qs_GC(1,model_info.ExtFunIO.jointi.base_forward);
+if ~isempty(model_info.ExtFunIO.jointi.base_forward)
+    Qs_GC(idx_GC_base_forward_offset,model_info.ExtFunIO.jointi.base_forward) = ...
+        Qs_GC(idx_GC_base_forward_offset,model_info.ExtFunIO.jointi.base_forward) + ...
+        dist_trav_opt;
+    Qs_GC(:,model_info.ExtFunIO.jointi.base_forward) = ...
+        Qs_GC(:,model_info.ExtFunIO.jointi.base_forward) - ...
+        Qs_GC(1,model_info.ExtFunIO.jointi.base_forward);
+end
 
 %% Unscale actuator torques
 if nq.torqAct > 0
