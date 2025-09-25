@@ -303,9 +303,13 @@ These settings are passed to OpenSimAD.
 - **S.OpenSimADOptions.input3DBodyMoments**:
     - add 3D moment vectors that act on bodies. Default is empty. Needs further implementations before this can be used.
 - **S.OpenSimADOptions.export3DPositions**:
-    - export 3D position of points in bodies, in ground reference frame. Default is empty. Needs further implementations before this can be used.
+    - export 3D position of points in bodies, in another reference frame. Default is empty. Needs further implementations before this can be used.
+- **S.OpenSimADOptions.export3DOrientations**:
+    - export 3D orientation of bodies, in another reference frame. Default is empty. Needs further implementations before this can be used.
 - **S.OpenSimADOptions.export3DVelocities**:
-    - export 3D velocity of points in bodies, in ground reference frame. Default is empty. Needs further implementations before this can be used.
+    - export 3D velocity of points in bodies, in another reference frame. Default is empty. Needs further implementations before this can be used.
+- **S.OpenSimADOptions.export3DVelocitiesProjGround**:
+    - export 3D velocity of a point that is the projection onto the global xz-plane of a point in a body. Default is empty. Needs further implementations before this can be used.
 - **S.OpenSimADOptions.exportGRFs**: 
     - Export total ground reaction forces of left and right side. Default is *true* [bool]
 - **S.OpenSimADOptions.exportSeparateGRFs**: 
@@ -314,6 +318,10 @@ These settings are passed to OpenSimAD.
     - Export total ground reaction moments of left and right side. Default is *true* [bool]
 - **S.OpenSimADOptions.exportContactPowers**: 
     - Export power due to vertical compression of each contact element. Default is *true* [bool]
+- **S.OpenSimADOptions.useSerialisedFunction**:
+    - ??? Default is *false* [bool]
+- **S.OpenSimADOptions.always_generate**:
+    - ??? Default is *false* [bool]
 
 
 #### S.orthosis
