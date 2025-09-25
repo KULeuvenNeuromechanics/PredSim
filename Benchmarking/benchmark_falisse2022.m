@@ -98,63 +98,9 @@ benchmark_predsim(S,osim_path,S_benchmark);
 
 %% Compare simulation with experiment
 
+% you can use the function benchmark_results to do this. This function
+% adds the experimental data to your simulations and has some plot
+% utilities to compare simulations and experiments. 
+% please run this function when all simulations are finished
 
-
-
-% 3. method to attach data from literature to each simulation or make a
-% table as in my script TableSim.m (benchmarking study). Not sure how to do
-% this properply.
-%
-% Other option is to only provide a graphical benchmarking. In other words
-% only make a figure with measured and simulated values. For each
-% experimental condition look for the datapoint that is most similar to 
-% measured values
-%
-% current idea is to write function here that attaches experimental data to
-% simulation results structure. This is only for the replication of
-% specific studies. I you want to benchmark generic effects of gait speed I
-% will only add the figure (e.g. measured and simulated COT as a function
-% of gait speed).
-% this is a seperate function that you should run when all simulations are
-% finished
-
-% step 0. download data from Benchmarking paper 2025:
-% DOI 10.5281/zenodo.14524619
-data_exp_path = fullfile(S_benchmark.out_folder,'exp_data');
-if ~isfolder(data_exp_path)
-    mkdir(data_exp_path);
-end
-
-% general data
-LinkZipFile = 'https://zenodo.org/records/14524620/files/PredSim_gait_conditions-master_19_12_2024.zip?download=1';
-websave(fullfile(data_exp_path,'githubrepo_data.zip'),LinkZipFile);
-unzip(fullfile(data_exp_path,'githubrepo_data.zip'),fullfile(data_exp_path,'github_repo_temp'));
-delete(fullfile(data_exp_path,'githubrepo_data.zip'));
-%       change data format a bit here, we don't need everything
-copyfile(fullfile(data_exp_path,'github_repo_temp','PredSim_gait_conditions-master','ExperimentalData'),...
-    fullfile(data_exp_path,'general_exp_data'))
-rmdir(fullfile(data_exp_path,'github_repo_temp'),'s');
-
-% Van Der Zee kinematic data
-if isfield(S_benchmark,'studies') && ~isempty(S_benchmark.studies)
-    if any(strcmp(S_benchmark.studies,'vanderzee2022'))
-        LinkZipFile = 'https://zenodo.org/records/14524620/files/VanDerZee_Averages_Addbiomech.zip?download=1';
-        websave(fullfile(data_exp_path,'vanderzee2022.zip'),LinkZipFile);
-        unzip(fullfile(data_exp_path,'vanderzee2022.zip'),fullfile(data_exp_path,'vanderzee2022'));
-        delete(fullfile(data_exp_path,'vanderzee2022.zip'));
-    end
-    % attach experimental data to simulation results
-    
-end
-
-
-
-
-
-
-
-% 4. (optional) make figures as in 2022 paper (or some of the figures)
-
-
-
-
+%benchmark_results(S_benchmark.out_folder,'BoolPlot',true);

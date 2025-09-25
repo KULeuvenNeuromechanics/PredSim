@@ -96,11 +96,10 @@ if bool_convertmodels
             % check if .osim model and associated .dll already exists, if
             % this is the case do not run again
             out_dllname = fullfile(out_folder,['F_' model_name '.dll']);
+            S_benchmark.converted_models.koelewijn2019.modelnames{ct} = model_name;
+            S_benchmark.converted_models.koelewijn2019.osim_path{ct} = out_modelname;
             if ~exist(out_modelname,'file') || ~exist(out_dllname,'file')
                 adapt_gravity_model(osim_path_default,slopes(islope),out_modelname);
-                S_benchmark.converted_models.koelewijn2019.modelnames{ct} = model_name;
-                S_benchmark.converted_models.koelewijn2019.osim_path{ct} = out_modelname;
-
                 % copy model geometry file and settingsfile
                 copy_musclegeom_information(osim_path_default,out_modelname);
                 copy_modelsettingsfile(osim_path_default,out_modelname)
@@ -112,9 +111,9 @@ if bool_convertmodels
                 S_temp.subject.name = model_name;
                 S_temp.misc.save_folder = S_benchmark.out_folder;
                 run_pred_sim(S_temp,out_modelname);
-                diary(log_name);
-                ct = ct + 1;
+                diary(log_name);                
             end
+            ct = ct + 1;
         end
         % add default model (level walking)
         S_benchmark.converted_models.koelewijn2019.modelnames{ct}= S_input.subject.name;
@@ -255,7 +254,8 @@ if isfield(S_benchmark,'studies') && ~isempty(S_benchmark.studies)
                 % set forward velocity
                 S.misc.forward_velocity = S_benchmark.koelewijn.gait_speeds(i_speed);
                 % adapt folder to save results
-                save_name  =[model_name, '_speed_' num2str(round(S_benchmark.koelewijn.gait_speeds(i_speed)*100))];
+                save_name  =[model_name, '_speed_',...
+                    num2str(round(S_benchmark.koelewijn.gait_speeds(i_speed)*100))];
                 S.misc.save_folder  = fullfile(S_benchmark.out_folder,'koelewijn2019',...
                     save_name);
                 % adapt subject

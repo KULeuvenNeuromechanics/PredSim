@@ -28,7 +28,7 @@ for imodels = 1:length(ModelOut)
     % adapt gravity based on slope
     g = modSel.getGravity();
     gv = [g.get(0) g.get(1) g.get(2)];
-    fi = atan(slope/100);
+    fi = atan(slope);
     R = rotz(fi);
     R = R(1:3, 1:3);
     grav_tilt = gv*R;

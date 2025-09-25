@@ -381,13 +381,15 @@ if isfield(S_benchmark,'studies') && ~isempty(S_benchmark.studies)
             'Gomenuka2013','Gomenuka2013_b.csv'));
         % get COT values
         exp_speeds = round(Dat(2:end,1));
-        exp_cot = Dat(:,2);
-        i_addedmass = [2:5 11:15 26:30];
+        exp_cot = Dat(2:end,2);
+        i_addedmass = [1:5 11:15 26:30];
         exp_cot(i_addedmass) = exp_cot(i_addedmass)*1.25; % times 1.25 because we want W/kg body mass and not total mass
         exp_boolmass = zeros(size(exp_speeds));
         exp_boolmass(i_addedmass) = 0.25;
         exp_slope = zeros(size(exp_speeds));
-        exp_slope(1:15) = 1;
+        exp_slope(1:10) = 15;
+        exp_slope(11:20) = 7;
+        clear Dat;
         % loop over all simulations
         for i_speed = 1:length(S_benchmark.gomenuka.gait_speeds)
             for i_mass = 1 :length(S_benchmark.gomenuka.addedmass)
@@ -398,14 +400,14 @@ if isfield(S_benchmark,'studies') && ~isempty(S_benchmark.studies)
                     osim_path_sel = S_benchmark.converted_models.gomenuka2014.osim_path{imodel};
                     save_name  =[model_name, '_speed_' ,...
                         num2str(round(S_benchmark.gomenuka.gait_speeds(i_speed)*100))];
-                    sim_res_folder  = fullfile(S_benchmark.out_folder, ...
+                    sim_res_folder  = fullfile(benchmarking_folder, ...
                         'gomenuka2014', save_name);
                     mat_files = dir(fullfile(sim_res_folder,'*.mat'));
                     if length(mat_files) ~= 1
-                        disp('warning mutiple mat files in folder')
+                        disp('warning mutiple mat files in folder');
                         disp(sim_res_folder);
                         disp([' assumes that file ' mat_files(1).name, ...
-                            'contains the simulation results'])
+                            'contains the simulation results']);
                     end
                     sim_res_file = fullfile(mat_files(1).folder, mat_files(1).name);
 
@@ -432,25 +434,20 @@ if isfield(S_benchmark,'studies') && ~isempty(S_benchmark.studies)
                     % metabolic power
                     % find experimental condition for this particular
                     % simulation
-                    isel = exp_speeds == round(S_benchmark.gomenuka.gait_speeds(i_speed)*3.6) && ...
-                        exp_boolmass == S_benchmark.gomenuka.addedmass(i_mass) && ...
+                    isel = exp_speeds == round(S_benchmark.gomenuka.gait_speeds(i_speed)*3.6) & ...
+                        exp_boolmass == S_benchmark.gomenuka.addedmass(i_mass) & ...
                         exp_slope == S_benchmark.gomenuka.slopes(i_slope);
                     if sum(isel)>1
                         disp('problem with adding experimental data to gomenuka simulations');
                     end
-                    if sum(isel)>1
+                    if sum(isel)==1
                         cot_sel = exp_cot(isel);
                         speed = S_benchmark.gomenuka.gait_speeds(i_speed);
                         pmetab = cot_sel * speed * benchmark.subject_mass;
                         benchmark.Pmetab_mean= pmetab./(benchmark.subject_mass*9.81^1.5*sqrt(benchmark.leglength));
                     else
                         benchmark.Pmetab_mean = [];
-                    end
-
-
-
-
-                    benchmark.Pmetab_mean       
+                    end 
                     save(sim_res_file, 'benchmark', "-append");
                     clear benchmark;
                 end
@@ -502,6 +499,7 @@ if BoolPlot
         % Colors_Speeds = flipud(Colors_Speeds);
         Colors_Speeds = copper(length(speeds)+2);
         % load data of all simulation conditions first
+        clear Dat
         for ispeed_sort = 1:length(speeds_sort)
             ispeed = isort(ispeed_sort);
             sim_res_folder = fullfile(benchmarking_folder,'vanderzee2022',...
@@ -515,7 +513,11 @@ if BoolPlot
             end
             sim_res_file = fullfile(mat_files(1).folder, mat_files(1).name);
             load(sim_res_file,'R','benchmark');
-            Dat(ispeed_sort).benchmark = benchmark;
+            try
+                Dat(ispeed_sort).benchmark = benchmark;
+            catch
+                disp('error');
+            end
             Dat(ispeed_sort).R = R;
         end
 
@@ -817,7 +819,7 @@ if BoolPlot
     end
 
     % Plot results Gomenuka
-    if any(strcmp(S_benchmark.studies,'Gomenuka2014'))
+    if any(strcmp(S_benchmark.studies,'gomenuka2014'))
                 % loop over all simulations
         for i_speed = 1:length(S_benchmark.gomenuka.gait_speeds)
             for i_mass = 1 :length(S_benchmark.gomenuka.addedmass)
@@ -828,7 +830,7 @@ if BoolPlot
                     osim_path_sel = S_benchmark.converted_models.gomenuka2014.osim_path{imodel};
                     save_name  =[model_name, '_speed_' ,...
                         num2str(round(S_benchmark.gomenuka.gait_speeds(i_speed)*100))];
-                    sim_res_folder  = fullfile(S_benchmark.out_folder, ...
+                    sim_res_folder  = fullfile(benchmarking_folder, ...
                         'gomenuka2014', save_name);
                     slope = S_benchmark.gomenuka.slopes(i_slope);
                     id_study = 4;
