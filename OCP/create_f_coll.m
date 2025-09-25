@@ -111,6 +111,12 @@ if (S.subject.synergies)
     SynW_lk         = MX.sym('SynW_lk',length(model_info.muscle_info.idx_left),S.subject.NSyn_l);
 end
 
+% Contact forces for kinematic constraints
+if nq.constr > 0
+    F_constrj = MX.sym('F_constrj',3*nq.constr,d);
+    F_constrj_nsc = F_constrj.*scaling.F_constr;
+end
+
 J           = 0; % Initialize cost function
 eq_constr   = {}; % Initialize equality constraint vector
 ineq_constr_deact = {}; % Initialize inequality constraint vector
@@ -244,6 +250,16 @@ for j=1:d
     F_ext_input(model_info.ExtFunIO.input.Qdotdots.all,1) = Aj_nsc(:,j);
     % Assign forces and moments 
     F_ext_input = F_ext_input + M_ort_body_totj; % body forces and body moments from orthoses
+    
+    % Add contact forces for kinematic constraints (action-reaction)
+    for i=1:nq.constr
+        F_ext_input(model_info.ExtFunIO.input.Forces. ...
+            (['osimConstraint_',model_info.osimConstraints{i},'_1']),1) = ...
+            F_constrj_nsc((1:3)+3*(i-1),j);
+        F_ext_input(model_info.ExtFunIO.input.Forces. ...
+            (['osimConstraint_',model_info.osimConstraints{i},'_2']),1) = ...
+            - F_constrj_nsc((1:3)+3*(i-1),j);
+    end
 
     % Evaluate external function
     [Tj] = F(F_ext_input);
@@ -282,9 +298,9 @@ for j=1:d
         Ti = Ti + M_lig_j(i);
         
         % passive moment
-        if ~ismember(i,model_info.ExtFunIO.jointi.floating_base)
+%         if ~ismember(i,model_info.ExtFunIO.jointi.floating_base)
             Ti = Ti + Tau_passj(i);
-        end
+%         end
         
         % orthosis
         Ti = Ti + M_ort_coord_totj(i);
@@ -346,6 +362,19 @@ for j=1:d
 
     end
 
+    % kinematic constraints
+    for i=1:nq.constr
+        pos_1 = Tj(model_info.ExtFunIO.position.(['osimConstraint_',model_info.osimConstraints{i},'_1']),1);
+        pos_2 = Tj(model_info.ExtFunIO.position.(['osimConstraint_',model_info.osimConstraints{i},'_2']),1);
+
+        eq_constr{end+1} = (pos_2 - pos_1);
+
+        vel_1 = Tj(model_info.ExtFunIO.velocity.(['osimConstraint_',model_info.osimConstraints{i},'_1']),1);
+        vel_2 = Tj(model_info.ExtFunIO.velocity.(['osimConstraint_',model_info.osimConstraints{i},'_2']),1);
+
+        eq_constr{end+1} = (vel_2 - vel_1);
+    end
+
 end % End loop over collocation points
 
 % Add tracking terms in the cost function if synergy weights are tracked
@@ -381,7 +410,9 @@ end
 if (S.subject.synergies)
     coll_input_vars_def = [coll_input_vars_def,{SynH_rk,SynH_lk,SynW_rk,SynW_lk}];
 end
-
+if nq.constr > 0
+    coll_input_vars_def = [coll_input_vars_def,{F_constrj}];
+end
 
 
 f_coll = Function('f_coll',coll_input_vars_def,...
@@ -389,20 +420,12 @@ f_coll = Function('f_coll',coll_input_vars_def,...
         ineq_constr_distance{:}, ineq_constr_syn,J});
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+if S.OpenSimADOptions.useSerialisedFunction
+    try
+        f_coll = f_coll.expand();
+    catch
+    end
+end
 
 
 

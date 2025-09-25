@@ -48,6 +48,16 @@ for i = 1:N
     % Assign Qdotdots (A)
     F_ext_input(model_info.ExtFunIO.input.Qdotdots.all,1) = R.kinematics.Qddots_rad(i,:);
 
+    % Add contact forces for kinematic constraints (action-reaction)
+    for j=1:model_info.ExtFunIO.jointi.nq.constr
+        F_ext_input(model_info.ExtFunIO.input.Forces. ...
+            (['osimConstraint_',model_info.osimConstraints{j},'_1']),1) = ...
+            R.kinetics.F_kin_constr(i, (1:3)+3*(j-1));
+        F_ext_input(model_info.ExtFunIO.input.Forces. ...
+            (['osimConstraint_',model_info.osimConstraints{j},'_2']),1) = ...
+            - R.kinetics.F_kin_constr(i, (1:3)+3*(j-1));
+    end
+
     % Evaluate external function
     res = F(F_ext_input);
 

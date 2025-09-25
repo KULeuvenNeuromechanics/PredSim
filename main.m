@@ -34,12 +34,12 @@ clc
 %% Initialize S
 addpath(fullfile(pathRepo,'DefaultSettings'))
 
-[S] = initializeSettings('Falisse_et_al_2022');
+[S] = initializeSettings('walker_bar_v2');
 
 %% Settings
 
 % name of the subject
-S.subject.name = 'Falisse_et_al_2022';
+S.subject.name = 'walker_bar_v2';
 
 % path to folder where you want to store the results of the OCP
 S.misc.save_folder  = fullfile(pathRepoFolder,'PredSimResults',S.subject.name); 
@@ -53,6 +53,7 @@ S.solver.IG_selection_gaitCyclePercent = 100;
 osim_path = fullfile(pathRepo,'Subjects',S.subject.name,[S.subject.name '.osim']);
 
 S.OpenSimADOptions.useSerialisedFunction = true;
+
 
 %% Run predictive simulations
 
@@ -69,11 +70,11 @@ S.OpenSimADOptions.useSerialisedFunction = true;
 if (~S.solver.run_as_batch_job) && (~isenv('SLURM_JOB_ID'))
 
     % set path to reference result
-    result_paths{1} = fullfile(pathRepo,'Tests','ReferenceResults',...
-        'Falisse_et_al_2022','Falisse_et_al_2022_paper.mat');
+%     result_paths{1} = fullfile(pathRepo,'Tests','ReferenceResults',...
+%         'Falisse_et_al_2022','Falisse_et_al_2022_paper.mat');
     
     % set path to saved result
-    result_paths{2} = fullfile(S.misc.save_folder,[savename '.mat']);
+    result_paths{1} = fullfile(S.misc.save_folder,[savename '.mat']);
     
     % Cell array with legend name for each result
     legend_names = {'Reference result', 'Your first simulation'};

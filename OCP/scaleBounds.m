@@ -44,6 +44,9 @@ bounds.Qdotdots.upper(isnan(bounds.Qdotdots.upper)) = 0;
 % Muscle-tendon forces
 bounds_nsc.FTtilde.lower    = (bounds_nsc.FTtilde.lower)./scaling.FTtilde;
 bounds_nsc.FTtilde.upper    = (bounds_nsc.FTtilde.upper)./scaling.FTtilde;
+% Kinematic constraints contact forces
+bounds.F_constr.lower = bounds.F_constr.lower./scaling.F_constr;
+bounds.F_constr.upper = bounds.F_constr.upper./scaling.F_constr;
 
 % We impose the initial position of pelvis_tx to be 0
 bounds.Qs_0.lower = bounds.Qs.lower;

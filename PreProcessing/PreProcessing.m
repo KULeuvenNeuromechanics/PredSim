@@ -26,6 +26,9 @@ function [S,model_info] = PreProcessing(S,osim_path)
 % Last edit date: 
 % --------------------------------------------------------------------------
 
+% Read information about constraints from the osim model
+[S, osimConstraints] = kinematic_constraints_helper(S, osim_path);
+
 % Update settings about points that need to be exported from external function
 [S] = updateExport3DPositionsVelocities(S,osim_path);
 
@@ -39,6 +42,7 @@ S = osim2dll(S,osim_path);
 
 % Create a struct to contain all information about the neuro-musculoskeletal model
 model_info = get_model_info(S,osim_path);
+model_info.osimConstraints = osimConstraints;
 
 % Read ligament parameters from the opensim model and settings
 if model_info.ligament_info.NLigament > 0

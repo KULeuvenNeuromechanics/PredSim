@@ -258,6 +258,12 @@ if (S.subject.synergies)
     end
 end
 
+% Contact forces for kinematic constraints
+if nq.constr > 0
+    F_constr = opti.variable(3*nq.constr,d*N);
+    opti.subject_to(bounds.F_constr.lower < F_constr < bounds.F_constr.upper);
+end
+
 %%
 
 % evaluate helper function
@@ -276,6 +282,9 @@ if nq.torqAct > 0
 end
 if (S.subject.synergies)    
     coll_input_vars_eval = [coll_input_vars_eval,{SynH_r(:,1:end-1), SynH_l(:,1:end-1), SynW_r,SynW_l}];
+end
+if nq.constr > 0
+    coll_input_vars_eval = [coll_input_vars_eval,{F_constr}];
 end
 
 coll_ineq_constr_distance = cell(1,length(S.bounds.distanceConstraints));
@@ -576,6 +585,10 @@ if (S.subject.synergies)
         starti = starti + NMuscle/2*S.subject.NSyn_l;
     end
 end
+if nq.constr > 0
+    F_constr_col_opt = reshape(w_opt(starti:starti+3*nq.constr*d*N-1),3*nq.constr,d*N)';
+    starti = starti + nq.constr*3*d*N;
+end
 if starti - 1 ~= length(w_opt)
     disp('error when extracting results')
 end
@@ -647,6 +660,10 @@ if (S.subject.synergies)
         scaling.a,size(SynH_r_opt(1:end-1,:),1),size(SynH_r_opt,2)); % same scaling as a
     SynH_l_opt_unsc = SynH_l_opt(1:end-1,:).*repmat(...
         scaling.a,size(SynH_l_opt(1:end-1,:),1),size(SynH_l_opt,2)); % same scaling as a
+end
+if nq.constr > 0
+    F_constr_col_opt_unsc = F_constr_col_opt.*scaling.F_constr;
+    F_constr_opt_unsc = F_constr_col_opt_unsc(d:d:end,:);
 end
 
 % Controls at mesh points
@@ -954,12 +971,19 @@ if strcmp(S.misc.gaitmotion_type,'HalfGaitCycle')
         SynH_l_opt_unsc = [SynH_l_opt_unsc_half; SynH_r_opt_unsc_half];
     end
 
+    if nq.constr > 0
+        F_constr_opt_unsc = [F_constr_opt_unsc; F_constr_opt_unsc];
+        warning("TODO: symmetry")
+    end
 end
 
 % express slack controls on mesh points 1:N to be consistent
 qddot_opt_unsc.deg = [qddot_opt_unsc.deg(end,:); qddot_opt_unsc.deg(1:end-1,:)];
 qddot_opt_unsc.rad = [qddot_opt_unsc.rad(end,:); qddot_opt_unsc.rad(1:end-1,:)];
 dFTtilde_opt_unsc = [dFTtilde_opt_unsc(end,:); dFTtilde_opt_unsc(1:end-1,:)];
+if nq.constr > 0
+    F_constr_opt_unsc = [F_constr_opt_unsc(end,:); F_constr_opt_unsc(1:end-1,:)];
+end
 
 %% Gait cycle starts at right side initial contact
 if isfield(model_info.ExtFunIO,'GRFs')
@@ -1007,6 +1031,10 @@ if(S.subject.synergies)
     SynH_l_GC = SynH_l_opt_unsc(idx_GC,:);
 end
 
+if nq.constr > 0
+    F_constr_GC = F_constr_opt_unsc(idx_GC,:);
+end
+
 % adjust forward position to be continuous and start at 0
 if ~isempty(model_info.ExtFunIO.jointi.base_forward)
     Qs_GC(idx_GC_base_forward_offset,model_info.ExtFunIO.jointi.base_forward) = ...
@@ -1038,6 +1066,9 @@ R.colheaders.objective = contributionCost.labels;
 R.kinematics.Qs = Qs_GC;
 R.kinematics.Qdots = Qdots_GC;
 R.kinematics.Qddots = Qdotdots_GC;
+if nq.constr > 0
+    R.kinetics.F_kin_constr = F_constr_GC;
+end
 R.muscles.a = Acts_GC;
 R.muscles.da = dActs_GC;
 if (S.subject.synergies)

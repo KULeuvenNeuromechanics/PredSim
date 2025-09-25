@@ -53,6 +53,8 @@ scaling.dFTtilde = 100;
 scaling.FTtilde = max(abs(bounds_nsc.FTtilde.lower),abs(bounds_nsc.FTtilde.upper)); 
 % Joint moment equality constraints
 scaling.Moments = ones(1,NCoord);
+% Kinematic constraints contact forces
+scaling.F_constr = 100 * model_info.mass*9.81;
 
 %% Based on provided table
 fields = ["Qs","Qdots","Qdotdots","Moments"];

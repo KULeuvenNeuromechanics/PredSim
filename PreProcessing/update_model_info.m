@@ -58,6 +58,7 @@ model_info.ExtFunIO.jointi.nq.musAct       = length(model_info.ExtFunIO.jointi.m
 model_info.ExtFunIO.jointi.nq.torqAct      = length(model_info.ExtFunIO.jointi.torqueActuated);
 model_info.ExtFunIO.jointi.nq.rot          = length(model_info.ExtFunIO.jointi.rotations);
 model_info.ExtFunIO.jointi.nq.trnsl        = length(model_info.ExtFunIO.jointi.translations);
+model_info.ExtFunIO.jointi.nq.constr       = length(model_info.osimConstraints);
 
 %% Model symmetry 
 % for half gait cycle simulations

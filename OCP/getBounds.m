@@ -164,6 +164,10 @@ bounds_nsc.SynH.upper = ones(1,NMuscle);
 bounds_nsc.SynW.lower = 0;
 bounds_nsc.SynW.upper = 1;
 
+%% Kinematic constraints contact forces
+bounds_nsc.F_constr.lower = -1000 * model_info.mass*9.81;
+bounds_nsc.F_constr.upper =  1000 * model_info.mass*9.81;
+
 %% Final time
 bounds_nsc.tf.lower = S.bounds.t_final.lower;
 bounds_nsc.tf.upper = S.bounds.t_final.upper;
