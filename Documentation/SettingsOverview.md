@@ -319,9 +319,10 @@ These settings are passed to OpenSimAD.
 - **S.OpenSimADOptions.exportContactPowers**: 
     - Export power due to vertical compression of each contact element. Default is *true* [bool]
 - **S.OpenSimADOptions.useSerialisedFunction**:
-    - ??? Default is *false* [bool]
+    - Use a serialised CasADi function instead of an external function. Default is *false* [bool]
+    This serialised function is created with CasADi 3.6.2, and should be compatible with any later version. To create it with another version, [compile your own GenF.exe](../opensimAD/README.md#compiling-genf) from a conda environment with the desired CasADi version.
 - **S.OpenSimADOptions.always_generate**:
-    - ??? Default is *false* [bool]
+    - Always run OpenSimAD to generate a new function, even if one already exists. This will overwrite the existing function. Default is *false* [bool]
 
 
 #### S.orthosis
