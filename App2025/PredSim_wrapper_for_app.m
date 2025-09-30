@@ -47,7 +47,7 @@ osim_output_name = [U.ModelName '.osim'];
 output_dir = fullfile(pathRepo, 'Subjects',U.ModelName);
 import org.opensim.modeling.*
 model = Model(fullfile(output_dir,osim_output_name));
-gravity_model = U.Gravity_Sf*-9.81;
+gravity_model =  U.sf_Gravity*-9.81;
 model.setGravity( Vec3(0, gravity_model, 0) );
 
 
@@ -179,7 +179,7 @@ end
 
 S.misc.scaling_Moments = {'all',1.2*sf_mass*sf_legLength};
 S.subject.damping_coefficient_all_dofs = 0.1*sf_mass*sf_legLength;
-
+S.bounds.activation_all_muscles.lower = 0.01;
 
 %%
 % S.misc.visualize_bounds    = 1;

@@ -11,8 +11,8 @@ function [init_path_savefolder,init_path_geom,init_path_casadi] = getPaths()
         init_path_geom = 'C:\GBW_MyPrograms\OpenSim 4.3\Geometry';
         init_path_casadi = 'C:\GBW_MyPrograms\casadi_3_5_5';
     elseif strcmp(name,'GBW-L-W2195')
-        init_path_savefolder = 'O:\DemoVitruvianMan\ProfielStudent2024\Results';
-        init_path_geom = 'C:\GBW_MyPrograms\OpenSim 4.4\Geometry';
+        init_path_savefolder = 'C:\GBW_MyPrograms\KinderuniversiteitApp\Resultaten';
+        init_path_geom = 'C:\OpenSim 4.4\Geometry';
         init_path_casadi = 'C:\GBW_MyPrograms\casadi_3_5_5';
     elseif strcmp(name,'MSI')
         init_path_savefolder = 'D:\OneDrive - KU Leuven\Results_PredSim_App\Testing';

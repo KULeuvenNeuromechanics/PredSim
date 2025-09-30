@@ -1,0 +1,131 @@
+ 
+Subject name: SpongeBob
+OpenSim model: C:\GBW_MyPrograms\KinderuniversiteitApp\Subjects\SpongeBob\SpongeBob.osim
+ 
+ 
+Start PreProcessing...
+ 
+   Using existing external function: 
+      C:\GBW_MyPrograms\KinderuniversiteitApp\Subjects\SpongeBob\F_SpongeBob.dll
+{Error using <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('scale_MTparameters', 'C:\GBW_MyPrograms\KinderuniversiteitApp\PreProcessing\scale_MTparameters.m', 100)" style="font-weight:bold">scale_MTparameters</a> (<a href="matlab: opentoline('C:\GBW_MyPrograms\KinderuniversiteitApp\PreProcessing\scale_MTparameters.m',100,0)">line 100</a>)
+Unable to scale muscle-tendon parameter "muscle_strength" because: Unable to perform assignment because the
+size of the left side is 1-by-1 and the size of the right side is 1-by-5.
+
+Error in <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('read_and_scale_MTparameters', 'C:\GBW_MyPrograms\KinderuniversiteitApp\PreProcessing\read_and_scale_MTparameters.m', 96)" style="font-weight:bold">read_and_scale_MTparameters</a> (<a href="matlab: opentoline('C:\GBW_MyPrograms\KinderuniversiteitApp\PreProcessing\read_and_scale_MTparameters.m',96,0)">line 96</a>)
+muscle_info = scale_MTparameters(S,muscle_info);
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Error in <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('PreProcessing', 'C:\GBW_MyPrograms\KinderuniversiteitApp\PreProcessing\PreProcessing.m', 40)" style="font-weight:bold">PreProcessing</a> (<a href="matlab: opentoline('C:\GBW_MyPrograms\KinderuniversiteitApp\PreProcessing\PreProcessing.m',40,0)">line 40</a>)
+model_info = read_and_scale_MTparameters(S,osim_path,model_info);
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Error in <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('run_pred_sim', 'C:\GBW_MyPrograms\KinderuniversiteitApp\run_pred_sim.m', 106)" style="font-weight:bold">run_pred_sim</a> (<a href="matlab: opentoline('C:\GBW_MyPrograms\KinderuniversiteitApp\run_pred_sim.m',106,0)">line 106</a>)
+[S,model_info] = PreProcessing(S,osim_path);
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^
+Error in <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('PredSim_wrapper_for_app', 'C:\GBW_MyPrograms\KinderuniversiteitApp\App2025\PredSim_wrapper_for_app.m', 189)" style="font-weight:bold">PredSim_wrapper_for_app</a> (<a href="matlab: opentoline('C:\GBW_MyPrograms\KinderuniversiteitApp\App2025\PredSim_wrapper_for_app.m',189,0)">line 189</a>)
+savename = run_pred_sim(S,osim_path);
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+Error in <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('OpStapMetSuperKracht2025_exported/StartsimulatieButtonPushed', 'C:\GBW_MyPrograms\KinderuniversiteitApp\App2025\OpStapMetSuperKracht2025_exported.m', 644)" style="font-weight:bold">OpStapMetSuperKracht2025_exported/StartsimulatieButtonPushed</a> (<a href="matlab: opentoline('C:\GBW_MyPrograms\KinderuniversiteitApp\App2025\OpStapMetSuperKracht2025_exported.m',644,0)">line 644</a>)
+            resultpath = PredSim_wrapper_for_app(U,sf);
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Error in <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('appdesigner.internal.service.AppManagementService/executeCallback', 'C:\GBW_MyPrograms\toolbox\matlab\appdesigner\appdesigner\runtime\+appdesigner\+internal\+service\AppManagementService.m', 165)" style="font-weight:bold">appdesigner.internal.service.AppManagementService/executeCallback</a> (<a href="matlab: opentoline('C:\GBW_MyPrograms\toolbox\matlab\appdesigner\appdesigner\runtime\+appdesigner\+internal\+service\AppManagementService.m',165,0)">line 165</a>)
+                callback(appOrUserComponent, event);
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Error in <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('matlab.apps.AppBase>@(source,event)executeCallback(ams,app,callback,requiresEventData,event)', 'C:\GBW_MyPrograms\toolbox\matlab\appdesigner\appdesigner\runtime\+matlab\+apps\AppBase.m', 60)" style="font-weight:bold">matlab.apps.AppBase>@(source,event)executeCallback(ams,app,callback,requiresEventData,event)</a> (<a href="matlab: opentoline('C:\GBW_MyPrograms\toolbox\matlab\appdesigner\appdesigner\runtime\+matlab\+apps\AppBase.m',60,0)">line 60</a>)
+            newCallback = @(source, event)executeCallback(ams, ...
+                                          ^^^^^^^^^^^^^^^^^^^^^^^^
+} 
+Error using <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('appdesservices.internal.interfaces.model.AbstractModel/executeUserCallback', 'C:\GBW_MyPrograms\toolbox\shared\appdes\services\+appdesservices\+internal\+interfaces\+model\AbstractModel.m', 282)" style="font-weight:bold">appdesservices.internal.interfaces.model.AbstractModel/executeUserCallback</a> (<a href="matlab: opentoline('C:\GBW_MyPrograms\toolbox\shared\appdes\services\+appdesservices\+internal\+interfaces\+model\AbstractModel.m',282,0)">line 282</a>)
+Error while evaluating Button PrivateButtonPushedFcn.
+
+opentoline('C:\GBW_MyPrograms\KinderuniversiteitApp\PreProcessing\scale_MTparameters.m',100,0)
+opentoline('C:\GBW_MyPrograms\KinderuniversiteitApp\PreProcessing\PreProcessing.m',40,0)
+opentoline('C:\GBW_MyPrograms\KinderuniversiteitApp\App2025\PredSim_wrapper_for_app.m',189,0)
+OpStapMetSuperKracht2025_exported
+{Unrecognized function or variable 'loadResultsTable'.
+
+Error in <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('OpStapMetSuperKracht2025/GroepEditFieldValueChanged', 'C:\GBW_MyPrograms\KinderuniversiteitApp\App2025\OpStapMetSuperKracht2025.mlapp', 678)" style="font-weight:bold">OpStapMetSuperKracht2025/GroepEditFieldValueChanged</a> (<a href="matlab: opentoline('C:\GBW_MyPrograms\KinderuniversiteitApp\App2025\OpStapMetSuperKracht2025.mlapp',678,0)">line 678</a>)
+            loadResultsTable(app);
+            ^^^^^^^^^^^^^^^^^^^^^^
+Error in <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('matlab.apps.AppBase>@(source,event)executeCallback(ams,app,callback,requiresEventData,event)', 'C:\GBW_MyPrograms\toolbox\matlab\appdesigner\appdesigner\runtime\+matlab\+apps\AppBase.m', 60)" style="font-weight:bold">matlab.apps.AppBase>@(source,event)executeCallback(ams,app,callback,requiresEventData,event)</a> (<a href="matlab: opentoline('C:\GBW_MyPrograms\toolbox\matlab\appdesigner\appdesigner\runtime\+matlab\+apps\AppBase.m',60,0)">line 60</a>)
+            newCallback = @(source, event)executeCallback(ams, ...
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+} 
+Error while evaluating EditField PrivateValueChangedFcn.
+
+Scaled model already exists.
+<a href="matlab: opentoline('C:\GBW_MyPrograms\KinderuniversiteitApp\App2025\PredSim_wrapper_for_app.m',189,1)">189 </a>savename = run_pred_sim(S,osim_path);
+if system_dependent('IsDebugMode')==1, dbquit; end
+{Unrecognized function or variable 'loadResultsTable'.
+
+Error in <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('OpStapMetSuperKracht2025/GroepEditFieldValueChanged', 'C:\GBW_MyPrograms\KinderuniversiteitApp\App2025\OpStapMetSuperKracht2025.mlapp', 678)" style="font-weight:bold">OpStapMetSuperKracht2025/GroepEditFieldValueChanged</a> (<a href="matlab: opentoline('C:\GBW_MyPrograms\KinderuniversiteitApp\App2025\OpStapMetSuperKracht2025.mlapp',678,0)">line 678</a>)
+            loadResultsTable(app);
+            ^^^^^^^^^^^^^^^^^^^^^^
+Error in <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('matlab.apps.AppBase>@(source,event)executeCallback(ams,app,callback,requiresEventData,event)', 'C:\GBW_MyPrograms\toolbox\matlab\appdesigner\appdesigner\runtime\+matlab\+apps\AppBase.m', 60)" style="font-weight:bold">matlab.apps.AppBase>@(source,event)executeCallback(ams,app,callback,requiresEventData,event)</a> (<a href="matlab: opentoline('C:\GBW_MyPrograms\toolbox\matlab\appdesigner\appdesigner\runtime\+matlab\+apps\AppBase.m',60,0)">line 60</a>)
+            newCallback = @(source, event)executeCallback(ams, ...
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+} 
+Error while evaluating EditField PrivateValueChangedFcn.
+
+<a href="matlab: opentoline('C:\GBW_MyPrograms\KinderuniversiteitApp\App2025\OpStapMetSuperKracht2025.mlapp',619,1)">619 </a>                app.GIF.Position = [xpos_gif_current ypos_gif_current 98 71];
+U.Force_sf
+
+ans =
+
+     0     0     0     0     5
+
+                modelNames = {'Olaf','SpongeBob','Jullie','MrImpossible','Maui'};
+                sf_strength = [0.1 0.5 1 2 5];
+                % i_checks = logical(allChecks);
+                U.Force_sf = allChecks.*sf_strength;
+                i_checks = logical(allChecks);
+U.Force_sf 
+
+ans =
+
+     0     0     0     0     5
+
+                U.ModelName = modelNames{i_checks};
+
+U.ModelName
+
+ans =
+
+    'Maui'
+
+i_checks = logical(allChecks);
+i_checks
+
+i_checks =
+
+  1×5 <a href="matlab:helpPopup('logical')" style="font-weight:bold">logical</a> array
+
+   0   0   0   0   1
+
+sum(U.Force_sf )
+
+ans =
+
+     5
+
+if system_dependent('IsDebugMode')==1, dbquit; end
+{Unrecognized function or variable 'loadResultsTable'.
+
+Error in <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('OpStapMetSuperKracht2025/GroepEditFieldValueChanged', 'C:\GBW_MyPrograms\KinderuniversiteitApp\App2025\OpStapMetSuperKracht2025.mlapp', 677)" style="font-weight:bold">OpStapMetSuperKracht2025/GroepEditFieldValueChanged</a> (<a href="matlab: opentoline('C:\GBW_MyPrograms\KinderuniversiteitApp\App2025\OpStapMetSuperKracht2025.mlapp',677,0)">line 677</a>)
+            loadResultsTable(app);
+            ^^^^^^^^^^^^^^^^^^^^^^
+Error in <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('matlab.apps.AppBase>@(source,event)executeCallback(ams,app,callback,requiresEventData,event)', 'C:\GBW_MyPrograms\toolbox\matlab\appdesigner\appdesigner\runtime\+matlab\+apps\AppBase.m', 60)" style="font-weight:bold">matlab.apps.AppBase>@(source,event)executeCallback(ams,app,callback,requiresEventData,event)</a> (<a href="matlab: opentoline('C:\GBW_MyPrograms\toolbox\matlab\appdesigner\appdesigner\runtime\+matlab\+apps\AppBase.m',60,0)">line 60</a>)
+            newCallback = @(source, event)executeCallback(ams, ...
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+} 
+Error while evaluating EditField PrivateValueChangedFcn.
+
+<a href="matlab: opentoline('C:\GBW_MyPrograms\KinderuniversiteitApp\App2025\OpStapMetSuperKracht2025.mlapp',618,1)">618 </a>                app.GIF.Position = [xpos_gif_current ypos_gif_current 98 71];
+U.Force_sf
+
+ans =
+
+     5
+
+<a href="matlab: opentoline('C:\GBW_MyPrograms\KinderuniversiteitApp\App2025\OpStapMetSuperKracht2025.mlapp',618,1)">618 </a>                app.GIF.Position = [xpos_gif_current ypos_gif_current 98 71];
+if system_dependent('IsDebugMode')==1, dbcont; end
+Scaled model already exists.
+Using C:\GBW_MyPrograms\KinderuniversiteitApp\Subjects\Vitruvian_Man\IG\IG_v14ms_ATx70.mot as initial guess.
