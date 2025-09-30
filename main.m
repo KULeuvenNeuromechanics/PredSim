@@ -40,7 +40,7 @@ S.subject.IG_selection_gaitCyclePercent = 200;
 
 % give the path to the osim model of your subject
 osim_path = fullfile(pathRepo,'Subjects',S.subject.name,[S.subject.name '.osim']);
-
+% S.bounds.activation_all_muscles.lower = 0.01;
 % Do you want to run the simulation as a batch job (parallel computing toolbox)
 S.solver.run_as_batch_job = 0;
 
@@ -49,7 +49,7 @@ S.solver.run_as_batch_job = 0;
 % inputs.
 
 % % S.bounds
-% S.bounds.activation_all_muscles.lower = 0.01;
+S.bounds.activation_all_muscles.lower = 0.01;
 % S.bounds.SLL.upper          = ;
 % S.bounds.SLR.upper          = ;
 % S.bounds.dist_trav.lower    = ;

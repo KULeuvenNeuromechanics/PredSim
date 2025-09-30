@@ -329,6 +329,7 @@ classdef VitruvianManExample_exported < matlab.apps.AppBase
             U.Mass = app.MassaEditField.Value;
             U.Force_sf = app.SpierkrachtEditField.Value/100;
             U.Speed = app.usr_speed;
+            U.Gravity = 1;
             U.PathCasadi = app.path_casadi;
 
 

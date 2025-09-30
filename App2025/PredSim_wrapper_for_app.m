@@ -23,8 +23,8 @@ function [varargout] = PredSim_wrapper_for_app(U,sf)
 % Original author: Lars D'Hondt
 % Original date: October/2022
 %
-% Last edit by: 
-% Last edit date: 
+% Last edit by: Ellis Van Can
+% Last edit date: 30/09/2025
 % --------------------------------------------------------------------------
 
 
@@ -39,8 +39,19 @@ if U.Height > 50
     U.Height = U.Height/100;
 end
 
-% Scale
+% Scale + adapt gravity
 scaleOsim(pathRepo, U, sf);
+
+%%% adapt gravity
+osim_output_name = [U.ModelName '.osim'];
+output_dir = fullfile(pathRepo, 'Subjects',U.ModelName);
+import org.opensim.modeling.*
+model = Model(fullfile(output_dir,osim_output_name));
+gravity_model = U.Gravity_Sf*-9.81;
+model.setGravity( Vec3(0, gravity_model, 0) );
+
+
+
 
 
 
@@ -73,6 +84,7 @@ S.solver.tol_ipopt = 3;
 S.solver.max_iter = 1000;
 % S.OpenSimADOptions.compiler = 'Visual Studio 14 2015 Win64';
 
+
 %% Scaling
 
 sf_legLength = (sf.low_leg + sf.upp_leg)/2;
@@ -88,6 +100,11 @@ S.subject.MT_params  = {
     {'gastroc_r','soleus_r','tib_ant_r','gastroc_l','soleus_l','tib_ant_l'},...
     'FMo',sf_force*(sf.low_leg^2) % ~lower leg
     };
+
+
+S.subject.muscle_strength = {{'glut_max_r','iliopsoas_r','glut_max_l','iliopsoas_l',...
+    'hamstrings_r','bifemsh_r','rect_fem_r','vasti_r','hamstrings_l','bifemsh_l','rect_fem_l','vasti_l',...
+    'gastroc_r','soleus_r','tib_ant_r','gastroc_l','soleus_l','tib_ant_l'},U.Force_sf};
 
 % actuator torques (~ size^3)
 S.subject.scale_actuator_torque = {
@@ -109,7 +126,8 @@ S.subject.scale_default_coord_lim_torq = sf_mass*sf_legLength;
 
 S.subject.tendon_stiff_scale = {{'soleus_l','soleus_r','gastroc_r','gastroc_l'},0.7};
 
-
+% gravity 
+import org.opensim.modeling.*
 
 % % S.weights
 S.weights.E         = 0.05;
