@@ -604,6 +604,13 @@ f_coll = Function('f_coll',coll_input_vars_def,...
         {eq_constr, ineq_constr_deact, ineq_constr_act,...
         ineq_constr_distance{:}, ineq_constr_syn,J});
 
+if S.OpenSimADOptions.useSerialisedFunction
+    try
+        f_coll = f_coll.expand();
+    catch
+    end
+end
+
 % Repeat function for each mesh interval and assign evaluation to multiple threads
 f_coll_map = f_coll.map(N,S.solver.parallel_mode,S.solver.N_threads);
 
