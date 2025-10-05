@@ -60,73 +60,82 @@ for m_nr=1:length(muscle_sel)
     
     lMT = MuscleData.lMT(:,muscle_index);
     dM = zeros(nr_samples, nr_dof_crossing);
-    dM_recon = dM;
+%     dM_recon = dM;
     for dof_nr = 1:nr_dof_crossing
         dM(:,dof_nr) = MuscleData.dM(:,muscle_index,index_dof_crossing(dof_nr));
     end
 
-    criterion_full_filled = 0;
-    order = S.misc.poly_order.lower;
-    while criterion_full_filled==0
-        [mat,diff_mat_q] = n_art_mat(q_all(:,index_dof_crossing), order);
-        nr_coeffs = length(mat(1,:));
-        
-        diff_mat_q_all = zeros(nr_samples*nr_dof_crossing, nr_coeffs);
-        for dof_nr = 1:nr_dof_crossing
-            diff_mat_q_all(nr_samples*(dof_nr-1)+1:nr_samples*dof_nr,:) =...
-                -squeeze(diff_mat_q(:,:,dof_nr));
-        end
+    [coeff, stats, mu] = mvpolyfit(q_all(:,index_dof_crossing), lMT,...
+        [S.misc.poly_order.lower,S.misc.poly_order.upper], -dM,...
+        "reduced_coeff",1,...
+        "threshold_rmse_y",S.misc.threshold_lMT_fit,...
+        "threshold_rmse_ydx",S.misc.threshold_dM_fit);
+    
 
-        lapack_version = version('-lapack');
-        if startsWith(lapack_version, 'Intel')
-            coeff=[mat ; diff_mat_q_all]\[lMT; dM(:)];
-        else
-            % When using OpenBLAS as BLAS/LAPACK libraries, the built-in mldivide
-            % leads to segmentation violations. The current workaround is to provide
-            % a custom function in the LinearAlgebra subdirectory that directly calls
-            % LAPACK, which is compiled below if not yet done.
-            Amat = [mat ; diff_mat_q_all];
-            Bvec = [lMT; dM(:)];
-            % Compile if not yet done
-            if (exist('mldivide_lapack') == 0)
-                currentFolder = pwd;
-                cd(fullfile(S.misc.main_path, 'LinearAlgebra'))
-                mex mldivide_lapack.c -lopenblas
-                cd(currentFolder)
-            end
-            coeff = mldivide_lapack(Amat, Bvec);
-            coeff = coeff(1:size(mat, 2));
-        end
-
-        dM_recon = zeros(nr_samples, nr_dof_crossing);
-        for dof_nr = 1:nr_dof_crossing
-            dM_recon(:,dof_nr) = (-squeeze(diff_mat_q(:,:,dof_nr)))*coeff;
-        end
-        lMT_recon=mat*coeff;
-        
-        lMT_error_rms = sqrt(mean((lMT - lMT_recon).^2));
-        dm_error_rms = sqrt(mean((dM - dM_recon).^2));
-        
-        criterion_full_filled = lMT_error_rms<=S.misc.threshold_lMT_fit ...
-            & max(dm_error_rms)<=S.misc.threshold_dM_fit;
-        if order==max_order
-            criterion_full_filled = 1;
-        end
-        if criterion_full_filled==0
-            order = order+1;
-        end
-    end
+%     criterion_full_filled = 0;
+%     order = S.misc.poly_order.lower;
+%     while criterion_full_filled==0
+%         [mat,diff_mat_q] = n_art_mat(q_all(:,index_dof_crossing), order);
+%         nr_coeffs = length(mat(1,:));
+%         
+%         diff_mat_q_all = zeros(nr_samples*nr_dof_crossing, nr_coeffs);
+%         for dof_nr = 1:nr_dof_crossing
+%             diff_mat_q_all(nr_samples*(dof_nr-1)+1:nr_samples*dof_nr,:) =...
+%                 -squeeze(diff_mat_q(:,:,dof_nr));
+%         end
+% 
+%         lapack_version = version('-lapack');
+%         if startsWith(lapack_version, 'Intel')
+%             coeff=[mat ; diff_mat_q_all]\[lMT; dM(:)];
+%         else
+%             % When using OpenBLAS as BLAS/LAPACK libraries, the built-in mldivide
+%             % leads to segmentation violations. The current workaround is to provide
+%             % a custom function in the LinearAlgebra subdirectory that directly calls
+%             % LAPACK, which is compiled below if not yet done.
+%             Amat = [mat ; diff_mat_q_all];
+%             Bvec = [lMT; dM(:)];
+%             % Compile if not yet done
+%             if (exist('mldivide_lapack') == 0)
+%                 currentFolder = pwd;
+%                 cd(fullfile(S.misc.main_path, 'LinearAlgebra'))
+%                 mex mldivide_lapack.c -lopenblas
+%                 cd(currentFolder)
+%             end
+%             coeff = mldivide_lapack(Amat, Bvec);
+%             coeff = coeff(1:size(mat, 2));
+%         end
+% 
+%         dM_recon = zeros(nr_samples, nr_dof_crossing);
+%         for dof_nr = 1:nr_dof_crossing
+%             dM_recon(:,dof_nr) = (-squeeze(diff_mat_q(:,:,dof_nr)))*coeff;
+%         end
+%         lMT_recon=mat*coeff;
+%         
+%         lMT_error_rms = sqrt(mean((lMT - lMT_recon).^2));
+%         dm_error_rms = sqrt(mean((dM - dM_recon).^2));
+%         
+%         criterion_full_filled = lMT_error_rms<=S.misc.threshold_lMT_fit ...
+%             & max(dm_error_rms)<=S.misc.threshold_dM_fit;
+%         if order==max_order
+%             criterion_full_filled = 1;
+%         end
+%         if criterion_full_filled==0
+%             order = order+1;
+%         end
+%     end
     
     MuscleInfo.muscle(m_nr).DOF = MuscleData.dof_names(index_dof_crossing);
     MuscleInfo.muscle(m_nr).m_name = MuscleData.muscle_names{muscle_index};
     MuscleInfo.muscle(m_nr).coeff = coeff;
-    MuscleInfo.muscle(m_nr).order = order;
-    MuscleInfo.muscle(m_nr).lMT_error_rms = lMT_error_rms;
-    MuscleInfo.muscle(m_nr).dm_error_rms = dm_error_rms;
+    MuscleInfo.muscle(m_nr).order = stats.order;
+    MuscleInfo.muscle(m_nr).lMT_error_rms = stats.rmse_y;
+    MuscleInfo.muscle(m_nr).dm_error_rms = stats.rmse_ydx;
+    MuscleInfo.muscle(m_nr).stats = stats;
+    MuscleInfo.muscle(m_nr).mu = mu;
     
-    lMT_all_error(m_nr) = lMT_error_rms;
-    DM_all_error(m_nr, index_dof_crossing) = dm_error_rms;
-    order_all(m_nr) = order;            
+%     lMT_all_error(m_nr) = lMT_error_rms;
+%     DM_all_error(m_nr, index_dof_crossing) = dm_error_rms;
+%     order_all(m_nr) = order;            
 end
 
 % output_structure = PolynomialReduction(MuscleInfo, MuscleData,...

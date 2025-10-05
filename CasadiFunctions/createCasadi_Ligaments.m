@@ -60,13 +60,18 @@ if model_info.ligament_info.NLigament > 0
     
     for i=idx_coord_single
         q_i = model_info.ligament_info.polyFit.DummySamples.q(:,i);
-        M_i = zeros(size(q_i));
     
         idx_lig = find(model_info.ligament_info.ligament_spanning_single_coord(:,i));
     
         % sort angle and moment in order of angle
         [q_i,idx_sort] = sort(q_i);
+        % use 10 spline knots instead of 5000
+        idx_sel = round(linspace(1,length(q_i),10));
+        q_i = q_i(idx_sel);
+        idx_sort = idx_sort(idx_sel);
 
+        M_i = zeros(size(q_i));
+        
         for j=idx_lig'
             % test for valid input force-length
             if ~exist(model_info.ligament_info.parameters(j).stiffness,'file')
@@ -118,21 +123,23 @@ if model_info.ligament_info.NLigament > 0
     if sum(model_info.ligament_info.ligament_spanning_multi_coord,'all') > 0
         ligament_spanning_info_m = model_info.ligament_info.ligament_spanning_multi_coord(:,:);
         LigamentInfo_m.muscle = model_info.ligament_info.polyFit.LigamentInfo.muscle(:);
-        load(fullfile(S.misc.main_path,'CasadiFunctions','nCoeffMat.mat'), 'nCoeffMat');
-        load(fullfile(S.misc.main_path,'CasadiFunctions','expoVal_all.mat'), 'expoVal_all');
-        for i=1:model_info.ligament_info.NLigament      
+%         load(fullfile(S.misc.main_path,'CasadiFunctions','nCoeffMat.mat'), 'nCoeffMat');
+%         load(fullfile(S.misc.main_path,'CasadiFunctions','expoVal_all.mat'), 'expoVal_all');
+        for i=idx_multi_coord'    
             index_dof_crossing = find(ligament_spanning_info_m(i,:)==1);
             nr_dof_crossing = length(index_dof_crossing);
             if nr_dof_crossing == 0
                 continue
             end
-            order = LigamentInfo_m.muscle(i).order;
-            % get matrix with variabes for polynomial
-            % (e.g. mat = [1, q_1, q_1^2] for a 2nd order polynomial in 1 variable)
-            [mat,~] = n_art_mat_3_cas_SX_7(qin_SX(index_dof_crossing,1)',...
-                nCoeffMat(order,nr_dof_crossing), expoVal_all{order,nr_dof_crossing});
-            % multiply variable matrix with coefficient vactor to get polynomial expression
-            l_lig_p_SX(i,1) = mat'*LigamentInfo_m.muscle(i).coeff; 
+%             order = LigamentInfo_m.muscle(i).order;
+%             % get matrix with variabes for polynomial
+%             % (e.g. mat = [1, q_1, q_1^2] for a 2nd order polynomial in 1 variable)
+%             [mat,~] = n_art_mat_3_cas_SX_7(qin_SX(index_dof_crossing,1)',...
+%                 nCoeffMat(order,nr_dof_crossing), expoVal_all{order,nr_dof_crossing});
+%             % multiply variable matrix with coefficient vactor to get polynomial expression
+%             l_lig_p_SX(i,1) = mat'*LigamentInfo_m.muscle(i).coeff; 
+            l_lig_p_SX(i,1) = mvpolyval(LigamentInfo_m.muscle(i).coeff,...
+                qin_SX(index_dof_crossing,1)', LigamentInfo_m.muscle(i).mu);
         end 
     end
     f_l_lig = Function('f_l_lig',{qin_SX},{l_lig_p_SX});

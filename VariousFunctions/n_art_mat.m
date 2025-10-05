@@ -1,4 +1,4 @@
-function [mat,diff_mat_q] = n_art_mat(qs, order, diff_dim)
+function [mat,diff_mat_q] = n_art_mat(qs, order, diff_dim, diff_order)
 % --------------------------------------------------------------------------
 %
 %
@@ -18,6 +18,9 @@ function [mat,diff_mat_q] = n_art_mat(qs, order, diff_dim)
 if nargin == 2
     diff_dim = 3;
 end
+if nargin < 4
+    diff_order = 1;
+end
 n_dof = size(qs,2);
 n_points = size(qs,1);
 
@@ -32,14 +35,15 @@ end
 
 if n_points == 1
 
-    mat = eval_monomial(qs, monomial_exponents);
+    mat = eval_monomial(qs, monomial_exponents)';
 
     if diff_dim
-        diff_mat_q = zeros(n_coeff, n_dof, 'like', qs);
+        diff_mat_q = zeros(n_dof, n_coeff, 'like', qs);
         for j=1:n_dof
-                diff_mat_q(:,j) = eval_der_monomial(qs, monomial_exponents, j);
+            diff_mat_q(j,:) = eval_der_monomial(qs, monomial_exponents, j, diff_order);
         end
     end
+
 else
     mat = zeros(n_points, n_coeff, 'like', qs);
     for i=1:n_points
@@ -50,14 +54,14 @@ else
         diff_mat_q = zeros(n_points, n_coeff, n_dof, 'like', qs);
         for j=1:n_dof
             for i=1:n_points
-                diff_mat_q(i,:,j) = eval_der_monomial(qs(i,:), monomial_exponents, j);
+                diff_mat_q(i,:,j) = eval_der_monomial(qs(i,:), monomial_exponents, j, diff_order);
             end
         end
     elseif diff_dim == 2
         diff_mat_q = zeros(n_points*n_dof, n_coeff, 'like', qs);
         for j=1:n_dof
             for i=1:n_points
-                diff_mat_q(i+(j-1)*n_points,:) = eval_der_monomial(qs(i,:), monomial_exponents, j);
+                diff_mat_q(i+(j-1)*n_points,:) = eval_der_monomial(qs(i,:), monomial_exponents, j, diff_order);
             end
         end
     end
@@ -96,10 +100,16 @@ function [y] = eval_monomial(x, powers)
     end
 end
 
-function [y] = eval_der_monomial(x, powers, idx)
-    coeff = powers(:,idx);
-    powers(:,idx) = powers(:,idx)-1;
-    powers(powers<0) = 0;
+function [y] = eval_der_monomial(x, powers, idx, n)
+    if nargin == 3
+        n = 1;
+    end
+    coeff = ones(size(powers,1),1);
+    for i=1:n
+        coeff = coeff.*powers(:,idx);
+        powers(:,idx) = powers(:,idx)-1;
+        powers(powers<0) = 0;
+    end
     y = x(1) .^powers(:,1).*coeff;
     for i=2:size(powers,2)
         y = y.* (x(i) .^powers(:,i));

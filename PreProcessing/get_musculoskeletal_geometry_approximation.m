@@ -38,7 +38,11 @@ model_info.ExtFunIO.jointi.muscleActuated = find(sum(model_info.muscle_info.musc
 if strcmp(S.misc.msk_geom_eq,'polynomials') 
     % Only perform muscle analysis and fitting if the result is not yet
     % available, because the analysis takes long. (4 minutes)
-    if ~isfile(fullfile(S.misc.subject_path,S.misc.msk_geom_name)) || ~isempty(S.misc.msk_geom_bounds)
+    S.misc.msk_geom_new_fit = ...
+        ...~isempty(S.misc.msk_geom_bounds) || ...
+        ~isfile(fullfile(S.misc.subject_path,S.misc.msk_geom_name));
+    
+    if S.misc.msk_geom_new_fit || ~isfile(fullfile(S.misc.subject_path,S.misc.msk_geom_name))
         % Analyze the muscle-tendon lengths, velocities, and moment arms in function of coordinate values
         t0 = tic;
         disp(['   start analysing musculoskeletal geometry...'])

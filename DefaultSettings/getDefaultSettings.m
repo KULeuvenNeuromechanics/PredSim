@@ -214,6 +214,8 @@ if ~isfield(S.misc,'threshold_dM_fit')
     S.misc.threshold_dM_fit = 0.003;
 end
 
+S.misc.msk_geom_new_fit = false;
+
 % visualize IG and bounds
 if ~isfield(S.misc,'visualize_bounds')
     S.misc.visualize_bounds = 0;
