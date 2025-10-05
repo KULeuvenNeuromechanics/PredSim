@@ -225,10 +225,13 @@ for j=1:d
         J = J + W.pass_torq  * B(j+1) *(f_casadi.J_lim_torq(Tau_passj_cost))*h;
     end
     if nq.torqAct > 0
-        J = J + W.e_torqAct      * B(j+1) *(f_casadi.J_torq_act(e_ak))*h;
+        J = J + W.e_torqAct  * B(j+1) *(f_casadi.J_torq_act(e_ak))*h;
     end
     if nq.arms > 0
         J = J + W.slack_ctrl * B(j+1) *(f_casadi.J_arms_dof(Aj(model_info.ExtFunIO.jointi.armsi,j)))*h;
+    end
+    if nq.constr > 0
+        J = J + W.slack_ctrl * B(j+1) *( sumsqr(F_constrj(:,j))/(nq.constr*3) )*h;
     end
 
     % If muscle synergies: Instead of a - WH = 0 as an equality constraint, have it as a
@@ -366,13 +369,7 @@ for j=1:d
     for i=1:nq.constr
         pos_1 = Tj(model_info.ExtFunIO.position.(['osimConstraint_',model_info.osimConstraints{i},'_1']),1);
         pos_2 = Tj(model_info.ExtFunIO.position.(['osimConstraint_',model_info.osimConstraints{i},'_2']),1);
-
         eq_constr{end+1} = (pos_2 - pos_1);
-
-        vel_1 = Tj(model_info.ExtFunIO.velocity.(['osimConstraint_',model_info.osimConstraints{i},'_1']),1);
-        vel_2 = Tj(model_info.ExtFunIO.velocity.(['osimConstraint_',model_info.osimConstraints{i},'_2']),1);
-
-        eq_constr{end+1} = (vel_2 - vel_1);
     end
 
 end % End loop over collocation points

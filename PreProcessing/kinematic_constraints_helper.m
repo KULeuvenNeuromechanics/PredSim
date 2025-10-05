@@ -57,9 +57,6 @@ for i=0:constr_set.getSize()-1
         S.OpenSimADOptions.export3DPositions = ...
             [S.OpenSimADOptions.export3DPositions(:); con_i_body(:)];
 
-        S.OpenSimADOptions.export3DVelocities = ...
-            [S.OpenSimADOptions.export3DVelocities(:); con_i_body(:)];
-
         S.OpenSimADOptions.input3DBodyForces = ...
             [S.OpenSimADOptions.input3DBodyForces(:); con_i_body(:)];
     
