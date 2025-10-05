@@ -8,38 +8,21 @@ clear
 close all
 clc
 
-% % Check BLAS/LAPACK version; add functions from LinearAlgebra subdirectory
-% % to path in case Intel is *not* used
-% blas_version = version('-blas');
-% lapack_version = version('-lapack');
-% if ~startsWith(lapack_version, 'Intel')
-%     addpath(fullfile(getenv('PWD'), 'LinearAlgebra'))
-% end
-% 
 % path to the repository folder
 [pathRepo,~,~] = fileparts(mfilename('fullpath'));
 % path to the folder that contains the repository folder
 [pathRepoFolder,~,~] = fileparts(pathRepo);
-% 
-% % if the OpenSim module is loaded, make its Java library available
-% if isenv('EBROOTOPENSIM')
-%     javaclasspath(fullfile(getenv('EBROOTOPENSIM'), 'sdk', 'Java', 'org-opensim-modeling.jar'));
-% end
-% 
-% % if the CasADi-MATLAB module is loaded, expose its matlab bindings
-% if isenv('EBROOTCASADIMINMATLAB')
-%     addpath(fullfile(getenv('EBROOTCASADIMINMATLAB'), 'matlab'))
-% end
+
 
 %% Initialize S
 addpath(fullfile(pathRepo,'DefaultSettings'))
 
-[S] = initializeSettings('walker_bar_v2');
+[S] = initializeSettings('DHondt_et_al_2025');
 
 %% Settings
 
 % name of the subject
-S.subject.name = 'walker_bar_v2';
+% S.subject.name = 'DHondt_et_al_2025';
 
 % path to folder where you want to store the results of the OCP
 S.misc.save_folder  = fullfile(pathRepoFolder,'PredSimResults',S.subject.name); 
@@ -50,10 +33,23 @@ S.solver.IG_selection_gaitCyclePercent = 100;
 % S.solver.IG_selection = 'quasi-random';
 
 % give the path to the osim model of your subject
-osim_path = fullfile(pathRepo,'Subjects',S.subject.name,[S.subject.name '.osim']);
+osim_path = fullfile(pathRepo,'Subjects',S.subject.name,[S.subject.name '_v1.osim']);
 
 S.OpenSimADOptions.useSerialisedFunction = true;
+% S.solver.nlpsol_options.expand = true;
 
+S.solver.N_threads = 10;
+
+S.solver.ipopt_options.hsllib = ['C:/GBW_MyPrograms/coin-or/coinhsl/build/' ...
+        'with-openmp-v2/bin/libhsl.dll'];
+S.solver.linear_solver = 'ma97';
+
+% S.weights.E = 0;
+% S.solver.N_meshes = 50;
+% S.misc.msk_geom_n_samples = 100;
+% S.misc.poly_order.upper = 7;
+
+% S.subject.default_coord_lim_torq_coeff = '';
 
 %% Run predictive simulations
 
@@ -67,7 +63,7 @@ S.OpenSimADOptions.useSerialisedFunction = true;
 % default way to plot figures will not work. That is probably fixable, but in
 % the meantime, skip the plotting in this case.
 
-if (~S.solver.run_as_batch_job) && (~isenv('SLURM_JOB_ID'))
+if (~S.solver.run_as_batch_job)
 
     % set path to reference result
 %     result_paths{1} = fullfile(pathRepo,'Tests','ReferenceResults',...
