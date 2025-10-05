@@ -175,8 +175,7 @@ MuscleData.q = Qs2;
 MuscleData.lMT = lMT;
 % moment arms
 MuscleData.dM = dM;
-MuscleData.dM0 = dM0;
-MuscleData.qdot = Qdots2;
+
 
 
 
