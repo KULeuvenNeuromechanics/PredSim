@@ -35,7 +35,7 @@ cd(pathRepo);
 
 %% scale model
 % Detect height in cm and convert to m
-if U.Height > 50
+if U.Height > 10
     U.Height = U.Height/100;
 end
 
@@ -161,7 +161,7 @@ end
 % S.subject.IG_selection = 'quasi-random';
 
 S.subject.adapt_IG_pelvis_y = 1;
-
+%S.subject.IG_pelvis_y = U.IG_pelvis_y;
 
 
 S.bounds.Qs = {
@@ -172,7 +172,7 @@ S.bounds.Qs = {
 S.bounds.Qdots = {
     'pelvis_tx',0.01,max(S.subject.v_pelvis_x_trgt)*2
     };
-    
+
 if max(S.subject.v_pelvis_x_trgt) > 4
     S.bounds.Qdotdots = {'pelvis_tilt',-2000,2000};%v=4.5;
 end
