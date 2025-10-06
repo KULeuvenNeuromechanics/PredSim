@@ -132,6 +132,87 @@ pctst_data.iliopsoas_l = 0.50;
 pctst_data.vasti_l = 0.543;
 pctst_data.gastroc_l = 0.566;
 
+%% shoulder muscles
+% data from
+% 1: 10.1002/ca.20349
+% 2: https://www.sciencedirect.com/science/article/pii/0022510X73900233
+
+% right side
+pctst_data.BRA_r = 0.35; % cfr BIC and TRI
+pctst_data.TrapeziusScapula_M_r = 0.537; %2
+pctst_data.TrapeziusScapula_S_r = 0.537; %2
+pctst_data.TrapeziusScapula_I_r = 0.537; %2
+pctst_data.TrapeziusClavicle_S_r = 0.537; %2
+% pctst_data.SerratusAnterior_I_r = % no data?
+% pctst_data.SerratusAnterior_M_r = % no data?
+% pctst_data.SerratusAnterior_S_r = % no data?
+pctst_data.Rhomboideus_S_r = 0.446; %2
+pctst_data.Rhomboideus_I_r = 0.446; %2
+% pctst_data.LevatorScapulae_r = % no data?
+pctst_data.Coracobrachialis_r = 0.29; %1
+pctst_data.DeltoideusClavicle_A_r = 0.55; %1
+pctst_data.DeltoideusScapula_P_r = 0.57; %1
+pctst_data.DeltoideusScapula_M_r = 0.46; %1
+pctst_data.LatissimusDorsi_S_r = 0.47; %1
+pctst_data.LatissimusDorsi_M_r = 0.47; %1
+pctst_data.LatissimusDorsi_I_r = 0.47; %1
+pctst_data.PectoralisMajorClavicle_S_r = 0.36; %1
+pctst_data.PectoralisMajorThorax_I_r = 0.36; %1
+pctst_data.PectoralisMajorThorax_M_r = 0.36; %1
+pctst_data.TeresMajor_r = 0.48; %1
+pctst_data.Infraspinatus_I_r = 0.54; %1
+pctst_data.Infraspinatus_S_r = 0.54; %1
+pctst_data.PectoralisMinor_r = 0.36; %1
+pctst_data.TeresMinor_r = 0.53; %1
+pctst_data.Subscapularis_S_r = 0.42; %1
+pctst_data.Subscapularis_M_r = 0.42; %1
+pctst_data.Subscapularis_I_r = 0.42; %1
+pctst_data.Supraspinatus_P_r = 0.51; %1
+pctst_data.Supraspinatus_A_r = 0.51; %1
+pctst_data.TRI_long_r = 0.43; %1
+pctst_data.TRI_med_r = 0.33; %2
+pctst_data.TRI_lat_r = 0.33; %2
+pctst_data.BIC_long_r = 0.32; %1
+pctst_data.BIC_brevis_r = 0.38; %1
+
+% left side
+pctst_data.BRA_l = 0.35; % cfr BIC and TRI
+pctst_data.TrapeziusScapula_M_l = 0.537; %2
+pctst_data.TrapeziusScapula_S_l = 0.537; %2
+pctst_data.TrapeziusScapula_I_l = 0.537; %2
+pctst_data.TrapeziusClavicle_S_l = 0.537; %2
+% pctst_data.SerratusAnterior_I_l = % no data?
+% pctst_data.SerratusAnterior_M_l = % no data?
+% pctst_data.SerratusAnterior_S_l = % no data?
+pctst_data.Rhomboideus_S_l = 0.446; %2
+pctst_data.Rhomboideus_I_l = 0.446; %2
+% pctst_data.LevatorScapulae_l = % no data?
+pctst_data.Coracobrachialis_l = 0.29; %1
+pctst_data.DeltoideusClavicle_A_l = 0.55; %1
+pctst_data.DeltoideusScapula_P_l = 0.57; %1
+pctst_data.DeltoideusScapula_M_l = 0.46; %1
+pctst_data.LatissimusDorsi_S_l = 0.47; %1
+pctst_data.LatissimusDorsi_M_l = 0.47; %1
+pctst_data.LatissimusDorsi_I_l = 0.47; %1
+pctst_data.PectoralisMajorClavicle_S_l = 0.36; %1
+pctst_data.PectoralisMajorThorax_I_l = 0.36; %1
+pctst_data.PectoralisMajorThorax_M_l = 0.36; %1
+pctst_data.TeresMajor_l = 0.48; %1
+pctst_data.Infraspinatus_I_l = 0.54; %1
+pctst_data.Infraspinatus_S_l = 0.54; %1
+pctst_data.PectoralisMinor_l = 0.36; %1
+pctst_data.TeresMinor_l = 0.53; %1
+pctst_data.Subscapularis_S_l = 0.42; %1
+pctst_data.Subscapularis_M_l = 0.42; %1
+pctst_data.Subscapularis_I_l = 0.42; %1
+pctst_data.Supraspinatus_P_l = 0.51; %1
+pctst_data.Supraspinatus_A_l = 0.51; %1
+pctst_data.TRI_long_l = 0.43; %1
+pctst_data.TRI_med_l = 0.33; %2
+pctst_data.TRI_lat_l = 0.33; %2
+pctst_data.BIC_long_l = 0.32; %1
+pctst_data.BIC_brevis_l = 0.38; %1
+
 %%
 slow_twitch_fiber_ratio = zeros(length(muscleNames),1);
 for i = 1:length(muscleNames)
