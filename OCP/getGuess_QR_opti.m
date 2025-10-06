@@ -59,6 +59,15 @@ end
 %% Qs
 % The model is moving forward but with a standing position (Qs=0)
 guess.Qs = zeros(N,nq.all);
+
+import org.opensim.modeling.*
+model = Model(model_info.osim_path);
+for j=1:model_info.ExtFunIO.jointi.nq.all
+    coord_j = model.getCoordinateSet().get(model_info.ExtFunIO.coord_names.all{j});
+    q_default = coord_j.getDefaultValue;
+    guess.Qs(:,j) = q_default;
+end
+
 if ~isempty(model_info.ExtFunIO.jointi.base_forward)
     guess.Qs(:,model_info.ExtFunIO.jointi.base_forward) = linspace(0,guess.tf*S.misc.forward_velocity,N);
 end
