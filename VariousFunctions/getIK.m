@@ -29,6 +29,15 @@ coordinate_names = fieldnames(model_info.ExtFunIO.coordi);
 % Load the reference date
 Qsall = read_motionFile_v40(path_IK);
 
+%% Get default positions
+import org.opensim.modeling.*
+model = Model(model_info.osim_path);
+Qs_default = nan(1,model_info.ExtFunIO.jointi.nq.all);
+for j=1:model_info.ExtFunIO.jointi.nq.all
+    coord_j = model.getCoordinateSet().get(model_info.ExtFunIO.coord_names.all{j});
+    Qs_default(j) = coord_j.getDefaultValue;
+end
+
 %% Build the struct with inverse kinematics
 % First column has the timestamps
 Qs_IK.time = Qsall.data(:,strcmp(Qsall.labels,{'time'}));
@@ -40,7 +49,7 @@ for i = 1:length(coordinate_names)
     coordinate = coordinate_names{i};
     idx_coord_Qsall = find(strcmp(Qsall.labels,coordinate),1,'first');
     if isempty(idx_coord_Qsall)
-        Qs_IK.(coordinate) = zeros(size(Qs_IK.time));
+        Qs_IK.(coordinate) = Qs_default(i) * ones(size(Qs_IK.time));
     else
         if strcmp(Qsall.inDeg,'yes')
             if sum(model_info.ExtFunIO.jointi.translations(:) == model_info.ExtFunIO.coordi.(coordinate))
