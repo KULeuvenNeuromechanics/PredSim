@@ -65,10 +65,12 @@ if model_info.ligament_info.NLigament > 0
     
         % sort angle and moment in order of angle
         [q_i,idx_sort] = sort(q_i);
-        % use 10 spline knots instead of 5000
-        idx_sel = round(linspace(1,length(q_i),10));
-        q_i = q_i(idx_sel);
-        idx_sort = idx_sort(idx_sel);
+        % use 100 spline knots max
+        if length(q_i) > 100
+            idx_sel = round(linspace(1,length(q_i),100));
+            q_i = q_i(idx_sel);
+            idx_sort = idx_sort(idx_sel);
+        end
 
         M_i = zeros(size(q_i));
         

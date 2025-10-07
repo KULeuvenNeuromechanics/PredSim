@@ -11,8 +11,8 @@ ankle_angle_r,-30,30
 ankle_angle_l,-30,30
 subtalar_angle_r,-30,30
 subtalar_angle_l,-30,30
-mtj_angle_r,-30,30
-mtj_angle_l,-30,30
+mtj_angle_r,-20,10
+mtj_angle_l,-10,10
 mtp_angle_r,-20,50
 mtp_angle_l,-20,50
 lumbar_extension,-30,30

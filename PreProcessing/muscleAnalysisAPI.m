@@ -98,7 +98,6 @@ lMT = zeros(n_data_points,n_muscle);
 dM = zeros(n_data_points,n_muscle,n_coord);
 Qs2 = nan(size(Qs));
 Qdots2 = Qs2;
-dM0 = dM;
 
 % names of states corresponding to coordinate position and velocity values
 for i=1:n_coord
@@ -128,14 +127,17 @@ for j=1:n_data_points
         lMT(j,m) = muscle_m.getLength(s);
     end
 
-    % Get moment arm 
-    for i=1:n_coord
-        if ligaments_bool
-            for m=find(muscle_spanning_joint_info(:,i)==1)'
-                muscle_m = Ligament.safeDownCast(force_set.get(muscle_names{m}));
-                dM0(j,m,i) = muscle_m.computeMomentArm(s,coord_set.get(coord_names{i}));
+    % Get moment arm
+    if ligaments_bool
+        for m=1:n_muscle
+            muscle_m = Ligament.safeDownCast(force_set.get(muscle_names{m}));
+            for i=find(muscle_spanning_joint_info(m,:)==1)
+                dM(j,m,i) = muscle_m.computeMomentArm(s,coord_set.get(coord_names{i}));
             end
-        else
+        end
+
+    else % muscle
+        for i=1:n_coord
             % The moment arm is defined as -dl/dq.
             % By settings the velocity of coordinate i to -1 and all other
             % velocities to 0, the moment arm can be calculated as
@@ -147,7 +149,6 @@ for j=1:n_data_points
             for m=find(muscle_spanning_joint_info(:,i)==1)'
                 muscle_m = force_set.get(muscle_names{m});
                 dM(j,m,i) = muscle_m.getLengtheningSpeed(s);
-    %             dM0(j,m,i) = muscle_m.computeMomentArm(s,coord_set.get(coord_names{i}));
             end
             model.setStateVariableValue(s,qdot_state_names{i},0);
         end
