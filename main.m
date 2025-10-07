@@ -10,8 +10,8 @@ clc
 
 % Check BLAS/LAPACK version; add functions from LinearAlgebra subdirectory
 % to path in case Intel is *not* used
-blas_version = version('-blas')
-lapack_version = version('-lapack')
+blas_version = version('-blas');
+lapack_version = version('-lapack');
 if ~startsWith(lapack_version, 'Intel')
     addpath(fullfile(getenv('PWD'), 'LinearAlgebra'))
 end
@@ -51,7 +51,6 @@ S.solver.IG_selection_gaitCyclePercent = 100;
 
 % give the path to the osim model of your subject
 osim_path = fullfile(pathRepo,'Subjects',S.subject.name,[S.subject.name '.osim']);
-
 
 %% Run predictive simulations
 
