@@ -32,13 +32,17 @@ S.solver.IG_selection = fullfile(S.misc.main_path,'OCP','IK_Guess_Full_GC.mot');
 S.solver.IG_selection_gaitCyclePercent = 100;
 % S.solver.IG_selection = 'quasi-random';
 
+% S.solver.IG_selection = fullfile(pathRepoFolder,'PredSimResults',...
+%     'DHondt_et_al_2024_4seg','DHondt_et_al_2024_4seg_v16.mot');
+% S.solver.IG_selection_gaitCyclePercent = 200;
+
 % give the path to the osim model of your subject
-osim_path = fullfile(pathRepo,'Subjects',S.subject.name,[S.subject.name '_v1.osim']);
+osim_path = fullfile(pathRepo,'Subjects',S.subject.name,[S.subject.name '_v4.osim']);
 
 S.OpenSimADOptions.useSerialisedFunction = true;
-% S.solver.nlpsol_options.expand = true;
+S.solver.nlpsol_options.expand = true;
 
-S.solver.N_threads = 10;
+% S.solver.N_threads = 10;
 
 S.solver.ipopt_options.hsllib = ['C:/GBW_MyPrograms/coin-or/coinhsl/build/' ...
         'with-openmp-v2/bin/libhsl.dll'];
