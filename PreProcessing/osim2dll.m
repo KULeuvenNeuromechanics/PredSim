@@ -29,9 +29,9 @@ function [S] = osim2dll(S, osim_path)
 % external function files
 [~,osim_file_name,~] = fileparts(osim_path);
 if ispc
-    libextension = '.dll'
+    libextension = '.dll';
 elseif isunix
-    libextension = '.so'
+    libextension = '.so';
 end
 external_function_dll = fullfile(S.misc.subject_path,['F_', osim_file_name, libextension]);
 external_function_lib = fullfile(S.misc.subject_path,['F_', osim_file_name, '.lib']); % not needed, yet...
