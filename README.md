@@ -153,6 +153,7 @@ The [examples folder](./Examples/) contains scripts illustrating how to use sett
 - Predict a gait pattern resulting from a limited number of muscle synergies.
 - Predict gait with assistance from an ankle exoskeleton.
 - Run a sensitivity analysis.
+- Run simulations in batch on the VSC cluster.
 
 
 ### Required Settings
