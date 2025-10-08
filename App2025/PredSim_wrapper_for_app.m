@@ -49,6 +49,7 @@ import org.opensim.modeling.*
 model = Model(fullfile(output_dir,osim_output_name));
 gravity_model =  U.sf_Gravity*-9.81;
 model.setGravity( Vec3(0, gravity_model, 0) );
+model.print(fullfile(output_dir,osim_output_name));
 
 
 
