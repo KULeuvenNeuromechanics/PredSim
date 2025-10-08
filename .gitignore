@@ -3,9 +3,9 @@
 *.asv
 *.sto
 *.log
-*.png
+#*.png
 !/FiguresForDocumentation/*.png
-*.jpg
+#*.jpg
 *.eps
 
 Debug/*
