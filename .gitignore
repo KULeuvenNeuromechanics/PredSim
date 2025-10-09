@@ -39,3 +39,9 @@ Subjects/gait1018/*
 !Subjects/gait1018/*.osim
 !Subjects/gait1018/*.md
 !Subjects/gait1018/settings*.m
+
+!Subjects/DHondt_et_al_2025/
+Subjects/DHondt_et_al_2025/*
+!Subjects/DHondt_et_al_2025/*.osim
+!Subjects/DHondt_et_al_2025/*.md
+!Subjects/DHondt_et_al_2025/settings*.m
