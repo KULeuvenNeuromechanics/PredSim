@@ -22,6 +22,11 @@ function [init_path_savefolder,init_path_geom,init_path_casadi] = getPaths()
         init_path_savefolder = 'C:\Users\u0125183\OneDrive - KU Leuven\Kinderuniversiteit';
         init_path_geom = 'C:\GBW_MyPrograms\OpenSim 4.5\Geometry';
         init_path_casadi = 'C:\GBW_MyPrograms\Casadi';
+ elseif strcmp(name, 'GBW-L-W2099')
+        init_path_savefolder = 'C:\Users\u0167448\OneDrive - KU Leuven\Kinderuniversiteit2025';
+        init_path_geom = 'C:\GBW_MyPrograms\OpenSim 4.5\Geometry';
+        init_path_casadi = 'C:\Users\u0167448\Documents\GitHub\casadi-windows-matlabR2016a-v3.5.5';
+
     % elseif strcmp(name,'MSI')
     %     init_path_savefolder = 'D:\OneDrive - KU Leuven\Results_PredSim_App\Testing';
     %     init_path_geom = 'D:\software\OpenSim 4.3\Geometry';
