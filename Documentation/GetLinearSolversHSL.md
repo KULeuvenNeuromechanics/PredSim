@@ -12,16 +12,25 @@ You will receive `coinhsl-2021.05.05.zip` (or maybe a newer version?).
     > Make sure all file paths use `/`, not `\`.
 
 4. Install packages
-- General utility `pacman -S git make`
+- General utility `pacman -S git make pkg-config`
 - GNU compilers (c and fortran) `pacman -S mingw-w64-x86_64-gcc mingw-w64-x86_64-gcc-fortran`
 - Dependencies for solvers (lapack for math, metis for matrix ordering) `pacman -S mingw-w64-x86_64-lapack mingw-w64-x86_64-metis`
 
 
 
-cd c:/GBW_MyPrograms/coin-or/coinhsl/source
+cd c:/GBW_MyPrograms/coin-or/coinhsl
+
+mkdir source
+cd source
+
 
 git clone https://github.com/coin-or-tools/ThirdParty-HSL.git
 
-put coinhsl source code in c:/GBW_MyPrograms/coin-or/coinhsl/source/ThirdParty-HSL
+extract `coinhsl-2021.05.05.zip` into `c:/GBW_MyPrograms/coin-or/coinhsl/source/ThirdParty-HSL`
 
+rename `coinhsl-2021.05.05` to `coinhsl`
 
+cd c:/GBW_MyPrograms/coin-or/coinhsl/source/ThirdParty-HSL
+./configure --prefix="/c/GBW_MyPrograms/coin-or/coinhsl/build/with-openmp-v2" --enable-openmp
+make
+make install
