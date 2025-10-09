@@ -24,13 +24,16 @@ MSVS_versions = {'17','16','15','14'};
 MSVS_bit = {'','',' Win64',' Win64'}; % 2019 and newer versions assume 64 bit
 MSVS_compiler = [];
 
-expected_path = 'c:/Program Files*/Microsoft Visual Studio/';
+expected_paths = {'c:/Program Files*/Microsoft Visual Studio/', 'c:/GBW_MyPrograms*/Microsoft Visual Studio/'};
 
-if ~isempty(dir(expected_path))
-    for i=1:length(MSVS_years)
-        if ~isempty(dir(fullfile(expected_path,MSVS_years{i})))
-            MSVS_compiler = ['Visual Studio ',MSVS_versions{i},' ',MSVS_years{i}, MSVS_bit{i}];
-            break
+for j = 1:length(expected_paths)
+    expected_path = expected_paths{j};
+    if ~isempty(dir(expected_path))
+        for i=1:length(MSVS_years)
+            if ~isempty(dir(fullfile(expected_path,MSVS_years{i})))
+                MSVS_compiler = ['Visual Studio ',MSVS_versions{i},' ',MSVS_years{i}, MSVS_bit{i}];
+                break
+            end
         end
     end
 end
