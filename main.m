@@ -22,7 +22,7 @@ addpath(fullfile(pathRepo,'DefaultSettings'))
 %% Settings
 
 % name of the subject
-% S.subject.name = 'DHondt_et_al_2025';
+S.subject.name = 'DHondt_et_al_2025';
 
 % path to folder where you want to store the results of the OCP
 S.misc.save_folder  = fullfile(pathRepoFolder,'PredSimResults',S.subject.name); 
@@ -37,7 +37,9 @@ S.solver.IG_selection_gaitCyclePercent = 100;
 % S.solver.IG_selection_gaitCyclePercent = 200;
 
 % give the path to the osim model of your subject
-osim_path = fullfile(pathRepo,'Subjects',S.subject.name,[S.subject.name '_v4.osim']);
+osim_path = fullfile(pathRepo,'Subjects',S.subject.name,...
+    [S.subject.name '_v4_alt1.osim']);
+
 
 S.OpenSimADOptions.useSerialisedFunction = true;
 S.solver.nlpsol_options.expand = true;
@@ -49,7 +51,7 @@ S.solver.ipopt_options.hsllib = ['C:/GBW_MyPrograms/coin-or/coinhsl/build/' ...
 S.solver.linear_solver = 'ma97';
 
 % S.weights.E = 0;
-% S.solver.N_meshes = 50;
+% S.solver.N_meshes = 2;
 % S.misc.msk_geom_n_samples = 100;
 % S.misc.poly_order.upper = 7;
 

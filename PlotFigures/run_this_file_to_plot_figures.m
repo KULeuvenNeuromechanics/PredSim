@@ -14,12 +14,12 @@ clc
 % Construct a cell array with full paths to files with saved results for
 % which you want to appear on the plotted figures.
 results_folder = fullfile(pathRepoFolder,'PredSimResults');
-result_paths{1} = fullfile(pathRepo,'Tests','ReferenceResults','DHondt_et_al_2024_4seg','DHondt_et_al_2024_4seg_paper.mat');
-result_paths{2} = fullfile(results_folder,'DHondt_et_al_2024_4seg','DHondt_et_al_2024_4seg_v16.mat');
+% result_paths{1} = fullfile(pathRepo,'Tests','ReferenceResults','DHondt_et_al_2024_4seg','DHondt_et_al_2024_4seg_paper.mat');
+result_paths{1} = fullfile(results_folder,'DHondt_et_al_2025','DHondt_et_al_2025_v24.mat');
 % result_paths{1} = fullfile(results_folder,'DHondt_et_al_2025\DHondt_et_al_2025_v14.mat');
 
 % Cell array with legend name for each result
-legend_names = {'MTP along metatarsals', 'MTP in sagittal plane'};
+legend_names = {'Updated (v4.1)'};
 
 % Path to the folder where figures are saved
 figure_folder = results_folder;
@@ -82,20 +82,28 @@ fig_count = 1;
 % figure_settings(fig_count).filetype = {};
 % fig_count = fig_count+1;
 
-% figure_settings(fig_count).name = 'all_lengths';
-% figure_settings(fig_count).dofs = {'muscles_r'};
-% figure_settings(fig_count).variables = {'lMtilde'};
+figure_settings(fig_count).name = 'activation_r';
+figure_settings(fig_count).dofs = {'muscles_r'};
+figure_settings(fig_count).variables = {'a'};
+figure_settings(fig_count).savepath = fullfile(figure_folder,[figure_savename '_' figure_settings(fig_count).name]);
+figure_settings(fig_count).filetype = {};
+fig_count = fig_count+1;
+
+figure_settings(fig_count).name = 'lengths_r';
+figure_settings(fig_count).dofs = {'muscles_r'};
+figure_settings(fig_count).variables = {'lMtilde'};
+figure_settings(fig_count).savepath = fullfile(figure_folder,[figure_savename '_' figure_settings(fig_count).name]);
+figure_settings(fig_count).filetype = {};
+fig_count = fig_count+1;
+
+% figure_settings(fig_count).name = 'selected_angles';
+% % figure_settings(fig_count).dofs = {'hip_flexion_r','hip_adduction_r','hip_rotation_r','knee_angle_r',...
+% %     'ankle_angle_r','subtalar_angle_r','mtj_angle_r','mtp_angle_r'};
+% figure_settings(fig_count).dofs = {'plane_elv_r','shoulder_elev_r','axial_rot_r','elbow_flexion_r'};
+% figure_settings(fig_count).variables = {'Qs'};
 % figure_settings(fig_count).savepath = fullfile(figure_folder,[figure_savename '_' figure_settings(fig_count).name]);
 % figure_settings(fig_count).filetype = {};
 % fig_count = fig_count+1;
-
-figure_settings(fig_count).name = 'selected_angles';
-figure_settings(fig_count).dofs = {'hip_flexion_r','hip_adduction_r','hip_rotation_r','knee_angle_r',...
-    'ankle_angle_r','subtalar_angle_r','mtj_angle_r','mtp_angle_r'};
-figure_settings(fig_count).variables = {'Qs'};
-figure_settings(fig_count).savepath = fullfile(figure_folder,[figure_savename '_' figure_settings(fig_count).name]);
-figure_settings(fig_count).filetype = {'jpeg'};
-fig_count = fig_count+1;
 
 % figure_settings(fig_count).name = 'torques';
 % figure_settings(fig_count).dofs = {'all_coords'};
@@ -104,12 +112,12 @@ fig_count = fig_count+1;
 % figure_settings(fig_count).filetype = {};
 % fig_count = fig_count+1;
 
-% figure_settings(fig_count).name = 'limit torques';
-% figure_settings(fig_count).dofs = {'all_coords'};
-% figure_settings(fig_count).variables = {'T_limit'};
-% figure_settings(fig_count).savepath = fullfile(figure_folder,[figure_savename '_' figure_settings(fig_count).name]);
-% figure_settings(fig_count).filetype = {};
-% fig_count = fig_count+1;
+figure_settings(fig_count).name = 'limit torques';
+figure_settings(fig_count).dofs = {'all_coords'};
+figure_settings(fig_count).variables = {'T_limit'};
+figure_settings(fig_count).savepath = fullfile(figure_folder,[figure_savename '_' figure_settings(fig_count).name]);
+figure_settings(fig_count).filetype = {};
+fig_count = fig_count+1;
 
 % figure_settings(fig_count).name = 'ankle_muscles';
 % figure_settings(fig_count).dofs = {'soleus_r','med_gas_r','lat_gas_r','tib_ant_r'};

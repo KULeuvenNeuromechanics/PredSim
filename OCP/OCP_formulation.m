@@ -467,7 +467,7 @@ opti.minimize(Jall_sc);
 disp(' ')
 disp(['...OCP formulation done. Time elapsed ' num2str(toc(t0),'%.2f') ' s'])
 disp(' ')
-
+% opti.debug.x_describe(2033)
 %%
 
 if ~S.post_process.load_prev_opti_vars
@@ -799,10 +799,9 @@ for k=1:N
             W.slack_ctrl*B(j+1) *(f_casadi.J_muscles(dFTtilde_col_opt(count,:)))*h_opt);
             
         if nq.limTorq > 0
-            J_opt = J_opt + W.pass_torq*B(j+1)  *(f_casadi.J_lim_torq(Tau_passkj))*h_opt;
+            J_opt = J_opt + 1/(dist_trav_opt)*(W.pass_torq*B(j+1)  *(f_casadi.J_lim_torq(Tau_passkj))*h_opt);
 
-            Pass_cost = Pass_cost + W.pass_torq*B(j+1)*...
-            (f_casadi.J_lim_torq(Tau_passkj))*h_opt;
+            Pass_cost = Pass_cost + W.pass_torq*B(j+1)*(f_casadi.J_lim_torq(Tau_passkj))*h_opt;
         end
         if nq.torqAct > 0
             J_opt = J_opt + 1/(dist_trav_opt)*(W.e_torqAct*B(j+1)      *(f_casadi.J_torq_act(e_a_opt(k,:)))*h_opt);
@@ -827,7 +826,7 @@ for k=1:N
         E_cost = E_cost + W.E*B(j+1)*...
             (f_casadi.J_muscles_exp(e_tot_opt_all,W.E_exp))/model_info.mass*h_opt;
         A_cost = A_cost + W.a*B(j+1)*...
-            (f_casadi.J_muscles(a_col_opt(count,:)))*h_opt;      
+            (f_casadi.J_muscles_exp(a_col_opt(count,:), W.a_exp))*h_opt;      
         Qdotdot_cost = Qdotdot_cost + W.q_dotdot*B(j+1)*...
             (f_casadi.J_not_arms_dof(qdotdot_col_opt(count,model_info.ExtFunIO.jointi.noarmsi)))*h_opt;
         vA_cost = vA_cost + W.slack_ctrl*B(j+1)*...
