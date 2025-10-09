@@ -44,7 +44,7 @@ scaleOsim(pathRepo, U, sf);
 
 %%% adapt gravity
 osim_output_name = [U.ModelName '.osim'];
-output_dir = fullfile(pathRepo, 'Subjects',U.ModelName);
+output_dir = fullfile(pathRepo, 'Subjects',U.GroupName, U.ModelName);
 import org.opensim.modeling.*
 model = Model(fullfile(output_dir,osim_output_name));
 gravity_model =  U.sf_Gravity*-9.81;
@@ -70,10 +70,10 @@ addpath([S.misc.main_path '\AdaptOpenSimModel'])
 S.subject.name = U.ModelName;
 
 % path to folder where you want to store the results of the OCP
-S.subject.save_folder  = fullfile(U.savefolder,U.GroupName); 
+S.subject.save_folder  = fullfile(U.savefolder,U.GroupName,U.ModelName); 
 
 % give the path to the osim model of your subject
-osim_path = fullfile(pathRepo,'Subjects',S.subject.name,[S.subject.name '.osim']);
+osim_path = fullfile(pathRepo,'Subjects',U.GroupName, S.subject.name,[S.subject.name '.osim']);
 
 % Do you want to run the simulation as a batch job (parallel computing toolbox)
 S.solver.run_as_batch_job = 0;
