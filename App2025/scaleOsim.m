@@ -20,7 +20,7 @@ function scaleOsim(MainPath, U, sf)
 %% inputs
 % folders
 osim_output_name = [U.ModelName '.osim'];
-output_dir = fullfile(MainPath, 'Subjects',U.ModelName);
+output_dir = fullfile(MainPath, 'Subjects',U.GroupName, U.ModelName);
 if exist(fullfile(output_dir,osim_output_name),'file')
     disp('Scaled model already exists.')
     return
