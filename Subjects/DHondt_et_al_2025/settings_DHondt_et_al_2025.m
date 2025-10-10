@@ -26,7 +26,7 @@ S.subject.base_joints_legs = {'hip'};
 S.subject.base_joints_arms = {'sternoclavicular','scapulothoracic'};
 
 
-S.bounds.Qs = {'pelvis_ty',0.55,1.1, 'pelvis_tilt',-2.9302,nan};
+% S.bounds.Qs = {'pelvis_ty',0.55,1.1, 'pelvis_tilt',-2.9302,nan};
 
 % S.subject.set_stiffness_coefficient_selected_dofs = {'mtp_angle',1};
 % 
