@@ -1,0 +1,19 @@
+ 
+Subject name: Ellis_model11
+OpenSim model: Ellis_model11.osim
+ 
+ 
+Start PreProcessing...
+ 
+<a href="matlab: opentoline('C:\GBW_MyPrograms\KinderuniversiteitApp\App2025\OpStapMetSuperKracht2025_editsEllislaatstetab.mlapp',725,1)">725 </a>                resultpath = PredSim_wrapper_for_app_Old(U,sf);
+if system_dependent('IsDebugMode')==1, dbcont; end
+if system_dependent('IsDebugMode')==1, dbcont; end
+if system_dependent('IsDebugMode')==1, dbcont; end
+if system_dependent('IsDebugMode')==1, dbcont; end
+if system_dependent('IsDebugMode')==1, dbcont; end
+if system_dependent('IsDebugMode')==1, dbcont; end
+if system_dependent('IsDebugMode')==1, dbcont; end
+<a href="matlab: opentoline('C:\GBW_MyPrograms\KinderuniversiteitApp\App2025\PredSim_wrapper_for_app_Old.m',91,1)">91  </a>sf_legLength = (sf.low_leg + sf.upp_leg)/2;
+if system_dependent('IsDebugMode')==1, dbcont; end
+if system_dependent('IsDebugMode')==1, dbcont; end
+Using C:\GBW_MyPrograms\KinderuniversiteitApp\Subjects\Vitruvian_Man\IG\IG_v14ms_ATx70.mot as initial guess.

@@ -1,0 +1,26 @@
+ 
+Subject name: Aarde
+OpenSim model: C:\GBW_MyPrograms\KinderuniversiteitApp\Subjects\AardeEllistest\Aarde\Aarde.osim
+ 
+ 
+Start PreProcessing...
+ 
+   Using existing external function: 
+      C:\GBW_MyPrograms\KinderuniversiteitApp\Subjects\Aarde\F_Aarde.dll
+   using existing MSK geometry Aarde_f_lMT_vMT_dM_poly_3_9
+ 
+...PreProcessing done. Time elapsed 1.20 s
+ 
+ 
+Start creating CasADi functions...
+ 
+ 
+...CasADi functions created. Time elapsed 1.50 s
+ 
+ 
+Start formulating OCP...
+ 
+...OCP formulation done. Time elapsed 1.63 s
+ 
+Starting NLP solver...
+ 

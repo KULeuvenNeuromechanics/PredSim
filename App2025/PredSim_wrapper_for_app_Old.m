@@ -1,4 +1,4 @@
-function [varargout] = PredSim_wrapper_for_app(U,sf)
+function [varargout] = PredSim_wrapper_for_app_Old(U,sf)
 % --------------------------------------------------------------------------
 % PredSim_wrapper_for_app
 %   This functions replaces main.m when using the Vitruvian_Man apps
@@ -23,8 +23,8 @@ function [varargout] = PredSim_wrapper_for_app(U,sf)
 % Original author: Lars D'Hondt
 % Original date: October/2022
 %
-% Last edit by: Ellis Van Can
-% Last edit date: 30/09/2025
+% Last edit by: 
+% Last edit date: 
 % --------------------------------------------------------------------------
 
 
@@ -32,29 +32,30 @@ function [varargout] = PredSim_wrapper_for_app(U,sf)
 [pathApp,~,~] = fileparts(mfilename('fullpath'));
 [pathRepo,~,~] = fileparts(pathApp);
 cd(pathRepo);
+output_dir = fullfile(pathRepo, 'Subjects',U.GroupName, U.ModelName);
+osim_output_name = [U.ModelName '.osim'];
 
 %% scale model
 % Detect height in cm and convert to m
-if U.Height > 50
-    U.Height = U.Height/100;
-end
+U.Height = U.Height/100;
 
-% Scale + adapt gravity
+
+% Scale
 scaleOsim(pathRepo, U, sf);
 
-%%% adapt gravity
-osim_output_name = [U.ModelName '.osim'];
-output_dir = fullfile(pathRepo, 'Subjects',U.ModelName);
+
+%%% gravity
 import org.opensim.modeling.*
 model = Model(fullfile(output_dir,osim_output_name));
-gravity_model = U.sf_Gravity*-9.81;
+gravity_model =  U.sf_Gravity*-9.8066499999999994;
 model.setGravity( Vec3(0, gravity_model, 0) );
+
+if ~isfolder(output_dir)
+    mkdir(output_dir)
+end
+
+%%% save all changes to the model
 model.print(fullfile(output_dir,osim_output_name));
-
-
-
-
-
 
 %% Inputs
 pathDefaultSettings = [pathRepo '\DefaultSettings'];
@@ -73,7 +74,7 @@ S.subject.name = U.ModelName;
 S.subject.save_folder  = fullfile(U.savefolder,U.GroupName); 
 
 % give the path to the osim model of your subject
-osim_path = fullfile(pathRepo,'Subjects',S.subject.name,[S.subject.name '.osim']);
+osim_path = fullfile(output_dir,osim_output_name);
 
 % Do you want to run the simulation as a batch job (parallel computing toolbox)
 S.solver.run_as_batch_job = 0;
@@ -84,7 +85,6 @@ S.solver.CasADi_path    = U.PathCasadi;
 S.solver.tol_ipopt = 3;
 S.solver.max_iter = 1000;
 % S.OpenSimADOptions.compiler = 'Visual Studio 14 2015 Win64';
-
 
 %% Scaling
 
@@ -122,8 +122,7 @@ S.subject.scale_default_coord_lim_torq = sf_mass*sf_legLength;
 
 S.subject.tendon_stiff_scale = {{'soleus_l','soleus_r','gastroc_r','gastroc_l'},0.7};
 
-% gravity 
-import org.opensim.modeling.*
+
 
 % % S.weights
 S.weights.E         = 0.05;
@@ -152,6 +151,15 @@ else
     S.subject.IG_selection = fullfile(S.misc.main_path,'Subjects',...
         'Vitruvian_Man','IG','IG_v40ms_ATx70.mot');
     S.subject.IG_selection_gaitCyclePercent = 200;
+end
+
+
+if strcmp(U.ModelName,'Smurf')
+    S.subject.IG_selection = [pathRepo, '\OCP\Smurf_v1.mot'];
+    S.subject.IG_selection_gaitCyclePercent = 200;    
+elseif strcmp(U.ModelName,'Reus')
+    S.subject.IG_selection = [pathRepo, '\OCP\Reus_v1.mot'];
+    S.subject.IG_selection_gaitCyclePercent = 200;  
 end
 
 % S.subject.IG_selection = 'quasi-random';

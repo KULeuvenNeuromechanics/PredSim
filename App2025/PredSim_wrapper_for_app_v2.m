@@ -1,4 +1,4 @@
-function [varargout] = PredSim_wrapper_for_app(U,sf)
+function [varargout] = PredSim_wrapper_for_app_v2(U,sf)
 % --------------------------------------------------------------------------
 % PredSim_wrapper_for_app
 %   This functions replaces main.m when using the Vitruvian_Man apps
@@ -39,8 +39,6 @@ osim_output_name = [U.ModelName '.osim'];
 
 % Scale + adapt gravity
 % scaleOsim(pathRepo, U, sf);
-
-
 
 
 %% changes to the model
@@ -112,23 +110,23 @@ S.solver.run_as_batch_job = 0;
 S.solver.CasADi_path    = U.PathCasadi;
 
 S.solver.tol_ipopt = 3;
-S.solver.max_iter = 100;
+S.solver.max_iter = 1000;
 % S.OpenSimADOptions.compiler = 'Visual Studio 14 2015 Win64';
 
 %%% speed
 S.subject.v_pelvis_x_trgt = U.Speed;
 %% IG
 if strcmp(U.ModelName,'Jullie_lengte')
-    S.subject.IG_selection = [pathRepo, '\OCP\Jullie_lengte_v1.mot'];
+    S.subject.IG_selection = "C:\GBW_MyPrograms\KinderuniversiteitApp\OCP\Jullie_lengte_v1.mot";
     S.subject.IG_selection_gaitCyclePercent = 200;
 elseif strcmp(U.ModelName,'Kleuter')
-    S.subject.IG_selection = [pathRepo, '\OCP\Kleuter_v1.mot'];
+    S.subject.IG_selection = "C:\GBW_MyPrograms\KinderuniversiteitApp\OCP\Kleuter_v1.mot";
     S.subject.IG_selection_gaitCyclePercent = 200;
 elseif strcmp(U.ModelName,'Volwassenen')
-    S.subject.IG_selection = [pathRepo, '\OCP\Volwassenen_v1.mot'];
+    S.subject.IG_selection = "C:\GBW_MyPrograms\KinderuniversiteitApp\OCP\Volwassenen_v1.mot";
     S.subject.IG_selection_gaitCyclePercent = 200;
 else
-   S.subject.IG_selection = [pathRepo, '\OCP\Ik_Guess_2D.mot'];
+    S.subject.IG_selection = "C:\GBW_MyPrograms\KinderuniversiteitApp\OCP\Ik_Guess_2D.mot";
     S.subject.IG_selection_gaitCyclePercent = 200;
 end
 
