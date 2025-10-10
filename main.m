@@ -23,18 +23,18 @@ addpath(fullfile(S.misc.main_path,'VariousFunctions'))
 
 %% Required inputs
 % name of the subject
-S.subject.name = 'Vitruvian_Man_v1';
+S.subject.name = 'gait1018';
 
 % path to folder where you want to store the results of the OCP
 S.subject.save_folder  = fullfile(pathRepoFolder,'PredSimResults',S.subject.name); 
 S.subject.save_folder  = fullfile(S.misc.main_path,'Subjects',S.subject.name,'IG'); 
 
 % either choose "quasi-random" or give the path to a .mot file you want to use as initial guess
-S.subject.IG_selection = 'quasi-random';
-% S.subject.IG_selection = fullfile(S.misc.main_path,'OCP','IK_Guess_Full_GC.mot');
+% S.subject.IG_selection = 'quasi-random';
+S.subject.IG_selection = fullfile(S.misc.main_path,'OCP','IK_Guess_Full_GC.mot');
 % S.subject.IG_selection_gaitCyclePercent = 100;
-S.subject.IG_selection = fullfile(S.misc.main_path,'Subjects','Vitruvian_Man_v1','IG','IG_v25ms_ATx70.mot');
-S.subject.IG_selection_gaitCyclePercent = 200;
+% S.subject.IG_selection = fullfile(S.misc.main_path,'Subjects','Vitruvian_Man_v1','IG','IG_v25ms_ATx70.mot');
+S.subject.IG_selection_gaitCyclePercent = 100;
 % S.subject.IG_selection = fullfile('C:\GBW_MyPrograms\OpenSim 4.3\Resources\Code\Matlab\Moco\example2DWalking','referenceCoordinates.mot');
 % S.subject.IG_selection_gaitCyclePercent = 50;
 
@@ -49,7 +49,7 @@ S.solver.run_as_batch_job = 0;
 % inputs.
 
 % % S.bounds
-S.bounds.activation_all_muscles.lower = 0.01;
+% S.bounds.activation_all_muscles.lower = 0.01;
 % S.bounds.SLL.upper          = ;
 % S.bounds.SLR.upper          = ;
 % S.bounds.dist_trav.lower    = ;
@@ -57,13 +57,13 @@ S.bounds.activation_all_muscles.lower = 0.01;
 % S.bounds.t_final.lower      = ;
 % S.bounds.Qs = {'lumbar_extension',-10,20};
 
-S.subject.v_pelvis_x_trgt   = 3;
-
-S.bounds.Qs = {
-%     'pelvis_tilt',-50,20,...
-    'lumbar_extension',-20,5,... % v=2
-    {'arm_flex_r','arm_flex_l'},-60,60
-    };
+S.subject.v_pelvis_x_trgt   = 1.33;
+% 
+% S.bounds.Qs = {
+% %     'pelvis_tilt',-50,20,...
+%     'lumbar_extension',-20,5,... % v=2
+%     {'arm_flex_r','arm_flex_l'},-60,60
+%     };
 
 S.bounds.Qdots = {
     'pelvis_tx',0.01,max(S.subject.v_pelvis_x_trgt)*2,...
@@ -126,7 +126,7 @@ S.post_process.make_plot = 0;
 % S.post_process.savename  = 'datetime';
 % S.post_process.load_prev_opti_vars = 1;
 % S.post_process.rerun   = 1;
-S.post_process.result_filename = ['IG_v' num2str(S.subject.v_pelvis_x_trgt*10) 'ms_ATx70'];
+% S.post_process.result_filename = ['IG_v' num2str(S.subject.v_pelvis_x_trgt*10) 'ms_ATx70'];
 
 % % S.solver
 % S.solver.linear_solver  = '';
@@ -156,13 +156,13 @@ S.subject.tendon_stiff_scale = {{'soleus_l','soleus_r','gastroc_r','gastroc_l'},
 % S.subject.spasticity        = ;
 % S.subject.muscle_coordination = ;
 % S.subject.damping_coefficient_all_dofs = 0; 
-S.subject.set_stiffness_coefficient_selected_dofs = {{'mtp_angle_l','mtp_angle_r'},25};
-S.subject.set_damping_coefficient_selected_dofs = {{'mtp_angle_l','mtp_angle_r'},2};
+% S.subject.set_stiffness_coefficient_selected_dofs = {{'mtp_l','mtp_r'},25};
+% S.subject.set_damping_coefficient_selected_dofs = {{'mtp_l','mtp_r'},2};
 % S.subject.set_stiffness_coefficient_selected_dofs = {'lumbar_extension',1};
-S.subject.set_damping_coefficient_selected_dofs = {{'arm_flex_r','arm_flex_l'},0.2};
-
-S.subject.set_limit_torque_coefficients_selected_dofs = ...
-    {{'arm_flex_r','arm_flex_l'},[-10; 22; 10; -22], [-1, 1]};
+% S.subject.set_damping_coefficient_selected_dofs = {{'arm_flex_r','arm_flex_l'},0.2};
+% 
+% S.subject.set_limit_torque_coefficients_selected_dofs = ...
+%     {{'arm_flex_r','arm_flex_l'},[-10; 22; 10; -22], [-1, 1]};
 % S.subject.set_limit_torque_coefficients_selected_dofs = {'all',[0,0,0,0],[0,0]};
 
 % S.subject.base_joints_legs = 'hip';

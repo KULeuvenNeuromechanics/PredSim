@@ -1,0 +1,71 @@
+ 
+Subject name: Jullie_lengte
+OpenSim model: C:\GBW_MyPrograms\KinderuniversiteitApp\Subjects\Ellis\Jullie_lengte\Jullie_lengte.osim
+ 
+ 
+Start PreProcessing...
+ 
+   Using existing external function: 
+      C:\GBW_MyPrograms\KinderuniversiteitApp\Subjects\Jullie_lengte\F_Jullie_lengte.dll
+   using existing MSK geometry Jullie_lengte_f_lMT_vMT_dM_poly_3_9
+ 
+...PreProcessing done. Time elapsed 0.25 s
+ 
+ 
+Start creating CasADi functions...
+ 
+ 
+...CasADi functions created. Time elapsed 0.21 s
+ 
+ 
+Start formulating OCP...
+ 
+...OCP formulation done. Time elapsed 0.30 s
+ 
+Starting NLP solver...
+ 
+This is Ipopt version 3.12.3, running with linear solver mumps.
+NOTE: Other linear solvers might be more efficient (see Ipopt documentation).
+
+Number of nonzeros in equality constraint Jacobian...:   115460
+Number of nonzeros in inequality constraint Jacobian.:    10800
+Number of nonzeros in Lagrangian Hessian.............:        0
+
+Exception of type: IpoptException in file "Unknown File" at line -1:
+ Exception message: Unknown Exception caught in Ipopt
+      solver  :   t_proc      (avg)   t_wall      (avg)    n_eval
+  nlp_grad_f  |  37.00ms ( 37.00ms)  37.07ms ( 37.07ms)         1
+       total  |  39.00ms ( 39.00ms)  39.11ms ( 39.11ms)         1
+ 
+...Exit NLP solver. Time elapsed 1.00 s
+ 
+ 
+Retrieving solution...
+ 
+Issue when reconstructing average speed
+{Unrecognized field name "iterations".
+
+Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('OCP_formulation', 'C:\GBW_MyPrograms\KinderuniversiteitApp\OCP\OCP_formulation.m', 952)" style="font-weight:bold">OCP_formulation</a> (<a href="matlab: opentoline('C:\GBW_MyPrograms\KinderuniversiteitApp\OCP\OCP_formulation.m',952,0)">line 952</a>)
+assertCost2 = abs(stats.iterations.obj(end) - J_optf);
+
+Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('run_pred_sim', 'C:\GBW_MyPrograms\KinderuniversiteitApp\run_pred_sim.m', 126)" style="font-weight:bold">run_pred_sim</a> (<a href="matlab: opentoline('C:\GBW_MyPrograms\KinderuniversiteitApp\run_pred_sim.m',126,0)">line 126</a>)
+    OCP_formulation(S,model_info,f_casadi);
+
+Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('PredSim_wrapper_for_app', 'C:\GBW_MyPrograms\KinderuniversiteitApp\App2025\PredSim_wrapper_for_app.m', 131)" style="font-weight:bold">PredSim_wrapper_for_app</a> (<a href="matlab: opentoline('C:\GBW_MyPrograms\KinderuniversiteitApp\App2025\PredSim_wrapper_for_app.m',131,0)">line 131</a>)
+savename = run_pred_sim(S,osim_path);
+
+Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('OpStapMetSuperKracht2025/StartsimulatieButtonPushed', 'C:\GBW_MyPrograms\KinderuniversiteitApp\App2025\OpStapMetSuperKracht2025.mlapp', 655)" style="font-weight:bold">OpStapMetSuperKracht2025/StartsimulatieButtonPushed</a> (<a href="matlab: opentoline('C:\GBW_MyPrograms\KinderuniversiteitApp\App2025\OpStapMetSuperKracht2025.mlapp',655,0)">line 655</a>)
+            resultpath = PredSim_wrapper_for_app(U,sf);
+
+Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('matlab.apps.AppBase>@(source,event)executeCallback(ams,app,callback,requiresEventData,event)', 'C:\Program Files\MATLAB\R2023b\toolbox\matlab\appdesigner\appdesigner\runtime\+matlab\+apps\AppBase.m', 62)" style="font-weight:bold">matlab.apps.AppBase>@(source,event)executeCallback(ams,app,callback,requiresEventData,event)</a> (<a href="matlab: opentoline('C:\Program Files\MATLAB\R2023b\toolbox\matlab\appdesigner\appdesigner\runtime\+matlab\+apps\AppBase.m',62,0)">line 62</a>)
+            newCallback = @(source, event)executeCallback(ams, ...
+} 
+Error while evaluating Button PrivateButtonPushedFcn.
+
+<a href="matlab: opentoline('C:\GBW_MyPrograms\KinderuniversiteitApp\App2025\scaleOsimModel_2025.m',43,1)">43  </a>sf_seg.pelvis = [1,1,1]*sf_total;
+if system_dependent('IsDebugMode')==1, dbcont; end
+if system_dependent('IsDebugMode')==1, dbcont; end
+if system_dependent('IsDebugMode')==1, dbcont; end
+<a href="matlab: opentoline('C:\GBW_MyPrograms\KinderuniversiteitApp\App2025\PredSim_wrapper_for_app.m',131,1)">131 </a>savename = run_pred_sim(S,osim_path);
+if system_dependent('IsDebugMode')==1, dbcont; end
+Using C:\GBW_MyPrograms\KinderuniversiteitApp\OCP\IK_Guess_Full_GC.mot as initial guess.

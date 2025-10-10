@@ -93,6 +93,11 @@ for i=0:forceSet.getSize()-1
         % set radius
         geo1.setRadius(contact_spheres(idx).radius);
 
+
+        %%% added 2025 
+        loc_vec = contact_spheres(idx).location; % should be [x y z]
+        geo1.set_location(Vec3(loc_vec(1), loc_vec(2), loc_vec(3)));
+
     end
 end
 

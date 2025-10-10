@@ -1,0 +1,49 @@
+ 
+Subject name: Olaf
+OpenSim model: C:\GBW_MyPrograms\KinderuniversiteitApp\Subjects\Ellis\Olaf\Olaf.osim
+ 
+ 
+Start PreProcessing...
+ 
+   Using existing external function: 
+      C:\GBW_MyPrograms\KinderuniversiteitApp\Subjects\Olaf\F_Olaf.dll
+<a href="matlab: opentoline('C:\GBW_MyPrograms\KinderuniversiteitApp\PreProcessing\get_model_info.m',79,1)">79  </a>model_info = getCoordinateIndexForStateVectorOpenSimAPI(S,osim_path,model_info);
+model_info = getCoordinateIndexForStateVectorOpenSimAPI(S,osim_path,model_info);
+if system_dependent('IsDebugMode')==1, dbcont; end
+   using existing MSK geometry Olaf_f_lMT_vMT_dM_poly_3_9
+ 
+...PreProcessing done. Time elapsed 6.20 s
+ 
+ 
+Start creating CasADi functions...
+ 
+ 
+...CasADi functions created. Time elapsed 0.21 s
+ 
+ 
+Start formulating OCP...
+ 
+...OCP formulation done. Time elapsed 0.31 s
+ 
+Starting NLP solver...
+ 
+ 
+...Exit NLP solver. Time elapsed 81.57 s
+ 
+ 
+Retrieving solution...
+ 
+Saving results as: C:\GBW_MyPrograms\KinderuniversiteitApp\Resultaten\Ellis\Olaf\Olaf_v2.mat
+ 
+ 
+Start PostProcessing...
+ 
+ 
+...PostProcessing done. Time elapsed 0.25 s
+ 
+ 
+Total time elapsed 89.60 s
+ 
+Diary saved as C:\GBW_MyPrograms\KinderuniversiteitApp\Resultaten\Ellis\Olaf\Olaf_v2_log.txt
+ 
+ 

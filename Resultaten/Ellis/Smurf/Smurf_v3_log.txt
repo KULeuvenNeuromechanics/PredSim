@@ -1,0 +1,148 @@
+ 
+Subject name: Smurf
+OpenSim model: C:\GBW_MyPrograms\KinderuniversiteitApp\Subjects\Ellis\Smurf\Smurf.osim
+ 
+ 
+Start PreProcessing...
+ 
+   Using existing external function: 
+      C:\GBW_MyPrograms\KinderuniversiteitApp\Subjects\Smurf\F_Smurf.dll
+   using existing MSK geometry Smurf_f_lMT_vMT_dM_poly_3_9
+ 
+...PreProcessing done. Time elapsed 0.28 s
+ 
+ 
+Start creating CasADi functions...
+ 
+ 
+...CasADi functions created. Time elapsed 0.20 s
+ 
+ 
+Start formulating OCP...
+ 
+...OCP formulation done. Time elapsed 0.28 s
+ 
+Starting NLP solver...
+ 
+This is Ipopt version 3.12.3, running with linear solver mumps.
+NOTE: Other linear solvers might be more efficient (see Ipopt documentation).
+
+Number of nonzeros in equality constraint Jacobian...:   115460
+Number of nonzeros in inequality constraint Jacobian.:    10800
+Number of nonzeros in Lagrangian Hessian.............:        0
+
+Total number of variables............................:    16607
+                     variables with only lower bounds:        0
+                variables with lower and upper bounds:    16607
+                     variables with only upper bounds:        0
+Total number of equality constraints.................:    15657
+Total number of inequality constraints...............:     5400
+        inequality constraints with only lower bounds:     2700
+   inequality constraints with lower and upper bounds:        0
+        inequality constraints with only upper bounds:     2700
+
+iter    objective    inf_pr   inf_du lg(mu)  ||d||  lg(rg) alpha_du alpha_pr  ls
+   0 1.8971012e+241 1.82e+120 6.96e+234   0.0 0.00e+000    -  0.00e+000 0.00e+000   0
+CasADi -  WARNING("solver:nlp_g failed: NaN detected for output g, at (row 1, col 1).") [.../casadi/core/oracle_function.cpp:265]
+Warning: Cutting back alpha due to evaluation error
+CasADi -  WARNING("solver:nlp_g failed: NaN detected for output g, at (row 1, col 1).") [.../casadi/core/oracle_function.cpp:265]
+Warning: Cutting back alpha due to evaluation error
+CasADi -  WARNING("solver:nlp_g failed: NaN detected for output g, at (row 1, col 1).") [.../casadi/core/oracle_function.cpp:265]
+Warning: Cutting back alpha due to evaluation error
+CasADi -  WARNING("solver:nlp_g failed: NaN detected for output g, at (row 1, col 1).") [.../casadi/core/oracle_function.cpp:265]
+Warning: Cutting back alpha due to evaluation error
+CasADi -  WARNING("solver:nlp_g failed: NaN detected for output g, at (row 1, col 1).") [.../casadi/core/oracle_function.cpp:265]
+Warning: Cutting back alpha due to evaluation error
+CasADi -  WARNING("solver:nlp_g failed: NaN detected for output g, at (row 1, col 1).") [.../casadi/core/oracle_function.cpp:265]
+Warning: Cutting back alpha due to evaluation error
+CasADi -  WARNING("solver:nlp_g failed: NaN detected for output g, at (row 1, col 1).") [.../casadi/core/oracle_function.cpp:265]
+Warning: Cutting back alpha due to evaluation error
+CasADi -  WARNING("solver:nlp_g failed: NaN detected for output g, at (row 1, col 1).") [.../casadi/core/oracle_function.cpp:265]
+Warning: Cutting back alpha due to evaluation error
+CasADi -  WARNING("solver:nlp_g failed: NaN detected for output g, at (row 1, col 1).") [.../casadi/core/oracle_function.cpp:265]
+Warning: Cutting back alpha due to evaluation error
+CasADi -  WARNING("solver:nlp_g failed: NaN detected for output g, at (row 1, col 1).") [.../casadi/core/oracle_function.cpp:265]
+Warning: Cutting back alpha due to evaluation error
+CasADi -  WARNING("solver:nlp_g failed: NaN detected for output g, at (row 1, col 1).") [.../casadi/core/oracle_function.cpp:265]
+Warning: Cutting back alpha due to evaluation error
+CasADi -  WARNING("solver:nlp_g failed: NaN detected for output g, at (row 1, col 1).") [.../casadi/core/oracle_function.cpp:265]
+Warning: Cutting back alpha due to evaluation error
+CasADi -  WARNING("solver:nlp_g failed: NaN detected for output g, at (row 1, col 1).") [.../casadi/core/oracle_function.cpp:265]
+Warning: Cutting back alpha due to evaluation error
+CasADi -  WARNING("solver:nlp_g failed: NaN detected for output g, at (row 1, col 1).") [.../casadi/core/oracle_function.cpp:265]
+Warning: Cutting back alpha due to evaluation error
+CasADi -  WARNING("solver:nlp_g failed: NaN detected for output g, at (row 1, col 1).") [.../casadi/core/oracle_function.cpp:265]
+Warning: Cutting back alpha due to evaluation error
+CasADi -  WARNING("solver:nlp_g failed: NaN detected for output g, at (row 1, col 1).") [.../casadi/core/oracle_function.cpp:265]
+Warning: Cutting back alpha due to evaluation error
+CasADi -  WARNING("solver:nlp_g failed: NaN detected for output g, at (row 1, col 1).") [.../casadi/core/oracle_function.cpp:265]
+Warning: Cutting back alpha due to evaluation error
+CasADi -  WARNING("solver:nlp_g failed: NaN detected for output g, at (row 1, col 1).") [.../casadi/core/oracle_function.cpp:265]
+Warning: Cutting back alpha due to evaluation error
+CasADi -  WARNING("solver:nlp_g failed: NaN detected for output g, at (row 1, col 1).") [.../casadi/core/oracle_function.cpp:265]
+Warning: Cutting back alpha due to evaluation error
+CasADi -  WARNING("solver:nlp_g failed: NaN detected for output g, at (row 1, col 1).") [.../casadi/core/oracle_function.cpp:265]
+Warning: Cutting back alpha due to evaluation error
+CasADi -  WARNING("solver:nlp_g failed: NaN detected for output g, at (row 1, col 1).") [.../casadi/core/oracle_function.cpp:265]
+Warning: Cutting back alpha due to evaluation error
+CasADi -  WARNING("solver:nlp_f failed: NaN detected for output f, at (row 1, col 1).") [.../casadi/core/oracle_function.cpp:265]
+Warning: Evaluation error during soft restoration phase step.
+CasADi -  WARNING("solver:nlp_f failed: NaN detected for output f, at (row 1, col 1).") [.../casadi/core/oracle_function.cpp:265]
+Warning: Evaluation error during soft restoration phase step.
+CasADi -  WARNING("solver:nlp_f failed: NaN detected for output f, at (row 1, col 1).") [.../casadi/core/oracle_function.cpp:265]
+Warning: Evaluation error during soft restoration phase step.
+   1r1.8971012e+241 1.82e+120 9.99e+002 112.3 0.00e+000    -  0.00e+000 4.77e-007R 22
+Sorry, things failed ?!?!
+
+Number of Iterations....: 1
+
+                                   (scaled)                 (unscaled)
+Objective...............:  1.8971011504211647e+233   1.8971011504211648e+241
+Dual infeasibility......:  6.9642756067478667e+234   6.9642756067478665e+242
+Constraint violation....:  1.8198335063569521e+112   1.8198335063569521e+120
+Complementarity.........:  5.9990000666666667e+001   5.9990000666666670e+009
+Overall NLP error.......:  6.9642756067478667e+234   6.9642756067478665e+242
+
+
+Number of objective function evaluations             = 5
+Number of objective gradient evaluations             = 2
+Number of equality constraint evaluations            = 23
+Number of inequality constraint evaluations          = 2
+Number of equality constraint Jacobian evaluations   = 2
+Number of inequality constraint Jacobian evaluations = 2
+Number of Lagrangian Hessian evaluations             = 0
+Total CPU secs in IPOPT (w/o function evaluations)   =      0.412
+Total CPU secs in NLP function evaluations           =      0.622
+
+EXIT: Restoration Failed!
+      solver  :   t_proc      (avg)   t_wall      (avg)    n_eval
+       nlp_f  |  83.00ms ( 16.60ms)  83.33ms ( 16.67ms)         5
+       nlp_g  | 372.00ms ( 16.17ms) 371.07ms ( 16.13ms)        23
+  nlp_grad_f  |  99.00ms ( 33.00ms)  99.92ms ( 33.31ms)         3
+   nlp_jac_g  | 155.00ms ( 51.67ms) 155.06ms ( 51.69ms)         3
+       total  |   1.07 s (  1.07 s)   1.07 s (  1.07 s)         1
+ 
+...Exit NLP solver. Time elapsed 2.06 s
+ 
+ 
+Retrieving solution...
+ 
+Issue when reconstructing average speed
+Issue when reconstructing optimal cost wrt sum of terms
+   Difference = 1.184477304306571e+226
+Issue when reconstructing optimal cost wrt stats
+   Difference = 5.922386521532856e+225
+Saving results as: C:\GBW_MyPrograms\KinderuniversiteitApp\Resultaten\Ellis\Smurf\Smurf_v3.mat
+ 
+ 
+Start PostProcessing...
+ 
+ 
+...PostProcessing done. Time elapsed 0.25 s
+ 
+ 
+Total time elapsed 4.10 s
+ 
+Diary saved as C:\GBW_MyPrograms\KinderuniversiteitApp\Resultaten\Ellis\Smurf\Smurf_v3_log.txt
+ 
+ 

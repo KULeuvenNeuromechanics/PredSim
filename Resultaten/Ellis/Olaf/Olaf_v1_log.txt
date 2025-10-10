@@ -1,0 +1,53 @@
+ 
+Subject name: Olaf
+OpenSim model: C:\GBW_MyPrograms\KinderuniversiteitApp\Subjects\Ellis\Olaf\Olaf.osim
+ 
+ 
+Start PreProcessing...
+ 
+   Creating new external function...
+   ... external function created (17.75 s)
+<a href="matlab: opentoline('C:\GBW_MyPrograms\KinderuniversiteitApp\PreProcessing\get_model_info.m',79,1)">79  </a>model_info = getCoordinateIndexForStateVectorOpenSimAPI(S,osim_path,model_info);
+model_info = getCoordinateIndexForStateVectorOpenSimAPI(S,osim_path,model_info);
+if system_dependent('IsDebugMode')==1, dbcont; end
+ 
+   Start analysing musculoskeletal geometry...
+   analysing MSK geometry: 1.25 s
+   approximating MSK geometry: 0.05 s
+ 
+...PreProcessing done. Time elapsed 26.68 s
+ 
+ 
+Start creating CasADi functions...
+ 
+ 
+...CasADi functions created. Time elapsed 0.38 s
+ 
+ 
+Start formulating OCP...
+ 
+...OCP formulation done. Time elapsed 0.36 s
+ 
+Starting NLP solver...
+ 
+ 
+...Exit NLP solver. Time elapsed 46.94 s
+ 
+ 
+Retrieving solution...
+ 
+Issue when reconstructing average speed
+Saving results as: C:\GBW_MyPrograms\KinderuniversiteitApp\Resultaten\Ellis\Olaf\Olaf_v1.mat
+ 
+ 
+Start PostProcessing...
+ 
+ 
+...PostProcessing done. Time elapsed 0.25 s
+ 
+ 
+Total time elapsed 75.69 s
+ 
+Diary saved as C:\GBW_MyPrograms\KinderuniversiteitApp\Resultaten\Ellis\Olaf\Olaf_v1_log.txt
+ 
+ 

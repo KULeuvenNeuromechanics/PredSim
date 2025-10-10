@@ -423,11 +423,21 @@ classdef VitruvianManExample_exported < matlab.apps.AppBase
                 flag = 1;
                 disp(['Could not find "' app.sel_mot_file '"'])
             end
-            if flag
-                app.sel_osim_file = fullfile(app.path_repo,'Subjects','Vitruvian_Man','Vitruvian_Man.osim');
-                app.sel_mot_file = fullfile(app.path_repo,'Subjects','Vitruvian_Man','Vitruvian_Man.mot');
-            end
+             if flag
+                % app.sel_osim_file = fullfile(app.path_repo,'Subjects','Vitruvian_Man','Vitruvian_Man.osim');
+                % app.sel_mot_file = fullfile(app.path_repo,'Subjects','Vitruvian_Man','Vitruvian_Man.mot');
+                app.sel_osim_file = fullfile(app.path_repo,'Subjects',app.GroupName,app.ModelName,[app.ModelName '.osim']);
 
+                mot_folder = fullfile(app.path_repo, 'Subjects',app.GroupName,app.ModelName);
+                files = dir(fullfile(mot_folder, [app.ModelName '_v*.mot']));
+                if isempty(files), error('No mot files found.'); end
+
+                nums = cellfun(@(s) sscanf(s, [app.ModelName '_v%d.mot']), {files.name});
+                [~, idx] = max(nums);
+
+                app.sel_mot_file = fullfile(mot_folder, files(idx).name);
+
+            end
             % function
             try
                 playVideo(app.sel_osim_file,app.sel_mot_file,app.path_geom);

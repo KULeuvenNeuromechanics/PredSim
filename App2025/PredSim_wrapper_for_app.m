@@ -33,36 +33,64 @@ function [varargout] = PredSim_wrapper_for_app(U,sf)
 [pathRepo,~,~] = fileparts(pathApp);
 cd(pathRepo);
 
-%% scale model
-% Detect height in cm and convert to m
-if U.Height > 10
-    U.Height = U.Height/100;
-end
+modelpath = [pathRepo, '\Subjects\gait1018\gait1018.osim'];
+output_dir = fullfile(pathRepo, 'Subjects',U.GroupName, U.ModelName);
+osim_output_name = [U.ModelName '.osim'];
 
 % Scale + adapt gravity
 % scaleOsim(pathRepo, U, sf);
 
-%%% adapt gravity
-osim_output_name = [U.ModelName '.osim'];
-output_dir = fullfile(pathRepo, 'Subjects',U.GroupName, U.ModelName);
+
+
+
+%% changes to the model
+[S] = initializeSettings();
+
+%%% scaling strength
+S.subject.muscle_strength = {{'hamstrings_r','bifemsh_r','glut_max_r','iliopsoas_r',...
+                                    'rect_fem_r','vasti_r','gastroc_r','soleus_r','tib_ant_r',...
+                                    'hamstrings_l','bifemsh_l','glut_max_l','iliopsoas_l',...
+                                    'rect_fem_l','vasti_l','gastroc_l','soleus_l','tib_ant_l'},U.Force_sf};
+
+%%% scaling length + contactspheres
+scaleOsimModel_2025(pathRepo, U)
+
 import org.opensim.modeling.*
-modelpath = fullfile(output_dir,osim_output_name);
-modelpath = [pathRepo, '\Subjects\gait1018\gait1018.osim'];
-model = Model(modelpath);
-gravity_model =  U.sf_Gravity*-9.81;
+model = Model(fullfile(output_dir,osim_output_name));
+
+%%% scaling max isometric force
+if U.Mass ~= 62
+muscleSet = model.getMuscles;
+old_model_name = char(model.getName.toString);
+    if ~contains(old_model_name,'_sf')
+    model.setName([old_model_name '_sf'])
+    % Loop through all muscles
+        for m=1:muscleSet.getSize
+            clear muscleName
+            muscleName = char(muscleSet.get(m-1));
+            model = scaleFMO(muscleName,model,62,U.Mass);
+        end
+    end
+end
+
+%%% scaling bounds+limittorques+cost function weights
+% S = scale4PredSim_2025(S,U,62,160);
+
+%%% adapt gravity
+gravity_model =  U.sf_Gravity*-9.8066499999999994;
 model.setGravity( Vec3(0, gravity_model, 0) );
 
 if ~isfolder(output_dir)
     mkdir(output_dir)
 end
 
+%%% save all changes to the model
 model.print(fullfile(output_dir,osim_output_name));
 
-%% Inputs
+%% Inputs PredSim
 pathDefaultSettings = [pathRepo '\DefaultSettings'];
 addpath(pathDefaultSettings)
 
-[S] = initializeSettings();
 S.misc.main_path = pathRepo;
 
 addpath([S.misc.main_path '\VariousFunctions'])
@@ -75,9 +103,6 @@ S.subject.name = U.ModelName;
 S.subject.save_folder  = fullfile(U.savefolder,U.GroupName,U.ModelName); 
 
 % give the path to the osim model of your subject
-% osim_path = fullfile(pathRepo,'Subjects',U.GroupName, S.subject.name,[S.subject.name '.osim']);
-% osim_path = fullfile(pathRepo,'Subjects',U.GroupName, S.subject.name,[S.subject.name '.osim']);
-% osim_path = 'C:\Users\u0167448\Documents\GitHub\PredSim\Subjects\gait1018_moon\gait1018_moon.osim';
 osim_path = fullfile(output_dir,osim_output_name);
 
 % Do you want to run the simulation as a batch job (parallel computing toolbox)
@@ -90,104 +115,13 @@ S.solver.tol_ipopt = 3;
 S.solver.max_iter = 1000;
 % S.OpenSimADOptions.compiler = 'Visual Studio 14 2015 Win64';
 
-
-%% Scaling
-
-% sf_legLength = (sf.low_leg + sf.upp_leg)/2;
-% sf_mass = U.Mass/75;
-% sf_force = sf_mass^(2/3);
-% 
-% % muscle forces (~ size^2)
-% S.subject.MT_params  = {
-%     {'glut_max_r','iliopsoas_r','glut_max_l','iliopsoas_l'},...
-%     'FMo',sf_force*(sqrt(sf.torso*sf.upp_leg)*sf.upp_leg),... % ~ pelvis and upper leg
-%     {'hamstrings_r','bifemsh_r','rect_fem_r','vasti_r','hamstrings_l','bifemsh_l','rect_fem_l','vasti_l'},...
-%     'FMo',sf_force*(sf.upp_leg^2),... % ~ upper leg
-%     {'gastroc_r','soleus_r','tib_ant_r','gastroc_l','soleus_l','tib_ant_l'},...
-%     'FMo',sf_force*(sf.low_leg^2) % ~lower leg
-%     };
-% 
-% 
-% S.subject.muscle_strength = {{'glut_max_r','iliopsoas_r','glut_max_l','iliopsoas_l',...
-%     'hamstrings_r','bifemsh_r','rect_fem_r','vasti_r','hamstrings_l','bifemsh_l','rect_fem_l','vasti_l',...
-%     'gastroc_r','soleus_r','tib_ant_r','gastroc_l','soleus_l','tib_ant_l'},U.Force_sf};
-% 
-% % actuator torques (~ size^3)
-% S.subject.scale_actuator_torque = {
-%     'lumbar_extension',sf_force*(sqrt(sf.torso*sf.shoulder)*sf.torso*sf.upp_leg),... % ~ torso and pelvis
-%     {'arm_flex_r','arm_flex_l'},sf_force*(sqrt(sf.torso*sf.shoulder)*sf.shoulder^2) % ~ torso and shoulder
-%     };
-% 
-% S.subject.set_damping_coefficient_selected_dofs = {
-% %     'lumbar_extension',2*sf_force*(sqrt(sf.torso*sf.shoulder)*sf.torso*sf.upp_leg),...
-%     {'arm_flex_r','arm_flex_l'},0.2*sf_force*(sqrt(sf.torso*sf.shoulder)*sf.shoulder^2),...
-%     };
-% 
-% pass_torq_arm = 10*sf_force*(sqrt(sf.torso*sf.shoulder)*sf.shoulder^2);
-% 
-% S.subject.set_limit_torque_coefficients_selected_dofs = ...
-%     {{'arm_flex_r','arm_flex_l'},[-pass_torq_arm; 22; pass_torq_arm; -22], [-1, 1]};
-% 
-% S.subject.scale_default_coord_lim_torq = sf_mass*sf_legLength;
-% 
-% S.subject.tendon_stiff_scale = {{'soleus_l','soleus_r','gastroc_r','gastroc_l'},0.7};
-% 
-% % gravity 
-% import org.opensim.modeling.*
-% 
-% % % S.weights
-% S.weights.E         = 0.05;
-% % S.weights.E_exp     = ;
-% S.weights.q_dotdot  = 1;
-% S.weights.e_arm     = 10;
-% S.weights.pass_torq = 0;
-% S.weights.a         = 1;
-% S.weights.slack_ctrl = 0.001;
-% 
-% 
-% if U.Speed > 0
-%     S.subject.v_pelvis_x_trgt = U.Speed;
-%     S.weights.velocity = 0;
-%     v_ig = [12:2:20,25:5:40];
-%     [~,idxv] = min((v_ig/10 - S.subject.v_pelvis_x_trgt).^2);
-%     name_ig = ['IG_v' num2str(v_ig(idxv)) 'ms_ATx70.mot'];
-%     S.subject.IG_selection = fullfile(S.misc.main_path,'Subjects',...
-%         'Vitruvian_Man','IG',name_ig);
-%     S.subject.IG_selection_gaitCyclePercent = 200;
-% 
-% else
-%     S.weights.velocity = -5e4;
-%     S.subject.v_pelvis_x_trgt   = [2,10];
-% 
-%     S.subject.IG_selection = fullfile(S.misc.main_path,'Subjects',...
-%         'Vitruvian_Man','IG','IG_v40ms_ATx70.mot');
-%     S.subject.IG_selection_gaitCyclePercent = 200;
-% end
-% 
-% S.subject.IG_selection = 'quasi-random';
+%%% speed
+S.subject.v_pelvis_x_trgt = U.Speed;
+%% IG
 S.subject.IG_selection = [pathRepo, '\OCP\IK_Guess_Full_GC.mot'];
 S.subject.IG_selection_gaitCyclePercent = 100;
-
 % S.subject.adapt_IG_pelvis_y = 1;
-% %S.subject.IG_pelvis_y = U.IG_pelvis_y;
-% 
-% 
-% S.bounds.Qs = {
-%     'pelvis_tx',0,4*sf_legLength,...
-%     {'arm_flex_r','arm_flex_l'},-60,60
-%     };
-% 
-% S.bounds.Qdots = {
-%     'pelvis_tx',0.01,max(S.subject.v_pelvis_x_trgt)*2
-%     };
-% 
-% if max(S.subject.v_pelvis_x_trgt) > 4
-%     S.bounds.Qdotdots = {'pelvis_tilt',-2000,2000};%v=4.5;
-% end
-% 
-% S.misc.scaling_Moments = {'all',1.2*sf_mass*sf_legLength};
-% S.subject.damping_coefficient_all_dofs = 0.1*sf_mass*sf_legLength;
-% S.bounds.activation_all_muscles.lower = 0.01;
+% S.subject.IG_pelvis_y = U.IG_pelvis_y;
 
 %%
 % S.misc.visualize_bounds    = 1;

@@ -1,4 +1,4 @@
-function scaleOsim(MainPath, U)
+function scaleOsim_2025(MainPath, U)
 
 % % test inputs
 % MainPath = 'C:\GBW_MyPrograms\PredSim_test';
@@ -37,6 +37,7 @@ copyfile(fullfile(MainPath,'Subjects','gait1018','gait1018.osim'),output_dir);
 generic_scalefile = fullfile(MainPath,'Subjects','Vitruvian_Man','uniformScale.xml');
 
 % general scale factor
+U.Height = 80;
 sf_total = U.Height/160;
 
 % apply scale factors to segments
@@ -83,18 +84,18 @@ for i=1:nSegments
 
     % segment-specific scale factor
     if isfield(sf_seg,char(segment_name))
-        segm_sf = sf_seg.(char(segment_name));
+        sf_segm = sf_seg.(char(segment_name));
     else
-        segm_sf = [1,1,1];
+        sf_segm = [1,1,1];
     end
-
-    % add general scale factor
-    segm_sf = segm_sf*sf_total;
-
-    segmentscaling = [num2str(segm_sf(1)) ' ' num2str(segm_sf(2)) ' ' num2str(segm_sf(3))];
+    % 
+    % % add general scale factor
+    % segm_sf = segm_sf*sf_total;
+    % %
+    segment_scaling = [num2str(sf_segm(1)) ' ' num2str(sf_segm(2)) ' ' num2str(sf_segm(3))];
 
     %adjust scales
-    scalefile.getElementsByTagName('Scale').item(i-1).getElementsByTagName('scales').item(0).getFirstChild.setNodeValue(segmentscaling);
+    scalefile.getElementsByTagName('Scale').item(i-1).getElementsByTagName('scales').item(0).getFirstChild.setNodeValue(segment_scaling);
 end
 
 % set output_model_file
@@ -114,7 +115,7 @@ scale.run();
 
 %% adapt contact sphere placement
 fixContactSpherePositionAfterScaling(fullfile(output_dir,'gait1018.osim'),fullfile(output_dir,osim_output_name));
-scaleContactSpheres(fullfile(output_dir,'gai1018.osim'),fullfile(output_dir,osim_output_name));
+scaleContactSpheres(fullfile(output_dir,'gait1018.osim'),fullfile(output_dir,osim_output_name));
 
 % remove unscaled model file
 delete(fullfile(output_dir,'gait1018.osim'));
