@@ -112,7 +112,7 @@ S.solver.run_as_batch_job = 0;
 S.solver.CasADi_path    = U.PathCasadi;
 
 S.solver.tol_ipopt = 3;
-S.solver.max_iter = 1000;
+S.solver.max_iter = 100;
 % S.OpenSimADOptions.compiler = 'Visual Studio 14 2015 Win64';
 
 %%% speed
