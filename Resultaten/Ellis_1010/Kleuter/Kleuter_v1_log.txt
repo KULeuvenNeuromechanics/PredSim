@@ -1,0 +1,286 @@
+ 
+Subject name: Kleuter
+OpenSim model: C:\GBW_MyPrograms\KinderuniversiteitApp\Subjects\Ellis_1010\Kleuter\Kleuter.osim
+ 
+ 
+Start PreProcessing...
+ 
+   Using existing external function: 
+      C:\GBW_MyPrograms\KinderuniversiteitApp\Subjects\Kleuter\F_Kleuter.dll
+{Error using <a href="matlab:matlab.internal.language.introspective.errorDocCallback('unpack_name_value_combinations')" style="font-weight:bold">unpack_name_value_combinations</a>
+"arm_flex_r" is not a valid name.
+
+Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('get_actuator_info', 'C:\GBW_MyPrograms\KinderuniversiteitApp\PreProcessing\get_actuator_info.m', 71)" style="font-weight:bold">get_actuator_info</a> (<a href="matlab: opentoline('C:\GBW_MyPrograms\KinderuniversiteitApp\PreProcessing\get_actuator_info.m',71,0)">line 71</a>)
+scale_factors = unpack_name_value_combinations(S.subject.scale_actuator_torque, coord_names, 1);
+
+Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('PreProcessing', 'C:\GBW_MyPrograms\KinderuniversiteitApp\PreProcessing\PreProcessing.m', 43)" style="font-weight:bold">PreProcessing</a> (<a href="matlab: opentoline('C:\GBW_MyPrograms\KinderuniversiteitApp\PreProcessing\PreProcessing.m',43,0)">line 43</a>)
+model_info = get_actuator_info(S,osim_path,model_info);
+
+Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('run_pred_sim', 'C:\GBW_MyPrograms\KinderuniversiteitApp\run_pred_sim.m', 106)" style="font-weight:bold">run_pred_sim</a> (<a href="matlab: opentoline('C:\GBW_MyPrograms\KinderuniversiteitApp\run_pred_sim.m',106,0)">line 106</a>)
+[S,model_info] = PreProcessing(S,osim_path);
+
+Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('PredSim_wrapper_for_app', 'C:\GBW_MyPrograms\KinderuniversiteitApp\App2025\PredSim_wrapper_for_app.m', 131)" style="font-weight:bold">PredSim_wrapper_for_app</a> (<a href="matlab: opentoline('C:\GBW_MyPrograms\KinderuniversiteitApp\App2025\PredSim_wrapper_for_app.m',131,0)">line 131</a>)
+savename = run_pred_sim(S,osim_path);
+
+Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('OpStapMetSuperKracht2025/StartsimulatieButtonPushed', 'C:\GBW_MyPrograms\KinderuniversiteitApp\App2025\OpStapMetSuperKracht2025.mlapp', 655)" style="font-weight:bold">OpStapMetSuperKracht2025/StartsimulatieButtonPushed</a> (<a href="matlab: opentoline('C:\GBW_MyPrograms\KinderuniversiteitApp\App2025\OpStapMetSuperKracht2025.mlapp',655,0)">line 655</a>)
+            resultpath = PredSim_wrapper_for_app(U,sf);
+
+Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('matlab.apps.AppBase>@(source,event)executeCallback(ams,app,callback,requiresEventData,event)', 'C:\Program Files\MATLAB\R2023b\toolbox\matlab\appdesigner\appdesigner\runtime\+matlab\+apps\AppBase.m', 62)" style="font-weight:bold">matlab.apps.AppBase>@(source,event)executeCallback(ams,app,callback,requiresEventData,event)</a> (<a href="matlab: opentoline('C:\Program Files\MATLAB\R2023b\toolbox\matlab\appdesigner\appdesigner\runtime\+matlab\+apps\AppBase.m',62,0)">line 62</a>)
+            newCallback = @(source, event)executeCallback(ams, ...
+} 
+Error while evaluating Button PrivateButtonPushedFcn.
+
+sqrt(sf_Length*sf_Length)*sf_Length*sf_Length
+{Unrecognized function or variable 'sf_Length'.
+} 
+sf_Length = 0.5
+
+sf_Length =
+
+    0.5000
+
+sf_Length*sf_Length)*sf_Length*sf_Length
+ sf_Length*sf_Length)*sf_Length*sf_Length
+                    ↑
+{Invalid expression. When calling a function or indexing a variable, use parentheses. Otherwise, check
+for mismatched delimiters.
+} 
+(sf_Length*sf_Length)*sf_Length*sf_Length
+
+ans =
+
+    0.0625
+
+Scaled model already exists.
+<a href="matlab: opentoline('C:\GBW_MyPrograms\KinderuniversiteitApp\App2025\PredSim_wrapper_for_app.m',80,1)">80  </a>gravity_model =  U.sf_Gravity*-9.8066499999999994;
+if system_dependent('IsDebugMode')==1, dbcont; end
+<a href="matlab: opentoline('C:\GBW_MyPrograms\KinderuniversiteitApp\App2025\PredSim_wrapper_for_app.m',131,1)">131 </a>savename = run_pred_sim(S,osim_path);
+if system_dependent('IsDebugMode')==1, dbcont; end
+Using C:\GBW_MyPrograms\KinderuniversiteitApp\OCP\IK_Guess_Full_GC.mot as initial guess.
+ 
+Subject name: Kleuter
+OpenSim model: C:\GBW_MyPrograms\KinderuniversiteitApp\Subjects\Ellis_1010\Kleuter\Kleuter.osim
+ 
+ 
+Start PreProcessing...
+ 
+   Using existing external function: 
+      C:\GBW_MyPrograms\KinderuniversiteitApp\Subjects\Kleuter\F_Kleuter.dll
+   using existing MSK geometry Kleuter_f_lMT_vMT_dM_poly_3_9
+ 
+...PreProcessing done. Time elapsed 0.25 s
+ 
+ 
+Start creating CasADi functions...
+ 
+ 
+...CasADi functions created. Time elapsed 0.21 s
+ 
+ 
+Start formulating OCP...
+ 
+...OCP formulation done. Time elapsed 0.31 s
+ 
+Starting NLP solver...
+ 
+This is Ipopt version 3.12.3, running with linear solver mumps.
+NOTE: Other linear solvers might be more efficient (see Ipopt documentation).
+
+Number of nonzeros in equality constraint Jacobian...:   115460
+Number of nonzeros in inequality constraint Jacobian.:    10800
+Number of nonzeros in Lagrangian Hessian.............:        0
+
+Total number of variables............................:    16607
+                     variables with only lower bounds:        0
+                variables with lower and upper bounds:    16607
+                     variables with only upper bounds:        0
+Total number of equality constraints.................:    15657
+Total number of inequality constraints...............:     5400
+        inequality constraints with only lower bounds:     2700
+   inequality constraints with lower and upper bounds:        0
+        inequality constraints with only upper bounds:     2700
+
+iter    objective    inf_pr   inf_du lg(mu)  ||d||  lg(rg) alpha_du alpha_pr  ls
+   0 9.4598574e+028 3.77e+015 5.16e+021   0.0 0.00e+000    -  0.00e+000 0.00e+000   0
+   1 9.2177972e+028 3.77e+015 4.94e+021  -1.2 3.80e+017    -  1.02e-018 1.37e-018f  1
+   2 9.2123456e+028 3.77e+015 4.94e+021  -1.2 2.77e+010    -  6.05e-011 8.83e-013f  1
+   3 9.2122414e+028 3.77e+015 4.94e+021  -1.2 1.15e+015    -  1.48e-015 2.28e-019f  1
+   4 9.0954205e+028 3.77e+015 4.82e+021  -1.2 1.40e+014    -  6.99e-015 3.76e-016f  1
+   5 8.9627397e+028 3.77e+015 4.76e+021  -1.2 6.45e+013    -  1.25e-014 2.64e-016f  1
+   6 3.7905238e+028 3.77e+015 4.63e+021  -1.2 2.39e+009  11.8 1.35e-011 7.22e-011f  1
+MUMPS returned INFO(1) = -9 and requires more memory, reallocating.  Attempt 1
+  Increasing icntl[13] from 1000 to 2000.
+MUMPS returned INFO(1) = -9 and requires more memory, reallocating.  Attempt 2
+  Increasing icntl[13] from 2000 to 4000.
+   7 3.7886015e+028 3.77e+015 4.62e+021  -1.2 9.86e+004  11.4 2.34e-011 5.13e-006f  1
+   8 3.7507527e+028 3.77e+015 4.54e+021   2.7 3.86e+010  10.4 4.86e-013 7.74e-015f  1
+   9 3.7506655e+028 3.77e+015 4.54e+021   2.7 1.70e+006  10.8 4.34e-009 2.57e-009f  1
+iter    objective    inf_pr   inf_du lg(mu)  ||d||  lg(rg) alpha_du alpha_pr  ls
+  10 3.2505515e+028 3.77e+015 7.18e+021  -1.2 1.41e+009  12.2 2.91e-016 1.12e-011f  5
+  11 2.8806710e+028 3.77e+015 6.91e+021  -1.2 1.23e+009  11.7 2.97e-012 2.41e-011f  2
+  12 2.4437931e+028 3.77e+015 6.60e+021  -1.2 7.44e+009  11.2 1.55e-011 3.71e-012f  4
+  13 2.3652544e+028 3.77e+015 6.44e+021  -1.2 2.15e+013    -  2.03e-014 2.53e-016f  1
+  14 2.0021746e+028 3.77e+015 6.43e+021  -1.2 1.28e+010  10.7 1.88e-012 2.24e-012f  3
+  15 3.7269751e+027 3.77e+015 4.05e+020  -1.2 3.14e+014    -  8.86e-019 2.02e-015f  1
+  16 2.6494812e+027 3.77e+015 1.37e+020  -1.2 3.64e+012    -  6.91e-014 5.57e-015f  1
+  17 2.6120937e+027 3.77e+015 1.35e+020  -1.2 1.12e+012    -  2.49e-013 4.54e-016F  1
+  18 2.5931538e+027 3.77e+015 2.32e+020  -1.2 1.21e+012    -  3.41e-015 5.33e-014f  4
+  19 2.5905029e+027 3.77e+015 2.32e+020  -1.2 1.30e+006  10.3 1.90e-011 4.16e-008f  1
+iter    objective    inf_pr   inf_du lg(mu)  ||d||  lg(rg) alpha_du alpha_pr  ls
+  20 2.5904766e+027 3.77e+015 2.32e+020   2.7 4.97e+005  10.7 1.06e-007 1.09e-009f  1
+  21 2.4956640e+027 3.77e+015 2.48e+020  -1.2 2.21e+009  10.2 7.14e-012 4.90e-012f  5
+  22 2.4356424e+027 3.77e+015 2.47e+020  -1.2 2.26e+016    -  6.34e-018 8.58e-018f  1
+  23 2.4356375e+027 3.77e+015 2.47e+020  -1.2 1.79e+009    -  8.43e-010 3.61e-014f  1
+  24 2.4354692e+027 3.77e+015 2.47e+020  -1.2 9.88e+009    -  4.39e-010 2.41e-012f  1
+  25 2.4354318e+027 3.77e+015 2.47e+020  -1.2 5.83e+009    -  4.28e-010 2.40e-012f  1
+  26 2.4035725e+027 3.77e+015 2.43e+020  -1.2 1.55e+015    -  1.60e-015 1.41e-015f  1
+  27 2.3914056e+027 3.77e+015 2.43e+020  -1.2 5.27e+013    -  9.23e-015 1.05e-015f  1
+  28 2.3340172e+027 3.77e+015 2.39e+020  -1.2 1.84e+013    -  2.58e-014 7.10e-015f  1
+  29 2.3322761e+027 3.77e+015 2.39e+020   2.6 1.36e+010    -  1.96e-010 5.58e-012f  1
+iter    objective    inf_pr   inf_du lg(mu)  ||d||  lg(rg) alpha_du alpha_pr  ls
+  30 2.3071406e+027 3.77e+015 2.38e+020  -1.2 7.52e+009    -  1.28e-010 2.56e-010f  1
+  31 2.3056520e+027 3.77e+015 2.38e+020  -1.2 1.32e+017    -  6.56e-018 1.11e-018f  1
+  32 2.3056458e+027 3.77e+015 2.38e+020  -1.2 1.27e+011    -  1.68e-011 8.88e-015f  1
+  33 2.2721068e+027 3.77e+015 4.92e+020  -1.2 2.88e+010   9.7 3.90e-012 1.96e-012f  3
+  34 2.2715692e+027 3.77e+015 4.92e+020  -1.2 9.39e+008    -  6.89e-011 3.75e-010f  1
+  35 2.6034880e+026 3.77e+015 9.60e+019  -1.2 7.12e+010   9.3 1.49e-012 2.11e-012f  1
+  36 2.6034851e+026 3.77e+015 9.60e+019  -1.2 2.58e+008    -  5.18e-010 1.78e-012f  1
+  37 2.5855633e+026 3.77e+015 9.16e+019  -1.2 5.53e+008    -  1.29e-011 7.32e-009f  1
+  38 2.5855572e+026 3.77e+015 9.16e+019  -1.2 2.28e+008    -  1.64e-013 2.32e-011f  1
+  39 2.5855572e+026 3.77e+015 9.16e+019  -1.2 1.15e+009    -  5.28e-014 1.80e-014f  1
+iter    objective    inf_pr   inf_du lg(mu)  ||d||  lg(rg) alpha_du alpha_pr  ls
+  40 2.5855571e+026 3.77e+015 9.16e+019  -1.2 7.28e+010    -  1.21e-015 5.07e-016f  1
+  41 2.5855527e+026 3.77e+015 9.16e+019  -1.2 7.30e+010    -  1.70e-015 5.03e-014f  1
+  42 2.5311403e+026 3.77e+015 9.14e+019  -1.2 4.55e+013    -  3.00e-016 7.75e-015f  1
+  43 2.4796783e+026 3.77e+015 9.05e+019  -1.2 2.30e+016    -  3.29e-017 3.95e-018f  1
+  44 2.4781265e+026 3.77e+015 9.03e+019  -1.2 5.46e+008    -  5.62e-012 2.18e-011f  1
+  45 2.4777764e+026 3.77e+015 9.03e+019   2.7 1.14e+008    -  1.45e-009 1.29e-010f  1
+  46 2.4776853e+026 3.77e+015 9.03e+019   1.9 7.74e+008    -  6.50e-010 7.69e-012f  1
+  47 2.4776630e+026 3.77e+015 9.03e+019  -1.1 7.69e+008    -  5.77e-012 1.90e-012f  1
+  48 2.4775770e+026 3.77e+015 9.03e+019  -1.1 7.69e+008    -  5.77e-014 7.33e-012f  1
+  49 2.4660917e+026 3.77e+015 8.88e+019  -1.1 3.80e+015    -  2.48e-017 7.99e-018f  1
+iter    objective    inf_pr   inf_du lg(mu)  ||d||  lg(rg) alpha_du alpha_pr  ls
+  50 2.4660822e+026 3.77e+015 8.88e+019  -1.1 4.45e+008    -  4.01e-013 3.73e-013f  1
+  51 2.4660820e+026 3.77e+015 8.88e+019  -1.1 1.57e+008    -  6.57e-011 1.61e-014f  1
+  52 2.4660820e+026 3.77e+015 8.88e+019   0.5 1.33e+008    -  5.78e-009 2.15e-016f  1
+  53 2.4659850e+026 3.77e+015 8.88e+019   1.4 1.56e+008    -  2.44e-010 2.31e-011f  1
+  54 2.3919172e+026 3.77e+015 7.61e+019  -0.5 1.94e+015    -  6.86e-017 1.47e-016f  1
+  55 2.3890722e+026 3.77e+015 7.61e+019  -0.5 5.72e+008    -  7.36e-011 5.64e-010f  1
+In iteration 55, 1 Slack too small, adjusting variable bound
+  56 2.3815449e+026 3.77e+015 7.62e+019  -0.5 5.09e+008    -  6.53e-010 2.32e-009f  1
+  57 2.3804278e+026 3.77e+015 7.62e+019  -0.5 4.92e+008    -  5.90e-012 3.59e-010f  1
+  58 2.3804211e+026 3.77e+015 7.62e+019  -0.5 1.30e+008    -  1.52e-013 1.05e-011f  1
+  59 2.3804150e+026 3.77e+015 7.62e+019  -0.5 4.88e+012    -  1.15e-016 3.68e-018f  1
+iter    objective    inf_pr   inf_du lg(mu)  ||d||  lg(rg) alpha_du alpha_pr  ls
+  60 2.3802373e+026 3.77e+015 7.62e+019  -0.5 1.08e+012    -  1.62e-013 2.71e-016f  1
+  61 2.3802371e+026 3.77e+015 7.62e+019   1.3 4.32e+010    -  5.20e-012 3.62e-016f  1
+  62 2.2783878e+026 3.77e+015 7.47e+019   2.5 9.14e+012    -  1.40e-014 1.62e-014f  1
+  63 2.1981004e+026 3.77e+015 7.61e+019  -0.5 7.15e+012    -  1.89e-014 3.91e-014f  1
+  64 2.1213355e+026 3.77e+015 7.66e+019   0.7 9.31e+009   8.8 1.09e-011 1.36e-013f  1
+  65 2.0799720e+026 3.77e+015 6.77e+019   1.3 3.50e+015    -  1.43e-016 3.01e-017f  1
+  66 1.0466081e+026 3.77e+015 5.01e+019   3.4 3.70e+010   8.3 2.58e-012 1.28e-012f  1
+  67 8.9404787e+025 3.77e+015 4.15e+019   0.4 4.62e+010   7.8 3.96e-012 5.47e-013f  3
+  68 8.9404761e+025 3.77e+015 4.15e+019   0.4 3.61e+007    -  8.23e-009 1.15e-011f  1
+  69 8.9385896e+025 3.77e+015 4.15e+019  -0.5 3.61e+007    -  8.23e-011 8.17e-009f  1
+In iteration 69, 1 Slack too small, adjusting variable bound
+iter    objective    inf_pr   inf_du lg(mu)  ||d||  lg(rg) alpha_du alpha_pr  ls
+  70 8.9366804e+025 3.77e+015 4.14e+019  -0.5 3.62e+007    -  8.25e-013 8.22e-009f  1
+  71 8.8584002e+025 3.77e+015 4.01e+019  -0.5 6.55e+014    -  3.41e-016 2.76e-016f  1
+  72 8.8583810e+025 3.77e+015 4.01e+019   1.7 2.00e+008    -  8.56e-010 5.26e-012f  1
+  73 8.8583802e+025 3.77e+015 4.01e+019  -0.5 5.55e+008    -  1.43e-012 6.15e-014f  1
+  74 8.8583578e+025 3.77e+015 4.01e+019  -0.5 1.84e+009    -  1.80e-014 5.68e-013f  1
+  75 6.6565330e+025 3.77e+015 4.54e+019  -0.5 5.14e+012    -  1.28e-015 3.13e-013f  1
+  76 6.3847404e+025 3.77e+015 4.43e+019   1.0 1.04e+012    -  2.03e-017 4.70e-014f  1
+  77 6.3847236e+025 3.77e+015 4.43e+019   3.4 1.35e+009    -  2.21e-009 1.17e-012f  1
+  78 6.3847194e+025 3.77e+015 4.43e+019   3.4 1.28e+009    -  2.32e-009 2.96e-013f  1
+  79 6.3846865e+025 3.77e+015 4.43e+019   3.4 7.32e+008    -  6.42e-009 5.04e-012f  1
+iter    objective    inf_pr   inf_du lg(mu)  ||d||  lg(rg) alpha_du alpha_pr  ls
+  80 6.3794287e+025 3.77e+015 4.42e+019  -0.4 1.15e+015    -  1.24e-016 4.66e-018f  1
+  81 6.3458083e+025 3.77e+015 4.28e+019  -0.4 6.09e+008    -  3.85e-012 4.41e-010f  1
+  82 6.3457680e+025 3.77e+015 4.28e+019   3.5 7.16e+007    -  1.68e-008 2.24e-011f  1
+  83 6.3392585e+025 3.77e+015 4.27e+019   3.5 4.33e+008    -  1.30e-009 8.66e-010f  1
+  84 6.1254052e+025 3.77e+015 4.24e+019  -0.4 1.26e+013    -  8.31e-016 1.80e-014f  1
+  85 6.1231211e+025 3.77e+015 4.24e+019   1.0 7.65e+012    -  2.65e-014 5.69e-016f  1
+  86 6.1231076e+025 3.77e+015 4.24e+019  -0.4 6.81e+012    -  3.20e-014 4.98e-018f  1
+  87 6.0044304e+025 3.77e+015 4.18e+019  -0.4 5.63e+009   9.2 1.63e-012 9.50e-014f  1
+  88 5.9001004e+025 3.77e+015 3.80e+019   1.4 1.92e+013    -  1.04e-013 3.35e-014f  1
+  89 5.8983737e+025 3.77e+015 3.80e+019  -0.4 4.43e+008    -  4.62e-013 3.11e-010f  1
+iter    objective    inf_pr   inf_du lg(mu)  ||d||  lg(rg) alpha_du alpha_pr  ls
+  90 5.8951341e+025 3.77e+015 3.80e+019  -0.4 1.65e+012    -  7.93e-014 3.81e-015f  1
+  91 5.8951126e+025 3.77e+015 3.80e+019  -0.4 1.80e+008    -  1.80e-013 1.89e-011f  1
+  92 5.8951083e+025 3.77e+015 3.80e+019  -0.4 2.27e+008    -  2.29e-015 2.97e-012f  1
+  93 5.8951041e+025 3.77e+015 3.80e+019  -0.4 4.35e+008    -  5.62e-013 1.47e-012f  1
+  94 5.7729906e+025 3.77e+015 3.67e+019  -0.4 7.31e+014    -  1.05e-019 1.92e-016f  1
+  95 5.7728835e+025 3.77e+015 3.67e+019   1.9 4.84e+008    -  6.22e-010 1.97e-012f  1
+  96 5.7721747e+025 3.77e+015 3.67e+019   0.0 5.91e+007    -  1.14e-008 3.98e-010f  1
+  97 5.7721632e+025 3.77e+015 3.67e+019   1.2 6.40e+007    -  2.06e-008 7.25e-012f  1
+  98 5.7703545e+025 3.77e+015 3.67e+019  -0.3 7.05e+007    -  8.74e-010 1.37e-009f  1
+  99 5.7694560e+025 3.77e+015 3.67e+019  -0.3 6.84e+014    -  1.70e-016 2.21e-018f  1
+iter    objective    inf_pr   inf_du lg(mu)  ||d||  lg(rg) alpha_du alpha_pr  ls
+ 100 5.7694288e+025 3.77e+015 3.67e+019  -0.3 4.93e+008    -  6.32e-013 5.46e-013f  1
+ 101 5.7694287e+025 3.77e+015 3.67e+019  -0.3 7.18e+007    -  1.86e-009 9.98e-014f  1
+ 102 5.7694095e+025 3.77e+015 3.67e+019  -0.3 7.48e+007    -  1.81e-009 1.40e-011f  1
+ 103 5.7693105e+025 3.77e+015 3.67e+019  -0.3 7.47e+007    -  1.84e-011 7.20e-011f  1
+ 104 5.7681654e+025 3.77e+015 3.66e+019  -0.3 3.62e+014    -  1.25e-015 5.56e-018f  1
+ 105 5.7681654e+025 3.77e+015 3.66e+019  -0.3 5.64e+007    -  1.10e-012 9.97e-016f  1
+ 106 5.7624634e+025 3.77e+015 3.66e+019  -0.3 2.66e+009    -  3.08e-015 1.13e-010f  1
+ 107 5.7624069e+025 3.77e+015 3.66e+019  -0.3 2.87e+009    -  2.24e-013 1.03e-012f  1
+ 108 5.7624064e+025 3.77e+015 3.66e+019  -0.3 3.14e+009    -  3.06e-014 9.39e-015f  1
+ 109 5.7270857e+025 3.77e+015 3.50e+019  -0.3 3.30e+014    -  6.51e-017 1.70e-016f  1
+iter    objective    inf_pr   inf_du lg(mu)  ||d||  lg(rg) alpha_du alpha_pr  ls
+ 110 5.7270857e+025 3.77e+015 3.50e+019   3.5 3.83e+007    -  7.19e-009 1.59e-016f  1
+ 111 5.7270847e+025 3.77e+015 3.50e+019   3.6 5.14e+007    -  9.73e-010 9.83e-013f  1
+ 112 5.7250897e+025 3.77e+015 3.50e+019   3.6 1.76e+009    -  4.80e-011 5.91e-011f  1
+ 113 5.7250404e+025 3.77e+015 3.50e+019   1.9 2.80e+008    -  8.53e-010 1.15e-011f  1
+In iteration 113, 1 Slack too small, adjusting variable bound
+ 114 5.7229113e+025 3.77e+015 3.50e+019  -0.3 2.03e+008    -  8.16e-012 7.73e-010f  1
+ 115 5.6938246e+025 3.77e+015 3.35e+019  -0.3 3.17e+014    -  1.69e-015 1.56e-016f  1
+ 116 5.6925439e+025 3.77e+015 3.35e+019  -0.3 3.34e+007    -  7.10e-011 2.42e-009f  1
+ 117 5.6912322e+025 3.77e+015 3.35e+019   1.5 3.40e+007    -  2.47e-009 2.51e-009f  1
+ 118 5.6909605e+025 3.77e+015 3.35e+019   3.6 3.47e+007    -  5.06e-009 5.26e-010f  1
+ 119 5.6868656e+025 3.77e+015 3.34e+019  -0.3 2.61e+014    -  2.25e-015 2.91e-017f  1
+iter    objective    inf_pr   inf_du lg(mu)  ||d||  lg(rg) alpha_du alpha_pr  ls
+ 120 5.6868466e+025 3.77e+015 3.34e+019   3.6 4.35e+007    -  1.38e-010 4.25e-011f  1
+ 121 5.6867777e+025 3.77e+015 3.34e+019   3.0 4.41e+007    -  1.06e-009 1.57e-010f  1
+ 122 5.6862472e+025 3.77e+015 3.34e+019  -0.3 4.42e+007    -  1.06e-011 1.21e-009f  1
+ 123 5.6858352e+025 3.77e+015 3.33e+019  -0.3 2.51e+014    -  2.12e-015 3.55e-018f  1
+ 124 5.6852857e+025 3.77e+015 3.33e+019  -0.3 4.32e+007    -  1.35e-013 1.24e-009f  1
+In iteration 124, 1 Slack too small, adjusting variable bound
+ 125 5.6846728e+025 3.77e+015 3.33e+019   1.6 2.15e+008    -  2.00e-010 1.36e-009f  1
+ 126 5.6840289e+025 3.77e+015 3.33e+019   3.6 2.14e+008    -  2.26e-009 1.44e-009f  1
+ 127 5.6830229e+025 3.77e+015 3.33e+019  -0.3 1.57e+014    -  2.48e-015 1.33e-017f  1
+ 128 5.6813259e+025 3.77e+015 3.33e+019  -0.3 1.93e+008    -  7.52e-013 4.33e-009f  1
+ 129 5.6747532e+025 3.77e+015 3.33e+019   3.6 1.91e+008    -  4.34e-009 1.69e-008f  1
+Exception of type: IpoptException in file "Unknown File" at line -1:
+ Exception message: Unknown Exception caught in Ipopt
+      solver  :   t_proc      (avg)   t_wall      (avg)    n_eval
+       nlp_f  |   2.74 s ( 17.11ms)   2.74 s ( 17.14ms)       160
+       nlp_g  |   2.90 s ( 18.12ms)   2.90 s ( 18.10ms)       160
+  nlp_grad_f  |   4.52 s ( 34.48ms)   4.51 s ( 34.46ms)       131
+   nlp_jac_g  |   7.08 s ( 54.05ms)   7.07 s ( 54.00ms)       131
+       total  | 109.82 s (109.82 s) 109.82 s (109.82 s)         1
+ 
+...Exit NLP solver. Time elapsed 110.81 s
+ 
+ 
+Retrieving solution...
+ 
+Issue when reconstructing average speed
+Issue when reconstructing optimal cost wrt sum of terms
+   Difference = 128849018880
+Issue when reconstructing optimal cost wrt stats
+   Difference = 68719476736
+Saving results as: C:\GBW_MyPrograms\KinderuniversiteitApp\Resultaten\Ellis_1010\Kleuter\Kleuter_v1.mat
+ 
+ 
+Start PostProcessing...
+ 
+ 
+...PostProcessing done. Time elapsed 0.23 s
+ 
+ 
+Total time elapsed 112.78 s
+ 
+Diary saved as C:\GBW_MyPrograms\KinderuniversiteitApp\Resultaten\Ellis_1010\Kleuter\Kleuter_v1_log.txt
+ 
+ 

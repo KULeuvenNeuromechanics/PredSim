@@ -1,0 +1,183 @@
+ 
+Subject name: Jullie_lengte
+OpenSim model: C:\GBW_MyPrograms\KinderuniversiteitApp\Subjects\Ellis_v10102025\Jullie_lengte\Jullie_lengte.osim
+ 
+ 
+Start PreProcessing...
+ 
+   Using existing external function: 
+      C:\GBW_MyPrograms\KinderuniversiteitApp\Subjects\Jullie_lengte\F_Jullie_lengte.dll
+   using existing MSK geometry Jullie_lengte_f_lMT_vMT_dM_poly_3_9
+ 
+...PreProcessing done. Time elapsed 0.29 s
+ 
+ 
+Start creating CasADi functions...
+ 
+ 
+...CasADi functions created. Time elapsed 0.21 s
+ 
+ 
+Start formulating OCP...
+ 
+...OCP formulation done. Time elapsed 0.33 s
+ 
+Starting NLP solver...
+ 
+This is Ipopt version 3.12.3, running with linear solver mumps.
+NOTE: Other linear solvers might be more efficient (see Ipopt documentation).
+
+Number of nonzeros in equality constraint Jacobian...:   115460
+Number of nonzeros in inequality constraint Jacobian.:    10800
+Number of nonzeros in Lagrangian Hessian.............:        0
+
+Total number of variables............................:    16607
+                     variables with only lower bounds:        0
+                variables with lower and upper bounds:    16607
+                     variables with only upper bounds:        0
+Total number of equality constraints.................:    15657
+Total number of inequality constraints...............:     5400
+        inequality constraints with only lower bounds:     2700
+   inequality constraints with lower and upper bounds:        0
+        inequality constraints with only upper bounds:     2700
+
+iter    objective    inf_pr   inf_du lg(mu)  ||d||  lg(rg) alpha_du alpha_pr  ls
+   0 1.1648358e+004 1.05e+005 1.00e+002   0.0 0.00e+000    -  0.00e+000 0.00e+000   0
+   1 1.3266259e+008 6.67e+004 1.46e+006  -0.2 6.95e+000    -  5.81e-001 3.71e-001h  2
+   2 1.1391749e+006 3.30e+004 6.57e+008   0.8 1.43e+000    -  1.00e+000 5.43e-001f  1
+   3 3.9469406e+008 1.27e+004 3.27e+009   1.3 4.64e+000    -  1.00e+000 6.79e-001h  1
+   4 2.9122413e+008 1.12e+004 1.02e+009   2.2 1.39e+001    -  1.00e+000 1.39e-001h  1
+   5 2.7870428e+008 1.10e+004 1.41e+009   3.5 5.95e+000    -  1.00e+000 2.14e-002h  1
+   6 2.7857169e+008 1.10e+004 1.41e+009   3.7 4.42e+000    -  3.68e-001 2.32e-004h  1
+   7r2.7857169e+008 1.10e+004 1.00e+003   3.7 0.00e+000    -  0.00e+000 3.05e-007R  4
+   8r3.0851445e+006 3.30e+002 3.08e+002   1.8 6.20e+000    -  9.25e-001 9.21e-001f  1
+   9 3.0108683e+006 3.44e+002 5.58e+006   2.1 1.27e+002    -  9.58e-001 1.99e-002h  1
+iter    objective    inf_pr   inf_du lg(mu)  ||d||  lg(rg) alpha_du alpha_pr  ls
+  10 3.0077094e+006 3.44e+002 6.69e+006   3.6 1.47e+002    -  1.00e+000 4.48e-004f  1
+  11 3.0075905e+006 3.44e+002 3.92e+009  -2.5 1.57e+003    -  2.39e-003 5.81e-006f  1
+  12 2.9687554e+006 3.55e+002 2.01e+008   3.7 9.20e+003    -  2.37e-004 2.58e-003f  1
+  13 3.0320498e+006 3.56e+002 2.07e+010   3.7 3.05e+005    -  1.87e-005 1.09e-004f  1
+  14 3.0350109e+006 3.56e+002 2.12e+010   3.4 5.78e+004    -  1.16e-006 1.52e-005f  3
+  15 3.0339867e+006 3.56e+002 2.15e+010   2.7 2.69e+004    -  7.50e-008 5.38e-005h  1
+  16 3.0372843e+006 3.56e+002 2.15e+010   2.0 2.71e+004    -  5.74e-005 1.35e-004h  1
+  17 3.0428281e+006 3.56e+002 2.15e+010   2.0 2.55e+004    -  9.08e-004 1.74e-004h  2
+  18 3.0460036e+006 3.56e+002 2.15e+010   2.0 2.57e+004    -  4.62e-004 8.91e-005h  2
+  19r3.0460036e+006 3.56e+002 1.00e+003   2.0 0.00e+000    -  0.00e+000 3.23e-007R 10
+iter    objective    inf_pr   inf_du lg(mu)  ||d||  lg(rg) alpha_du alpha_pr  ls
+  20r1.8244984e+006 3.54e+002 7.95e+002   0.7 4.82e+000    -  2.06e-001 1.50e-001f  1
+  21 1.8242261e+006 3.54e+002 5.81e+004   2.7 2.08e+004    -  1.44e-003 2.68e-005h  3
+  22r1.8242261e+006 3.54e+002 1.98e+002   2.8 0.00e+000    -  0.00e+000 3.16e-007R 10
+  23r9.1317913e+004 2.77e+002 2.24e+003   0.6 2.28e+001    -  6.72e-001 5.91e-001f  1
+  24r2.1134780e+003 3.12e+002 2.71e+003   0.6 1.38e+001    -  5.88e-001 8.41e-001f  1
+  25r1.9716438e+003 2.86e+002 1.86e+003  -0.2 4.00e+000    -  6.99e-001 9.64e-002f  1
+  26r3.6637225e+003 9.83e+001 1.17e+003  -0.1 8.90e+000    -  5.24e-001 9.10e-001f  1
+  27 3.6666513e+003 9.83e+001 3.39e+003  -0.6 1.09e+002    -  2.12e-001 2.00e-004h  1
+  28r3.6666513e+003 9.83e+001 9.99e+002  -1.4 0.00e+000    -  0.00e+000 4.07e-007R  5
+  29r3.6796487e+003 1.04e+002 1.12e+003   0.5 3.30e+001    -  7.83e-002 1.14e-003f  1
+iter    objective    inf_pr   inf_du lg(mu)  ||d||  lg(rg) alpha_du alpha_pr  ls
+  30 3.6799815e+003 1.04e+002 2.55e+006   0.8 2.69e+001    -  1.00e+000 3.74e-005h  1
+  31 3.7855826e+003 1.04e+002 2.61e+007   2.3 1.41e+003    -  4.67e-002 1.05e-003f  5
+  32 3.8759962e+003 1.03e+002 5.62e+007   1.1 1.77e+003    -  1.91e-002 9.48e-004h  5
+  33r3.8759962e+003 1.03e+002 9.97e+002   1.1 0.00e+000    -  0.00e+000 3.66e-007R 16
+  34r4.6557823e+004 2.41e+002 3.05e+004   1.0 1.41e+001    -  9.88e-001 1.00e+000f  1
+  35r3.0501564e+003 1.61e+002 7.27e+003   0.4 5.83e+000    -  7.30e-001 5.01e-001f  1
+  36r5.7077489e+003 1.40e+002 2.71e+004   0.0 7.05e+000    -  8.32e-001 7.95e-001f  1
+  37r5.9509787e+004 5.52e+001 8.89e+003   0.1 9.58e+000    -  7.08e-001 1.00e+000f  1
+  38r4.9178372e+004 1.96e+001 9.35e+003  -0.1 4.25e+000    -  1.00e+000 1.00e+000f  1
+  39r3.9910135e+004 3.52e+000 6.94e+001  -0.7 4.51e+000    -  1.00e+000 8.92e-001f  1
+iter    objective    inf_pr   inf_du lg(mu)  ||d||  lg(rg) alpha_du alpha_pr  ls
+  40r1.2083817e+004 2.62e+001 7.05e+002  -0.1 2.48e+001    -  8.37e-001 3.19e-001f  1
+  41r8.6678714e+003 6.94e+000 4.41e+002  -0.4 1.51e+000    -  1.00e+000 1.00e+000f  1
+  42r8.9304034e+003 8.16e+000 1.40e+002  -0.4 2.62e+000    -  1.00e+000 1.00e+000f  1
+  43 8.9308239e+003 8.16e+000 4.58e+004   0.5 1.19e+001    -  7.97e-001 5.84e-004h  1
+  44r8.9308239e+003 8.16e+000 9.97e+002   2.4 0.00e+000    -  0.00e+000 3.66e-007R  5
+  45r8.6348842e+003 2.05e+001 5.87e+001  -3.9 2.64e-001    -  9.42e-001 9.72e-001f  1
+  46r7.6925293e+003 4.95e+001 1.51e+003  -1.5 7.88e-001    -  1.00e+000 6.48e-001f  1
+  47r3.2331686e+004 5.55e+001 6.15e+002  -0.3 2.02e+001    -  7.24e-001 6.26e-001f  1
+  48r1.0526007e+004 1.44e+001 1.51e+003  -0.8 5.91e+000    -  1.00e+000 9.61e-001f  1
+  49r6.9093875e+003 6.82e+000 3.22e+002  -0.9 5.01e+000    -  1.00e+000 8.54e-001f  1
+iter    objective    inf_pr   inf_du lg(mu)  ||d||  lg(rg) alpha_du alpha_pr  ls
+  50r6.9535914e+003 3.33e+000 2.64e+002  -1.7 9.83e-001    -  1.00e+000 5.36e-001f  1
+  51r6.9626096e+003 1.67e+000 2.64e+002  -2.5 7.38e-001    -  1.00e+000 5.07e-001f  1
+  52r6.9454719e+003 1.26e-001 2.45e+001  -2.9 7.02e-001    -  1.00e+000 9.34e-001f  1
+  53r6.9203300e+003 1.40e-002 1.35e+001  -4.1 5.01e-001    -  1.00e+000 9.74e-001f  1
+  54r6.9204097e+003 1.40e-002 8.91e-001  -5.8 4.28e-002    -  1.00e+000 9.69e-001f  1
+  55r6.8420873e+003 1.24e-001 1.71e+001  -6.4 5.91e+000    -  1.00e+000 8.77e-001f  1
+  56r7.5454575e+003 4.38e-001 2.38e-001  -7.2 6.75e+000    -  1.00e+000 1.00e+000h  1
+  57r6.8319881e+003 6.46e-001 5.04e+000  -7.3 1.32e+001    -  1.00e+000 5.00e-001h  2
+  58r7.0130186e+003 3.41e-002 8.30e-002  -8.2 1.39e+000    -  1.00e+000 1.00e+000h  1
+  59r7.0138996e+003 1.54e-002 4.41e-003  -9.0 1.73e-002    -  1.00e+000 1.00e+000h  1
+iter    objective    inf_pr   inf_du lg(mu)  ||d||  lg(rg) alpha_du alpha_pr  ls
+  60r7.0155246e+003 1.54e-002 1.39e-003  -9.0 1.41e-002    -  1.00e+000 1.00e+000h  1
+  61r7.1210233e+003 1.68e-002 1.69e-002  -9.0 8.85e-001    -  1.00e+000 1.00e+000h  1
+  62r7.1096857e+003 1.65e-002 5.43e-003  -9.0 1.13e-001    -  1.00e+000 1.00e+000h  1
+  63r7.1089715e+003 1.65e-002 2.47e-003  -9.0 5.07e-002    -  1.00e+000 1.00e+000h  1
+  64r7.1098115e+003 1.65e-002 2.29e-003  -9.0 6.21e-002    -  1.00e+000 1.00e+000h  1
+  65r7.1097256e+003 1.65e-002 2.50e-004  -9.0 2.51e-003    -  1.00e+000 1.00e+000h  1
+
+Number of Iterations....: 65
+
+                                   (scaled)                 (unscaled)
+Objective...............:  1.7971673084274784e+001   7.1097212003361765e+003
+Dual infeasibility......:  4.2286293843967570e+002   1.6728757440461384e+005
+Constraint violation....:  1.6531782143490315e-002   1.6531782143490315e-002
+Complementarity.........:  1.0000000000000003e-009   3.9560708493841821e-007
+Overall NLP error.......:  4.2286293843967570e+002   1.6728757440461384e+005
+
+
+Number of objective function evaluations             = 144
+Number of objective gradient evaluations             = 35
+Number of equality constraint evaluations            = 146
+Number of inequality constraint evaluations          = 146
+Number of equality constraint Jacobian evaluations   = 73
+Number of inequality constraint Jacobian evaluations = 73
+Number of Lagrangian Hessian evaluations             = 0
+Total CPU secs in IPOPT (w/o function evaluations)   =      9.612
+Total CPU secs in NLP function evaluations           =      7.966
+
+EXIT: Converged to a point of local infeasibility. Problem may be infeasible.
+      solver  :   t_proc      (avg)   t_wall      (avg)    n_eval
+       nlp_f  |   1.81 s ( 12.59ms)   1.82 s ( 12.63ms)       144
+       nlp_g  |   1.97 s ( 13.51ms)   1.97 s ( 13.49ms)       146
+  nlp_grad_f  | 884.00ms ( 24.56ms) 884.84ms ( 24.58ms)        36
+   nlp_jac_g  |   3.35 s ( 45.24ms)   3.34 s ( 45.17ms)        74
+       total  |  17.61 s ( 17.61 s)  17.61 s ( 17.61 s)         1
+ 
+...Exit NLP solver. Time elapsed 18.58 s
+ 
+ 
+Retrieving solution...
+ 
+Issue when reconstructing optimal cost wrt stats
+   Difference = 1821.102
+[Warning: No ground contact detected on right foot, using left foot initial contact as start of gait cycle.] 
+[> In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('getStancePhaseSimulation', 'C:\GBW_MyPrograms\KinderuniversiteitApp\OCP\getStancePhaseSimulation.m', 59)" style="font-weight:bold">getStancePhaseSimulation</a> (<a href="matlab: opentoline('C:\GBW_MyPrograms\KinderuniversiteitApp\OCP\getStancePhaseSimulation.m',59,0)">line 59</a>)
+In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('OCP_formulation', 'C:\GBW_MyPrograms\KinderuniversiteitApp\OCP\OCP_formulation.m', 1073)" style="font-weight:bold">OCP_formulation</a> (<a href="matlab: opentoline('C:\GBW_MyPrograms\KinderuniversiteitApp\OCP\OCP_formulation.m',1073,0)">line 1073</a>)
+In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('run_pred_sim', 'C:\GBW_MyPrograms\KinderuniversiteitApp\run_pred_sim.m', 126)" style="font-weight:bold">run_pred_sim</a> (<a href="matlab: opentoline('C:\GBW_MyPrograms\KinderuniversiteitApp\run_pred_sim.m',126,0)">line 126</a>)
+In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('PredSim_wrapper_for_app', 'C:\GBW_MyPrograms\KinderuniversiteitApp\App2025\PredSim_wrapper_for_app.m', 132)" style="font-weight:bold">PredSim_wrapper_for_app</a> (<a href="matlab: opentoline('C:\GBW_MyPrograms\KinderuniversiteitApp\App2025\PredSim_wrapper_for_app.m',132,0)">line 132</a>)
+In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('OpStapMetSuperKracht2025/StartsimulatieButtonPushed', 'C:\GBW_MyPrograms\KinderuniversiteitApp\App2025\OpStapMetSuperKracht2025.mlapp', 655)" style="font-weight:bold">OpStapMetSuperKracht2025/StartsimulatieButtonPushed</a> (<a href="matlab: opentoline('C:\GBW_MyPrograms\KinderuniversiteitApp\App2025\OpStapMetSuperKracht2025.mlapp',655,0)">line 655</a>)
+In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('matlab.apps.AppBase>@(source,event)executeCallback(ams,app,callback,requiresEventData,event)', 'C:\Program Files\MATLAB\R2023b\toolbox\matlab\appdesigner\appdesigner\runtime\+matlab\+apps\AppBase.m', 62)" style="font-weight:bold">matlab.apps.AppBase>@(source,event)executeCallback(ams,app,callback,requiresEventData,event)</a> (<a href="matlab: opentoline('C:\Program Files\MATLAB\R2023b\toolbox\matlab\appdesigner\appdesigner\runtime\+matlab\+apps\AppBase.m',62,0)">line 62</a>)] 
+{Index exceeds the number of array elements. Index must not exceed 0.
+
+Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('getStancePhaseSimulation', 'C:\GBW_MyPrograms\KinderuniversiteitApp\OCP\getStancePhaseSimulation.m', 72)" style="font-weight:bold">getStancePhaseSimulation</a> (<a href="matlab: opentoline('C:\GBW_MyPrograms\KinderuniversiteitApp\OCP\getStancePhaseSimulation.m',72,0)">line 72</a>)
+if idx_init_contact(1) == 1 % no need to shift
+
+Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('OCP_formulation', 'C:\GBW_MyPrograms\KinderuniversiteitApp\OCP\OCP_formulation.m', 1073)" style="font-weight:bold">OCP_formulation</a> (<a href="matlab: opentoline('C:\GBW_MyPrograms\KinderuniversiteitApp\OCP\OCP_formulation.m',1073,0)">line 1073</a>)
+[idx_GC,idx_GC_base_forward_offset,HS1,HS_threshold] = getStancePhaseSimulation(GRFk_opt,model_info.mass/3);
+
+Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('run_pred_sim', 'C:\GBW_MyPrograms\KinderuniversiteitApp\run_pred_sim.m', 126)" style="font-weight:bold">run_pred_sim</a> (<a href="matlab: opentoline('C:\GBW_MyPrograms\KinderuniversiteitApp\run_pred_sim.m',126,0)">line 126</a>)
+    OCP_formulation(S,model_info,f_casadi);
+
+Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('PredSim_wrapper_for_app', 'C:\GBW_MyPrograms\KinderuniversiteitApp\App2025\PredSim_wrapper_for_app.m', 132)" style="font-weight:bold">PredSim_wrapper_for_app</a> (<a href="matlab: opentoline('C:\GBW_MyPrograms\KinderuniversiteitApp\App2025\PredSim_wrapper_for_app.m',132,0)">line 132</a>)
+savename = run_pred_sim(S,osim_path);
+
+Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('OpStapMetSuperKracht2025/StartsimulatieButtonPushed', 'C:\GBW_MyPrograms\KinderuniversiteitApp\App2025\OpStapMetSuperKracht2025.mlapp', 655)" style="font-weight:bold">OpStapMetSuperKracht2025/StartsimulatieButtonPushed</a> (<a href="matlab: opentoline('C:\GBW_MyPrograms\KinderuniversiteitApp\App2025\OpStapMetSuperKracht2025.mlapp',655,0)">line 655</a>)
+            resultpath = PredSim_wrapper_for_app(U,sf);
+
+Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('matlab.apps.AppBase>@(source,event)executeCallback(ams,app,callback,requiresEventData,event)', 'C:\Program Files\MATLAB\R2023b\toolbox\matlab\appdesigner\appdesigner\runtime\+matlab\+apps\AppBase.m', 62)" style="font-weight:bold">matlab.apps.AppBase>@(source,event)executeCallback(ams,app,callback,requiresEventData,event)</a> (<a href="matlab: opentoline('C:\Program Files\MATLAB\R2023b\toolbox\matlab\appdesigner\appdesigner\runtime\+matlab\+apps\AppBase.m',62,0)">line 62</a>)
+            newCallback = @(source, event)executeCallback(ams, ...
+} 
+Error while evaluating Button PrivateButtonPushedFcn.
+
+Scaled model already exists.
+Using a quasi-random initial guess.
