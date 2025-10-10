@@ -1,4 +1,4 @@
-function [varargout] = PredSim_wrapper_for_app_Old(U,sf)
+function [varargout] = PredSim_wrapper_for_app(U,sf)
 % --------------------------------------------------------------------------
 % PredSim_wrapper_for_app
 %   This functions replaces main.m when using the Vitruvian_Man apps
@@ -35,32 +35,23 @@ cd(pathRepo);
 
 %% scale model
 % Detect height in cm and convert to m
-
-U.Height = U.Height/100;
-
+if U.Height > 50
+    U.Height = U.Height/100;
+end
 
 % Scale + adapt gravity
-scaleOsim(pathRepo, U,sf);
+scaleOsim(pathRepo, U, sf);
 
 %%% adapt gravity
-output_dir = fullfile(pathRepo, 'Subjects',U.GroupName, U.ModelName);
 osim_output_name = [U.ModelName '.osim'];
+output_dir = fullfile(pathRepo, 'Subjects',U.ModelName);
 import org.opensim.modeling.*
 model = Model(fullfile(output_dir,osim_output_name));
 gravity_model = U.sf_Gravity*-9.81;
 model.setGravity( Vec3(0, gravity_model, 0) );
 model.print(fullfile(output_dir,osim_output_name));
 
-%%% adapt gravity
-gravity_model =  U.sf_Gravity*-9.8066499999999994;
-model.setGravity( Vec3(0, gravity_model, 0) );
 
-if ~isfolder(output_dir)
-    mkdir(output_dir)
-end
-
-%%% save all changes to the model
-model.print(fullfile(output_dir,osim_output_name));
 
 
 
@@ -82,7 +73,7 @@ S.subject.name = U.ModelName;
 S.subject.save_folder  = fullfile(U.savefolder,U.GroupName); 
 
 % give the path to the osim model of your subject
-osim_path = fullfile(output_dir,[S.subject.name '.osim']);
+osim_path = fullfile(pathRepo,'Subjects',S.subject.name,[S.subject.name '.osim']);
 
 % Do you want to run the simulation as a batch job (parallel computing toolbox)
 S.solver.run_as_batch_job = 0;
@@ -98,7 +89,7 @@ S.solver.max_iter = 1000;
 %% Scaling
 
 sf_legLength = (sf.low_leg + sf.upp_leg)/2;
-sf_mass = U.Mass/62;
+sf_mass = U.Mass/75;
 sf_force = sf_mass^(2/3);
 
 % muscle forces (~ size^2)

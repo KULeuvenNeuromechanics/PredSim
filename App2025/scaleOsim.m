@@ -1,4 +1,4 @@
-function scaleOsim(MainPath, U, sf)
+function scaleOsim(MainPath, U)
 
 % % test inputs
 % MainPath = 'C:\GBW_MyPrograms\PredSim_test';
@@ -31,35 +31,35 @@ if ~isfolder(output_dir)
 end
 
 % copy unscaled model file
-copyfile(fullfile(MainPath,'Subjects','Vitruvian_Man','Vitruvian_Man.osim'),output_dir);
+copyfile(fullfile(MainPath,'Subjects','gait1018','gait1018.osim'),output_dir);
 
 % generic xml file
 generic_scalefile = fullfile(MainPath,'Subjects','Vitruvian_Man','uniformScale.xml');
 
 % general scale factor
-sf_total = U.Height/1.80;
+sf_total = U.Height/160;
 
 % apply scale factors to segments
-sf_seg.pelvis = [1,1,1]*sf.upp_leg;
-sf_seg.femur_r = [1,1,1]*sf.upp_leg;
-sf_seg.femur_l = [1,1,1]*sf.upp_leg;
-sf_seg.tibia_r = [1,1,1]*sf.low_leg;
-sf_seg.tibia_l = [1,1,1]*sf.low_leg;
-sf_seg.talus_r = [1,1,1]*sf.foot;
-sf_seg.calcn_r = [1,1,1]*sf.foot;
-sf_seg.toes_r = [1,1,1]*sf.foot;
-sf_seg.talus_l = [1,1,1]*sf.foot;
-sf_seg.calcn_l = [1,1,1]*sf.foot;
-sf_seg.toes_l = [1,1,1]*sf.foot;
-sf_seg.torso = [sqrt(sf.torso*sf.shoulder),sf.torso,sf.shoulder];
-sf_seg.humerus_r = [1,1,1]*sf.upp_arm;
-sf_seg.humerus_l = [1,1,1]*sf.upp_arm;
-sf_seg.ulna_r = [1,1,1]*sf.low_arm;
-sf_seg.radius_r = [1,1,1]*sf.low_arm;
-sf_seg.hand_r = [1,1,1]*sf.low_arm;
-sf_seg.ulna_l = [1,1,1]*sf.low_arm;
-sf_seg.radius_l = [1,1,1]*sf.low_arm;
-sf_seg.hand_l = [1,1,1]*sf.low_arm;
+sf_seg.pelvis = [1,1,1]*sf_total;
+sf_seg.femur_r = [1,1,1]*sf_total;
+sf_seg.femur_l = [1,1,1]*sf_total;
+sf_seg.tibia_r = [1,1,1]*sf_total;
+sf_seg.tibia_l = [1,1,1]*sf_total;
+sf_seg.talus_r = [1,1,1]*sf_total;
+sf_seg.calcn_r = [1,1,1]*sf_total;
+sf_seg.toes_r = [1,1,1]*sf_total;
+sf_seg.talus_l = [1,1,1]*sf_total;
+sf_seg.calcn_l = [1,1,1]*sf_total;
+sf_seg.toes_l = [1,1,1]*sf_total;
+sf_seg.torso = [sqrt(sf_total*sf_total),sf_total,sf_total];
+sf_seg.humerus_r = [1,1,1]*sf_total;
+sf_seg.humerus_l = [1,1,1]*sf_total;
+sf_seg.ulna_r = [1,1,1]*sf_total;
+sf_seg.radius_r = [1,1,1]*sf_total;
+sf_seg.hand_r = [1,1,1]*sf_total;
+sf_seg.ulna_l = [1,1,1]*sf_total;
+sf_seg.radius_l = [1,1,1]*sf_total;
+sf_seg.hand_l = [1,1,1]*sf_total;
 
 %% adjust scaling setup file
 
@@ -72,7 +72,7 @@ scalefile.getElementsByTagName('ScaleTool').item(0).getAttributes.item(0).setVal
 scalefile.getElementsByTagName('mass').item(0).getFirstChild.setNodeValue(num2str(U.Mass));
 
 % set model_file
-scalefile.getElementsByTagName('model_file').item(0).getFirstChild.setNodeValue('Vitruvian_Man.osim');
+scalefile.getElementsByTagName('model_file').item(0).getFirstChild.setNodeValue('gait1018.osim');
 
 % get amount of segments
 nSegments = scalefile.getElementsByTagName('Scale').getLength;
@@ -91,10 +91,10 @@ for i=1:nSegments
     % add general scale factor
     segm_sf = segm_sf*sf_total;
 
-    segementscaling = [num2str(segm_sf(1)) ' ' num2str(segm_sf(2)) ' ' num2str(segm_sf(3))];
+    segmentscaling = [num2str(segm_sf(1)) ' ' num2str(segm_sf(2)) ' ' num2str(segm_sf(3))];
 
     %adjust scales
-    scalefile.getElementsByTagName('Scale').item(i-1).getElementsByTagName('scales').item(0).getFirstChild.setNodeValue(segementscaling);
+    scalefile.getElementsByTagName('Scale').item(i-1).getElementsByTagName('scales').item(0).getFirstChild.setNodeValue(segmentscaling);
 end
 
 % set output_model_file
@@ -113,10 +113,10 @@ scale.run();
 
 
 %% adapt contact sphere placement
-fixContactSpherePositionAfterScaling(fullfile(output_dir,'Vitruvian_Man.osim'),fullfile(output_dir,osim_output_name));
-scaleContactSpheres_2025(fullfile(output_dir,'Vitruvian_Man.osim'),fullfile(output_dir,osim_output_name));
+fixContactSpherePositionAfterScaling(fullfile(output_dir,'gait1018.osim'),fullfile(output_dir,osim_output_name));
+scaleContactSpheres(fullfile(output_dir,'gai1018.osim'),fullfile(output_dir,osim_output_name));
 
 % remove unscaled model file
-delete(fullfile(output_dir,'Vitruvian_Man.osim'));
+delete(fullfile(output_dir,'gait1018.osim'));
 
 end
