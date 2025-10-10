@@ -31,7 +31,7 @@ osimConstraints = [];
 
 for i=0:constr_set.getSize()-1
 
-    constr_i = constr_set.get(0);
+    constr_i = constr_set.get(i);
     constr_name_i = char(constr_i.getName());
 
     % conditionally enforce constraints?

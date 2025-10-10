@@ -2880,7 +2880,7 @@
 					<coordinates>
 						<Coordinate name="pelvis_tilt">
 							<!--The value of this coordinate before any value has been set. Rotational coordinate value is in radians and Translational in meters.-->
-							<default_value>1.041360211220184e-15</default_value>
+							<default_value>1.0412343658091034e-15</default_value>
 							<!--The speed value of this coordinate before any value has been set. Rotational coordinate value is in rad/s and Translational in m/s.-->
 							<default_speed_value>0</default_speed_value>
 							<!--The minimum and maximum values that the coordinate can range between. Rotational coordinate range in radians and Translational in meters.-->
@@ -2894,7 +2894,7 @@
 						</Coordinate>
 						<Coordinate name="pelvis_list">
 							<!--The value of this coordinate before any value has been set. Rotational coordinate value is in radians and Translational in meters.-->
-							<default_value>1.5406066749466902e-15</default_value>
+							<default_value>1.5410557425503786e-15</default_value>
 							<!--The speed value of this coordinate before any value has been set. Rotational coordinate value is in rad/s and Translational in m/s.-->
 							<default_speed_value>0</default_speed_value>
 							<!--The minimum and maximum values that the coordinate can range between. Rotational coordinate range in radians and Translational in meters.-->
@@ -2908,7 +2908,7 @@
 						</Coordinate>
 						<Coordinate name="pelvis_rotation">
 							<!--The value of this coordinate before any value has been set. Rotational coordinate value is in radians and Translational in meters.-->
-							<default_value>-1.6985989210301544e-17</default_value>
+							<default_value>-1.7003399689119892e-17</default_value>
 							<!--The speed value of this coordinate before any value has been set. Rotational coordinate value is in rad/s and Translational in m/s.-->
 							<default_speed_value>0</default_speed_value>
 							<!--The minimum and maximum values that the coordinate can range between. Rotational coordinate range in radians and Translational in meters.-->
@@ -2936,7 +2936,7 @@
 						</Coordinate>
 						<Coordinate name="pelvis_ty">
 							<!--The value of this coordinate before any value has been set. Rotational coordinate value is in radians and Translational in meters.-->
-							<default_value>0.92998532648166699</default_value>
+							<default_value>0.94998814878911053</default_value>
 							<!--The speed value of this coordinate before any value has been set. Rotational coordinate value is in rad/s and Translational in m/s.-->
 							<default_speed_value>0</default_speed_value>
 							<!--The minimum and maximum values that the coordinate can range between. Rotational coordinate range in radians and Translational in meters.-->
@@ -3255,7 +3255,7 @@
 					<coordinates>
 						<Coordinate name="knee_angle_r">
 							<!--The value of this coordinate before any value has been set. Rotational coordinate value is in radians and Translational in meters.-->
-							<default_value>-0.00019083551716616323</default_value>
+							<default_value>-9.5672571165647752e-05</default_value>
 							<!--The speed value of this coordinate before any value has been set. Rotational coordinate value is in rad/s and Translational in m/s.-->
 							<default_speed_value>0</default_speed_value>
 							<!--The minimum and maximum values that the coordinate can range between. Rotational coordinate range in radians and Translational in meters.-->
@@ -4101,7 +4101,7 @@
 					<coordinates>
 						<Coordinate name="knee_angle_l">
 							<!--The value of this coordinate before any value has been set. Rotational coordinate value is in radians and Translational in meters.-->
-							<default_value>-0.00014331031915576335</default_value>
+							<default_value>-4.7845361724023158e-05</default_value>
 							<!--The speed value of this coordinate before any value has been set. Rotational coordinate value is in rad/s and Translational in m/s.-->
 							<default_speed_value>0</default_speed_value>
 							<!--The minimum and maximum values that the coordinate can range between. Rotational coordinate range in radians and Translational in meters.-->
@@ -4773,7 +4773,7 @@
 					<coordinates>
 						<Coordinate name="lumbar_extension">
 							<!--The value of this coordinate before any value has been set. Rotational coordinate value is in radians and Translational in meters.-->
-							<default_value>9.5860580121600402e-16</default_value>
+							<default_value>9.5820260246530234e-16</default_value>
 							<!--The speed value of this coordinate before any value has been set. Rotational coordinate value is in rad/s and Translational in m/s.-->
 							<default_speed_value>0</default_speed_value>
 							<!--The minimum and maximum values that the coordinate can range between. Rotational coordinate range in radians and Translational in meters.-->
@@ -4787,7 +4787,7 @@
 						</Coordinate>
 						<Coordinate name="lumbar_bending">
 							<!--The value of this coordinate before any value has been set. Rotational coordinate value is in radians and Translational in meters.-->
-							<default_value>7.8255969213512323e-16</default_value>
+							<default_value>7.8239980955275283e-16</default_value>
 							<!--The speed value of this coordinate before any value has been set. Rotational coordinate value is in rad/s and Translational in m/s.-->
 							<default_speed_value>0</default_speed_value>
 							<!--The minimum and maximum values that the coordinate can range between. Rotational coordinate range in radians and Translational in meters.-->
@@ -4801,7 +4801,7 @@
 						</Coordinate>
 						<Coordinate name="lumbar_rotation">
 							<!--The value of this coordinate before any value has been set. Rotational coordinate value is in radians and Translational in meters.-->
-							<default_value>-1.5766633481382392e-16</default_value>
+							<default_value>-1.5754347203772347e-16</default_value>
 							<!--The speed value of this coordinate before any value has been set. Rotational coordinate value is in rad/s and Translational in m/s.-->
 							<default_speed_value>0</default_speed_value>
 							<!--The minimum and maximum values that the coordinate can range between. Rotational coordinate range in radians and Translational in meters.-->
@@ -4947,11 +4947,11 @@
 					<coordinates>
 						<Coordinate name="clav_prot_r">
 							<!--The value of this coordinate before any value has been set. Rotational coordinate value is in radians and Translational in meters.-->
-							<default_value>-0.26270178403487826</default_value>
+							<default_value>-0.26275212813654381</default_value>
 							<!--The speed value of this coordinate before any value has been set. Rotational coordinate value is in rad/s and Translational in m/s.-->
 							<default_speed_value>0</default_speed_value>
 							<!--The minimum and maximum values that the coordinate can range between. Rotational coordinate range in radians and Translational in meters.-->
-							<range>-0.95993108859688125 -0.20943951023931953</range>
+							<range>-0.95993108859688125 0</range>
 							<!--Flag indicating whether or not the values of the coordinates should be limited to the range, above.-->
 							<clamped>true</clamped>
 							<!--Flag indicating whether or not the values of the coordinates should be constrained to the current (e.g. default) value, above.-->
@@ -4963,7 +4963,7 @@
 						</Coordinate>
 						<Coordinate name="clav_elev_r">
 							<!--The value of this coordinate before any value has been set. Rotational coordinate value is in radians and Translational in meters.-->
-							<default_value>0.10702273035808521</default_value>
+							<default_value>0.10697716713257838</default_value>
 							<!--The speed value of this coordinate before any value has been set. Rotational coordinate value is in rad/s and Translational in m/s.-->
 							<default_speed_value>0</default_speed_value>
 							<!--The minimum and maximum values that the coordinate can range between. Rotational coordinate range in radians and Translational in meters.-->
@@ -5111,7 +5111,7 @@
 					<coordinates>
 						<Coordinate name="scapula_abduction_r">
 							<!--The value of this coordinate before any value has been set. Rotational coordinate value is in radians and Translational in meters.-->
-							<default_value>-0.23800815228728631</default_value>
+							<default_value>-0.23798375429833901</default_value>
 							<!--The speed value of this coordinate before any value has been set. Rotational coordinate value is in rad/s and Translational in m/s.-->
 							<default_speed_value>0</default_speed_value>
 							<!--The minimum and maximum values that the coordinate can range between. Rotational coordinate range in radians and Translational in meters.-->
@@ -5127,11 +5127,11 @@
 						</Coordinate>
 						<Coordinate name="scapula_winging_r">
 							<!--The value of this coordinate before any value has been set. Rotational coordinate value is in radians and Translational in meters.-->
-							<default_value>0.20371969141610891</default_value>
+							<default_value>0.2037885978271918</default_value>
 							<!--The speed value of this coordinate before any value has been set. Rotational coordinate value is in rad/s and Translational in m/s.-->
 							<default_speed_value>0</default_speed_value>
 							<!--The minimum and maximum values that the coordinate can range between. Rotational coordinate range in radians and Translational in meters.-->
-							<range>-0.3490658503988659 0.20943951023931953</range>
+							<range>-0.3490658503988659 0.3490658503988659</range>
 							<!--Flag indicating whether or not the values of the coordinates should be limited to the range, above.-->
 							<clamped>true</clamped>
 							<!--Flag indicating whether or not the values of the coordinates should be constrained to the current (e.g. default) value, above.-->
@@ -5145,7 +5145,7 @@
 						</Coordinate>
 						<Coordinate name="scapula_elevation_r">
 							<!--The value of this coordinate before any value has been set. Rotational coordinate value is in radians and Translational in meters.-->
-							<default_value>0.11894228551056535</default_value>
+							<default_value>0.11877374112613208</default_value>
 							<!--The speed value of this coordinate before any value has been set. Rotational coordinate value is in rad/s and Translational in m/s.-->
 							<default_speed_value>0</default_speed_value>
 							<!--The minimum and maximum values that the coordinate can range between. Rotational coordinate range in radians and Translational in meters.-->
@@ -5163,11 +5163,11 @@
 						</Coordinate>
 						<Coordinate name="scapula_upward_rot_r">
 							<!--The value of this coordinate before any value has been set. Rotational coordinate value is in radians and Translational in meters.-->
-							<default_value>0.26559952033668832</default_value>
+							<default_value>0.26569573402869201</default_value>
 							<!--The speed value of this coordinate before any value has been set. Rotational coordinate value is in rad/s and Translational in m/s.-->
 							<default_speed_value>0</default_speed_value>
 							<!--The minimum and maximum values that the coordinate can range between. Rotational coordinate range in radians and Translational in meters.-->
-							<range>0.034906585039886591 1.5707963267948966</range>
+							<range>-0.174532925199433 1.5707963267948966</range>
 							<!--Flag indicating whether or not the values of the coordinates should be limited to the range, above.-->
 							<clamped>true</clamped>
 							<!--Flag indicating whether or not the values of the coordinates should be constrained to the current (e.g. default) value, above.-->
@@ -5333,7 +5333,7 @@
 					<coordinates>
 						<Coordinate name="plane_elv_r">
 							<!--The value of this coordinate before any value has been set. Rotational coordinate value is in radians and Translational in meters.-->
-							<default_value>-0.44910691603247366</default_value>
+							<default_value>-0.44907590310800199</default_value>
 							<!--The speed value of this coordinate before any value has been set. Rotational coordinate value is in rad/s and Translational in m/s.-->
 							<default_speed_value>0</default_speed_value>
 							<!--The minimum and maximum values that the coordinate can range between. Rotational coordinate range in radians and Translational in meters.-->
@@ -5349,11 +5349,11 @@
 						</Coordinate>
 						<Coordinate name="shoulder_elev_r">
 							<!--The value of this coordinate before any value has been set. Rotational coordinate value is in radians and Translational in meters.-->
-							<default_value>0.08742037393862262</default_value>
+							<default_value>0.08742920875355098</default_value>
 							<!--The speed value of this coordinate before any value has been set. Rotational coordinate value is in rad/s and Translational in m/s.-->
 							<default_speed_value>0</default_speed_value>
 							<!--The minimum and maximum values that the coordinate can range between. Rotational coordinate range in radians and Translational in meters.-->
-							<range>-0.020943951023931952 1.9058995431778079</range>
+							<range>-1.0471975511965981 1.9058995431778079</range>
 							<!--Flag indicating whether or not the values of the coordinates should be limited to the range, above.-->
 							<clamped>true</clamped>
 							<!--Flag indicating whether or not the values of the coordinates should be constrained to the current (e.g. default) value, above.-->
@@ -5365,7 +5365,7 @@
 						</Coordinate>
 						<Coordinate name="axial_rot_r">
 							<!--The value of this coordinate before any value has been set. Rotational coordinate value is in radians and Translational in meters.-->
-							<default_value>0.63420370599984921</default_value>
+							<default_value>0.63419223694390447</default_value>
 							<!--The speed value of this coordinate before any value has been set. Rotational coordinate value is in rad/s and Translational in m/s.-->
 							<default_speed_value>0</default_speed_value>
 							<!--The minimum and maximum values that the coordinate can range between. Rotational coordinate range in radians and Translational in meters.-->
@@ -5513,7 +5513,7 @@
 					<coordinates>
 						<Coordinate name="elbow_flexion_r">
 							<!--The value of this coordinate before any value has been set. Rotational coordinate value is in radians and Translational in meters.-->
-							<default_value>0.17943171033661928</default_value>
+							<default_value>0.1795723242937981</default_value>
 							<!--The speed value of this coordinate before any value has been set. Rotational coordinate value is in rad/s and Translational in m/s.-->
 							<default_speed_value>0</default_speed_value>
 							<!--The minimum and maximum values that the coordinate can range between. Rotational coordinate range in radians and Translational in meters.-->
@@ -5759,11 +5759,11 @@
 					<coordinates>
 						<Coordinate name="clav_prot_l">
 							<!--The value of this coordinate before any value has been set. Rotational coordinate value is in radians and Translational in meters.-->
-							<default_value>-0.26270086658118164</default_value>
+							<default_value>-0.26275121728215378</default_value>
 							<!--The speed value of this coordinate before any value has been set. Rotational coordinate value is in rad/s and Translational in m/s.-->
 							<default_speed_value>0</default_speed_value>
 							<!--The minimum and maximum values that the coordinate can range between. Rotational coordinate range in radians and Translational in meters.-->
-							<range>-0.95993108859688125 -0.20943951023931953</range>
+							<range>-0.95993108859688125 0</range>
 							<!--Flag indicating whether or not the values of the coordinates should be limited to the range, above.-->
 							<clamped>true</clamped>
 							<!--Flag indicating whether or not the values of the coordinates should be constrained to the current (e.g. default) value, above.-->
@@ -5775,7 +5775,7 @@
 						</Coordinate>
 						<Coordinate name="clav_elev_l">
 							<!--The value of this coordinate before any value has been set. Rotational coordinate value is in radians and Translational in meters.-->
-							<default_value>0.10702647847750318</default_value>
+							<default_value>0.10698090014167946</default_value>
 							<!--The speed value of this coordinate before any value has been set. Rotational coordinate value is in rad/s and Translational in m/s.-->
 							<default_speed_value>0</default_speed_value>
 							<!--The minimum and maximum values that the coordinate can range between. Rotational coordinate range in radians and Translational in meters.-->
@@ -5923,7 +5923,7 @@
 					<coordinates>
 						<Coordinate name="scapula_abduction_l">
 							<!--The value of this coordinate before any value has been set. Rotational coordinate value is in radians and Translational in meters.-->
-							<default_value>-0.23800701240002645</default_value>
+							<default_value>-0.23798260886351033</default_value>
 							<!--The speed value of this coordinate before any value has been set. Rotational coordinate value is in rad/s and Translational in m/s.-->
 							<default_speed_value>0</default_speed_value>
 							<!--The minimum and maximum values that the coordinate can range between. Rotational coordinate range in radians and Translational in meters.-->
@@ -5939,11 +5939,11 @@
 						</Coordinate>
 						<Coordinate name="scapula_winging_l">
 							<!--The value of this coordinate before any value has been set. Rotational coordinate value is in radians and Translational in meters.-->
-							<default_value>0.20371971522179286</default_value>
+							<default_value>0.20378863736917097</default_value>
 							<!--The speed value of this coordinate before any value has been set. Rotational coordinate value is in rad/s and Translational in m/s.-->
 							<default_speed_value>0</default_speed_value>
 							<!--The minimum and maximum values that the coordinate can range between. Rotational coordinate range in radians and Translational in meters.-->
-							<range>-0.3490658503988659 0.20943951023931953</range>
+							<range>-0.3490658503988659 0.3490658503988659</range>
 							<!--Flag indicating whether or not the values of the coordinates should be limited to the range, above.-->
 							<clamped>true</clamped>
 							<!--Flag indicating whether or not the values of the coordinates should be constrained to the current (e.g. default) value, above.-->
@@ -5955,7 +5955,7 @@
 						</Coordinate>
 						<Coordinate name="scapula_elevation_l">
 							<!--The value of this coordinate before any value has been set. Rotational coordinate value is in radians and Translational in meters.-->
-							<default_value>0.11894722131031478</default_value>
+							<default_value>0.11877864193306184</default_value>
 							<!--The speed value of this coordinate before any value has been set. Rotational coordinate value is in rad/s and Translational in m/s.-->
 							<default_speed_value>0</default_speed_value>
 							<!--The minimum and maximum values that the coordinate can range between. Rotational coordinate range in radians and Translational in meters.-->
@@ -5971,11 +5971,11 @@
 						</Coordinate>
 						<Coordinate name="scapula_upward_rot_l">
 							<!--The value of this coordinate before any value has been set. Rotational coordinate value is in radians and Translational in meters.-->
-							<default_value>0.26560141200478127</default_value>
+							<default_value>0.26569763284024822</default_value>
 							<!--The speed value of this coordinate before any value has been set. Rotational coordinate value is in rad/s and Translational in m/s.-->
 							<default_speed_value>0</default_speed_value>
 							<!--The minimum and maximum values that the coordinate can range between. Rotational coordinate range in radians and Translational in meters.-->
-							<range>0.034906585039886591 1.5707963267948966</range>
+							<range>-0.174532925199433 1.5707963267948966</range>
 							<!--Flag indicating whether or not the values of the coordinates should be limited to the range, above.-->
 							<clamped>true</clamped>
 							<!--Flag indicating whether or not the values of the coordinates should be constrained to the current (e.g. default) value, above.-->
@@ -6139,7 +6139,7 @@
 					<coordinates>
 						<Coordinate name="plane_elv_l">
 							<!--The value of this coordinate before any value has been set. Rotational coordinate value is in radians and Translational in meters.-->
-							<default_value>-0.44910691603247366</default_value>
+							<default_value>-0.44907590310800199</default_value>
 							<!--The speed value of this coordinate before any value has been set. Rotational coordinate value is in rad/s and Translational in m/s.-->
 							<default_speed_value>0</default_speed_value>
 							<!--The minimum and maximum values that the coordinate can range between. Rotational coordinate range in radians and Translational in meters.-->
@@ -6155,11 +6155,11 @@
 						</Coordinate>
 						<Coordinate name="shoulder_elev_l">
 							<!--The value of this coordinate before any value has been set. Rotational coordinate value is in radians and Translational in meters.-->
-							<default_value>0.087498239327435293</default_value>
+							<default_value>0.08750707190171475</default_value>
 							<!--The speed value of this coordinate before any value has been set. Rotational coordinate value is in rad/s and Translational in m/s.-->
 							<default_speed_value>0</default_speed_value>
 							<!--The minimum and maximum values that the coordinate can range between. Rotational coordinate range in radians and Translational in meters.-->
-							<range>-0.020943951023931952 1.9058995431778079</range>
+							<range>-1.0471975511965981 1.9058995431778079</range>
 							<!--Flag indicating whether or not the values of the coordinates should be limited to the range, above.-->
 							<clamped>true</clamped>
 							<!--Flag indicating whether or not the values of the coordinates should be constrained to the current (e.g. default) value, above.-->
@@ -6171,7 +6171,7 @@
 						</Coordinate>
 						<Coordinate name="axial_rot_l">
 							<!--The value of this coordinate before any value has been set. Rotational coordinate value is in radians and Translational in meters.-->
-							<default_value>0.63420370599984921</default_value>
+							<default_value>0.63419223694390447</default_value>
 							<!--The speed value of this coordinate before any value has been set. Rotational coordinate value is in rad/s and Translational in m/s.-->
 							<default_speed_value>0</default_speed_value>
 							<!--The minimum and maximum values that the coordinate can range between. Rotational coordinate range in radians and Translational in meters.-->
@@ -6319,7 +6319,7 @@
 					<coordinates>
 						<Coordinate name="elbow_flexion_l">
 							<!--The value of this coordinate before any value has been set. Rotational coordinate value is in radians and Translational in meters.-->
-							<default_value>0.17943171033661928</default_value>
+							<default_value>0.1795723242937981</default_value>
 							<!--The speed value of this coordinate before any value has been set. Rotational coordinate value is in rad/s and Translational in m/s.-->
 							<default_speed_value>0</default_speed_value>
 							<!--The minimum and maximum values that the coordinate can range between. Rotational coordinate range in radians and Translational in meters.-->
@@ -10321,82 +10321,6 @@
 					<!--Tendon strain at a tension of 1 normalized force. Default: 0.049.-->
 					<tendon_strain_at_one_norm_force>0.033000000000000002</tendon_strain_at_one_norm_force>
 				</DeGrooteFregly2016Muscle>
-				<DeGrooteFregly2016Muscle name="FDB_r">
-					<!--Flag indicating whether the force is applied or not. If true the forceis applied to the MultibodySystem otherwise the force is not applied.NOTE: Prior to OpenSim 4.0, this behavior was controlled by the 'isDisabled' property, where 'true' meant that force was not being applied. Thus, if 'isDisabled' is true, then 'appliesForce` is false.-->
-					<appliesForce>true</appliesForce>
-					<!--Minimum allowed value for control signal. Used primarily when solving for control values.-->
-					<min_control>0.01</min_control>
-					<!--Maximum allowed value for control signal. Used primarily when solving for control values.-->
-					<max_control>1</max_control>
-					<!--The path of the actuator which defines length and lengthening speed.-->
-					<GeometryPath name="path">
-						<!--Default appearance attributes for this AbstractGeometryPath.-->
-						<Appearance>
-							<!--Flag indicating whether the associated Geometry is visible or hidden.-->
-							<visible>false</visible>
-							<!--The color, (red, green, blue), [0, 1], used to display the geometry. -->
-							<color>0.80000000000000004 0.10000000000000001 0.10000000000000001</color>
-						</Appearance>
-						<!--The set of points defining the path-->
-						<PathPointSet>
-							<objects>
-								<PathPoint name="FDB_r_P1">
-									<!--Path to a Component that satisfies the Socket 'parent_frame' of type PhysicalFrame (description: The frame in which this path point is defined.).-->
-									<socket_parent_frame>/bodyset/calcn_r</socket_parent_frame>
-									<!--The fixed location of the path point expressed in its parent frame.-->
-									<location>0.032360605933673785 -0.016 -0.015208299999999999</location>
-								</PathPoint>
-								<PathPoint name="FDB_r_P3">
-									<!--Path to a Component that satisfies the Socket 'parent_frame' of type PhysicalFrame (description: The frame in which this path point is defined.).-->
-									<socket_parent_frame>/bodyset/toes_r</socket_parent_frame>
-									<!--The fixed location of the path point expressed in its parent frame.-->
-									<location>0.014999999999999999 -0.0027273077122499994 -0.014256576749999998</location>
-								</PathPoint>
-							</objects>
-							<groups />
-						</PathPointSet>
-						<!--The wrap objects that are associated with this path-->
-						<PathWrapSet>
-							<objects>
-								<PathWrap name="pathwrap">
-									<!--A WrapObject that this PathWrap interacts with.-->
-									<wrap_object>MetatarsalHead_r</wrap_object>
-									<!--The wrapping method used to solve the path around the wrap object.-->
-									<method>hybrid</method>
-									<!--The range of indices to use to compute the path over the wrap object.-->
-									<range>1 2</range>
-								</PathWrap>
-							</objects>
-							<groups />
-						</PathWrapSet>
-					</GeometryPath>
-					<!--Maximum isometric force that the fibers can generate-->
-					<max_isometric_force>600</max_isometric_force>
-					<!--Optimal length of the muscle fibers-->
-					<optimal_fiber_length>0.022999999999999996</optimal_fiber_length>
-					<!--Resting length of the tendon-->
-					<tendon_slack_length>0.12299999999999997</tendon_slack_length>
-					<!--Angle between tendon and fibers at optimal fiber length expressed in radians-->
-					<pennation_angle_at_optimal>0.34910000000000002</pennation_angle_at_optimal>
-					<!--Maximum contraction velocity of the fibers, in optimal fiberlengths/second-->
-					<max_contraction_velocity>10</max_contraction_velocity>
-					<!--Compute muscle dynamics ignoring tendon compliance. Tendon is assumed to be rigid.-->
-					<ignore_tendon_compliance>false</ignore_tendon_compliance>
-					<!--Compute muscle dynamics ignoring activation dynamics. Activation is equivalent to excitation.-->
-					<ignore_activation_dynamics>false</ignore_activation_dynamics>
-					<!--Smaller value means activation can increase more rapidly. Default: 0.015 seconds.-->
-					<activation_time_constant>0.01</activation_time_constant>
-					<!--Smaller value means activation can decrease more rapidly. Default: 0.060 seconds.-->
-					<deactivation_time_constant>0.040000000000000001</deactivation_time_constant>
-					<!--Value of activation in the default state returned by initSystem(). Default: 0.5.-->
-					<default_activation>0.050000000000000003</default_activation>
-					<!--Use this property to define the linear damping force that is added to the total muscle fiber force. It is computed by multiplying this damping parameter by the normalized fiber velocity and the max isometric force. Default: 0.-->
-					<fiber_damping>0</fiber_damping>
-					<!--Fiber strain when the passive fiber force is 1 normalized force. Default: 0.6.-->
-					<passive_fiber_strain_at_one_norm_force>0.59999999999999998</passive_fiber_strain_at_one_norm_force>
-					<!--Tendon strain at a tension of 1 normalized force. Default: 0.049.-->
-					<tendon_strain_at_one_norm_force>0.033000000000000002</tendon_strain_at_one_norm_force>
-				</DeGrooteFregly2016Muscle>
 				<DeGrooteFregly2016Muscle name="glut_med1_l">
 					<!--Flag indicating whether the force is applied or not. If true the forceis applied to the MultibodySystem otherwise the force is not applied.NOTE: Prior to OpenSim 4.0, this behavior was controlled by the 'isDisabled' property, where 'true' meant that force was not being applied. Thus, if 'isDisabled' is true, then 'appliesForce` is false.-->
 					<appliesForce>true</appliesForce>
@@ -13913,82 +13837,6 @@
 					<!--Tendon strain at a tension of 1 normalized force. Default: 0.049.-->
 					<tendon_strain_at_one_norm_force>0.033000000000000002</tendon_strain_at_one_norm_force>
 				</DeGrooteFregly2016Muscle>
-				<DeGrooteFregly2016Muscle name="FDB_l">
-					<!--Flag indicating whether the force is applied or not. If true the forceis applied to the MultibodySystem otherwise the force is not applied.NOTE: Prior to OpenSim 4.0, this behavior was controlled by the 'isDisabled' property, where 'true' meant that force was not being applied. Thus, if 'isDisabled' is true, then 'appliesForce` is false.-->
-					<appliesForce>true</appliesForce>
-					<!--Minimum allowed value for control signal. Used primarily when solving for control values.-->
-					<min_control>0.01</min_control>
-					<!--Maximum allowed value for control signal. Used primarily when solving for control values.-->
-					<max_control>1</max_control>
-					<!--The path of the actuator which defines length and lengthening speed.-->
-					<GeometryPath name="path">
-						<!--Default appearance attributes for this AbstractGeometryPath.-->
-						<Appearance>
-							<!--Flag indicating whether the associated Geometry is visible or hidden.-->
-							<visible>false</visible>
-							<!--The color, (red, green, blue), [0, 1], used to display the geometry. -->
-							<color>0.80000000000000004 0.10000000000000001 0.10000000000000001</color>
-						</Appearance>
-						<!--The set of points defining the path-->
-						<PathPointSet>
-							<objects>
-								<PathPoint name="FDB_l_P1">
-									<!--Path to a Component that satisfies the Socket 'parent_frame' of type PhysicalFrame (description: The frame in which this path point is defined.).-->
-									<socket_parent_frame>/bodyset/calcn_l</socket_parent_frame>
-									<!--The fixed location of the path point expressed in its parent frame.-->
-									<location>0.032360605933673785 -0.016 0.015208299999999999</location>
-								</PathPoint>
-								<PathPoint name="FDB_l_P3">
-									<!--Path to a Component that satisfies the Socket 'parent_frame' of type PhysicalFrame (description: The frame in which this path point is defined.).-->
-									<socket_parent_frame>/bodyset/toes_l</socket_parent_frame>
-									<!--The fixed location of the path point expressed in its parent frame.-->
-									<location>0.014999999999999999 -0.0027273077122499994 0.014256576749999998</location>
-								</PathPoint>
-							</objects>
-							<groups />
-						</PathPointSet>
-						<!--The wrap objects that are associated with this path-->
-						<PathWrapSet>
-							<objects>
-								<PathWrap name="pathwrap">
-									<!--A WrapObject that this PathWrap interacts with.-->
-									<wrap_object>MetatarsalHead_l</wrap_object>
-									<!--The wrapping method used to solve the path around the wrap object.-->
-									<method>hybrid</method>
-									<!--The range of indices to use to compute the path over the wrap object.-->
-									<range>1 2</range>
-								</PathWrap>
-							</objects>
-							<groups />
-						</PathWrapSet>
-					</GeometryPath>
-					<!--Maximum isometric force that the fibers can generate-->
-					<max_isometric_force>600</max_isometric_force>
-					<!--Optimal length of the muscle fibers-->
-					<optimal_fiber_length>0.023000000000000007</optimal_fiber_length>
-					<!--Resting length of the tendon-->
-					<tendon_slack_length>0.12300000000000004</tendon_slack_length>
-					<!--Angle between tendon and fibers at optimal fiber length expressed in radians-->
-					<pennation_angle_at_optimal>0.34910000000000002</pennation_angle_at_optimal>
-					<!--Maximum contraction velocity of the fibers, in optimal fiberlengths/second-->
-					<max_contraction_velocity>10</max_contraction_velocity>
-					<!--Compute muscle dynamics ignoring tendon compliance. Tendon is assumed to be rigid.-->
-					<ignore_tendon_compliance>false</ignore_tendon_compliance>
-					<!--Compute muscle dynamics ignoring activation dynamics. Activation is equivalent to excitation.-->
-					<ignore_activation_dynamics>false</ignore_activation_dynamics>
-					<!--Smaller value means activation can increase more rapidly. Default: 0.015 seconds.-->
-					<activation_time_constant>0.01</activation_time_constant>
-					<!--Smaller value means activation can decrease more rapidly. Default: 0.060 seconds.-->
-					<deactivation_time_constant>0.040000000000000001</deactivation_time_constant>
-					<!--Value of activation in the default state returned by initSystem(). Default: 0.5.-->
-					<default_activation>0.050000000000000003</default_activation>
-					<!--Use this property to define the linear damping force that is added to the total muscle fiber force. It is computed by multiplying this damping parameter by the normalized fiber velocity and the max isometric force. Default: 0.-->
-					<fiber_damping>0</fiber_damping>
-					<!--Fiber strain when the passive fiber force is 1 normalized force. Default: 0.6.-->
-					<passive_fiber_strain_at_one_norm_force>0.59999999999999998</passive_fiber_strain_at_one_norm_force>
-					<!--Tendon strain at a tension of 1 normalized force. Default: 0.049.-->
-					<tendon_strain_at_one_norm_force>0.033000000000000002</tendon_strain_at_one_norm_force>
-				</DeGrooteFregly2016Muscle>
 				<DeGrooteFregly2016Muscle name="ercspn_r">
 					<!--Flag indicating whether the force is applied or not. If true the forceis applied to the MultibodySystem otherwise the force is not applied.NOTE: Prior to OpenSim 4.0, this behavior was controlled by the 'isDisabled' property, where 'true' meant that force was not being applied. Thus, if 'isDisabled' is true, then 'appliesForce` is false.-->
 					<appliesForce>true</appliesForce>
@@ -14808,7 +14656,7 @@
 					<!--Optimal length of the muscle fibers-->
 					<optimal_fiber_length>0.15694907613898892</optimal_fiber_length>
 					<!--Resting length of the tendon-->
-					<tendon_slack_length>0</tendon_slack_length>
+					<tendon_slack_length>0.01</tendon_slack_length>
 					<!--Angle between tendon and fibers at optimal fiber length expressed in radians-->
 					<pennation_angle_at_optimal>0</pennation_angle_at_optimal>
 					<!--Maximum contraction velocity of the fibers, in optimal fiberlengths/second-->
@@ -14960,7 +14808,7 @@
 					<!--Optimal length of the muscle fibers-->
 					<optimal_fiber_length>0.075798135077533288</optimal_fiber_length>
 					<!--Resting length of the tendon-->
-					<tendon_slack_length>0</tendon_slack_length>
+					<tendon_slack_length>0.01</tendon_slack_length>
 					<!--Angle between tendon and fibers at optimal fiber length expressed in radians-->
 					<pennation_angle_at_optimal>0</pennation_angle_at_optimal>
 					<!--Maximum contraction velocity of the fibers, in optimal fiberlengths/second-->
@@ -17871,7 +17719,7 @@
 					<!--Optimal length of the muscle fibers-->
 					<optimal_fiber_length>0.15676391617553989</optimal_fiber_length>
 					<!--Resting length of the tendon-->
-					<tendon_slack_length>0</tendon_slack_length>
+					<tendon_slack_length>0.01</tendon_slack_length>
 					<!--Angle between tendon and fibers at optimal fiber length expressed in radians-->
 					<pennation_angle_at_optimal>0</pennation_angle_at_optimal>
 					<!--Maximum contraction velocity of the fibers, in optimal fiberlengths/second-->
@@ -18023,7 +17871,7 @@
 					<!--Optimal length of the muscle fibers-->
 					<optimal_fiber_length>0.075880617459961927</optimal_fiber_length>
 					<!--Resting length of the tendon-->
-					<tendon_slack_length>0</tendon_slack_length>
+					<tendon_slack_length>0.01</tendon_slack_length>
 					<!--Angle between tendon and fibers at optimal fiber length expressed in radians-->
 					<pennation_angle_at_optimal>0</pennation_angle_at_optimal>
 					<!--Maximum contraction velocity of the fibers, in optimal fiberlengths/second-->
