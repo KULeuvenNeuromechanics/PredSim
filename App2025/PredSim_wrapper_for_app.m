@@ -119,16 +119,16 @@ S.solver.max_iter = 1000;
 S.subject.v_pelvis_x_trgt = U.Speed;
 %% IG
 if strcmp(U.ModelName,'Jullie_lengte')
-    S.subject.IG_selection = "C:\GBW_MyPrograms\KinderuniversiteitApp\OCP\Jullie_lengte_v1.mot";
+    S.subject.IG_selection = [pathRepo, '\OCP\Jullie_lengte_v1.mot'];
     S.subject.IG_selection_gaitCyclePercent = 200;
 elseif strcmp(U.ModelName,'Kleuter')
-    S.subject.IG_selection = "C:\GBW_MyPrograms\KinderuniversiteitApp\OCP\Kleuter_v1.mot";
+    S.subject.IG_selection = [pathRepo, '\OCP\Kleuter_v1.mot'];
     S.subject.IG_selection_gaitCyclePercent = 200;
 elseif strcmp(U.ModelName,'Volwassenen')
-    S.subject.IG_selection = "C:\GBW_MyPrograms\KinderuniversiteitApp\OCP\Volwassenen_v1.mot";
+    S.subject.IG_selection = [pathRepo, '\OCP\Volwassenen_v1.mot'];
     S.subject.IG_selection_gaitCyclePercent = 200;
 else
-    S.subject.IG_selection = "C:\GBW_MyPrograms\KinderuniversiteitApp\OCP\Ik_Guess_2D.mot";
+    S.subject.IG_selection = [pathRepo, '\OCP\Ik_Guess_2D.mot'];
     S.subject.IG_selection_gaitCyclePercent = 200;
 end
 
