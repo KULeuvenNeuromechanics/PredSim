@@ -1,0 +1,61 @@
+ 
+Subject name: test_v6
+OpenSim model: C:\GBW_MyPrograms\KinderuniversiteitApp\Subjects\test_v6\test_v6.osim
+ 
+ 
+Start PreProcessing...
+ 
+  <a href="matlab:helpPopup matlab.exception.JavaException" style="font-weight:bold">JavaException</a> with properties:
+
+    ExceptionObject: [1×1 java.io.IOException]
+         identifier: 'MATLAB:Java:GenericException'
+            message: 'Java exception occurred: ↵java.io.IOException: Object: Cannot open file C:\GBW_MyPrograms\KinderuniversiteitApp\Subjects\test_v6\test_v6.osim. It may not exist or you do not have permission to read it.↵→Thrown at Object.cpp:105 in Object().←↵→at org.opensim.modeling.opensimSimulationJNI.new_Model__SWIG_1(Native Method)←↵→at org.opensim.modeling.Model.<init>(Model.java:821)←'
+              cause: {}
+              stack: [6×1 struct]
+         Correction: []
+
+<a href="matlab: opentoline('C:\GBW_MyPrograms\KinderuniversiteitApp\App\PredSim_wrapper_for_app_Old.m',43,1)">43  </a>scaleOsimModel_2025(pathRepo, U);
+if system_dependent('IsDebugMode')==1, dbcont; end
+Scaled model already exists.
+<a href="matlab: opentoline('C:\GBW_MyPrograms\KinderuniversiteitApp\App\PredSim_wrapper_for_app_Old.m',105,1)">105 </a>S.subject.MT_params  = {
+if system_dependent('IsDebugMode')==1, dbcont; end
+Using C:\GBW_MyPrograms\KinderuniversiteitApp\Subjects\Vitruvian_Man\IG\IG_v14ms_ATx70.mot as initial guess.
+ 
+Subject name: test_v6
+OpenSim model: C:\GBW_MyPrograms\KinderuniversiteitApp\Subjects\smurftest\test_v6\test_v6.osim
+ 
+ 
+Start PreProcessing...
+ 
+   Creating new external function...
+   ... external function created (22.07 s)
+  <a href="matlab:helpPopup MException" style="font-weight:bold">MException</a> with properties:
+
+    identifier: ''
+       message: '"arm_flex_r" is not a valid name.'
+         cause: {}
+         stack: [7×1 struct]
+    Correction: []
+
+<a href="matlab: opentoline('C:\GBW_MyPrograms\KinderuniversiteitApp\App2025\scaleOsim.m',116,1)">116 </a>fixContactSpherePositionAfterScaling(fullfile(output_dir,'Vitruvian_Man.osim'),fullfile(output_dir,osim_output_name));
+output_name
+
+output_name =
+
+    'C:\GBW_MyPrograms\KinderuniversiteitApp\Subjects\Smurf\Smurf_Scale_Setup.xml'
+
+if system_dependent('IsDebugMode')==1, dbquit; end
+Scaled model already exists.
+<a href="matlab: opentoline('C:\GBW_MyPrograms\KinderuniversiteitApp\App\PredSim_wrapper_for_app_Old.m',105,1)">105 </a>S.subject.MT_params  = {
+if system_dependent('IsDebugMode')==1, dbquit; end
+<a href="matlab: opentoline('C:\GBW_MyPrograms\KinderuniversiteitApp\App2025\scaleOsim.m',116,1)">116 </a>fixContactSpherePositionAfterScaling(fullfile(output_dir,'Vitruvian_Man.osim'),fullfile(output_dir,osim_output_name));
+output_name
+
+output_name =
+
+    'C:\GBW_MyPrograms\KinderuniversiteitApp\Subjects\smurftest_v2\Smurf\Smurf_Scale_Setup.xml'
+
+if system_dependent('IsDebugMode')==1, dbcont; end
+<a href="matlab: opentoline('C:\GBW_MyPrograms\KinderuniversiteitApp\App\PredSim_wrapper_for_app_Old.m',105,1)">105 </a>S.subject.MT_params  = {
+if system_dependent('IsDebugMode')==1, dbcont; end
+Using C:\GBW_MyPrograms\KinderuniversiteitApp\Subjects\Vitruvian_Man\IG\IG_v12ms_ATx70.mot as initial guess.

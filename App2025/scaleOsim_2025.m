@@ -115,7 +115,7 @@ scale.run();
 
 %% adapt contact sphere placement
 fixContactSpherePositionAfterScaling(fullfile(output_dir,'gait1018.osim'),fullfile(output_dir,osim_output_name));
-scaleContactSpheres(fullfile(output_dir,'gait1018.osim'),fullfile(output_dir,osim_output_name));
+scaleContactSpheres_2025(fullfile(output_dir,'gait1018.osim'),fullfile(output_dir,osim_output_name));
 
 % remove unscaled model file
 delete(fullfile(output_dir,'gait1018.osim'));

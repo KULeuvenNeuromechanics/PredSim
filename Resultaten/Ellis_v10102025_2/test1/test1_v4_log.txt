@@ -1,0 +1,97 @@
+ 
+Subject name: test1
+OpenSim model: C:\GBW_MyPrograms\KinderuniversiteitApp\Subjects\Ellis_v10102025_2\test1\test1.osim
+ 
+ 
+Start PreProcessing...
+ 
+   Using existing external function: 
+      C:\GBW_MyPrograms\KinderuniversiteitApp\Subjects\test1\F_test1.dll
+   using existing MSK geometry test1_f_lMT_vMT_dM_poly_3_9
+ 
+...PreProcessing done. Time elapsed 1.09 s
+ 
+ 
+Start creating CasADi functions...
+ 
+ 
+...CasADi functions created. Time elapsed 1.41 s
+ 
+ 
+Start formulating OCP...
+ 
+...OCP formulation done. Time elapsed 1.44 s
+ 
+Starting NLP solver...
+ 
+This is Ipopt version 3.12.3, running with linear solver mumps.
+NOTE: Other linear solvers might be more efficient (see Ipopt documentation).
+
+Number of nonzeros in equality constraint Jacobian...:   115460
+Number of nonzeros in inequality constraint Jacobian.:    10800
+Number of nonzeros in Lagrangian Hessian.............:        0
+
+Total number of variables............................:    16607
+                     variables with only lower bounds:        0
+                variables with lower and upper bounds:    16607
+                     variables with only upper bounds:        0
+Total number of equality constraints.................:    15657
+Total number of inequality constraints...............:     5400
+        inequality constraints with only lower bounds:     2700
+   inequality constraints with lower and upper bounds:        0
+        inequality constraints with only upper bounds:     2700
+
+iter    objective    inf_pr   inf_du lg(mu)  ||d||  lg(rg) alpha_du alpha_pr  ls
+   0 1.1737546e+004 9.85e+002 1.00e+002   0.0 0.00e+000    -  0.00e+000 0.00e+000   0
+   1 1.6524882e+004 9.90e+002 2.04e+002   2.6 6.26e+003    -  1.40e-003 7.33e-004f  3
+   2 2.3690293e+004 9.73e+002 2.35e+003   0.7 1.31e+003    -  3.79e-003 2.73e-003f  1
+   3 3.4020896e+004 9.78e+002 6.82e+003   2.5 4.10e+003    -  7.26e-003 3.48e-003f  1
+   4 4.3622821e+004 9.66e+002 1.83e+004   2.9 5.26e+003    -  1.24e-002 3.55e-003f  1
+   5 5.1749113e+004 9.62e+002 5.20e+004   3.3 3.47e+003    -  1.08e-001 2.29e-003f  1
+   6 7.4359236e+004 9.52e+002 5.14e+005   3.7 2.57e+003    -  2.07e-002 6.76e-003f  1
+   7 7.5334455e+004 9.51e+002 5.66e+006   3.7 1.25e+003    -  1.21e-002 6.68e-004f  1
+   8 6.4205739e+005 9.47e+002 9.92e+006   3.7 1.24e+003    -  1.10e-002 1.00e-002f  1
+   9 6.9271137e+005 9.41e+002 9.97e+006   2.6 2.18e+003    -  6.12e-003 5.53e-003h  1
+iter    objective    inf_pr   inf_du lg(mu)  ||d||  lg(rg) alpha_du alpha_pr  ls
+  10 7.5910274e+005 9.32e+002 9.98e+006   2.6 3.04e+003    -  5.19e-003 7.60e-003h  1
+  11 7.9036079e+005 9.27e+002 1.29e+007   2.6 4.08e+003    -  6.34e-003 4.32e-003h  1
+  12 8.1201563e+005 9.23e+002 4.13e+007   2.6 4.77e+003    -  6.19e-003 3.70e-003h  1
+  13 8.2686520e+005 9.20e+002 1.01e+007  -3.3 3.41e+003    -  1.47e-003 3.46e-003h  1
+  14 8.3149034e+005 9.18e+002 6.35e+007   2.3 2.74e+003    -  4.32e-003 1.64e-003h  1
+  15 8.3809749e+005 9.15e+002 1.15e+008   3.7 2.36e+003    -  5.87e-003 3.84e-003h  1
+  16 8.3923205e+005 9.13e+002 6.34e+007   3.7 3.04e+003    -  1.32e-003 2.81e-003h  1
+  17 8.3718223e+005 9.12e+002 1.13e+008   2.8 3.16e+003    -  1.93e-003 7.49e-004h  1
+  18 8.2566641e+005 9.10e+002 1.96e+008   3.6 3.77e+003    -  4.37e-003 2.61e-003h  1
+Exception of type: IpoptException in file "Unknown File" at line -1:
+ Exception message: Unknown Exception caught in Ipopt
+      solver  :   t_proc      (avg)   t_wall      (avg)    n_eval
+       nlp_f  | 374.00ms ( 17.81ms) 371.63ms ( 17.70ms)        21
+       nlp_g  | 472.00ms ( 20.52ms) 473.72ms ( 20.60ms)        23
+  nlp_grad_f  | 835.00ms ( 41.75ms) 836.48ms ( 41.82ms)        20
+   nlp_jac_g  |   1.34 s ( 67.20ms)   1.35 s ( 67.26ms)        20
+       total  |   5.89 s (  5.89 s)   5.89 s (  5.89 s)         1
+ 
+...Exit NLP solver. Time elapsed 9.01 s
+ 
+ 
+Retrieving solution...
+ 
+Issue when reconstructing average speed
+[Warning: No ground contact detected on right foot, using left foot initial contact as start of gait cycle.] 
+[> In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('getStancePhaseSimulation', 'C:\GBW_MyPrograms\KinderuniversiteitApp\OCP\getStancePhaseSimulation.m', 59)" style="font-weight:bold">getStancePhaseSimulation</a> (<a href="matlab: opentoline('C:\GBW_MyPrograms\KinderuniversiteitApp\OCP\getStancePhaseSimulation.m',59,0)">line 59</a>)
+In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('OCP_formulation', 'C:\GBW_MyPrograms\KinderuniversiteitApp\OCP\OCP_formulation.m', 1073)" style="font-weight:bold">OCP_formulation</a> (<a href="matlab: opentoline('C:\GBW_MyPrograms\KinderuniversiteitApp\OCP\OCP_formulation.m',1073,0)">line 1073</a>)
+In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('run_pred_sim', 'C:\GBW_MyPrograms\KinderuniversiteitApp\run_pred_sim.m', 126)" style="font-weight:bold">run_pred_sim</a> (<a href="matlab: opentoline('C:\GBW_MyPrograms\KinderuniversiteitApp\run_pred_sim.m',126,0)">line 126</a>)
+In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('PredSim_wrapper_for_app', 'C:\GBW_MyPrograms\KinderuniversiteitApp\App2025\PredSim_wrapper_for_app.m', 143)" style="font-weight:bold">PredSim_wrapper_for_app</a> (<a href="matlab: opentoline('C:\GBW_MyPrograms\KinderuniversiteitApp\App2025\PredSim_wrapper_for_app.m',143,0)">line 143</a>)
+In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('OpStapMetSuperKracht2025_editsEllislaatstetab/StartsimulatieButtonPushed', 'C:\GBW_MyPrograms\KinderuniversiteitApp\App2025\OpStapMetSuperKracht2025_editsEllislaatstetab.mlapp', 699)" style="font-weight:bold">OpStapMetSuperKracht2025_editsEllislaatstetab/StartsimulatieButtonPushed</a> (<a href="matlab: opentoline('C:\GBW_MyPrograms\KinderuniversiteitApp\App2025\OpStapMetSuperKracht2025_editsEllislaatstetab.mlapp',699,0)">line 699</a>)
+In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('matlab.apps.AppBase>@(source,event)executeCallback(ams,app,callback,requiresEventData,event)', 'C:\Program Files\MATLAB\R2023b\toolbox\matlab\appdesigner\appdesigner\runtime\+matlab\+apps\AppBase.m', 62)" style="font-weight:bold">matlab.apps.AppBase>@(source,event)executeCallback(ams,app,callback,requiresEventData,event)</a> (<a href="matlab: opentoline('C:\Program Files\MATLAB\R2023b\toolbox\matlab\appdesigner\appdesigner\runtime\+matlab\+apps\AppBase.m',62,0)">line 62</a>)] 
+{Property assignment is not allowed when the object is empty.  Use subscripted assignment to create an array element.
+
+Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('OpStapMetSuperKracht2025_editsEllislaatstetab/StartsimulatieButtonPushed', 'C:\GBW_MyPrograms\KinderuniversiteitApp\App2025\OpStapMetSuperKracht2025_editsEllislaatstetab.mlapp', 703)" style="font-weight:bold">OpStapMetSuperKracht2025_editsEllislaatstetab/StartsimulatieButtonPushed</a> (<a href="matlab: opentoline('C:\GBW_MyPrograms\KinderuniversiteitApp\App2025\OpStapMetSuperKracht2025_editsEllislaatstetab.mlapp',703,0)">line 703</a>)
+            app.ProbeeropnieuwButton.Visible = 'on';
+
+Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('matlab.apps.AppBase>@(source,event)executeCallback(ams,app,callback,requiresEventData,event)', 'C:\Program Files\MATLAB\R2023b\toolbox\matlab\appdesigner\appdesigner\runtime\+matlab\+apps\AppBase.m', 62)" style="font-weight:bold">matlab.apps.AppBase>@(source,event)executeCallback(ams,app,callback,requiresEventData,event)</a> (<a href="matlab: opentoline('C:\Program Files\MATLAB\R2023b\toolbox\matlab\appdesigner\appdesigner\runtime\+matlab\+apps\AppBase.m',62,0)">line 62</a>)
+            newCallback = @(source, event)executeCallback(ams, ...
+} 
+Error while evaluating Button PrivateButtonPushedFcn.
+
+Using C:\GBW_MyPrograms\KinderuniversiteitApp\OCP\Ik_Guess_2D.mot as initial guess.

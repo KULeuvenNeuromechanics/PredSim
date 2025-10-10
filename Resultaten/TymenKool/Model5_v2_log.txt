@@ -1,0 +1,58 @@
+ 
+Subject name: Model5
+OpenSim model: C:\GBW_MyPrograms\KinderuniversiteitApp\Subjects\TymenKool\Model5\Model5.osim
+ 
+ 
+Start PreProcessing...
+ 
+   Using existing external function: 
+      C:\GBW_MyPrograms\KinderuniversiteitApp\Subjects\Model5\F_Model5.dll
+   using existing MSK geometry Model5_f_lMT_vMT_dM_poly_3_9
+ 
+...PreProcessing done. Time elapsed 0.50 s
+ 
+ 
+Start creating CasADi functions...
+ 
+ 
+...CasADi functions created. Time elapsed 0.26 s
+ 
+ 
+Start formulating OCP...
+ 
+...OCP formulation done. Time elapsed 0.34 s
+ 
+Starting NLP solver...
+ 
+This is Ipopt version 3.12.3, running with linear solver mumps.
+NOTE: Other linear solvers might be more efficient (see Ipopt documentation).
+
+Number of nonzeros in equality constraint Jacobian...:   129872
+Number of nonzeros in inequality constraint Jacobian.:    10800
+Number of nonzeros in Lagrangian Hessian.............:        0
+
+Total number of variables............................:    18213
+                     variables with only lower bounds:        0
+                variables with lower and upper bounds:    18213
+                     variables with only upper bounds:        0
+Total number of equality constraints.................:    17163
+Total number of inequality constraints...............:     5400
+        inequality constraints with only lower bounds:     2700
+   inequality constraints with lower and upper bounds:        0
+        inequality constraints with only upper bounds:     2700
+
+Exception of type: IpoptException in file "Unknown File" at line -1:
+ Exception message: Unknown Exception caught in Ipopt
+      solver  :   t_proc      (avg)   t_wall      (avg)    n_eval
+       nlp_g  |  18.00ms ( 18.00ms)  18.00ms ( 18.00ms)         1
+  nlp_grad_f  |  71.00ms ( 35.50ms)  71.09ms ( 35.55ms)         2
+   nlp_jac_g  | 110.00ms ( 55.00ms) 110.01ms ( 55.01ms)         2
+       total  | 582.00ms (582.00ms) 581.62ms (581.62ms)         1
+ 
+...Exit NLP solver. Time elapsed 1.71 s
+ 
+ 
+Retrieving solution...
+ 
+Issue when reconstructing average speed
+Using C:\GBW_MyPrograms\KinderuniversiteitApp\Subjects\Vitruvian_Man\IG\IG_v14ms_ATx70.mot as initial guess.

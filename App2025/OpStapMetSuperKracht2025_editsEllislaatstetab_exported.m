@@ -1,4 +1,4 @@
-classdef OpStapMetSuperKracht2025_exported < matlab.apps.AppBase
+classdef OpStapMetSuperKracht2025_editsEllislaatstetab_exported < matlab.apps.AppBase
 
     % Properties that correspond to app components
     properties (Access = public)
@@ -7,12 +7,12 @@ classdef OpStapMetSuperKracht2025_exported < matlab.apps.AppBase
         KrachtMenu                      matlab.ui.container.Menu
         ZwaartekrachtMenu               matlab.ui.container.Menu
         CreerjezelfalsmodelMenu         matlab.ui.container.Menu
+        SimulatieNietGeluktWarning      matlab.ui.control.Label
+        LengteSliderEigenModel          matlab.ui.control.Slider
+        gLabelEigenModel                matlab.ui.control.Label
         CheckBox_Reus                   matlab.ui.control.CheckBox
-        giant                           matlab.ui.control.Image
         smurf                           matlab.ui.control.Image
-        Volwassenen                     matlab.ui.control.Image
         Kleuters                        matlab.ui.control.Image
-        Jullie_lengte                   matlab.ui.control.Image
         CheckBox_Volwassenen            matlab.ui.control.CheckBox
         CheckBox_Jullie_lengte          matlab.ui.control.CheckBox
         CheckBox_Kleuter                matlab.ui.control.CheckBox
@@ -20,17 +20,15 @@ classdef OpStapMetSuperKracht2025_exported < matlab.apps.AppBase
         CheckBoxJupiter                 matlab.ui.control.CheckBox
         GIF                             matlab.ui.control.Image
         Ballon                          matlab.ui.control.Image
+        GroepEditField                  matlab.ui.control.EditField
+        GroepEditFieldLabel             matlab.ui.control.Label
         CheckBox_Maui                   matlab.ui.control.CheckBox
         CheckBox_MrImpossible           matlab.ui.control.CheckBox
         CheckBox_Jullie_strength        matlab.ui.control.CheckBox
         CheckBox_Spongebob              matlab.ui.control.CheckBox
         CheckBox_Olaf                   matlab.ui.control.CheckBox
-        MrIncredible                    matlab.ui.control.Image
-        Jullie_strength                 matlab.ui.control.Image
         Spongebob                       matlab.ui.control.Image
         Olaf                            matlab.ui.control.Image
-        Button                          matlab.ui.control.Button
-        GroepEditField                  matlab.ui.control.EditField
         SpeelvideoButton                matlab.ui.control.Button
         SluitvideoButton                matlab.ui.control.Button
         StartsimulatieButton            matlab.ui.control.Button
@@ -40,21 +38,26 @@ classdef OpStapMetSuperKracht2025_exported < matlab.apps.AppBase
         CheckBoxMars                    matlab.ui.control.CheckBox
         CheckBoxMaan                    matlab.ui.control.CheckBox
         earth                           matlab.ui.control.Image
-        Mars                            matlab.ui.control.Image
         Jupiter                         matlab.ui.control.Image
-        Spaceman                        matlab.ui.control.Image
-        PlanetXblack                    matlab.ui.control.Image
         maan                            matlab.ui.control.Image
         CheckBoxPluto                   matlab.ui.control.CheckBox
         Image2                          matlab.ui.control.Image
         Image                           matlab.ui.control.Image
+        giant                           matlab.ui.control.Image
         ZwaartekrachtLabelEigenModel    matlab.ui.control.Label
+        ZwaartekrachtEditFieldEigenModel  matlab.ui.control.NumericEditField
+        Jullie_lengte                   matlab.ui.control.Image
+        Mars                            matlab.ui.control.Image
+        Volwassenen                     matlab.ui.control.Image
+        MrIncredible                    matlab.ui.control.Image
+        Jullie_strength                 matlab.ui.control.Image
+        Spaceman                        matlab.ui.control.Image
+        PlanetXblack                    matlab.ui.control.Image
         SpierkrachtLabelEigenModel      matlab.ui.control.Label
+        GewichtLabelEigenModel          matlab.ui.control.Label
         cmLabelEigenModel               matlab.ui.control.Label
         LengteLabelEigenModel           matlab.ui.control.Label
-        gLabelEigenModel                matlab.ui.control.Label
         ZwaartekrachtEigenModel         matlab.ui.control.NumericEditField
-        MassaEditFieldLabel             matlab.ui.control.Label
         kgLabelEigenModel               matlab.ui.control.Label
         SpierkrachtEigenModel           matlab.ui.control.NumericEditField
         procentlabelEigenModel          matlab.ui.control.Label
@@ -63,14 +66,13 @@ classdef OpStapMetSuperKracht2025_exported < matlab.apps.AppBase
         GIFreus                         matlab.ui.control.Image
         DENKreus                        matlab.ui.control.Image
         PlaneetX                        matlab.ui.control.Image
-        GroepEditFieldLabel             matlab.ui.control.Label
-        spaceBackground                 matlab.ui.control.Image
         Maui                            matlab.ui.control.Image
-        BackgroundImageSmurfReusKracht  matlab.ui.control.Image
-        LengteSliderEigenModel          matlab.ui.control.RangeSlider
         NaamModelEditField              matlab.ui.control.EditField
+        ModelEditFieldLabel             matlab.ui.control.Label
         MassaEditFieldEigenModel        matlab.ui.control.NumericEditField
         Background_creerjeeigenmodel    matlab.ui.control.Image
+        spaceBackground                 matlab.ui.control.Image
+        BackgroundImageSmurfReusKracht  matlab.ui.control.Image
     end
 
     
@@ -141,6 +143,7 @@ classdef OpStapMetSuperKracht2025_exported < matlab.apps.AppBase
             app.Volwassenen.Visible = 'on';
             app.CheckBox_Volwassenen.Visible = 'on';
             %app.LengteSliderReusSmurf.Visible = 'on';
+            app.GroepEditField.Visible = 'on';
 
             % related to kracht 
             app.Spongebob.Visible = 'off';
@@ -173,9 +176,8 @@ classdef OpStapMetSuperKracht2025_exported < matlab.apps.AppBase
             app.LengteSliderEigenModel.Visible = 'off';
             app.gLabelEigenModel.Visible = 'off';
             app.PlanetXblack.Visible = 'off';
-            app.NaamModelEditField.Visible = 'off';
             app.MassaEditFieldEigenModel.Visible = 'off';
-            app.MassaEditFieldLabel.Visible = 'off';
+            app.GewichtLabelEigenModel.Visible = 'off';
             app.kgLabelEigenModel.Visible = 'off';
             app.procentlabelEigenModel.Visible = 'off';
             app.SpierkrachtEigenModel.Visible = 'off';
@@ -183,7 +185,14 @@ classdef OpStapMetSuperKracht2025_exported < matlab.apps.AppBase
             app.Background_creerjeeigenmodel.Visible = 'off';
             app.ZwaartekrachtEigenModel.Visible = 'off';
             app.ZwaartekrachtLabelEigenModel.Visible = 'off';
-            app.SpierkrachtLabelEigenModel.Visible = 'off';            
+            app.SpierkrachtLabelEigenModel.Visible = 'off';   
+            app.GewichtLabelEigenModel.Visible = 'off';
+            app.ZwaartekrachtEditFieldEigenModel.Visible = 'off';
+            app.NaamModelEditField.Visible = 'off';
+            app.ModelEditFieldLabel.Visible = 'off';
+            
+            app.ProbeeropnieuwButton.Visible = 'off';  
+            app.SimulatieNietGeluktWarning.Visible = 'off';  
         end
 
 
@@ -205,6 +214,7 @@ classdef OpStapMetSuperKracht2025_exported < matlab.apps.AppBase
             app.CheckBox_Jullie_strength.Visible = 'on';
             app.Olaf.Visible  = 'on';
             app.CheckBox_Olaf.Visible = 'on';
+            app.GroepEditField.Visible = 'on';
 
             % related to smurf reus
             app.giant.Visible = 'off';
@@ -240,9 +250,9 @@ classdef OpStapMetSuperKracht2025_exported < matlab.apps.AppBase
             app.LengteSliderEigenModel.Visible = 'off';
             app.gLabelEigenModel.Visible = 'off';
             app.PlanetXblack.Visible = 'off';
-            app.NaamModelEditField.Visible = 'off';
+           
             app.MassaEditFieldEigenModel.Visible = 'off';
-            app.MassaEditFieldLabel.Visible = 'off';
+            app.GewichtLabelEigenModel.Visible = 'off';
             app.kgLabelEigenModel.Visible = 'off';
             app.procentlabelEigenModel.Visible = 'off';
             app.SpierkrachtEigenModel.Visible = 'off';
@@ -251,6 +261,13 @@ classdef OpStapMetSuperKracht2025_exported < matlab.apps.AppBase
             app.ZwaartekrachtEigenModel.Visible = 'off';
             app.ZwaartekrachtLabelEigenModel.Visible = 'off';
             app.SpierkrachtLabelEigenModel.Visible = 'off'; 
+            app.GewichtLabelEigenModel.Visible = 'off';
+            app.ZwaartekrachtEditFieldEigenModel.Visible = 'off';
+             app.NaamModelEditField.Visible = 'off';
+             app.ModelEditFieldLabel.Visible = 'off';
+
+            app.ProbeeropnieuwButton.Visible = 'off';  
+            app.SimulatieNietGeluktWarning.Visible = 'off';  
 
         end
 
@@ -302,6 +319,7 @@ classdef OpStapMetSuperKracht2025_exported < matlab.apps.AppBase
             app.CheckBoxJupiter.Visible = 'on';
             app.PlaneetX.Visible = 'on';
             app.CheckBoxPluto.Visible = 'on'; 
+            app.GroepEditField.Visible = 'on';
 
             % Eigen model
             app.cmLabelEigenModel.Visible = 'off';
@@ -309,9 +327,9 @@ classdef OpStapMetSuperKracht2025_exported < matlab.apps.AppBase
             app.LengteSliderEigenModel.Visible = 'off';
             app.gLabelEigenModel.Visible = 'off';
             app.PlanetXblack.Visible = 'off';
-            app.NaamModelEditField.Visible = 'off';
+        
             app.MassaEditFieldEigenModel.Visible = 'off';
-            app.MassaEditFieldLabel.Visible = 'off';
+            app.GewichtLabelEigenModel.Visible = 'off';
             app.kgLabelEigenModel.Visible = 'off';
             app.procentlabelEigenModel.Visible = 'off';
             app.SpierkrachtEigenModel.Visible = 'off';
@@ -321,6 +339,13 @@ classdef OpStapMetSuperKracht2025_exported < matlab.apps.AppBase
             app.ZwaartekrachtEigenModel.Visible = 'off';
             app.ZwaartekrachtLabelEigenModel.Visible = 'off';
             app.SpierkrachtLabelEigenModel.Visible = 'off';
+            app.GewichtLabelEigenModel.Visible = 'off';
+            app.ZwaartekrachtEditFieldEigenModel.Visible = 'off';
+             app.NaamModelEditField.Visible = 'off';
+             app.ModelEditFieldLabel.Visible = 'off';
+
+            app.ProbeeropnieuwButton.Visible = 'off';  
+            app.SimulatieNietGeluktWarning.Visible = 'off';  
 
         end
 
@@ -379,9 +404,9 @@ classdef OpStapMetSuperKracht2025_exported < matlab.apps.AppBase
             app.LengteSliderEigenModel.Visible = 'on';
             app.gLabelEigenModel.Visible = 'on';
             app.PlanetXblack.Visible = 'on';
-            app.NaamModelEditField.Visible = 'on';
+            app.GroepEditField.Visible = 'on';
             app.MassaEditFieldEigenModel.Visible = 'on';
-            app.MassaEditFieldLabel.Visible = 'on';
+            app.GewichtLabelEigenModel.Visible = 'on';
             app.kgLabelEigenModel.Visible = 'on';
             app.procentlabelEigenModel.Visible = 'on';
             app.SpierkrachtEigenModel.Visible = 'on';
@@ -389,32 +414,16 @@ classdef OpStapMetSuperKracht2025_exported < matlab.apps.AppBase
             app.ZwaartekrachtEigenModel.Visible = 'on';
             app.ZwaartekrachtLabelEigenModel.Visible = 'on';
             app.SpierkrachtLabelEigenModel.Visible = 'on';
+            app.GewichtLabelEigenModel.Visible = 'on';
+            app.ZwaartekrachtEditFieldEigenModel.Visible = 'on';
+             app.NaamModelEditField.Visible = 'on';
+             app.ModelEditFieldLabel.Visible = 'on';
+
+            app.ProbeeropnieuwButton.Visible = 'off';  
+            app.SimulatieNietGeluktWarning.Visible = 'off';  
 
         end
 
-% 
-%         % user inputs with default values
-%         function [] = updateUserInput(app)
-% %             app.usr_height = app.default_height;
-%             app.usr_fingertip_elbow = app.default_ratio_fingertip_elbow*app.usr_height;
-%             app.usr_elbow_shoulder = app.default_ratio_elbow_shoulder*app.usr_height;
-%             app.usr_shoulder_width = app.default_ratio_shoulder_width*app.usr_height;
-%             app.usr_hip_knee = app.default_ratio_hip_knee*app.usr_height;
-%             app.usr_knee_ground = app.default_ratio_knee_ground*app.usr_height;
-%             app.usr_foot_length = app.default_ratio_foot_length*app.usr_height;
-%         end
-% 
-%         % read user inputs
-%         function [] = readUserInput(app)
-%             % app.usr_height = app.LichaamslengteEditField.Value;
-%             app.usr_fingertip_elbow = app.AfstandelleboogtotvingertopEditField.Value;
-%             app.usr_elbow_shoulder = app.AfstandschoudertotelleboogEditField.Value;
-%             app.usr_shoulder_width = app.AfstandtussenschoudersEditField.Value;
-%             app.usr_hip_knee = app.AfstandheuptotknieEditField.Value;
-%             app.usr_knee_ground = app.AfstandknietotgrondEditField.Value;
-%             app.usr_foot_length = app.LengtevanvoetEditField.Value;
-%         end
-% 
 
         function [total_distance, avg_vel] = calcDistance(app,savepath)
             %% get distance
@@ -427,10 +436,28 @@ classdef OpStapMetSuperKracht2025_exported < matlab.apps.AppBase
 
         end
 
+        function name_tmp2 = getName(app,name_tmp)
+            if strcmp(name_tmp(end-2:end-1),'_v')
+                name_tmp2 = name_tmp(1:end-3);
+            elseif strcmp(name_tmp(end-3:end-2),'_v')
+                name_tmp2 = name_tmp(1:end-4);
+            else
+                name_tmp2 = name_tmp;
+            end
+        end
 
-        function initPaths(app)
-        [init_path_savefolder, init_path_geom, init_path_casadi] = getPaths();
-            %test given paths
+        
+        function setPaths(app)
+            name = getenv('COMPUTERNAME');
+% 
+%             % fill these in based on your computer
+                init_path_savefolder = 'C:\Users\u0125183\OneDrive - KU Leuven\Kinderuniversiteit';
+                init_path_geom = 'C:\GBW_MyPrograms\OpenSim 4.5\Geometry';
+                init_path_casadi = 'C:\GBW_MyPrograms\Casadi';
+
+
+            [init_path_savefolder,init_path_geom,init_path_casadi] = getPaths();
+            % test given paths
             if ~exist(init_path_savefolder,'dir')
                 error('Please set "init_path_savefolder"')
             end
@@ -445,8 +472,10 @@ classdef OpStapMetSuperKracht2025_exported < matlab.apps.AppBase
             app.path_savefolder = init_path_savefolder;
             app.path_geom = init_path_geom;
             app.path_casadi = init_path_casadi;
+
         end
         
+
         end
     
     
@@ -464,14 +493,14 @@ classdef OpStapMetSuperKracht2025_exported < matlab.apps.AppBase
             app.path_repo = pathRepo;
 
             addpath([pathRepo '\VariousFunctions'])
-            addpath([pathRepo '\App2025'])
+            addpath([pathRepo '\App'])
 
-            %app.sel_mot_file = fullfile(app.path_repo,'Subjects','Vitruvian_Man','Vitruvian_Man.mot');
+            % app.sel_mot_file = fullfile(app.path_repo,'Subjects','Vitruvian_Man','Vitruvian_Man.mot');
+            % 
+            % app.sel_osim_file = fullfile(app.path_repo,'Subjects','Vitruvian_Man','Vitruvian_Man.osim');
+            % 
 
-            %app.sel_osim_file = fullfile(app.path_repo,'Subjects','Vitruvian_Man','Vitruvian_Man.osim');
-
-            %setPaths(app)
-            initPaths(app)
+            setPaths(app)
 
             % menu
            app.LengteMenu.MenuSelectedFcn = @(src, event) LengteMenuSelected(app,event);
@@ -491,6 +520,7 @@ classdef OpStapMetSuperKracht2025_exported < matlab.apps.AppBase
             app.CheckBox_Jullie_strength.Visible = 'off';
             app.Olaf.Visible  = 'off';
             app.CheckBox_Olaf.Visible = 'off';
+            app.GroepEditField.Visible = 'on';
               
             
             app.OpstapmetsuperkrachtWhite.Visible = 'off';
@@ -513,9 +543,9 @@ classdef OpStapMetSuperKracht2025_exported < matlab.apps.AppBase
             app.LengteSliderEigenModel.Visible = 'off';
             app.gLabelEigenModel.Visible = 'off';
             app.PlanetXblack.Visible = 'off';
-            app.NaamModelEditField.Visible = 'off';
+            app.GroepEditField.Visible = 'off';
             app.MassaEditFieldEigenModel.Visible = 'off';
-            app.MassaEditFieldLabel.Visible = 'off';
+            app.GewichtLabelEigenModel.Visible = 'off';
             app.kgLabelEigenModel.Visible = 'off';
             app.procentlabelEigenModel.Visible = 'off';
             app.SpierkrachtEigenModel.Visible = 'off';
@@ -524,6 +554,15 @@ classdef OpStapMetSuperKracht2025_exported < matlab.apps.AppBase
             app.ZwaartekrachtLabelEigenModel.Visible = 'off';
             app.SpierkrachtLabelEigenModel.Visible = 'off';
             app.OpstapmetsuperkrachtBlue.Visible = 'on';
+            app.GewichtLabelEigenModel.Visible = 'off';
+            app.ZwaartekrachtEditFieldEigenModel.Visible = 'off';
+            app.NaamModelEditField.Visible = 'off';
+            app.ModelEditFieldLabel.Visible = 'off';
+
+
+            app.ProbeeropnieuwButton.Visible = 'off'; 
+            
+            app.SimulatieNietGeluktWarning.Visible = 'off';  
             
 
         end
@@ -536,11 +575,16 @@ classdef OpStapMetSuperKracht2025_exported < matlab.apps.AppBase
         % Button pushed function: StartsimulatieButton
         function StartsimulatieButtonPushed(app, event)
 
+            
             if isempty(app.GroepEditField)
                 warning('Kies een groepsnaam.')
                 return
             end
 
+            app.StartsimulatieButton.Enable = 'off';
+            app.StartsimulatieButton.Visible = 'off';
+
+            try
             if strcmp(app.CurrentMenu,'Kracht')
                 allChecks = [app.CheckBox_Olaf.Value, app.CheckBox_Spongebob.Value, ...
                 app.CheckBox_Jullie_strength.Value, app.CheckBox_MrImpossible.Value, ...
@@ -600,14 +644,15 @@ classdef OpStapMetSuperKracht2025_exported < matlab.apps.AppBase
                  app.CheckBox_Reus.Value];
                 modelNames = {'Smurf','Kleuter','Jullie_lengte','Volwassenen','Reus'};
                 v_Length = [20 80 120 180 400];
-                v_Mass = [2 20 35 62 200];
+                v_Mass = [2 12 35 62 200];
                 v_Speed = [0.20 0.53 0.85 1.20 2.7];
-                v_IG_pelvis_y = [0.115 0.460 0.690 1.02 2.3];
+                %v_IG_pelvis_y = [0.115 0.460 0.690 1.02 2.3];
                 %i_checks = logical(allChecks);
                 U.Height = sum(allChecks.*v_Length);
                 U.Mass = sum(allChecks.*v_Mass);
                 U.Speed = sum(allChecks.*v_Speed);
-                U.IG_pelvis_y = sum(allChecks.*v_IG_pelvis_y);
+                
+                %U.IG_pelvis_y = sum(allChecks.*v_IG_pelvis_y);
                 i_checks = logical(allChecks);
                 U.ModelName = modelNames{i_checks};
                 xpos_ballon_all = [265 508 693 1009 1336];
@@ -624,10 +669,34 @@ classdef OpStapMetSuperKracht2025_exported < matlab.apps.AppBase
                 app.GIF.Position = [xpos_gif_current ypos_gif_current 98 71];
             
             else
-                U.Height = 160;
+                U.Height = 180;
                 U.Speed = 1.33;
                 U.Mass = 62;
                 %U.IG_pelvis_y = [];
+                
+            end
+
+            if strcmp(app.CurrentMenu,'EigenModel')
+                Length_val = app.LengteSliderEigenModel.Value;
+                Strength_val = app.SpierkrachtEigenModel.Value;
+                Mass_val = app.MassaEditFieldEigenModel.Value;
+                g_val = app.ZwaartekrachtEditFieldEigenModel.Value;
+
+
+                U.Height = Length_val;
+                U.Mass = Mass_val;
+                U.Force_sf = Strength_val/100;
+                U.sf_Gravity = g_val;
+                U.Speed = 1.33;
+
+
+                U.ModelName = app.NaamModelEditField.Value;
+
+                app.Ballon.Position = [576 511 214 177];
+                app.GIF.Position = [627 569 98 71];
+
+            else
+
             end
 
               app.Ballon.Enable = 'on';
@@ -638,27 +707,43 @@ classdef OpStapMetSuperKracht2025_exported < matlab.apps.AppBase
             U.savefolder = app.path_savefolder;
             U.GroupName = app.GroupName;
             U.PathCasadi = app.path_casadi;
-            %U.Height = 180;
-            %U.Speed = 1.33;
-            %U.Mass = 62;
-            % U.sf_Gravity = 1;
-            sf.foot = 1;
-            sf.upp_leg = 1;
-            sf.low_leg = 1;
-            sf.torso = 1;
-            sf.shoulder = 1;
-            sf.low_arm = 1;
-            sf.upp_arm = 1;
-            app.ModelName = U.ModelName;
+    
+            sf_gen = U.Height/180;
+            sf.foot = sf_gen;
+            sf.upp_leg = sf_gen;
+            sf.low_leg = sf_gen;
+            sf.torso = sf_gen;
+            sf.shoulder = sf_gen;
+            sf.low_arm = sf_gen;
+            sf.upp_arm = sf_gen;
 
             % start simulation
             resultpath = PredSim_wrapper_for_app(U,sf);
 
 
-              app.Ballon.Enable = 'off';
-              app.Ballon.Visible = 'off';
-              app.GIF.Enable = 'off';
-              app.GIF.Visible = 'off';
+            app.StartsimulatieButton.Enable = 'on';
+            app.StartsimulatieButton.Visible = 'on';
+
+            catch ME
+            app.SimulatieNietGeluktWarning.Enable = 'on';  
+            app.ProbeeropnieuwButton.Enable = 'on';  
+            app.ProbeeropnieuwButton.Visible = 'on';  
+            app.SimulatieNietGeluktWarning.Visible = 'on';  
+
+            app.Ballon.Enable = 'off';
+            app.Ballon.Visible = 'off';
+            app.GIF.Enable = 'off';
+            app.GIF.Visible = 'off';     
+            end
+
+            app.StartsimulatieButton.Enable = 'on';
+            app.StartsimulatieButton.Visible = 'on';
+
+
+            app.Ballon.Enable = 'off';
+            app.Ballon.Visible = 'off';
+            app.GIF.Enable = 'off';
+            app.GIF.Visible = 'off';          
 
 
         end
@@ -690,42 +775,52 @@ classdef OpStapMetSuperKracht2025_exported < matlab.apps.AppBase
 
         % Callback function
         function NaamEditFieldValueChanged(app, event)
-           % if isempty(app.NaamModelEditField.Value)
-           %     return
-           % end
-           % ModelName_tmp = app.NaamModelEditField.Value;
-            % ModelName_tmp(strfind(ModelName_tmp,' ')) = '_';
-            % ModelName_tmp(strfind(ModelName_tmp,'/')) = '_';
-            % ModelName_tmp(strfind(ModelName_tmp,'\')) = '_';
-            % 
-            % while strcmp(ModelName_tmp(1),'_') && length(ModelName_tmp)>1
-            %     ModelName_tmp = ModelName_tmp(2:end);
-            % end
-            % 
-            % while strcmp(ModelName_tmp(end),'_') && length(ModelName_tmp)>1
-            %     ModelName_tmp = ModelName_tmp(1:end-1);
-            % end
-            % app.ModelName = ModelName_tmp;
+            if isempty(app.GroepEditField.Value)
+                return
+            end
+            ModelName_tmp = app.GroepEditField.Value;
+            ModelName_tmp(strfind(ModelName_tmp,' ')) = '_';
+            ModelName_tmp(strfind(ModelName_tmp,'/')) = '_';
+            ModelName_tmp(strfind(ModelName_tmp,'\')) = '_';
+            
+            while strcmp(ModelName_tmp(1),'_') && length(ModelName_tmp)>1
+                ModelName_tmp = ModelName_tmp(2:end);
+            end
+            
+            while strcmp(ModelName_tmp(end),'_') && length(ModelName_tmp)>1
+                ModelName_tmp = ModelName_tmp(1:end-1);
+            end
+            app.ModelName = ModelName_tmp;
 
         end
 
         % Button pushed function: SpeelvideoButton
         function SpeelvideoButtonPushed(app, event)
 
-            % app.sel_osim_file = fullfile(app.path_repo,'Subjects','Vitruvian_Man','Vitruvian_Man.osim');
-            % app.sel_mot_file = fullfile(app.path_repo,'Subjects','Vitruvian_Man','Vitruvian_Man.mot');
-            app.sel_osim_file = fullfile(app.path_repo,'Subjects',app.GroupName,app.ModelName,[app.ModelName '.osim']);
+             flag = 0;
+            if ~exist(app.sel_osim_file,'file')
+                flag = 1;
+                disp(['Could not find "' app.sel_osim_file '"'])
+            end
+            if ~exist(app.sel_mot_file,'file')
+                flag = 1;
+                disp(['Could not find "' app.sel_mot_file '"'])
+            end
+            if flag
+                % app.sel_osim_file = fullfile(app.path_repo,'Subjects','Vitruvian_Man','Vitruvian_Man.osim');
+                % app.sel_mot_file = fullfile(app.path_repo,'Subjects','Vitruvian_Man','Vitruvian_Man.mot');
+                app.sel_osim_file = fullfile(app.path_repo,'Subjects',app.GroupName,app.ModelName,[app.ModelName '.osim']);
 
-            mot_folder = fullfile(app.path_repo, 'Subjects',app.GroupName,app.ModelName);
-            files = dir(fullfile(mot_folder, [app.ModelName '_v*.mot']));
-            if isempty(files), error('No mot files found.'); end
+                mot_folder = fullfile(app.path_repo, 'Subjects',app.GroupName,app.ModelName);
+                files = dir(fullfile(mot_folder, [app.ModelName '_v*.mot']));
+                if isempty(files), error('No mot files found.'); end
 
-            nums = cellfun(@(s) sscanf(s, [app.ModelName '_v%d.mot']), {files.name});
-            [~, idx] = max(nums);
+                nums = cellfun(@(s) sscanf(s, [app.ModelName '_v%d.mot']), {files.name});
+                [~, idx] = max(nums);
 
-            app.sel_mot_file = fullfile(mot_folder, files(idx).name);
+                app.sel_mot_file = fullfile(mot_folder, files(idx).name);
 
-            % end
+            end
 
             % function
             try
@@ -759,38 +854,41 @@ classdef OpStapMetSuperKracht2025_exported < matlab.apps.AppBase
 
         % Callback function
         function NaamAfstandSnelheidListBoxValueChanged(app, event)
+            app.sel_mot_file = app.NaamAfstandSnelheidListBox.Value;
+
+            [~,name_tmp,~] = fileparts(app.sel_mot_file);
+            name_tmp2 = getName(app,name_tmp);
+            osim_tmp = fullfile(app.path_repo,'Subjects',name_tmp2,[name_tmp2 '.osim']);
+            if exist(osim_tmp,'file')
+                app.sel_osim_file = osim_tmp;
+            else
+                res_tmp = app.sel_mot_file;
+                res_tmp(end-1) = 'a'; % .mot -> .mat
+                load (res_tmp,'model_info');
+                app.sel_osim_file = model_info.osim_path;
+            end
+            
 
         end
 
         % Callback function
         function KrachtSliderValueChanged(app, event)
+            v = app.KrachtSlider.Value;
+            if v < app.KrachtSlider.Limits(2)
+                app.usr_speed = round(app.KrachtSlider.Value)/3.6;
+            else
+                app.usr_speed = -1;
+            end
             
         end
 
         % Callback function
         function LichaamslengteEditFieldValueChanged(app, event)
-             
-        end
-
-        % Value changed function: NaamModelEditField
-        function ModelEditFieldValueChanged(app, event)
-            if isempty(app.NaamModelEditField.Value)
-                return
-            end
-            % avoid issues with paths
-            NaamModel_tmp = app.NaamModelEditField.Value;
-            NaamModel_tmp(strfind(NaamModel_tmp,' ')) = '_';
-            NaamModel_tmp(strfind(NaamModel_tmp,'/')) = '_';
-            NaamModel_tmp(strfind(NaamModel_tmp,'\')) = '_';
+            readUserInput(app)
+            updateUserInput(app)
+            writeDefaultUserInput(app)
+            updateInputLimits(app)
             
-            while strcmp(NaamModel_tmp(1),'_') && length(NaamModel_tmp)>1
-                NaamModel_tmp = NaamModel_tmp(2:end);
-            end
-            
-            while strcmp(NaamModel_tmp(end),'_') && length(NaamModel_tmp)>1
-                NaamModel_tmp = NaamModel_tmp(1:end-1);
-            end
-            app.ModelName = NaamModel_tmp;
         end
     end
 
@@ -831,6 +929,18 @@ classdef OpStapMetSuperKracht2025_exported < matlab.apps.AppBase
             app.CreerjezelfalsmodelMenu.ForegroundColor = [0 0.4471 0.7412];
             app.CreerjezelfalsmodelMenu.Text = 'Creëer jezelf  als model!';
 
+            % Create BackgroundImageSmurfReusKracht
+            app.BackgroundImageSmurfReusKracht = uiimage(app.UIFigure);
+            app.BackgroundImageSmurfReusKracht.ScaleMethod = 'fill';
+            app.BackgroundImageSmurfReusKracht.HandleVisibility = 'callback';
+            app.BackgroundImageSmurfReusKracht.Position = [-15 -19 1586 844];
+            app.BackgroundImageSmurfReusKracht.ImageSource = fullfile(pathToMLAPP, 'Background_landscape_path.png');
+
+            % Create spaceBackground
+            app.spaceBackground = uiimage(app.UIFigure);
+            app.spaceBackground.Position = [-229 -188 2004 1032];
+            app.spaceBackground.ImageSource = fullfile(pathToMLAPP, 'Space_drawing.png');
+
             % Create Background_creerjeeigenmodel
             app.Background_creerjeeigenmodel = uiimage(app.UIFigure);
             app.Background_creerjeeigenmodel.Position = [-177 -67 1953 940];
@@ -843,55 +953,33 @@ classdef OpStapMetSuperKracht2025_exported < matlab.apps.AppBase
             app.MassaEditFieldEigenModel.HorizontalAlignment = 'center';
             app.MassaEditFieldEigenModel.FontName = 'Footlight MT Light';
             app.MassaEditFieldEigenModel.FontSize = 30;
-            app.MassaEditFieldEigenModel.FontColor = [0 0.4471 0.7412];
-            app.MassaEditFieldEigenModel.BackgroundColor = [1 0.9725 0.8627];
+            app.MassaEditFieldEigenModel.FontColor = [0 0.451 0.7412];
+            app.MassaEditFieldEigenModel.BackgroundColor = [1 0.9686 0.8588];
             app.MassaEditFieldEigenModel.Position = [1370 303 74 41];
             app.MassaEditFieldEigenModel.Value = 75;
 
+            % Create ModelEditFieldLabel
+            app.ModelEditFieldLabel = uilabel(app.UIFigure);
+            app.ModelEditFieldLabel.FontName = 'Footlight MT Light';
+            app.ModelEditFieldLabel.FontSize = 30;
+            app.ModelEditFieldLabel.FontColor = [0 0.451 0.7412];
+            app.ModelEditFieldLabel.Position = [813 466 83 42];
+            app.ModelEditFieldLabel.Text = 'Model';
+
             % Create NaamModelEditField
             app.NaamModelEditField = uieditfield(app.UIFigure, 'text');
-            app.NaamModelEditField.ValueChangedFcn = createCallbackFcn(app, @ModelEditFieldValueChanged, true);
+            app.NaamModelEditField.HorizontalAlignment = 'center';
             app.NaamModelEditField.FontName = 'Footlight MT Light';
             app.NaamModelEditField.FontSize = 30;
+            app.NaamModelEditField.FontColor = [0 0.451 0.7412];
             app.NaamModelEditField.BackgroundColor = [1 0.9686 0.8588];
-            app.NaamModelEditField.Placeholder = '(Geef de naam van jouw groepje)';
-            app.NaamModelEditField.Position = [814 469 677 44];
-            app.NaamModelEditField.Value = '(Geef de naam van het model)';
-
-            % Create LengteSliderEigenModel
-            app.LengteSliderEigenModel = uislider(app.UIFigure, 'range');
-            app.LengteSliderEigenModel.Limits = [80 180];
-            app.LengteSliderEigenModel.MajorTicks = [80 100 120 140 160 180];
-            app.LengteSliderEigenModel.MinorTicks = [80 85 90.95 100 105 110 115 120 125 130 135 140 145 150 155 160 165 170 175180];
-            app.LengteSliderEigenModel.FontName = 'Footlight MT Light';
-            app.LengteSliderEigenModel.FontSize = 30;
-            app.LengteSliderEigenModel.Position = [929 426 495 3];
-            app.LengteSliderEigenModel.Value = [80 180];
-
-            % Create BackgroundImageSmurfReusKracht
-            app.BackgroundImageSmurfReusKracht = uiimage(app.UIFigure);
-            app.BackgroundImageSmurfReusKracht.ScaleMethod = 'fill';
-            app.BackgroundImageSmurfReusKracht.HandleVisibility = 'callback';
-            app.BackgroundImageSmurfReusKracht.Position = [-15 -19 1586 844];
-            app.BackgroundImageSmurfReusKracht.ImageSource = fullfile(pathToMLAPP, 'Background_landscape_path.png');
+            app.NaamModelEditField.Placeholder = '(Geef de naam van het model)';
+            app.NaamModelEditField.Position = [936 463 555 61];
 
             % Create Maui
             app.Maui = uiimage(app.UIFigure);
             app.Maui.Position = [1079 84 432 472];
             app.Maui.ImageSource = fullfile(pathToMLAPP, 'maui_nobackground_v2.png');
-
-            % Create spaceBackground
-            app.spaceBackground = uiimage(app.UIFigure);
-            app.spaceBackground.Position = [-229 -188 2004 1032];
-            app.spaceBackground.ImageSource = fullfile(pathToMLAPP, 'Space_drawing.png');
-
-            % Create GroepEditFieldLabel
-            app.GroepEditFieldLabel = uilabel(app.UIFigure);
-            app.GroepEditFieldLabel.FontName = 'Footlight MT Light';
-            app.GroepEditFieldLabel.FontSize = 30;
-            app.GroepEditFieldLabel.FontColor = [1 0.9686 0.8588];
-            app.GroepEditFieldLabel.Position = [123 588 83 42];
-            app.GroepEditFieldLabel.Text = 'Groep';
 
             % Create PlaneetX
             app.PlaneetX = uiimage(app.UIFigure);
@@ -954,14 +1042,6 @@ classdef OpStapMetSuperKracht2025_exported < matlab.apps.AppBase
             app.kgLabelEigenModel.Position = [1466 302 33 42];
             app.kgLabelEigenModel.Text = 'kg';
 
-            % Create MassaEditFieldLabel
-            app.MassaEditFieldLabel = uilabel(app.UIFigure);
-            app.MassaEditFieldLabel.FontName = 'Footlight MT Light';
-            app.MassaEditFieldLabel.FontSize = 30;
-            app.MassaEditFieldLabel.FontColor = [0 0.4471 0.7412];
-            app.MassaEditFieldLabel.Position = [1235 302 124 42];
-            app.MassaEditFieldLabel.Text = 'Massa';
-
             % Create ZwaartekrachtEigenModel
             app.ZwaartekrachtEigenModel = uieditfield(app.UIFigure, 'numeric');
             app.ZwaartekrachtEigenModel.Limits = [0.1 5];
@@ -973,29 +1053,29 @@ classdef OpStapMetSuperKracht2025_exported < matlab.apps.AppBase
             app.ZwaartekrachtEigenModel.Position = [1025 224 74 41];
             app.ZwaartekrachtEigenModel.Value = 1;
 
-            % Create gLabelEigenModel
-            app.gLabelEigenModel = uilabel(app.UIFigure);
-            app.gLabelEigenModel.HorizontalAlignment = 'center';
-            app.gLabelEigenModel.FontName = 'Footlight MT Light';
-            app.gLabelEigenModel.FontSize = 30;
-            app.gLabelEigenModel.FontColor = [1 0.9686 0.8588];
-            app.gLabelEigenModel.Position = [1101 227 43 42];
-            app.gLabelEigenModel.Text = 'g';
-
             % Create LengteLabelEigenModel
             app.LengteLabelEigenModel = uilabel(app.UIFigure);
             app.LengteLabelEigenModel.FontName = 'Footlight MT Light';
             app.LengteLabelEigenModel.FontSize = 30;
             app.LengteLabelEigenModel.FontColor = [0 0.4471 0.7412];
-            app.LengteLabelEigenModel.Position = [814 403 84 39];
+            app.LengteLabelEigenModel.Position = [813 399 84 39];
             app.LengteLabelEigenModel.Text = 'Lengte';
 
             % Create cmLabelEigenModel
             app.cmLabelEigenModel = uilabel(app.UIFigure);
             app.cmLabelEigenModel.FontName = 'Footlight MT Light';
             app.cmLabelEigenModel.FontSize = 30;
+            app.cmLabelEigenModel.FontColor = [0 0.4471 0.7412];
             app.cmLabelEigenModel.Position = [1466 405 43 42];
             app.cmLabelEigenModel.Text = 'cm';
+
+            % Create GewichtLabelEigenModel
+            app.GewichtLabelEigenModel = uilabel(app.UIFigure);
+            app.GewichtLabelEigenModel.FontName = 'Footlight MT Light';
+            app.GewichtLabelEigenModel.FontSize = 30;
+            app.GewichtLabelEigenModel.FontColor = [0 0.451 0.7412];
+            app.GewichtLabelEigenModel.Position = [1242 306 106 42];
+            app.GewichtLabelEigenModel.Text = 'Gewicht';
 
             % Create SpierkrachtLabelEigenModel
             app.SpierkrachtLabelEigenModel = uilabel(app.UIFigure);
@@ -1005,6 +1085,53 @@ classdef OpStapMetSuperKracht2025_exported < matlab.apps.AppBase
             app.SpierkrachtLabelEigenModel.Position = [813 308 146 39];
             app.SpierkrachtLabelEigenModel.Text = 'Spierkracht';
 
+            % Create PlanetXblack
+            app.PlanetXblack = uiimage(app.UIFigure);
+            app.PlanetXblack.Position = [953 79 244 244];
+            app.PlanetXblack.ImageSource = fullfile(pathToMLAPP, 'PlanetX_dark.png');
+
+            % Create Spaceman
+            app.Spaceman = uiimage(app.UIFigure);
+            app.Spaceman.Position = [358 -25 591 505];
+            app.Spaceman.ImageSource = fullfile(pathToMLAPP, 'Spaceman_nobackground.png');
+
+            % Create Jullie_strength
+            app.Jullie_strength = uiimage(app.UIFigure);
+            app.Jullie_strength.Position = [546 147 323 323];
+            app.Jullie_strength.ImageSource = fullfile(pathToMLAPP, 'Jullie_nobackground.png');
+
+            % Create MrIncredible
+            app.MrIncredible = uiimage(app.UIFigure);
+            app.MrIncredible.Position = [789 139 377 377];
+            app.MrIncredible.ImageSource = fullfile(pathToMLAPP, 'incredibles2-mrincredible2.png');
+
+            % Create Volwassenen
+            app.Volwassenen = uiimage(app.UIFigure);
+            app.Volwassenen.Position = [848 154 386 378];
+            app.Volwassenen.ImageSource = fullfile(pathToMLAPP, 'Volwassenen.png');
+
+            % Create Mars
+            app.Mars = uiimage(app.UIFigure);
+            app.Mars.Position = [708 383 317 317];
+            app.Mars.ImageSource = fullfile(pathToMLAPP, 'Mars.png');
+
+            % Create Jullie_lengte
+            app.Jullie_lengte = uiimage(app.UIFigure);
+            app.Jullie_lengte.Position = [626 162 324 328];
+            app.Jullie_lengte.ImageSource = fullfile(pathToMLAPP, 'Jullie_nobackground.png');
+
+            % Create ZwaartekrachtEditFieldEigenModel
+            app.ZwaartekrachtEditFieldEigenModel = uieditfield(app.UIFigure, 'numeric');
+            app.ZwaartekrachtEditFieldEigenModel.Limits = [1 9];
+            app.ZwaartekrachtEditFieldEigenModel.ValueDisplayFormat = '%111g';
+            app.ZwaartekrachtEditFieldEigenModel.HorizontalAlignment = 'center';
+            app.ZwaartekrachtEditFieldEigenModel.FontName = 'Footlight MT Light';
+            app.ZwaartekrachtEditFieldEigenModel.FontSize = 30;
+            app.ZwaartekrachtEditFieldEigenModel.FontColor = [0 0.4471 0.7412];
+            app.ZwaartekrachtEditFieldEigenModel.BackgroundColor = [1 0.9686 0.8588];
+            app.ZwaartekrachtEditFieldEigenModel.Position = [1025 221 74 41];
+            app.ZwaartekrachtEditFieldEigenModel.Value = 1;
+
             % Create ZwaartekrachtLabelEigenModel
             app.ZwaartekrachtLabelEigenModel = uilabel(app.UIFigure);
             app.ZwaartekrachtLabelEigenModel.FontName = 'Footlight MT Light';
@@ -1012,6 +1139,11 @@ classdef OpStapMetSuperKracht2025_exported < matlab.apps.AppBase
             app.ZwaartekrachtLabelEigenModel.FontColor = [0 0.4471 0.7412];
             app.ZwaartekrachtLabelEigenModel.Position = [810 224 186 39];
             app.ZwaartekrachtLabelEigenModel.Text = 'Zwaartekracht';
+
+            % Create giant
+            app.giant = uiimage(app.UIFigure);
+            app.giant.Position = [1096 46 548 552];
+            app.giant.ImageSource = fullfile(pathToMLAPP, 'Giant_nobackground.png');
 
             % Create Image
             app.Image = uiimage(app.UIFigure);
@@ -1037,25 +1169,10 @@ classdef OpStapMetSuperKracht2025_exported < matlab.apps.AppBase
             app.maan.Position = [143 306 457 377];
             app.maan.ImageSource = fullfile(pathToMLAPP, 'moon_drawing.png');
 
-            % Create PlanetXblack
-            app.PlanetXblack = uiimage(app.UIFigure);
-            app.PlanetXblack.Position = [953 79 244 244];
-            app.PlanetXblack.ImageSource = fullfile(pathToMLAPP, 'PlanetX_dark.png');
-
-            % Create Spaceman
-            app.Spaceman = uiimage(app.UIFigure);
-            app.Spaceman.Position = [358 -25 591 505];
-            app.Spaceman.ImageSource = fullfile(pathToMLAPP, 'Spaceman_nobackground.png');
-
             % Create Jupiter
             app.Jupiter = uiimage(app.UIFigure);
             app.Jupiter.Position = [19 -46 377 393];
             app.Jupiter.ImageSource = fullfile(pathToMLAPP, 'Jupiter_noBackground.png');
-
-            % Create Mars
-            app.Mars = uiimage(app.UIFigure);
-            app.Mars.Position = [708 383 317 317];
-            app.Mars.ImageSource = fullfile(pathToMLAPP, 'Mars.png');
 
             % Create earth
             app.earth = uiimage(app.UIFigure);
@@ -1128,22 +1245,6 @@ classdef OpStapMetSuperKracht2025_exported < matlab.apps.AppBase
             app.SpeelvideoButton.Position = [1056 569 314 61];
             app.SpeelvideoButton.Text = 'Speel video';
 
-            % Create GroepEditField
-            app.GroepEditField = uieditfield(app.UIFigure, 'text');
-            app.GroepEditField.ValueChangedFcn = createCallbackFcn(app, @GroepEditFieldValueChanged, true);
-            app.GroepEditField.FontName = 'Footlight MT Light';
-            app.GroepEditField.FontSize = 30;
-            app.GroepEditField.FontColor = [0 0.4471 0.7412];
-            app.GroepEditField.BackgroundColor = [1 0.9725 0.8627];
-            app.GroepEditField.Placeholder = '(Geef de naam van jouw groepje)';
-            app.GroepEditField.Position = [207 569 412 61];
-
-            % Create Button
-            app.Button = uibutton(app.UIFigure, 'push');
-            app.Button.Icon = fullfile(pathToMLAPP, 'Olaf_nobackground.png');
-            app.Button.Position = [-465 -1 330 594];
-            app.Button.Text = '';
-
             % Create Olaf
             app.Olaf = uiimage(app.UIFigure);
             app.Olaf.Position = [53 172 307 307];
@@ -1153,16 +1254,6 @@ classdef OpStapMetSuperKracht2025_exported < matlab.apps.AppBase
             app.Spongebob = uiimage(app.UIFigure);
             app.Spongebob.Position = [330 176 247 247];
             app.Spongebob.ImageSource = fullfile(pathToMLAPP, 'Spongebob.png');
-
-            % Create Jullie_strength
-            app.Jullie_strength = uiimage(app.UIFigure);
-            app.Jullie_strength.Position = [546 147 323 323];
-            app.Jullie_strength.ImageSource = fullfile(pathToMLAPP, 'Jullie_nobackground.png');
-
-            % Create MrIncredible
-            app.MrIncredible = uiimage(app.UIFigure);
-            app.MrIncredible.Position = [789 139 377 377];
-            app.MrIncredible.ImageSource = fullfile(pathToMLAPP, 'incredibles2-mrincredible2.png');
 
             % Create CheckBox_Olaf
             app.CheckBox_Olaf = uicheckbox(app.UIFigure);
@@ -1189,18 +1280,36 @@ classdef OpStapMetSuperKracht2025_exported < matlab.apps.AppBase
             app.CheckBox_Maui.Text = '';
             app.CheckBox_Maui.Position = [1273 100 77 62];
 
+            % Create GroepEditFieldLabel
+            app.GroepEditFieldLabel = uilabel(app.UIFigure);
+            app.GroepEditFieldLabel.FontName = 'Footlight MT Light';
+            app.GroepEditFieldLabel.FontSize = 30;
+            app.GroepEditFieldLabel.FontColor = [0 0.451 0.7412];
+            app.GroepEditFieldLabel.Position = [123 588 83 42];
+            app.GroepEditFieldLabel.Text = 'Groep';
+
+            % Create GroepEditField
+            app.GroepEditField = uieditfield(app.UIFigure, 'text');
+            app.GroepEditField.ValueChangedFcn = createCallbackFcn(app, @GroepEditFieldValueChanged, true);
+            app.GroepEditField.FontName = 'Footlight MT Light';
+            app.GroepEditField.FontSize = 30;
+            app.GroepEditField.FontColor = [0 0.451 0.7412];
+            app.GroepEditField.BackgroundColor = [1 0.9686 0.8588];
+            app.GroepEditField.Placeholder = '(Geef de naam van jouw groepje)';
+            app.GroepEditField.Position = [207 569 421 61];
+
             % Create Ballon
             app.Ballon = uiimage(app.UIFigure);
             app.Ballon.Enable = 'off';
             app.Ballon.Visible = 'off';
-            app.Ballon.Position = [265 413 214 177];
+            app.Ballon.Position = [576 511 214 177];
             app.Ballon.ImageSource = 'balloon.png';
 
             % Create GIF
             app.GIF = uiimage(app.UIFigure);
             app.GIF.Enable = 'off';
             app.GIF.Visible = 'off';
-            app.GIF.Position = [313 470 98 71];
+            app.GIF.Position = [627 569 98 71];
             app.GIF.ImageSource = 'allgifs.gif';
 
             % Create CheckBoxJupiter
@@ -1228,35 +1337,48 @@ classdef OpStapMetSuperKracht2025_exported < matlab.apps.AppBase
             app.CheckBox_Volwassenen.Text = '';
             app.CheckBox_Volwassenen.Position = [1033 139 25 22];
 
-            % Create Jullie_lengte
-            app.Jullie_lengte = uiimage(app.UIFigure);
-            app.Jullie_lengte.Position = [626 162 324 328];
-            app.Jullie_lengte.ImageSource = fullfile(pathToMLAPP, 'Jullie_nobackground.png');
-
             % Create Kleuters
             app.Kleuters = uiimage(app.UIFigure);
             app.Kleuters.Position = [377 158 310 280];
             app.Kleuters.ImageSource = fullfile(pathToMLAPP, 'Kleuters.png');
-
-            % Create Volwassenen
-            app.Volwassenen = uiimage(app.UIFigure);
-            app.Volwassenen.Position = [848 154 386 378];
-            app.Volwassenen.ImageSource = fullfile(pathToMLAPP, 'Volwassenen.png');
 
             % Create smurf
             app.smurf = uiimage(app.UIFigure);
             app.smurf.Position = [172 160 237 204];
             app.smurf.ImageSource = fullfile(pathToMLAPP, 'Smurf_nobackground.png');
 
-            % Create giant
-            app.giant = uiimage(app.UIFigure);
-            app.giant.Position = [1096 46 548 552];
-            app.giant.ImageSource = fullfile(pathToMLAPP, 'Giant_nobackground.png');
-
             % Create CheckBox_Reus
             app.CheckBox_Reus = uicheckbox(app.UIFigure);
             app.CheckBox_Reus.Text = '';
             app.CheckBox_Reus.Position = [1317 139 25 22];
+
+            % Create gLabelEigenModel
+            app.gLabelEigenModel = uilabel(app.UIFigure);
+            app.gLabelEigenModel.FontName = 'Footlight MT Light';
+            app.gLabelEigenModel.FontSize = 30;
+            app.gLabelEigenModel.FontColor = [1 0.9686 0.8588];
+            app.gLabelEigenModel.Position = [1109 224 25 39];
+            app.gLabelEigenModel.Text = 'g';
+
+            % Create LengteSliderEigenModel
+            app.LengteSliderEigenModel = uislider(app.UIFigure);
+            app.LengteSliderEigenModel.Limits = [80 180];
+            app.LengteSliderEigenModel.MinorTicks = [80 85 90.95 100 105 110 115 120 125 130 135 140 145 150 155 160 165 170 175 180];
+            app.LengteSliderEigenModel.FontName = 'Footlight MT Light';
+            app.LengteSliderEigenModel.FontSize = 30;
+            app.LengteSliderEigenModel.FontColor = [0 0.451 0.7412];
+            app.LengteSliderEigenModel.Position = [936 425 467 3];
+            app.LengteSliderEigenModel.Value = 120;
+
+            % Create SimulatieNietGeluktWarning
+            app.SimulatieNietGeluktWarning = uilabel(app.UIFigure);
+            app.SimulatieNietGeluktWarning.BackgroundColor = [1 0.9686 0.8588];
+            app.SimulatieNietGeluktWarning.FontName = 'Footlight MT Light';
+            app.SimulatieNietGeluktWarning.FontSize = 30;
+            app.SimulatieNietGeluktWarning.FontColor = [0 0.451 0.7412];
+            app.SimulatieNietGeluktWarning.Visible = 'off';
+            app.SimulatieNietGeluktWarning.Position = [676 564 694 71];
+            app.SimulatieNietGeluktWarning.Text = '             Simulatie niet gelukt 😔';
 
             % Show the figure after all components are created
             app.UIFigure.Visible = 'on';
@@ -1267,7 +1389,7 @@ classdef OpStapMetSuperKracht2025_exported < matlab.apps.AppBase
     methods (Access = public)
 
         % Construct app
-        function app = OpStapMetSuperKracht2025_exported
+        function app = OpStapMetSuperKracht2025_editsEllislaatstetab_exported
 
             % Create UIFigure and components
             createComponents(app)

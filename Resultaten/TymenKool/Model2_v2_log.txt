@@ -1,0 +1,50 @@
+ 
+Subject name: Model2
+OpenSim model: C:\GBW_MyPrograms\KinderuniversiteitApp\Subjects\TymenKool\Model2\Model2.osim
+ 
+ 
+Start PreProcessing...
+ 
+   Using existing external function: 
+      C:\GBW_MyPrograms\KinderuniversiteitApp\Subjects\Model2\F_Model2.dll
+   using existing MSK geometry Model2_f_lMT_vMT_dM_poly_3_9
+ 
+...PreProcessing done. Time elapsed 2.07 s
+ 
+ 
+Start creating CasADi functions...
+ 
+ 
+...CasADi functions created. Time elapsed 0.73 s
+ 
+ 
+Start formulating OCP...
+ 
+...OCP formulation done. Time elapsed 0.31 s
+ 
+Starting NLP solver...
+ 
+{Operation terminated by user during <a href="matlab:matlab.internal.language.introspective.errorDocCallback('casadi.GenericMatrixCommon/jacobian')" style="font-weight:bold">casadi.GenericMatrixCommon/jacobian</a>
+
+
+In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('solve_NLPSOL', 'C:\GBW_MyPrograms\KinderuniversiteitApp\OCP\solve_NLPSOL.m', 39)" style="font-weight:bold">solve_NLPSOL</a> (<a href="matlab: opentoline('C:\GBW_MyPrograms\KinderuniversiteitApp\OCP\solve_NLPSOL.m',39,0)">line 39</a>)
+sp = sparse(DM(sparsity(jacobian(opti.g,opti.x)),1));
+
+In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('OCP_formulation', 'C:\GBW_MyPrograms\KinderuniversiteitApp\OCP\OCP_formulation.m', 631)" style="font-weight:bold">OCP_formulation</a> (<a href="matlab: opentoline('C:\GBW_MyPrograms\KinderuniversiteitApp\OCP\OCP_formulation.m',631,0)">line 631</a>)
+    [w_opt,stats] = solve_NLPSOL(opti,options);
+
+In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('run_pred_sim', 'C:\GBW_MyPrograms\KinderuniversiteitApp\run_pred_sim.m', 126)" style="font-weight:bold">run_pred_sim</a> (<a href="matlab: opentoline('C:\GBW_MyPrograms\KinderuniversiteitApp\run_pred_sim.m',126,0)">line 126</a>)
+    OCP_formulation(S,model_info,f_casadi);
+
+In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('PredSim_wrapper_for_app_Old', 'C:\GBW_MyPrograms\KinderuniversiteitApp\App\PredSim_wrapper_for_app_Old.m', 194)" style="font-weight:bold">PredSim_wrapper_for_app_Old</a> (<a href="matlab: opentoline('C:\GBW_MyPrograms\KinderuniversiteitApp\App\PredSim_wrapper_for_app_Old.m',194,0)">line 194</a>)
+savename = run_pred_sim(S,osim_path);
+
+In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('OpStapMetSuperKracht2025_editsEllislaatstetab/StartsimulatieButtonPushed', 'C:\GBW_MyPrograms\KinderuniversiteitApp\App2025\OpStapMetSuperKracht2025_editsEllislaatstetab.mlapp', 698)" style="font-weight:bold">OpStapMetSuperKracht2025_editsEllislaatstetab/StartsimulatieButtonPushed</a> (<a href="matlab: opentoline('C:\GBW_MyPrograms\KinderuniversiteitApp\App2025\OpStapMetSuperKracht2025_editsEllislaatstetab.mlapp',698,0)">line 698</a>)
+                resultpath = PredSim_wrapper_for_app_Old(U,sf);
+
+In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('matlab.apps.AppBase>@(source,event)executeCallback(ams,app,callback,requiresEventData,event)', 'C:\Program Files\MATLAB\R2023b\toolbox\matlab\appdesigner\appdesigner\runtime\+matlab\+apps\AppBase.m', 62)" style="font-weight:bold">matlab.apps.AppBase>@(source,event)executeCallback(ams,app,callback,requiresEventData,event)</a> (<a href="matlab: opentoline('C:\Program Files\MATLAB\R2023b\toolbox\matlab\appdesigner\appdesigner\runtime\+matlab\+apps\AppBase.m',62,0)">line 62</a>)
+            newCallback = @(source, event)executeCallback(ams, ...
+} 
+Interrupt while evaluating Button PrivateButtonPushedFcn.
+
+Using C:\GBW_MyPrograms\KinderuniversiteitApp\Subjects\Vitruvian_Man\IG\IG_v14ms_ATx70.mot as initial guess.
