@@ -176,6 +176,27 @@ if nq.torqAct > 0
     opti.set_initial(a_a_col, guess.a_a_col');
 end
 
+%DONE: Add orthosis states opti variables (controls and states) at mesh points and collocation points.
+%TODO: also define initial guesses (now uses all zero).
+if (S.orthosis.Nstates_all > 0)
+    % Orthosis states bounds 
+    x_exo_bounds = cell2mat(S.orthosis.stateBounds_all');
+    x_exo_bounds_nsc = cell2mat(S.orthosis.stateBounds_nsc_all');
+    
+    % Orthosis states at mesh points
+    x_exo = opti.variable(S.orthosis.Nstates_all,N+1);
+    opti.subject_to(x_exo_bounds(:,1)*ones(1,N+1) < x_exo < x_exo_bounds(:,2)*ones(1,N+1));
+    opti.set_initial(x_exo, zeros(S.orthosis.Nstates_all,N+1));
+    
+    % Orthosis states at collocation points 
+    x_exo_col = opti.variable(S.orthosis.Nstates_all,d*N);
+    opti.subject_to(x_exo_bounds(:,1)*ones(1,d*N) < x_exo_col < x_exo_bounds(:,2)*ones(1,d*N));
+    opti.set_initial(x_exo_col, zeros(S.orthosis.Nstates_all,d*N));
+   
+end
+
+
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Define controls
 % Time derivative of muscle activations (states) at mesh points
@@ -204,29 +225,48 @@ opti.subject_to(bounds.Qdotdots.lower'*ones(1,d*N) < A_col < ...
     bounds.Qdotdots.upper'*ones(1,d*N));
 opti.set_initial(A_col, guess.Qdotdots_col');
 
+if (S.orthosis.Ncontrols_all > 0)
+    % Orthosis controls bounds 
+    u_exo_bounds = cell2mat(S.orthosis.controlBounds_all');
+    u_exo_bounds_nsc = cell2mat(S.orthosis.controlBounds_nsc_all');
+    
+    % Orthosis controls at mesh points 
+    u_exo = opti.variable(S.orthosis.Ncontrols_all,N);
+    opti.subject_to(u_exo_bounds(:,1)*ones(1,N) < u_exo < u_exo_bounds(:,2)*ones(1,N));
+    opti.set_initial(u_exo, zeros(S.orthosis.Ncontrols_all,N));  
+end
+
+
+
 %% Helper function for orthoses
+% DONE, may need to be edited to support orthosis states
 % variables
 a_MX = MX.sym('a',NMuscle,N);
 Qs_MX = MX.sym('Qs',nq.all,N);
 Qdots_MX = MX.sym('Qdots',nq.all,N);
 Qddots_MX = MX.sym('Qddots',nq.all,N);
+x_exo_MX = MX.sym('x_exo',S.orthosis.Nstates_all,N);
+u_exo_MX = MX.sym('u_exo',S.orthosis.Ncontrols_all,N);
 
 % unscale variables
 Qs_MX_nsc = Qs_MX.*(scaling.Qs'*ones(1,size(Qs_MX,2)));
 Qdots_MX_nsc = Qdots_MX.*(scaling.Qdots'*ones(1,size(Qdots_MX,2)));
 Qddots_MX_nsc = Qddots_MX.*(scaling.Qdotdots'*ones(1,size(Qddots_MX,2)));
+x_exo_MX_nsc = unscale_vector(x_exo_MX,x_exo_bounds, x_exo_bounds_nsc);
+u_exo_MX_nsc = unscale_vector(u_exo_MX,u_exo_bounds, u_exo_bounds_nsc);
 
 % evaluate orthosis function
-[M_ort_coord_MX, M_ort_body_MX] = f_casadi.f_orthosis_mesh_all(Qs_MX_nsc, Qdots_MX_nsc,...
-    Qddots_MX_nsc, a_MX);
+[M_ort_coord_MX, M_ort_body_MX, xdot_exo_MX] = f_casadi.f_orthosis_mesh_all(Qs_MX_nsc, Qdots_MX_nsc,...
+    Qddots_MX_nsc, a_MX,x_exo_MX_nsc, u_exo_MX_nsc);
 
 % create function
 f_orthosis_mesh_all = Function('f_orthosis_mesh_all',{Qs_MX, Qdots_MX,...
-    Qddots_MX, a_MX},{M_ort_coord_MX, M_ort_body_MX});
+    Qddots_MX, a_MX, x_exo_MX, u_exo_MX},{M_ort_coord_MX, M_ort_body_MX,xdot_exo_MX});
 
 % evaluate helper function
-[M_ort_coord_opti, M_ort_body_opti] = f_orthosis_mesh_all(Qs(:,1:N), Qdots(:,1:N),...
-    A_col(:,1:3:3*N), a(:,1:N)); 
+% TODO: use xdot_exo_opti later maybe ?
+[M_ort_coord_opti, M_ort_body_opti, xdot_exo_opti] = f_orthosis_mesh_all(Qs(:,1:N), Qdots(:,1:N),...
+    A_col(:,1:3:3*N), a(:,1:N), x_exo(:,1:N), u_exo(:,1:N)); 
     % note: A is at 1st collocation point of mesh interval instead of at 1st mesh point
 
 
@@ -301,6 +341,7 @@ Qskj        = [Qsk Qsj];
 Qdotsk      = MX.sym('Qdotsk',nq.all);
 Qdotsj      = MX.sym('Qdotsj',nq.all,d);
 Qdotskj     = [Qdotsk Qdotsj];
+
 if nq.torqAct > 0
     a_ak        = MX.sym('a_ak',nq.torqAct);
     a_aj        = MX.sym('a_akmesh',nq.torqAct,d);
@@ -311,6 +352,7 @@ vAk     = MX.sym('vAk',NMuscle);
 if nq.torqAct > 0
     e_ak    = MX.sym('e_ak',nq.torqAct);
 end
+uk          = MX.sym('uk', S.orthosis.Ncontrols_all);
 
 % Define CasADi variables for "slack" controls
 dFTtildej   = MX.sym('dFTtildej',NMuscle,d);
@@ -326,6 +368,12 @@ if (S.subject.synergies)
     SynH_lk         = MX.sym('SynH_lk',S.subject.NSyn_l);
     SynW_rk         = MX.sym('SynW_rk',length(idx_m_r),S.subject.NSyn_r);
     SynW_lk         = MX.sym('SynW_lk',length(idx_m_l),S.subject.NSyn_l);
+end
+
+if (S.orthosis.Nstates_all > 0)
+    xk          = MX.sym('xk', S.orthosis.Nstates_all);
+    xj          = MX.sym('xj', S.orthosis.Nstates_all,d);
+    xkj         = [xk xj];
 end
 
 J           = 0; % Initialize cost function
@@ -348,6 +396,9 @@ for j=1:d
     dFTtildej_nsc = dFTtildej.*scaling.dFTtilde;
     Aj_nsc = Aj.*(scaling.Qdotdots'*ones(1,size(Aj,2)));
     vAk_nsc = vAk.*scaling.vA;
+
+    xkj_nsc = unscale_vector(xkj,x_exo_bounds, x_exo_bounds_nsc);
+    uk_nsc = unscale_vector(uk,u_exo_bounds, u_exo_bounds_nsc);
     
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Get muscle-tendon lengths, velocities, and moment arms
@@ -394,6 +445,8 @@ for j=1:d
     Qdotsp_nsc   = Qdotskj_nsc*C(:,j+1);
     FTtildep_nsc = FTtildekj_nsc*C(:,j+1);
     ap           = akj*C(:,j+1);
+    xp_nsc       = xkj_nsc*C(:,j+1);
+
     if nq.torqAct > 0
         a_ap         = a_akj*C(:,j+1);
     end
@@ -413,11 +466,19 @@ for j=1:d
         da_adtj = f_casadi.ActuatorActivationDynamics(e_ak,a_akj(:,j+1));
         eq_constr{end+1} = (h*da_adtj - a_ap)./scaling.a_a;
     end
+    
 
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Orthosis moments on collocation point
-    [M_ort_coordj, M_ort_bodyj] = f_casadi.f_orthosis_mesh_k(Qskj_nsc(:,j+1),...
-        Qdotskj_nsc(:,j+1), Aj_nsc(:,j), akj(:,j+1));
+    [M_ort_coordj, M_ort_bodyj, xdotj] = f_casadi.f_orthosis_mesh_k(Qskj_nsc(:,j+1),...
+        Qdotskj_nsc(:,j+1), Aj_nsc(:,j), akj(:,j+1), xkj_nsc(:,j+1), uk_nsc);
+    % DONE: The function above for generating the orthosis moments also
+    % needs x and u inputs from orthosis
+   
+    % DONE: orthosis internal dynamics
+    if S.orthosis.Nstates_all > 0
+        eq_constr{end+1} = (h*xdotj - xp_nsc)./scaling_factors(x_exo_bounds,x_exo_bounds_nsc);
+    end  
 
     % add orthosis moments from input variables
     M_ort_coord_totj = M_ort_coordk + M_ort_coordj;
@@ -433,6 +494,9 @@ for j=1:d
         W.pass_torq  * B(j+1) *(f_casadi.J_lim_torq(Tau_passj_cost))*h + ...
         W.slack_ctrl * B(j+1) *(f_casadi.J_muscles(vAk))*h + ...
         W.slack_ctrl * B(j+1) *(f_casadi.J_muscles(dFTtildej(:,j)))*h;
+        % TODO: If orth_excitation is not predetermined and not a function of
+        % other decision variables, there MAY need to be a cost associated with
+        % orthosis motor activation
 
     if nq.torqAct > 0
         J = J + W.e_torqAct      * B(j+1) *(f_casadi.J_torq_act(e_ak))*h;
@@ -594,6 +658,13 @@ end
 if (S.subject.synergies)
     coll_input_vars_def = [coll_input_vars_def,{SynH_rk,SynH_lk,SynW_rk,SynW_lk}];
 end
+%DONE: add decision variables: orthosis states and excitation, hereafter (single mesh step)
+if (S.orthosis.Nstates_all > 0)
+   coll_input_vars_def = [coll_input_vars_def,{xk,xj}]; 
+end
+if (S.orthosis.Ncontrols_all > 0)
+   coll_input_vars_def = [coll_input_vars_def,{uk}]; 
+end
 
 f_coll = Function('f_coll',coll_input_vars_def,...
         {eq_constr, ineq_constr_deact, ineq_constr_act,...
@@ -611,6 +682,13 @@ if nq.torqAct > 0
 end
 if (S.subject.synergies)    
     coll_input_vars_eval = [coll_input_vars_eval,{SynH_r(:,1:end-1), SynH_l(:,1:end-1), SynW_r,SynW_l}];
+end
+%DONE: add decision variables: orthosis states and excitation, hereafter (full mesh)
+if (S.orthosis.Nstates_all > 0)
+   coll_input_vars_eval = [coll_input_vars_eval,{x_exo(:,1:end-1),x_exo_col}]; 
+end
+if (S.orthosis.Ncontrols_all > 0)
+   coll_input_vars_eval = [coll_input_vars_eval,{u_exo}]; 
 end
 
 coll_ineq_constr_distance = cell(1,length(ineq_constr_distance));
@@ -655,18 +733,24 @@ for k=1:N
     FTtildekj = [FTtilde(:,k), FTtilde_col(:,(k-1)*d+1:k*d)];
     Qskj = [Qs(:,k), Qs_col(:,(k-1)*d+1:k*d)];
     Qdotskj = [Qdots(:,k), Qdots_col(:,(k-1)*d+1:k*d)];
+    xkj = [x_exo(:,k), x_exo_col(:,(k-1)*d+1:k*d)];
     if nq.torqAct > 0
         a_akj = [a_a(:,k), a_a_col(:,(k-1)*d+1:k*d)];
     end
 
-    % Add equality constraints (next interval starts with end values of
+    % Add continuity a.k.a. gap closing equality constraints (next interval starts with end values of
     % states from previous interval)
     opti.subject_to(a(:,k+1) == akj*D);
     opti.subject_to(FTtilde(:,k+1) == FTtildekj*D); % scaled
     opti.subject_to(Qs(:,k+1) == Qskj*D); % scaled
     opti.subject_to(Qdots(:,k+1) == Qdotskj*D); % scaled
+    
     if nq.torqAct > 0
         opti.subject_to(a_a(:,k+1) == a_akj*D);
+    end
+
+    if S.orthosis.Nstates_all >0
+        opti.subject_to(x_exo(:,k+1) == xkj*D); %DONE add orthosis (controller) states continuity constaints
     end
 
 end % End loop over mesh points
@@ -697,6 +781,10 @@ if strcmp(S.misc.gaitmotion_type,'HalfGaitCycle')
         opti.subject_to(SynH_r(:,end) - SynH_l(:,1) == 0);
         opti.subject_to(SynH_l(:,end) - SynH_r(:,1) == 0);
     end
+    %TODO: add halfgaitcycle orthosis symmetry constraint
+    if S.orthosis.Nstates_all>0
+        % I do not understand indexing above...
+    end
 else
     opti.subject_to(Qs(model_info.ExtFunIO.symQs.QsFullGC,end) - Qs(model_info.ExtFunIO.symQs.QsFullGC,1) == 0);
     opti.subject_to(Qdots(:,end) - Qdots(:,1) == 0);
@@ -711,6 +799,10 @@ else
     if (S.subject.synergies)
         opti.subject_to(SynH_r(:,end) - SynH_r(:,1) == 0);
         opti.subject_to(SynH_l(:,end) - SynH_l(:,1) == 0);
+    end
+    %DONE: added fullgaitcycle orthosis continuity constraint
+    if S.orthosis.Nstates_all>0
+        opti.subject_to(x_exo(:,end) - x_exo(:,1) == 0);
     end
 
 end
@@ -779,6 +871,7 @@ if ~S.post_process.load_prev_opti_vars
     options.ipopt.tol                   = 1*10^(-S.solver.tol_ipopt);
     options.ipopt.constr_viol_tol       = 1*10^(-S.solver.constr_viol_tol_ipopt);
     opti.solver('ipopt', options);
+    %opti.solver('fatrop', options);
     % timer
     
     disp('Starting NLP solver...')
@@ -830,6 +923,7 @@ disp(' ')
 NParameters = 1;
 tf_opt = w_opt(1:NParameters);
 starti = NParameters+1;
+%states
 a_opt = reshape(w_opt(starti:starti+NMuscle*(N+1)-1),NMuscle,N+1)';
 starti = starti + NMuscle*(N+1);
 a_col_opt = reshape(w_opt(starti:starti+NMuscle*(d*N)-1),NMuscle,d*N)';
@@ -852,12 +946,22 @@ if nq.torqAct > 0
     a_a_col_opt = reshape(w_opt(starti:starti+nq.torqAct*(d*N)-1),nq.torqAct,d*N)';
     starti = starti + nq.torqAct*(d*N);
 end
+if S.orthosis.Nstates_all>0
+    x_exo_opt = reshape(w_opt(starti:starti+S.orthosis.Nstates_all*(N+1)-1),S.orthosis.Nstates_all,N+1)';
+    starti = starti + S.orthosis.Nstates_all*(N+1);
+    x_exo_col_opt = reshape(w_opt(starti:starti+S.orthosis.Nstates_all*(d*N)-1),S.orthosis.Nstates_all,d*N)';
+    starti = starti + S.orthosis.Nstates_all*(d*N);
+end
+
+
+%controls
 vA_opt = reshape(w_opt(starti:starti+NMuscle*N-1),NMuscle,N)';
 starti = starti + NMuscle*N;
 if nq.torqAct > 0
     e_a_opt = reshape(w_opt(starti:starti+nq.torqAct*N-1),nq.torqAct,N)';
     starti = starti + nq.torqAct*N;
 end
+
 dFTtilde_col_opt=reshape(w_opt(starti:starti+NMuscle*(d*N)-1),NMuscle,d*N)';
 starti = starti + NMuscle*(d*N);
 qdotdot_col_opt =reshape(w_opt(starti:starti+nq.all*(d*N)-1),nq.all,(d*N))';
@@ -882,6 +986,12 @@ if (S.subject.synergies)
         starti = starti + NMuscle/2*S.subject.NSyn_l;
     end
 end
+if S.orthosis.Ncontrols_all>0
+    u_exo_opt = reshape(w_opt(starti:starti+S.orthosis.Ncontrols_all*N-1),S.orthosis.Ncontrols_all,N)';
+    starti = starti + S.orthosis.Ncontrols_all*N;
+end
+
+
 if starti - 1 ~= length(w_opt)
     disp('error when extracting results')
 end
@@ -899,6 +1009,10 @@ if nq.torqAct > 0
     a_a_mesh_col_opt=zeros(N*(d+1)+1,nq.torqAct);
     a_a_mesh_col_opt(1:(d+1):end,:)= a_a_opt;
 end
+if S.orthosis.Nstates_all>0
+    x_exo_mesh_col_opt=zeros(N*(d+1)+1,S.orthosis.Nstates_all);
+    x_exo_mesh_col_opt(1:(d+1):end,:)= x_exo_opt;
+end
 for k=1:N
     rangei = k*(d+1)-(d-1):k*(d+1);
     rangebi = (k-1)*d+1:k*d;
@@ -908,6 +1022,9 @@ for k=1:N
     Qdots_mesh_col_opt(rangei,:) = Qdots_col_opt(rangebi,:);
     if nq.torqAct > 0
         a_a_mesh_col_opt(rangei,:) = a_a_col_opt(rangebi,:);
+    end
+    if S.orthosis.Nstates_all>0
+        x_exo_mesh_col_opt(rangei,:) = x_exo_col_opt(rangebi,:);
     end
 end
 
@@ -954,6 +1071,10 @@ if (S.subject.synergies)
     SynH_l_opt_unsc = SynH_l_opt(1:end-1,:).*repmat(...
         scaling.a,size(SynH_l_opt(1:end-1,:),1),size(SynH_l_opt,2)); % same scaling as a
 end
+if S.orthosis.Nstates_all>0
+    % x_exo, orthosis states
+    x_exo_opt_unsc=transpose(unscale_vector(x_exo_opt',x_exo_bounds,x_exo_bounds_nsc));
+end
 
 % Controls at mesh points
 % Time derivative of muscle activations (states)
@@ -995,6 +1116,11 @@ qdotdot_col_opt_unsc.deg(:,model_info.ExtFunIO.jointi.rotations) ...
 dFTtilde_col_opt_unsc = dFTtilde_col_opt.*repmat(...
     scaling.dFTtilde,size(dFTtilde_col_opt,1),size(dFTtilde_col_opt,2));
 dFTtilde_opt_unsc = dFTtilde_col_opt_unsc(d:d:end,:);
+
+if S.orthosis.Ncontrols_all>0
+    % u_exo, orthosis controls
+    u_exo_opt_unsc=transpose(unscale_vector(u_exo_opt',u_exo_bounds,u_exo_bounds_nsc));
+end
 
 
 %% Time grid
@@ -1254,6 +1380,8 @@ if strcmp(S.misc.gaitmotion_type,'HalfGaitCycle')
         SynH_l_opt_unsc = [SynH_l_opt_unsc_half; SynH_r_opt_unsc_half];
     end
 
+    %TODO: reconstruct exo states and controls for halfgaitcycle
+
 end
 
 % express slack controls on mesh points 1:N to be consistent
@@ -1299,6 +1427,14 @@ end
 if(S.subject.synergies)
     SynH_r_GC = SynH_r_opt_unsc(idx_GC,:);
     SynH_l_GC = SynH_l_opt_unsc(idx_GC,:);
+end
+
+if S.orthosis.Nstates_all>0
+    x_exo_GC = x_exo_opt_unsc(idx_GC,:);
+end
+
+if S.orthosis.Ncontrols_all>0
+    u_exo_GC = u_exo_opt_unsc(idx_GC,:);
 end
 
 % adjust forward position to be continuous and start at 0
@@ -1354,12 +1490,100 @@ R.ground_reaction.threshold = HS_threshold;
 R.ground_reaction.initial_contact_side = HS1;
 R.ground_reaction.idx_GC = idx_GC;
 R.spatiotemp.dist_trav = dist_trav_opt;
+if S.orthosis.Nstates_all>0
+    R.orthosis.states = x_exo_GC;
+end
+if S.orthosis.Ncontrols_all>0
+    R.orthosis.controls = u_exo_GC;
+end
 
 % save results
 Outname = fullfile(S.misc.save_folder,[S.misc.result_filename '.mat']);
 disp(['Saving results as: ' Outname])
 save(Outname,'w_opt','stats','setup','R','model_info');
 
+%% local functions
+function X_scaled = scale_vector(X_unscaled, bounds, bounds_nsc)
+%SCALE_VECTOR Linearly maps one or more unscaled vectors to scaled bounds.
+%
+%   X_scaled = scale_vector(X_unscaled, bounds, bounds_nsc)
+%
+%   Inputs:
+%       X_unscaled - [N x M] matrix of unscaled values (each column is a vector)
+%       bounds     - [N x 2] matrix of lower/upper bounds for scaled space
+%       bounds_nsc - [N x 2] matrix of lower/upper bounds for unscaled space
+%
+%   Output:
+%       X_scaled - [N x M] matrix mapped to 'bounds'
+
+    lb_scaled = bounds(:,1);
+    ub_scaled = bounds(:,2);
+    lb_unscaled = bounds_nsc(:,1);
+    ub_unscaled = bounds_nsc(:,2);
+
+    % Replicate bounds to match number of columns
+    lb_scaled_mat = repmat(lb_scaled, 1, size(X_unscaled,2));
+    ub_scaled_mat = repmat(ub_scaled, 1, size(X_unscaled,2));
+    lb_unscaled_mat = repmat(lb_unscaled, 1, size(X_unscaled,2));
+    ub_unscaled_mat = repmat(ub_unscaled, 1, size(X_unscaled,2));
+
+    % Linear scaling for each column
+    X_scaled = lb_scaled_mat + ((X_unscaled - lb_unscaled_mat) ./ ...
+                (ub_unscaled_mat - lb_unscaled_mat)) .* (ub_scaled_mat - lb_scaled_mat);
+end
+
+function X_unscaled = unscale_vector(X_scaled, bounds, bounds_nsc)
+%UNSCALE_VECTOR Linearly maps one or more scaled vectors to unscaled bounds.
+%
+%   X_unscaled = unscale_vector(X_scaled, bounds, bounds_nsc)
+%
+%   Inputs:
+%       X_scaled   - [N x M] matrix of scaled values (each column is a vector)
+%       bounds     - [N x 2] matrix of lower/upper bounds for scaled space
+%       bounds_nsc - [N x 2] matrix of lower/upper bounds for unscaled space
+%
+%   Output:
+%       X_unscaled - [N x M] matrix mapped to 'bounds_nsc'
+
+    lb_scaled = bounds(:,1);
+    ub_scaled = bounds(:,2);
+    lb_unscaled = bounds_nsc(:,1);
+    ub_unscaled = bounds_nsc(:,2);
+
+    % Replicate bounds to match number of columns
+    lb_scaled_mat = repmat(lb_scaled, 1, size(X_scaled,2));
+    ub_scaled_mat = repmat(ub_scaled, 1, size(X_scaled,2));
+    lb_unscaled_mat = repmat(lb_unscaled, 1, size(X_scaled,2));
+    ub_unscaled_mat = repmat(ub_unscaled, 1, size(X_scaled,2));
+
+    % Linear unscaling for each column
+    X_unscaled = lb_unscaled_mat + ((X_scaled - lb_scaled_mat) ./ ...
+                (ub_scaled_mat - lb_scaled_mat)) .* (ub_unscaled_mat - lb_unscaled_mat);
+end
+
+function factors = scaling_factors(bounds, bounds_nsc)
+%SCALING_FACTORS Computes linear scaling factors between two sets of bounds.
+%
+%   factors = scaling_factors(bounds, bounds_nsc)
+%
+%   Inputs:
+%       bounds     - [N x 2] matrix of lower/upper bounds for scaled space
+%       bounds_nsc - [N x 2] matrix of lower/upper bounds for unscaled space
+%
+%   Output:
+%       factors    - [N x 1] vector of scaling factors:
+%                       (ub_unscaled - lb_unscaled) ./ (ub_scaled - lb_scaled)
+%
+%   This factor tells how much the unscaled range changes per unit
+%   change in the scaled range.
+
+    lb_scaled = bounds(:,1);
+    ub_scaled = bounds(:,2);
+    lb_unscaled = bounds_nsc(:,1);
+    ub_unscaled = bounds_nsc(:,2);
+
+    factors = (ub_unscaled - lb_unscaled) ./ (ub_scaled - lb_scaled);
+end
 
 end
 

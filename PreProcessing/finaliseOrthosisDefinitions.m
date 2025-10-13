@@ -24,13 +24,69 @@ function [S] = finaliseOrthosisDefinitions(S, osim_path)
 init.Nmesh = S.solver.N_meshes;
 init.osimPath = osim_path;
 
+statecounter = uint16(0);
+controlcounter = uint16(0);
+% first loop: assemble cellstring of all orthosis states and controls
 for i=1:length(S.orthosis.settings)
-
     orthosis_settings_i = S.orthosis.settings{i};
 
     % get Orthosis object
     fun = str2func(orthosis_settings_i.function_name);
-    orthosis = fun(init, orthosis_settings_i);
+    orthosis = fun(init, orthosis_settings_i);    
+    S.orthosis.settings{i}.object = orthosis;
+
+    [~,~,~,~,~,~,meta_arg,~] = getArgRes(orthosis);
+
+    isOptivar = strcmp({meta_arg.type}, 'optivar');
+
+    isX = strcmp({meta_arg.subtype}, 'x') & isOptivar;
+    if any(isX)
+        S.orthosis.settings{i}.states.names = {meta_arg(isX).name};
+        S.orthosis.settings{i}.states.bounds_nsc = {meta_arg(isX).bounds_nsc};
+        S.orthosis.settings{i}.states.bounds = {meta_arg(isX).bounds};
+        statecounter = statecounter + uint16(1);
+    else
+        S.orthosis.settings{i}.states.names = {};
+        S.orthosis.settings{i}.states.bounds_nsc = {};
+        S.orthosis.settings{i}.states.bounds = {};
+    end
+
+    isU = strcmp({meta_arg.subtype}, 'u') & isOptivar;
+    if any(isU)
+        S.orthosis.settings{i}.controls.names = {meta_arg(isU).name};
+        S.orthosis.settings{i}.controls.bounds_nsc = {meta_arg(isU).bounds_nsc};
+        S.orthosis.settings{i}.controls.bounds = {meta_arg(isU).bounds};
+        controlcounter = controlcounter + uint16(1);
+    else
+        S.orthosis.settings{i}.controls.names = {};
+        S.orthosis.settings{i}.controls.bounds_nsc = {};
+        S.orthosis.settings{i}.controls.bounds = {};
+    end
+         
+
+end
+
+% Convert cell array of structs -> struct array
+settings = [S.orthosis.settings{:}];
+
+% Concatenate controlNames across all structs
+temp = [settings.controls];
+S.orthosis.controlNames_all = [temp.names]; 
+S.orthosis.controlBounds_nsc_all = [temp.bounds_nsc];
+S.orthosis.controlBounds_all = [temp.bounds];
+S.orthosis.Ncontrols_all = controlcounter;
+
+% Concatenate stateNames across all structs
+temp = [settings.states];
+%S.orthosis.Nstates_all = sum()
+S.orthosis.stateNames_all = [temp.names];
+S.orthosis.stateBounds_nsc_all = [temp.bounds_nsc];
+S.orthosis.stateBounds_all = [temp.bounds];
+S.orthosis.Nstates_all = statecounter;
+
+for i=1:length(S.orthosis.settings)
+
+    orthosis = S.orthosis.settings{i}.object;
 
     orthosis.createCasadiFunction();
     % run testing methods
@@ -50,9 +106,9 @@ for i=1:length(S.orthosis.settings)
     BodyMoments = orthosis.getBodyMoments();
     S.OpenSimADOptions.input3DBodyMoments = [S.OpenSimADOptions.input3DBodyMoments(:);...
         BodyMoments(:)];
-    
-    S.orthosis.settings{i}.object = orthosis;
 
+    S.orthosis.settings{i}.object = orthosis;
+    
 end
 
 %% Remove duplicate entries
