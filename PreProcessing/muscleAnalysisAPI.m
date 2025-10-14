@@ -28,9 +28,6 @@ function [MuscleData] = muscleAnalysisAPI(S,osim_path,model_info,varargin)
 %
 % Original author: Lars D'Hondt
 % Original date: 5/April/2022
-%
-% Last edit by:
-% Last edit date:
 % --------------------------------------------------------------------------
 
 
@@ -47,7 +44,9 @@ n_muscle = model_info.muscle_info.NMuscle;
 % get senseble muscle-coordinate combinations to evaluate
 muscle_spanning_joint_info = model_info.muscle_info.muscle_spanning_joint_info;
 
-idx_argin_lig = contains(varargin(cellfun(@(st)(isa(st,'char')||isa(st,'string')),varargin)),'ligament');
+
+idx_argin_lig = find(cellfun(@(st)(isa(st,'char')||isa(st,'string')),varargin)...
+    & strcmp(varargin,'ligaments'));
 if any(idx_argin_lig)
     muscle_names = model_info.ligament_info.ligament_names;
     n_muscle = model_info.ligament_info.NLigament;
@@ -89,30 +88,31 @@ if ligaments_bool
 else
     force_set = model.getMuscles();
 end
+coord_set = model.getCoordinateSet;
 
 %% Evaluate muscle-tendon unit lenght and moment arms
-% Set state vector to 0
-state_vars.setToZero();
-model.setStateVariableValues(s,state_vars);
-model.realizePosition(s);
-
 % Initialise matrices for results
 lMT = zeros(n_data_points,n_muscle);
 dM = zeros(n_data_points,n_muscle,n_coord);
+Qs2 = nan(size(Qs));
 
 % names of states corresponding to coordinate position values
 for i=1:n_coord
-    state_names{i} = model.getCoordinateSet.get(coord_names{i}).getStateVariableNames().get(0);
+    q_state_names{i} = coord_set.get(coord_names{i}).getStateVariableNames().get(0);
+    qdot_state_names{i} = coord_set.get(coord_names{i}).getStateVariableNames().get(1);
 end
 
 % Loop through dummy states
 for j=1:n_data_points
+
     % Set each coordinate value
     for i=1:n_coord
-%         model.getCoordinateSet.get(coord_names{i}).setValue(s,Qs(j,i),false); % slow
-        model.setStateVariableValue(s,state_names{i},Qs(j,i));
+        if ~isnan(Qs(j,i))
+            model.setStateVariableValue(s,q_state_names{i},Qs(j,i));
+        end
     end
     model.realizePosition(s);
+    model.assemble(s)
 
     % Loop over muscles
     for m=1:n_muscle
@@ -122,14 +122,39 @@ for j=1:n_data_points
         end
         % Get MTU length
         lMT(j,m) = muscle_m.getLength(s);
-        % Get moment arm for each joint
-        for i=1:n_coord
-            if muscle_spanning_joint_info(m,i)
-                dM(j,m,i) = muscle_m.computeMomentArm(s,model.getCoordinateSet().get(coord_names{i}));
+    end
+
+    % Get moment arm
+    if ligaments_bool
+        for m=1:n_muscle
+            muscle_m = Ligament.safeDownCast(force_set.get(muscle_names{m}));
+            for i=find(muscle_spanning_joint_info(m,:)==1)
+                dM(j,m,i) = muscle_m.computeMomentArm(s,coord_set.get(coord_names{i}));
             end
+        end
+
+    else % muscle
+        for i=1:n_coord
+            % The moment arm is defined as -dl/dq.
+            % By settings the velocity of coordinate i to -1 and all other
+            % velocities to 0, the moment arm can be calculated as
+            % ldot = dl/dq * qdot.
+            % This is ~3x faster than using computeMomentArm, and does give the
+            % desired moment arms when the model has active constraints.
+            model.setStateVariableValue(s,qdot_state_names{i},-1);
+            model.realizeVelocity(s)
+            for m=find(muscle_spanning_joint_info(:,i)==1)'
+                muscle_m = force_set.get(muscle_names{m});
+                dM(j,m,i) = muscle_m.getLengtheningSpeed(s);
+            end
+            model.setStateVariableValue(s,qdot_state_names{i},0);
         end
     end
 
+    % Read coordinate values, in case they were changed by assembling the model
+    for i=1:n_coord
+        Qs2(j,i) = model.getStateVariableValue(s,q_state_names{i});
+    end
 end
 
 
@@ -141,7 +166,8 @@ MuscleData.dof_names = model_info.ExtFunIO.coord_names.all;
 % muscle names
 MuscleData.muscle_names = muscle_names;
 % joint angles training data
-MuscleData.q = Qs;
+MuscleData.q0 = Qs;
+MuscleData.q = Qs2;
 % muscle-tendon lengths
 MuscleData.lMT = lMT;
 % moment arms
