@@ -6,6 +6,7 @@
 #SBATCH --nodes=1
 #SBATCH --account=<credit_account>
 #SBATCH --time=04:00:00
+#SBATCH --output=../PredSimResults/slurm-%j.out
 
 # Instead of installing dependencies yourself, you can simply load modules on
 # the cluster. The versions are just examples, you can check for available
