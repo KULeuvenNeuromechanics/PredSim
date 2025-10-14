@@ -70,45 +70,47 @@ end
 settings = [S.orthosis.settings{:}];
 
 % Concatenate controlNames across all structs
-temp = [settings.controls];
-S.orthosis.controlNames_all = [temp.names]; 
-S.orthosis.controlBounds_nsc_all = [temp.bounds_nsc];
-S.orthosis.controlBounds_all = [temp.bounds];
-S.orthosis.Ncontrols_all = controlcounter;
-
-% Concatenate stateNames across all structs
-temp = [settings.states];
-%S.orthosis.Nstates_all = sum()
-S.orthosis.stateNames_all = [temp.names];
-S.orthosis.stateBounds_nsc_all = [temp.bounds_nsc];
-S.orthosis.stateBounds_all = [temp.bounds];
-S.orthosis.Nstates_all = statecounter;
-
-for i=1:length(S.orthosis.settings)
-
-    orthosis = S.orthosis.settings{i}.object;
-
-    orthosis.createCasadiFunction();
-    % run testing methods
-%     orthosis.setOsimPath(osim_path);
-%     orthosis.testOsimModel();
-
-    % Add OpenSimAD options required for orthosis
-    PointPositions = orthosis.getPointPositions();
-    S.OpenSimADOptions.export3DPositions = [S.OpenSimADOptions.export3DPositions(:);...
-        PointPositions(:)];
-    PointVelocities = orthosis.getPointVelocities();
-    S.OpenSimADOptions.export3DVelocities = [S.OpenSimADOptions.export3DVelocities(:);...
-        PointVelocities(:)];
-    BodyForces = orthosis.getBodyForces();
-    S.OpenSimADOptions.input3DBodyForces = [S.OpenSimADOptions.input3DBodyForces(:);...
-        BodyForces(:)];
-    BodyMoments = orthosis.getBodyMoments();
-    S.OpenSimADOptions.input3DBodyMoments = [S.OpenSimADOptions.input3DBodyMoments(:);...
-        BodyMoments(:)];
-
-    S.orthosis.settings{i}.object = orthosis;
+if ~isempty(settings)
+    temp = [settings.controls];
+    S.orthosis.controlNames_all = [temp.names]; 
+    S.orthosis.controlBounds_nsc_all = [temp.bounds_nsc];
+    S.orthosis.controlBounds_all = [temp.bounds];
+    S.orthosis.Ncontrols_all = controlcounter;
     
+    % Concatenate stateNames across all structs
+    temp = [settings.states];
+    %S.orthosis.Nstates_all = sum()
+    S.orthosis.stateNames_all = [temp.names];
+    S.orthosis.stateBounds_nsc_all = [temp.bounds_nsc];
+    S.orthosis.stateBounds_all = [temp.bounds];
+    S.orthosis.Nstates_all = statecounter;
+
+    for i=1:length(S.orthosis.settings)
+    
+        orthosis = S.orthosis.settings{i}.object;
+    
+        orthosis.createCasadiFunction();
+        % run testing methods
+    %     orthosis.setOsimPath(osim_path);
+    %     orthosis.testOsimModel();
+    
+        % Add OpenSimAD options required for orthosis
+        PointPositions = orthosis.getPointPositions();
+        S.OpenSimADOptions.export3DPositions = [S.OpenSimADOptions.export3DPositions(:);...
+            PointPositions(:)];
+        PointVelocities = orthosis.getPointVelocities();
+        S.OpenSimADOptions.export3DVelocities = [S.OpenSimADOptions.export3DVelocities(:);...
+            PointVelocities(:)];
+        BodyForces = orthosis.getBodyForces();
+        S.OpenSimADOptions.input3DBodyForces = [S.OpenSimADOptions.input3DBodyForces(:);...
+            BodyForces(:)];
+        BodyMoments = orthosis.getBodyMoments();
+        S.OpenSimADOptions.input3DBodyMoments = [S.OpenSimADOptions.input3DBodyMoments(:);...
+            BodyMoments(:)];
+    
+        S.orthosis.settings{i}.object = orthosis;
+        
+    end
 end
 
 %% Remove duplicate entries

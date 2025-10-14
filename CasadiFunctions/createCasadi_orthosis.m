@@ -37,6 +37,16 @@ n_coord = model_info.ExtFunIO.jointi.nq.all;
 
 separate_orthoses = {};
 
+% program flow booleans for orthosis states and controls
+orthosispresent = ~isempty([S.orthosis.settings{:}]);
+if orthosispresent
+    ortstatespresent = S.orthosis.Nstates_all > 0;
+    ortcontrolspresent = S.orthosis.Ncontrols_all > 0;
+else
+    ortstatespresent = false;
+    ortcontrolspresent = false;
+end
+
 % external function
 F = external('F',fullfile(S.misc.subject_path, S.misc.external_function));
 F_k = F;
@@ -55,17 +65,33 @@ qddot_SX = SX.sym('qddot',n_coord,N);
 act_SX = SX.sym('a',model_info.muscle_info.NMuscle,N);
 fromExtFun_SX = SX.sym('fromExtFun',F.size1_out(0),N); % GRFs, point kinematics
 
-orthStates_SX = SX.sym('x',length(S.orthosis.stateNames_all),N);
-orthControls_SX = SX.sym('u',length(S.orthosis.controlNames_all),N);
+ortArg_SX = {};
+ortArg_names = {};
+ortRes_SX = {};
+ortRes_names = {};
+if orthosispresent
+    if ortstatespresent
+        orthStates_SX = SX.sym('x',S.orthosis.Nstates_all,N);
+        ortArg_SX{end+1} =  orthStates_SX;
+        ortArg_names{end+1} = 'orthStates';
+    end
+    if ortcontrolspresent
+        orthControls_SX = SX.sym('u',S.orthosis.Ncontrols_all,N);
+        ortArg_SX{end+1} = orthControls_SX;
+        ortArg_names{end+1} = 'orthControls';
+    end
+end
 
 % all outputs
 Mcoordk_SX = SX(n_coord,N);
 toExtFun_SX = SX(F.size1_in(0),N); % bodyforces, bodymoments
-stateDyn_SX = SX(S.orthosis.Nstates_all,N);
+if ortstatespresent
+    stateDyn_SX = SX(S.orthosis.Nstates_all,N);
+end
 
 
 %% loop over all selected orthoses
-if ~isempty(S.orthosis)
+if ~isempty([S.orthosis.settings{:}])
 
     for i=1:length(S.orthosis.settings)
 
@@ -82,46 +108,80 @@ if ~isempty(S.orthosis)
             separate_orthoses(i).wrap_pp = f_orthosis_pp_i;
 
             % evaluate function 
-            [Mcoordk_i, toExtFun_i, stateDyn_i] = f_orthosis_i(q_SX,qdot_SX,qddot_SX,act_SX,fromExtFun_SX,orthStates_SX,orthControls_SX);
-            
+            if ortstatespresent
+                [Mcoordk_i, toExtFun_i, stateDyn_i] = f_orthosis_i(q_SX,qdot_SX,qddot_SX,act_SX,fromExtFun_SX,ortArg_SX{:});
+                stateDyn_SX = stateDyn_SX + stateDyn_i; % Each orthosis uniquely defines a subset of x_dot, zero otherwise
+            else
+                [Mcoordk_i, toExtFun_i] = f_orthosis_i(q_SX,qdot_SX,qddot_SX,act_SX,fromExtFun_SX,ortArg_SX{:});
+            end
+
             % accumulate outputs
             Mcoordk_SX = Mcoordk_SX + Mcoordk_i;
             toExtFun_SX = toExtFun_SX + toExtFun_i;
-            stateDyn_SX = stateDyn_SX + stateDyn_i; % Each orthosis uniquely defines a subset of x_dot, zero otherwise
+            
 
             % create Casadi function for orthosis state dynamics
-            separate_orthoses(i).dynamics = Function(['f_Orthosis_dynamics_',num2str(N)],...
-                {q_SX, qdot_SX, qddot_SX, act_SX, fromExtFun_SX,orthStates_SX,orthControls_SX},...
-                {stateDyn_i},...
-                {'qs','qdots','qddots','act','fromExtFun','orthStates','orthControls'},...
-                {'orthStateDyn'});                       
+            if ortstatespresent
+                separate_orthoses(i).dynamics = Function(['f_Orthosis_dynamics_',num2str(N)],...
+                    [{q_SX, qdot_SX, qddot_SX, act_SX, fromExtFun_SX}, ortArg_SX],...
+                    {stateDyn_i},...
+                    [{'qs','qdots','qddots','act','fromExtFun'}, ortArg_names],...
+                    {'orthStateDyn'});   
+            end
         end
     end
+    if ortstatespresent
+        ortRes_SX = {stateDyn_SX};
+        ortRes_names = {'stateDyn'};
+    end
+else
+    Nmesh=N; % so casadi functions below are created, albeit empty.
 end
 
 
 %% create casadi Function for combination of orthoses
 if Nmesh==N
     fun = Function(['f_Orthosis_mesh_',num2str(N),'_wo_ext'],...
-        {q_SX, qdot_SX, qddot_SX, act_SX, fromExtFun_SX,orthStates_SX,orthControls_SX},...
-        {Mcoordk_SX, toExtFun_SX,stateDyn_SX},...
-        {'qs','qdots','qddots','act','fromExtFun','orthStates','orthControls'},...
-        {'M_coord','toExtFun','stateDyn'});
+        [{q_SX, qdot_SX, qddot_SX, act_SX, fromExtFun_SX}, ortArg_SX],...
+        [{Mcoordk_SX, toExtFun_SX}, ortRes_SX],...
+        [{'qs','qdots','qddots','act','fromExtFun'}, ortArg_names],...
+        [{'M_coord','toExtFun'}, ortRes_names]);
 else
+    ortArg_rep = {};
+    if ortstatespresent
+        ortArg_rep{end+1} = repmat(orthStates_SX,1,Nmesh);
+    end
+    if ortcontrolspresent
+        ortArg_rep{end+1} = repmat(orthControls_SX,1,Nmesh);
+    end
     % call function with Nmesh rows in the arguments
-    [res_Mcoordk_SX, res_toExtFun_SX, res_stateDyn_SX] = fun(repmat(q_SX,1,Nmesh),repmat(qdot_SX,1,Nmesh),...
-        repmat(qddot_SX,1,Nmesh),repmat(act_SX,1,Nmesh),...
-        repmat(fromExtFun_SX,1,Nmesh),repmat(orthStates_SX,1,Nmesh),...
-        repmat(orthControls_SX,1,Nmesh));
+    if ortstatespresent
+        [res_Mcoordk_SX, res_toExtFun_SX, res_stateDyn_SX] = fun(repmat(q_SX,1,Nmesh),repmat(qdot_SX,1,Nmesh),...
+            repmat(qddot_SX,1,Nmesh),repmat(act_SX,1,Nmesh),...
+            repmat(fromExtFun_SX,1,Nmesh),ortArg_rep{:});
+        res_stateDyn_SX_1 = res_stateDyn_SX(:,1);
+    else
+        [res_Mcoordk_SX, res_toExtFun_SX] = fun(repmat(q_SX,1,Nmesh),repmat(qdot_SX,1,Nmesh),...
+            repmat(qddot_SX,1,Nmesh),repmat(act_SX,1,Nmesh),...
+            repmat(fromExtFun_SX,1,Nmesh),ortArg_rep{:});
+    end
     res_Mcoordk_SX_1 = res_Mcoordk_SX(:,1);
     res_toExtFun_SX_1 = res_toExtFun_SX(:,1);
-    res_stateDyn_SX_1 = res_stateDyn_SX(:,1);
+    
     % redefine mapping fun
-    fun = Function(['f_Orthosis_mesh_',num2str(N),'_wo_ext'],...
-        {q_SX, qdot_SX, qddot_SX, act_SX, fromExtFun_SX,orthStates_SX,orthControls_SX},...
-        {res_Mcoordk_SX_1, res_toExtFun_SX_1,res_stateDyn_SX_1},...
-        {'qs','qdots','qddots','act','fromExtFun','orthStates','orthControls'},...
-        {'M_coord','toExtFun','stateDyn'});
+    if ortstatespresent
+        fun = Function(['f_Orthosis_mesh_',num2str(N),'_wo_ext'],...
+            [{q_SX, qdot_SX, qddot_SX, act_SX, fromExtFun_SX}, ortArg_SX],...
+            {res_Mcoordk_SX_1, res_toExtFun_SX_1,res_stateDyn_SX_1},...
+            [{'qs','qdots','qddots','act','fromExtFun'}, ortArg_names],...
+            {'M_coord','toExtFun','stateDyn'});
+    else
+        fun = Function(['f_Orthosis_mesh_',num2str(N),'_wo_ext'],...
+            [{q_SX, qdot_SX, qddot_SX, act_SX, fromExtFun_SX}, ortArg_SX],...
+            {res_Mcoordk_SX_1, res_toExtFun_SX_1},...
+            [{'qs','qdots','qddots','act','fromExtFun'}, ortArg_names],...
+            {'M_coord','toExtFun'});
+    end
 
 end
 
@@ -132,9 +192,14 @@ qdots_MX = MX.sym('qdots',n_coord,N);
 qddots_MX = MX.sym('qddots',n_coord,N);
 act_MX = MX.sym('a',model_info.muscle_info.NMuscle,N);
 
-orthStates_MX = MX.sym('x',S.orthosis.Nstates_all,N);
-orthControls_MX = MX.sym('u',S.orthosis.Ncontrols_all,N);
-stateDyn_MX = MX.sym('x_dot',S.orthosis.Nstates_all,N);
+ortArg_MX = {};
+ortRes_MX = {};
+if ortstatespresent
+    ortArg_MX{end+1} = MX.sym('x',S.orthosis.Nstates_all,N); %orthStates_SX
+end
+if ortcontrolspresent
+    ortArg_MX{end+1} = MX.sym('u',S.orthosis.Ncontrols_all,N); %orthControls_SX 
+end
 
 % Create zero (sparse) input vector for external function
 F_ext_input = MX(model_info.ExtFunIO.input.nInputs,N);
@@ -151,16 +216,29 @@ else
     fromExtFun_MX = F_all(F_ext_input);
 end
 
+
+if N==1
+    funname = 'f_orthosis_mesh_k';
+else
+    funname = 'f_orthosis_mesh_all';
+end
+
 % Evaluate orthosis function
-[Mcoord_MX, toExtFun_MX, stateDyn_MX] = fun(qs_MX,qdots_MX,qddots_MX,act_MX,fromExtFun_MX,orthStates_MX,orthControls_MX);
+if ortstatespresent
+    [Mcoord_MX, toExtFun_MX, stateDyn_MX] = fun(qs_MX,qdots_MX,qddots_MX,act_MX,fromExtFun_MX,ortArg_MX{:});
+    meshfun = Function(funname,[{qs_MX,qdots_MX,qddots_MX,act_MX}, ortArg_MX],...
+    {Mcoord_MX, toExtFun_MX, stateDyn_MX},[{'qs','qdots','qddots','act'}, ortArg_names],{'M_coord','M_body','stateDyn'});
+else
+    [Mcoord_MX, toExtFun_MX] = fun(qs_MX,qdots_MX,qddots_MX,act_MX,fromExtFun_MX,ortArg_MX{:});
+    meshfun = Function(funname,[{qs_MX,qdots_MX,qddots_MX,act_MX}, ortArg_MX],...
+    {Mcoord_MX, toExtFun_MX},[{'qs','qdots','qddots','act'}, ortArg_names],{'M_coord','M_body'});
+end
 
 % Create function to be used in OCP formulation
 if N==1
-    f_orthosis_mesh_k = Function('f_orthosis_mesh_k',{qs_MX,qdots_MX,qddots_MX,act_MX,orthStates_MX,orthControls_MX},...
-        {Mcoord_MX, toExtFun_MX, stateDyn_MX},{'qs','qdots','qddots','act','orthStates','orthControls'},{'M_coord','M_body','stateDyn'});
+    f_orthosis_mesh_k = meshfun;
 else
-    f_orthosis_mesh_all = Function('f_orthosis_mesh_all',{qs_MX,qdots_MX,qddots_MX,act_MX,orthStates_MX,orthControls_MX},...
-        {Mcoord_MX, toExtFun_MX, stateDyn_MX},{'qs','qdots','qddots','act','orthStates','orthControls'},{'M_coord','M_body','stateDyn'});
+    f_orthosis_mesh_all = meshfun;
 end
 
 end % for N = [1, Nmeshes]

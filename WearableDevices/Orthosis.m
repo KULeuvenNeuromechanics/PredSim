@@ -810,22 +810,28 @@ classdef Orthosis < handle
                 self.createCasadiFunction();
             end
 
+            Nstates_all = length(stateNames);
+            Ncontrols_all = length(controlNames);
+
             % all inputs for wrapper function
             arg_SX.q = SX.sym('q',ExtFunIO.jointi.nq.all,self.Nmesh);
             arg_SX.qdot = SX.sym('qdot',ExtFunIO.jointi.nq.all,self.Nmesh);
             arg_SX.qddot = SX.sym('qddot',ExtFunIO.jointi.nq.all,self.Nmesh);
             arg_SX.act = SX.sym('a',length(muscleNames),self.Nmesh);
             arg_SX.fromExtFun = SX.sym('fromExtFun',ExtFunIO.nOutputs,self.Nmesh); % GRFs, point kinematics
-
-            arg_SX.x = SX.sym('optivar_x',length(stateNames), self.Nmesh); % orthosis internal state
-            arg_SX.u = SX.sym('optivar_u',length(controlNames), self.Nmesh); % orthosis controls (to be optimized)
-
+            if self.Nstates > 0
+                arg_SX.x = SX.sym('optivar_x',Nstates_all, self.Nmesh); % orthosis internal state
+            end
+            if self.Ncontrols > 0
+                arg_SX.u = SX.sym('optivar_u',Ncontrols_all, self.Nmesh); % orthosis controls (to be optimized)
+            end
+            
             % all outputs for wrapper function
             res_SX.Mcoord = SX(ExtFunIO.jointi.nq.all,self.Nmesh);
             res_SX.toExtFun = SX(ExtFunIO.input.nInputs,self.Nmesh); % bodyforces, bodymoments
-
-            res_SX.stateDyn = SX(length(stateNames), self.Nmesh); % orthosis internal state dynamics
-
+            if self.Nstates > 0
+                res_SX.stateDyn = SX(Nstates_all, self.Nmesh); % orthosis internal state dynamics
+            end
             % create inputs for function from inputs of wrapper function
             arg_fun = cell(1,self.fun.n_in);
             res_fun = cell(1,self.fun.n_out);

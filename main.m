@@ -44,8 +44,9 @@ S.subject.name = 'Falisse_et_al_2022';
 % path to folder where you want to store the results of the OCP
 S.misc.save_folder  = fullfile(pathRepoFolder,'PredSimResults',S.subject.name); 
 
-%full gait cycle
+% gait cycle
 S.misc.gaitmotion_type = 'FullGaitCycle';
+%S.misc.gaitmotion_type = 'HalfGaitCycle';
 
 % either choose "quasi-random" or give the path to a .mot file you want to use as initial guess
 S.solver.IG_selection = fullfile(S.misc.main_path,'OCP','IK_Guess_Full_GC.mot');
@@ -64,10 +65,10 @@ S.solver.N_meshes = 10;
 exo1.function_name = 'hipexo';
 
 % set parameters
-exo1.dynamics.xl = -12; % [Nm]
-exo1.dynamics.xu = 12; % [Nm]
-exo1.dynamics.ul = -10; % [Nm]
-exo1.dynamics.uu = 10; % [Nm]
+exo1.dynamics.xl = -17; % [Nm]
+exo1.dynamics.xu = 17; % [Nm]
+exo1.dynamics.ul = -15; % [Nm]
+exo1.dynamics.uu = 15; % [Nm]
 
 exo1.gain = 1; %EMG gain for gluteus maximus
 
