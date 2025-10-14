@@ -94,11 +94,11 @@
 						<groups />
 					</WrapObjectSet>
 					<!--The mass of the body (kg)-->
-					<mass>9.5132938150883959</mass>
+					<mass>11.275864665752733</mass>
 					<!--The location (Vec3) of the mass center in the body frame.-->
 					<mass_center>-0.068277800171117939 0 0</mass_center>
 					<!--The elements of the inertia tensor (Vec6) as [Ixx Iyy Izz Ixy Ixz Iyz] measured about the mass_center and not the body origin.-->
-					<inertia>0.079806375432148371 0.079806375432148371 0.043620939140666615 0 0 0</inertia>
+					<inertia>0.094592462540146735 0.094592462540146735 0.051702787268388672 0 0 0</inertia>
 				</Body>
 				<Body name="femur_r">
 					<!--The geometry used to display the axes of this Frame.-->
@@ -135,11 +135,11 @@
 						<groups />
 					</WrapObjectSet>
 					<!--The mass of the body (kg)-->
-					<mass>7.5425479999999991</mass>
+					<mass>6.3533555150808567</mass>
 					<!--The location (Vec3) of the mass center in the body frame.-->
 					<mass_center>0 -0.17046665777369882 0</mass_center>
 					<!--The elements of the inertia tensor (Vec6) as [Ixx Iyy Izz Ixy Ixz Iyz] measured about the mass_center and not the body origin.-->
-					<inertia>0.10917705827064773 0.028619228867062994 0.11512920558488021 0 0 0</inertia>
+					<inertia>0.091963705803943696 0.024106990841810481 0.09697741045195557 0 0 0</inertia>
 				</Body>
 				<Body name="tibia_r">
 					<!--The geometry used to display the axes of this Frame.-->
@@ -189,11 +189,11 @@
 						<groups />
 					</WrapObjectSet>
 					<!--The mass of the body (kg)-->
-					<mass>3.0056359999999995</mass>
+					<mass>2.731942871484768</mass>
 					<!--The location (Vec3) of the mass center in the body frame.-->
 					<mass_center>0 -0.17525042630686288 0</mass_center>
 					<!--The elements of the inertia tensor (Vec6) as [Ixx Iyy Izz Ixy Ixz Iyz] measured about the mass_center and not the body origin.-->
-					<inertia>0.036002007766517366 0.0036448595082071555 0.036002007766517366 0 0 0</inertia>
+					<inertia>0.032723665965165571 0.0033129587052490774 0.032723665965165571 0 0 0</inertia>
 				</Body>
 				<Body name="talus_r">
 					<!--The geometry used to display the axes of this Frame.-->
@@ -230,11 +230,11 @@
 						<groups />
 					</WrapObjectSet>
 					<!--The mass of the body (kg)-->
-					<mass>0.11461055789608068</mass>
+					<mass>0.05677708235103536</mass>
 					<!--The location (Vec3) of the mass center in the body frame.-->
 					<mass_center>0 0 0</mass_center>
 					<!--The elements of the inertia tensor (Vec6) as [Ixx Iyy Izz Ixy Ixz Iyz] measured about the mass_center and not the body origin.-->
-					<inertia>0.0015614250326482289 0.001453935621631308 0.0015614250326482289 0 0 0</inertia>
+					<inertia>0.00077351650049570372 0.00072026717291887054 0.00077351650049570372 0 0 0</inertia>
 				</Body>
 				<Body name="calcn_r">
 					<!--The geometry used to display the axes of this Frame.-->
@@ -271,11 +271,11 @@
 						<groups />
 					</WrapObjectSet>
 					<!--The mass of the body (kg)-->
-					<mass>0.6123438071151337</mass>
+					<mass>0.30334984317279362</mass>
 					<!--The location (Vec3) of the mass center in the body frame.-->
 					<mass_center>0.035703886635941651 0.0075116435872500595 -0.004421386780000011</mass_center>
 					<!--The elements of the inertia tensor (Vec6) as [Ixx Iyy Izz Ixy Ixz Iyz] measured about the mass_center and not the body origin.-->
-					<inertia>0.0008212933511419757 0 0.0008212933511419757 0 0 0</inertia>
+					<inertia>0.00040686164597878094 0 0.00040686164597878094 0 0 0</inertia>
 				</Body>
 				<Body name="midfoot_r">
 					<!--The geometry used to display the axes of this Frame.-->
@@ -316,11 +316,11 @@
 						<groups />
 					</WrapObjectSet>
 					<!--The mass of the body (kg)-->
-					<mass>0.29545668382095636</mass>
+					<mass>0.14636669410227096</mass>
 					<!--The location (Vec3) of the mass center in the body frame.-->
 					<mass_center>0.013954384832107989 -0.0063976966242749993 -0.00260126983</mass_center>
 					<!--The elements of the inertia tensor (Vec6) as [Ixx Iyy Izz Ixy Ixz Iyz] measured about the mass_center and not the body origin.-->
-					<inertia>0.00044030567859474793 0 0.00044030567859474793 0 0 0</inertia>
+					<inertia>0.00021812363740406684 0 0.00021812363740406684 0 0 0</inertia>
 				</Body>
 				<Body name="forefoot_r">
 					<!--The geometry used to display the axes of this Frame.-->
@@ -388,11 +388,11 @@
 						<groups />
 					</WrapObjectSet>
 					<!--The mass of the body (kg)-->
-					<mass>0.49884865261032085</mass>
+					<mass>0.24712532204616186</mass>
 					<!--The location (Vec3) of the mass center in the body frame.-->
 					<mass_center>0.03109280751133555 -0.008181545115149999 -0.00047461483600000001</mass_center>
 					<!--The elements of the inertia tensor (Vec6) as [Ixx Iyy Izz Ixy Ixz Iyz] measured about the mass_center and not the body origin.-->
-					<inertia>0.001090009977312589 0.0010537915353345465 0.0010537915353345465 0 0 0</inertia>
+					<inertia>0.00053998154604082435 0.0005220392421155781 0.0005220392421155781 0 0 0</inertia>
 				</Body>
 				<Body name="toes_r">
 					<!--The geometry used to display the axes of this Frame.-->
@@ -429,11 +429,11 @@
 						<groups />
 					</WrapObjectSet>
 					<!--The mass of the body (kg)-->
-					<mass>0.27422929855750849</mass>
+					<mass>0.13585083043905821</mass>
 					<!--The location (Vec3) of the mass center in the body frame.-->
 					<mass_center>0.035432815357756733 0.0070879049999999994 -0.020072500000000004</mass_center>
 					<!--The elements of the inertia tensor (Vec6) as [Ixx Iyy Izz Ixy Ixz Iyz] measured about the mass_center and not the body origin.-->
-					<inertia>0.00018058849513142962 0.00024452505367159836 0.00024452505367159836 0 0 0</inertia>
+					<inertia>8.9461983677136941e-05 0.00012113560359589219 0.00012113560359589219 0 0 0</inertia>
 				</Body>
 				<Body name="femur_l">
 					<!--The geometry used to display the axes of this Frame.-->
@@ -470,11 +470,11 @@
 						<groups />
 					</WrapObjectSet>
 					<!--The mass of the body (kg)-->
-					<mass>7.5425479999999991</mass>
+					<mass>6.3533555150808567</mass>
 					<!--The location (Vec3) of the mass center in the body frame.-->
 					<mass_center>0 -0.17046665777369882 0</mass_center>
 					<!--The elements of the inertia tensor (Vec6) as [Ixx Iyy Izz Ixy Ixz Iyz] measured about the mass_center and not the body origin.-->
-					<inertia>0.10917705827064773 0.028619228867062994 0.11512920558488021 0 0 0</inertia>
+					<inertia>0.091963705803943696 0.024106990841810481 0.09697741045195557 0 0 0</inertia>
 				</Body>
 				<Body name="tibia_l">
 					<!--The geometry used to display the axes of this Frame.-->
@@ -524,11 +524,11 @@
 						<groups />
 					</WrapObjectSet>
 					<!--The mass of the body (kg)-->
-					<mass>3.0056359999999995</mass>
+					<mass>2.731942871484768</mass>
 					<!--The location (Vec3) of the mass center in the body frame.-->
 					<mass_center>0 -0.17525042630686288 0</mass_center>
 					<!--The elements of the inertia tensor (Vec6) as [Ixx Iyy Izz Ixy Ixz Iyz] measured about the mass_center and not the body origin.-->
-					<inertia>0.036002007766517366 0.0036448595082071555 0.036002007766517366 0 0 0</inertia>
+					<inertia>0.032723665965165571 0.0033129587052490774 0.032723665965165571 0 0 0</inertia>
 				</Body>
 				<Body name="talus_l">
 					<!--The geometry used to display the axes of this Frame.-->
@@ -565,11 +565,11 @@
 						<groups />
 					</WrapObjectSet>
 					<!--The mass of the body (kg)-->
-					<mass>0.11461055789608068</mass>
+					<mass>0.05677708235103536</mass>
 					<!--The location (Vec3) of the mass center in the body frame.-->
 					<mass_center>0 0 0</mass_center>
 					<!--The elements of the inertia tensor (Vec6) as [Ixx Iyy Izz Ixy Ixz Iyz] measured about the mass_center and not the body origin.-->
-					<inertia>0.0015614250326482289 0.001453935621631308 0.0015614250326482289 0 0 0</inertia>
+					<inertia>0.00077351650049570372 0.00072026717291887054 0.00077351650049570372 0 0 0</inertia>
 				</Body>
 				<Body name="calcn_l">
 					<!--The geometry used to display the axes of this Frame.-->
@@ -606,11 +606,11 @@
 						<groups />
 					</WrapObjectSet>
 					<!--The mass of the body (kg)-->
-					<mass>0.6123438071151337</mass>
+					<mass>0.30334984317279362</mass>
 					<!--The location (Vec3) of the mass center in the body frame.-->
 					<mass_center>0.035703886635941651 0.0075116435872500595 0.004421386780000011</mass_center>
 					<!--The elements of the inertia tensor (Vec6) as [Ixx Iyy Izz Ixy Ixz Iyz] measured about the mass_center and not the body origin.-->
-					<inertia>0.0008212933511419757 0 0.0008212933511419757 0 0 0</inertia>
+					<inertia>0.00040686164597878094 0 0.00040686164597878094 0 0 0</inertia>
 				</Body>
 				<Body name="midfoot_l">
 					<!--The geometry used to display the axes of this Frame.-->
@@ -651,11 +651,11 @@
 						<groups />
 					</WrapObjectSet>
 					<!--The mass of the body (kg)-->
-					<mass>0.29545668382095636</mass>
+					<mass>0.14636669410227096</mass>
 					<!--The location (Vec3) of the mass center in the body frame.-->
 					<mass_center>0.013954384832107989 -0.0063976966242749993 0.00260126983</mass_center>
 					<!--The elements of the inertia tensor (Vec6) as [Ixx Iyy Izz Ixy Ixz Iyz] measured about the mass_center and not the body origin.-->
-					<inertia>0.00044030567859474793 0 0.00044030567859474793 0 0 0</inertia>
+					<inertia>0.00021812363740406684 0 0.00021812363740406684 0 0 0</inertia>
 				</Body>
 				<Body name="forefoot_l">
 					<!--The geometry used to display the axes of this Frame.-->
@@ -723,11 +723,11 @@
 						<groups />
 					</WrapObjectSet>
 					<!--The mass of the body (kg)-->
-					<mass>0.49884865261032085</mass>
+					<mass>0.24712532204616186</mass>
 					<!--The location (Vec3) of the mass center in the body frame.-->
 					<mass_center>0.03109280751133555 -0.008181545115149999 0.00047461483600000001</mass_center>
 					<!--The elements of the inertia tensor (Vec6) as [Ixx Iyy Izz Ixy Ixz Iyz] measured about the mass_center and not the body origin.-->
-					<inertia>0.001090009977312589 0.0010537915353345465 0.0010537915353345465 0 0 0</inertia>
+					<inertia>0.00053998154604082435 0.0005220392421155781 0.0005220392421155781 0 0 0</inertia>
 				</Body>
 				<Body name="toes_l">
 					<!--The geometry used to display the axes of this Frame.-->
@@ -764,11 +764,11 @@
 						<groups />
 					</WrapObjectSet>
 					<!--The mass of the body (kg)-->
-					<mass>0.27422929855750849</mass>
+					<mass>0.13585083043905821</mass>
 					<!--The location (Vec3) of the mass center in the body frame.-->
 					<mass_center>0.035432815357756733 0.0070879049999999994 0.020072500000000004</mass_center>
 					<!--The elements of the inertia tensor (Vec6) as [Ixx Iyy Izz Ixy Ixz Iyz] measured about the mass_center and not the body origin.-->
-					<inertia>0.00018058849513142962 0.00024452505367159836 0.00024452505367159836 0 0 0</inertia>
+					<inertia>8.9461983677136941e-05 0.00012113560359589219 0.00012113560359589219 0 0 0</inertia>
 				</Body>
 				<Body name="torso">
 					<!--The geometry used to display the axes of this Frame.-->
@@ -961,11 +961,11 @@
 						<groups />
 					</WrapObjectSet>
 					<!--The mass of the body (kg)-->
-					<mass>20.722396185330862</mass>
+					<mass>24.561727985874292</mass>
 					<!--The location (Vec3) of the mass center in the body frame.-->
 					<mass_center>-0.026760266763599088 -0.059999999999999998 0</mass_center>
 					<!--The elements of the inertia tensor (Vec6) as [Ixx Iyy Izz Ixy Ixz Iyz] measured about the mass_center and not the body origin.-->
-					<inertia>1.014041465719365 0.4989865261081497 1.014041465719365 0 0 0</inertia>
+					<inertia>1.2019175014628574 0.59143601026027048 1.2019175014628574 0 0 0</inertia>
 				</Body>
 				<Body name="clavicle_r">
 					<!--List of components that this component owns and serializes.-->
@@ -1027,11 +1027,11 @@
 						<groups />
 					</WrapObjectSet>
 					<!--The mass of the body (kg)-->
-					<mass>0.14659142041597764</mass>
+					<mass>0.17375107401280943</mass>
 					<!--The location (Vec3) of the mass center in the body frame.-->
 					<mass_center>-0.010545312106762763 0.0060530033739412447 0.048756189198948183</mass_center>
 					<!--The elements of the inertia tensor (Vec6) as [Ixx Iyy Izz Ixy Ixz Iyz] measured about the mass_center and not the body origin.-->
-					<inertia>0.00016924918662136808 0.00016924918662136808 3.4167298292079669e-05 -1.4599183908013628e-05 -5.0970142193817506e-05 3.9139991604573205e-05</inertia>
+					<inertia>0.0002006067467509981 0.0002006067467509981 4.0497627743279682e-05 -1.7304040553872786e-05 -6.0413610316556691e-05 4.6391634372932985e-05</inertia>
 				</Body>
 				<Body name="scapula_r">
 					<!--List of components that this component owns and serializes.-->
@@ -1206,11 +1206,11 @@
 						<groups />
 					</WrapObjectSet>
 					<!--The mass of the body (kg)-->
-					<mass>0.38746357937439763</mass>
+					<mass>0.45925070420977565</mass>
 					<!--The location (Vec3) of the mass center in the body frame.-->
 					<mass_center>-0.051953790406942264 -0.033278851529536926 -0.039345511335418325</mass_center>
 					<!--The elements of the inertia tensor (Vec6) as [Ixx Iyy Izz Ixy Ixz Iyz] measured about the mass_center and not the body origin.-->
-					<inertia>0.00060239629571729565 0.00054115130337993979 0.00060239629571729565 0.00022321257303406936 0.0001925557309801057 0.00011346441366131261</inertia>
+					<inertia>0.00071400497426935331 0.00064141284598295595 0.00071400497426935331 0.00026456817314258753 0.00022823139969703414 0.0001344864773118603</inertia>
 				</Body>
 				<Body name="humerus_r">
 					<!--The geometry used to display the axes of this Frame.-->
@@ -1393,11 +1393,11 @@
 						<groups />
 					</WrapObjectSet>
 					<!--The mass of the body (kg)-->
-					<mass>1.6481769999999998</mass>
+					<mass>1.7789395442226401</mass>
 					<!--The location (Vec3) of the mass center in the body frame.-->
 					<mass_center>0.018061027649178382 -0.14010839649179074 -0.012750613631357729</mass_center>
 					<!--The elements of the inertia tensor (Vec6) as [Ixx Iyy Izz Ixy Ixz Iyz] measured about the mass_center and not the body origin.-->
-					<inertia>0.01012429089980231 0.00210502342059841 0.01012429089980231 -0.00028665737773713135 -0.00019185333464977612 0.00010141000087138384</inertia>
+					<inertia>0.010927528681004375 0.002272031101281791 0.010927528681004375 -0.00030940010987882347 -0.00020707453368143494 0.00010945563536547174</inertia>
 				</Body>
 				<Body name="ulna_r">
 					<!--The geometry used to display the axes of this Frame.-->
@@ -1438,11 +1438,11 @@
 						<groups />
 					</WrapObjectSet>
 					<!--The mass of the body (kg)-->
-					<mass>0.81334527044588845</mass>
+					<mass>0.89162884057002623</mass>
 					<!--The location (Vec3) of the mass center in the body frame.-->
 					<mass_center>0.0094269220629786508 -0.093076062146820501 0.023562454919710995</mass_center>
 					<!--The elements of the inertia tensor (Vec6) as [Ixx Iyy Izz Ixy Ixz Iyz] measured about the mass_center and not the body origin.-->
-					<inertia>0.0037481662550423217 0.00079838087789835537 0.0034227204505217438 0.00021943356479270484 -5.2729144711153294e-05 0.00075614216709887609</inertia>
+					<inertia>0.0041089230535698096 0.00087522414202216721 0.0037521534553474176 0.00024055379931207688 -5.7804265754542949e-05 0.00082892000267841004</inertia>
 				</Body>
 				<Body name="radius_r">
 					<!--The geometry used to display the axes of this Frame.-->
@@ -1483,11 +1483,11 @@
 						<groups />
 					</WrapObjectSet>
 					<!--The mass of the body (kg)-->
-					<mass>0.17189672955411159</mass>
+					<mass>0.18844159699371946</mass>
 					<!--The location (Vec3) of the mass center in the body frame.-->
 					<mass_center>0.032622699009875709 -0.17612183265634945 0.015132741735178737</mass_center>
 					<!--The elements of the inertia tensor (Vec6) as [Ixx Iyy Izz Ixy Ixz Iyz] measured about the mass_center and not the body origin.-->
-					<inertia>0.00030370325502707596 6.1343071962719243e-05 2.7877549127656355e-05 2.0870077762234543e-05 -2.9359366195047928e-06 4.4440663264107917e-05</inertia>
+					<inertia>0.00033293435272413051 6.7247273843663296e-05 3.0560731966879827e-05 2.2878799341325342e-05 -3.2185172265169025e-06 4.8718027263644992e-05</inertia>
 				</Body>
 				<Body name="hand_r">
 					<!--The geometry used to display the axes of this Frame.-->
@@ -1916,11 +1916,11 @@
 						<groups />
 					</WrapObjectSet>
 					<!--The mass of the body (kg)-->
-					<mass>0.37097700000000006</mass>
+					<mass>0.38120133090485142</mass>
 					<!--The location (Vec3) of the mass center in the body frame.-->
 					<mass_center>0 -0.066064709735129831 0</mass_center>
 					<!--The elements of the inertia tensor (Vec6) as [Ixx Iyy Izz Ixy Ixz Iyz] measured about the mass_center and not the body origin.-->
-					<inertia>0.00068081537474942114 0.00041749552689230196 0.0010227495539957669 0 0 0</inertia>
+					<inertia>0.00069957902229778252 0.0004290019340772276 0.0010509370962769376 0 0 0</inertia>
 				</Body>
 				<Body name="clavicle_l">
 					<!--List of components that this component owns and serializes.-->
@@ -1982,11 +1982,11 @@
 						<groups />
 					</WrapObjectSet>
 					<!--The mass of the body (kg)-->
-					<mass>0.14659142041597764</mass>
+					<mass>0.17375107401280943</mass>
 					<!--The location (Vec3) of the mass center in the body frame.-->
 					<mass_center>-0.010545312106762763 0.0060530033739412447 -0.048756189198948183</mass_center>
 					<!--The elements of the inertia tensor (Vec6) as [Ixx Iyy Izz Ixy Ixz Iyz] measured about the mass_center and not the body origin.-->
-					<inertia>0.00016924918662136808 0.00016924918662136808 3.4167298292079669e-05 -1.4599183908013628e-05 -5.0970142193817506e-05 3.9139991604573205e-05</inertia>
+					<inertia>0.0002006067467509981 0.0002006067467509981 4.0497627743279682e-05 -1.7304040553872786e-05 -6.0413610316556691e-05 4.6391634372932985e-05</inertia>
 				</Body>
 				<Body name="scapula_l">
 					<!--List of components that this component owns and serializes.-->
@@ -2159,11 +2159,11 @@
 						<groups />
 					</WrapObjectSet>
 					<!--The mass of the body (kg)-->
-					<mass>0.38746357937439763</mass>
+					<mass>0.45925070420977565</mass>
 					<!--The location (Vec3) of the mass center in the body frame.-->
 					<mass_center>-0.051953790406942264 -0.033278851529536926 0.039345511335418325</mass_center>
 					<!--The elements of the inertia tensor (Vec6) as [Ixx Iyy Izz Ixy Ixz Iyz] measured about the mass_center and not the body origin.-->
-					<inertia>0.00060239629571729565 0.00054115130337993979 0.00060239629571729565 0.00022321257303406936 0.0001925557309801057 0.00011346441366131261</inertia>
+					<inertia>0.00071400497426935331 0.00064141284598295595 0.00071400497426935331 0.00026456817314258753 0.00022823139969703414 0.0001344864773118603</inertia>
 				</Body>
 				<Body name="humerus_l">
 					<!--The geometry used to display the axes of this Frame.-->
@@ -2341,11 +2341,11 @@
 						<groups />
 					</WrapObjectSet>
 					<!--The mass of the body (kg)-->
-					<mass>1.6481769999999998</mass>
+					<mass>1.7789395442226401</mass>
 					<!--The location (Vec3) of the mass center in the body frame.-->
 					<mass_center>0.018061027649178382 -0.14010839649179074 0.012750613631357729</mass_center>
 					<!--The elements of the inertia tensor (Vec6) as [Ixx Iyy Izz Ixy Ixz Iyz] measured about the mass_center and not the body origin.-->
-					<inertia>0.01012429089980231 0.00210502342059841 0.01012429089980231 -0.00028665737773713135 -0.00019185333464977612 0.00010141000087138384</inertia>
+					<inertia>0.010927528681004375 0.002272031101281791 0.010927528681004375 -0.00030940010987882347 -0.00020707453368143494 0.00010945563536547174</inertia>
 				</Body>
 				<Body name="ulna_l">
 					<!--The geometry used to display the axes of this Frame.-->
@@ -2381,11 +2381,11 @@
 						</Mesh>
 					</attached_geometry>
 					<!--The mass of the body (kg)-->
-					<mass>0.81334527044588845</mass>
+					<mass>0.89162884057002623</mass>
 					<!--The location (Vec3) of the mass center in the body frame.-->
 					<mass_center>0.0094269220629786508 -0.093076062146820501 -0.023562454919710995</mass_center>
 					<!--The elements of the inertia tensor (Vec6) as [Ixx Iyy Izz Ixy Ixz Iyz] measured about the mass_center and not the body origin.-->
-					<inertia>0.0037481662550423217 0.00079838087789835537 0.0034227204505217438 0.00021943356479270484 -5.2729144711153294e-05 0.00075614216709887609</inertia>
+					<inertia>0.0041089230535698096 0.00087522414202216721 0.0037521534553474176 0.00024055379931207688 -5.7804265754542949e-05 0.00082892000267841004</inertia>
 				</Body>
 				<Body name="radius_l">
 					<!--The geometry used to display the axes of this Frame.-->
@@ -2426,11 +2426,11 @@
 						<groups />
 					</WrapObjectSet>
 					<!--The mass of the body (kg)-->
-					<mass>0.17189672955411159</mass>
+					<mass>0.18844159699371946</mass>
 					<!--The location (Vec3) of the mass center in the body frame.-->
 					<mass_center>0.032622699009875709 -0.17612183265634945 -0.015132741735178737</mass_center>
 					<!--The elements of the inertia tensor (Vec6) as [Ixx Iyy Izz Ixy Ixz Iyz] measured about the mass_center and not the body origin.-->
-					<inertia>0.00030370325502707596 6.1343071962719243e-05 2.7877549127656355e-05 2.0870077762234543e-05 -2.9359366195047928e-06 4.4440663264107917e-05</inertia>
+					<inertia>0.00033293435272413051 6.7247273843663296e-05 3.0560731966879827e-05 2.2878799341325342e-05 -3.2185172265169025e-06 4.8718027263644992e-05</inertia>
 				</Body>
 				<Body name="hand_l">
 					<!--The geometry used to display the axes of this Frame.-->
@@ -2859,11 +2859,11 @@
 						<groups />
 					</WrapObjectSet>
 					<!--The mass of the body (kg)-->
-					<mass>0.37097700000000006</mass>
+					<mass>0.38120133090485142</mass>
 					<!--The location (Vec3) of the mass center in the body frame.-->
 					<mass_center>0 -0.066064709735129831 0</mass_center>
 					<!--The elements of the inertia tensor (Vec6) as [Ixx Iyy Izz Ixy Ixz Iyz] measured about the mass_center and not the body origin.-->
-					<inertia>0.00068081537474942114 0.00041749552689230196 0.0010227495539957669 0 0 0</inertia>
+					<inertia>0.00069957902229778252 0.0004290019340772276 0.0010509370962769376 0 0 0</inertia>
 				</Body>
 			</objects>
 			<groups />
@@ -2880,7 +2880,7 @@
 					<coordinates>
 						<Coordinate name="pelvis_tilt">
 							<!--The value of this coordinate before any value has been set. Rotational coordinate value is in radians and Translational in meters.-->
-							<default_value>1.0412343658091034e-15</default_value>
+							<default_value>8.6484002336844195e-16</default_value>
 							<!--The speed value of this coordinate before any value has been set. Rotational coordinate value is in rad/s and Translational in m/s.-->
 							<default_speed_value>0</default_speed_value>
 							<!--The minimum and maximum values that the coordinate can range between. Rotational coordinate range in radians and Translational in meters.-->
@@ -2894,7 +2894,7 @@
 						</Coordinate>
 						<Coordinate name="pelvis_list">
 							<!--The value of this coordinate before any value has been set. Rotational coordinate value is in radians and Translational in meters.-->
-							<default_value>1.5410557425503786e-15</default_value>
+							<default_value>5.4783999405417288e-16</default_value>
 							<!--The speed value of this coordinate before any value has been set. Rotational coordinate value is in rad/s and Translational in m/s.-->
 							<default_speed_value>0</default_speed_value>
 							<!--The minimum and maximum values that the coordinate can range between. Rotational coordinate range in radians and Translational in meters.-->
@@ -2908,7 +2908,7 @@
 						</Coordinate>
 						<Coordinate name="pelvis_rotation">
 							<!--The value of this coordinate before any value has been set. Rotational coordinate value is in radians and Translational in meters.-->
-							<default_value>-1.7003399689119892e-17</default_value>
+							<default_value>4.5241127481684198e-18</default_value>
 							<!--The speed value of this coordinate before any value has been set. Rotational coordinate value is in rad/s and Translational in m/s.-->
 							<default_speed_value>0</default_speed_value>
 							<!--The minimum and maximum values that the coordinate can range between. Rotational coordinate range in radians and Translational in meters.-->
@@ -2936,7 +2936,7 @@
 						</Coordinate>
 						<Coordinate name="pelvis_ty">
 							<!--The value of this coordinate before any value has been set. Rotational coordinate value is in radians and Translational in meters.-->
-							<default_value>0.94998814878911053</default_value>
+							<default_value>0.9349774647391943</default_value>
 							<!--The speed value of this coordinate before any value has been set. Rotational coordinate value is in rad/s and Translational in m/s.-->
 							<default_speed_value>0</default_speed_value>
 							<!--The minimum and maximum values that the coordinate can range between. Rotational coordinate range in radians and Translational in meters.-->
@@ -3255,7 +3255,7 @@
 					<coordinates>
 						<Coordinate name="knee_angle_r">
 							<!--The value of this coordinate before any value has been set. Rotational coordinate value is in radians and Translational in meters.-->
-							<default_value>-9.5672571165647752e-05</default_value>
+							<default_value>-0.00022646649992984945</default_value>
 							<!--The speed value of this coordinate before any value has been set. Rotational coordinate value is in rad/s and Translational in m/s.-->
 							<default_speed_value>0</default_speed_value>
 							<!--The minimum and maximum values that the coordinate can range between. Rotational coordinate range in radians and Translational in meters.-->
@@ -4101,7 +4101,7 @@
 					<coordinates>
 						<Coordinate name="knee_angle_l">
 							<!--The value of this coordinate before any value has been set. Rotational coordinate value is in radians and Translational in meters.-->
-							<default_value>-4.7845361724023158e-05</default_value>
+							<default_value>-0.00018522425243106764</default_value>
 							<!--The speed value of this coordinate before any value has been set. Rotational coordinate value is in rad/s and Translational in m/s.-->
 							<default_speed_value>0</default_speed_value>
 							<!--The minimum and maximum values that the coordinate can range between. Rotational coordinate range in radians and Translational in meters.-->
@@ -4773,7 +4773,7 @@
 					<coordinates>
 						<Coordinate name="lumbar_extension">
 							<!--The value of this coordinate before any value has been set. Rotational coordinate value is in radians and Translational in meters.-->
-							<default_value>9.5820260246530234e-16</default_value>
+							<default_value>8.7933140416047349e-16</default_value>
 							<!--The speed value of this coordinate before any value has been set. Rotational coordinate value is in rad/s and Translational in m/s.-->
 							<default_speed_value>0</default_speed_value>
 							<!--The minimum and maximum values that the coordinate can range between. Rotational coordinate range in radians and Translational in meters.-->
@@ -4787,7 +4787,7 @@
 						</Coordinate>
 						<Coordinate name="lumbar_bending">
 							<!--The value of this coordinate before any value has been set. Rotational coordinate value is in radians and Translational in meters.-->
-							<default_value>7.8239980955275283e-16</default_value>
+							<default_value>-6.0181962196534149e-17</default_value>
 							<!--The speed value of this coordinate before any value has been set. Rotational coordinate value is in rad/s and Translational in m/s.-->
 							<default_speed_value>0</default_speed_value>
 							<!--The minimum and maximum values that the coordinate can range between. Rotational coordinate range in radians and Translational in meters.-->
@@ -4801,7 +4801,7 @@
 						</Coordinate>
 						<Coordinate name="lumbar_rotation">
 							<!--The value of this coordinate before any value has been set. Rotational coordinate value is in radians and Translational in meters.-->
-							<default_value>-1.5754347203772347e-16</default_value>
+							<default_value>-1.2708428943746208e-16</default_value>
 							<!--The speed value of this coordinate before any value has been set. Rotational coordinate value is in rad/s and Translational in m/s.-->
 							<default_speed_value>0</default_speed_value>
 							<!--The minimum and maximum values that the coordinate can range between. Rotational coordinate range in radians and Translational in meters.-->
@@ -4947,11 +4947,11 @@
 					<coordinates>
 						<Coordinate name="clav_prot_r">
 							<!--The value of this coordinate before any value has been set. Rotational coordinate value is in radians and Translational in meters.-->
-							<default_value>-0.26275212813654381</default_value>
+							<default_value>-0.36280769018381975</default_value>
 							<!--The speed value of this coordinate before any value has been set. Rotational coordinate value is in rad/s and Translational in m/s.-->
 							<default_speed_value>0</default_speed_value>
 							<!--The minimum and maximum values that the coordinate can range between. Rotational coordinate range in radians and Translational in meters.-->
-							<range>-0.95993108859688125 0</range>
+							<range>-1.0471975511965976 -0.35604716740684322</range>
 							<!--Flag indicating whether or not the values of the coordinates should be limited to the range, above.-->
 							<clamped>true</clamped>
 							<!--Flag indicating whether or not the values of the coordinates should be constrained to the current (e.g. default) value, above.-->
@@ -4963,11 +4963,11 @@
 						</Coordinate>
 						<Coordinate name="clav_elev_r">
 							<!--The value of this coordinate before any value has been set. Rotational coordinate value is in radians and Translational in meters.-->
-							<default_value>0.10697716713257838</default_value>
+							<default_value>0.16154023112950142</default_value>
 							<!--The speed value of this coordinate before any value has been set. Rotational coordinate value is in rad/s and Translational in m/s.-->
 							<default_speed_value>0</default_speed_value>
 							<!--The minimum and maximum values that the coordinate can range between. Rotational coordinate range in radians and Translational in meters.-->
-							<range>-0.22689280275926285 0.38397243543875248</range>
+							<range>-0.18849555921538758 0.35604716740684322</range>
 							<!--Flag indicating whether or not the values of the coordinates should be limited to the range, above.-->
 							<clamped>true</clamped>
 							<!--Flag indicating whether or not the values of the coordinates should be constrained to the current (e.g. default) value, above.-->
@@ -5111,11 +5111,11 @@
 					<coordinates>
 						<Coordinate name="scapula_abduction_r">
 							<!--The value of this coordinate before any value has been set. Rotational coordinate value is in radians and Translational in meters.-->
-							<default_value>-0.23798375429833901</default_value>
+							<default_value>-0.36797956884123972</default_value>
 							<!--The speed value of this coordinate before any value has been set. Rotational coordinate value is in rad/s and Translational in m/s.-->
 							<default_speed_value>0</default_speed_value>
 							<!--The minimum and maximum values that the coordinate can range between. Rotational coordinate range in radians and Translational in meters.-->
-							<range>-0.73303828583761843 0.27925268031909273</range>
+							<range>-0.79587013890941416 0.25132741228718342</range>
 							<!--Flag indicating whether or not the values of the coordinates should be limited to the range, above.-->
 							<clamped>true</clamped>
 							<!--Flag indicating whether or not the values of the coordinates should be constrained to the current (e.g. default) value, above.-->
@@ -5127,11 +5127,11 @@
 						</Coordinate>
 						<Coordinate name="scapula_winging_r">
 							<!--The value of this coordinate before any value has been set. Rotational coordinate value is in radians and Translational in meters.-->
-							<default_value>0.2037885978271918</default_value>
+							<default_value>0.18346811972489491</default_value>
 							<!--The speed value of this coordinate before any value has been set. Rotational coordinate value is in rad/s and Translational in m/s.-->
 							<default_speed_value>0</default_speed_value>
 							<!--The minimum and maximum values that the coordinate can range between. Rotational coordinate range in radians and Translational in meters.-->
-							<range>-0.3490658503988659 0.3490658503988659</range>
+							<range>-0.35604716740684322 0.18849555921538758</range>
 							<!--Flag indicating whether or not the values of the coordinates should be limited to the range, above.-->
 							<clamped>true</clamped>
 							<!--Flag indicating whether or not the values of the coordinates should be constrained to the current (e.g. default) value, above.-->
@@ -5145,11 +5145,11 @@
 						</Coordinate>
 						<Coordinate name="scapula_elevation_r">
 							<!--The value of this coordinate before any value has been set. Rotational coordinate value is in radians and Translational in meters.-->
-							<default_value>0.11877374112613208</default_value>
+							<default_value>0.14429440614005254</default_value>
 							<!--The speed value of this coordinate before any value has been set. Rotational coordinate value is in rad/s and Translational in m/s.-->
 							<default_speed_value>0</default_speed_value>
 							<!--The minimum and maximum values that the coordinate can range between. Rotational coordinate range in radians and Translational in meters.-->
-							<range>-0.20943951023931953 0.20943951023931953</range>
+							<range>-0.16755160819145562 0.16755160819145562</range>
 							<!--Flag indicating whether or not the values of the coordinates should be limited to the range, above.-->
 							<clamped>true</clamped>
 							<!--Flag indicating whether or not the values of the coordinates should be constrained to the current (e.g. default) value, above.-->
@@ -5163,11 +5163,11 @@
 						</Coordinate>
 						<Coordinate name="scapula_upward_rot_r">
 							<!--The value of this coordinate before any value has been set. Rotational coordinate value is in radians and Translational in meters.-->
-							<default_value>0.26569573402869201</default_value>
+							<default_value>0.36146561523753845</default_value>
 							<!--The speed value of this coordinate before any value has been set. Rotational coordinate value is in rad/s and Translational in m/s.-->
 							<default_speed_value>0</default_speed_value>
 							<!--The minimum and maximum values that the coordinate can range between. Rotational coordinate range in radians and Translational in meters.-->
-							<range>-0.174532925199433 1.5707963267948966</range>
+							<range>0.10471975511965977 1.8011797880581479</range>
 							<!--Flag indicating whether or not the values of the coordinates should be limited to the range, above.-->
 							<clamped>true</clamped>
 							<!--Flag indicating whether or not the values of the coordinates should be constrained to the current (e.g. default) value, above.-->
@@ -5333,7 +5333,7 @@
 					<coordinates>
 						<Coordinate name="plane_elv_r">
 							<!--The value of this coordinate before any value has been set. Rotational coordinate value is in radians and Translational in meters.-->
-							<default_value>-0.44907590310800199</default_value>
+							<default_value>-0.44908507720446361</default_value>
 							<!--The speed value of this coordinate before any value has been set. Rotational coordinate value is in rad/s and Translational in m/s.-->
 							<default_speed_value>0</default_speed_value>
 							<!--The minimum and maximum values that the coordinate can range between. Rotational coordinate range in radians and Translational in meters.-->
@@ -5349,11 +5349,11 @@
 						</Coordinate>
 						<Coordinate name="shoulder_elev_r">
 							<!--The value of this coordinate before any value has been set. Rotational coordinate value is in radians and Translational in meters.-->
-							<default_value>0.08742920875355098</default_value>
+							<default_value>0.08742390052500415</default_value>
 							<!--The speed value of this coordinate before any value has been set. Rotational coordinate value is in rad/s and Translational in m/s.-->
 							<default_speed_value>0</default_speed_value>
 							<!--The minimum and maximum values that the coordinate can range between. Rotational coordinate range in radians and Translational in meters.-->
-							<range>-1.0471975511965981 1.9058995431778079</range>
+							<range>-0.020943951023931952 1.9058995431778079</range>
 							<!--Flag indicating whether or not the values of the coordinates should be limited to the range, above.-->
 							<clamped>true</clamped>
 							<!--Flag indicating whether or not the values of the coordinates should be constrained to the current (e.g. default) value, above.-->
@@ -5365,7 +5365,7 @@
 						</Coordinate>
 						<Coordinate name="axial_rot_r">
 							<!--The value of this coordinate before any value has been set. Rotational coordinate value is in radians and Translational in meters.-->
-							<default_value>0.63419223694390447</default_value>
+							<default_value>0.63419581096084443</default_value>
 							<!--The speed value of this coordinate before any value has been set. Rotational coordinate value is in rad/s and Translational in m/s.-->
 							<default_speed_value>0</default_speed_value>
 							<!--The minimum and maximum values that the coordinate can range between. Rotational coordinate range in radians and Translational in meters.-->
@@ -5513,7 +5513,7 @@
 					<coordinates>
 						<Coordinate name="elbow_flexion_r">
 							<!--The value of this coordinate before any value has been set. Rotational coordinate value is in radians and Translational in meters.-->
-							<default_value>0.1795723242937981</default_value>
+							<default_value>0.17949692811247439</default_value>
 							<!--The speed value of this coordinate before any value has been set. Rotational coordinate value is in rad/s and Translational in m/s.-->
 							<default_speed_value>0</default_speed_value>
 							<!--The minimum and maximum values that the coordinate can range between. Rotational coordinate range in radians and Translational in meters.-->
@@ -5759,11 +5759,11 @@
 					<coordinates>
 						<Coordinate name="clav_prot_l">
 							<!--The value of this coordinate before any value has been set. Rotational coordinate value is in radians and Translational in meters.-->
-							<default_value>-0.26275121728215378</default_value>
+							<default_value>-0.3628077388653641</default_value>
 							<!--The speed value of this coordinate before any value has been set. Rotational coordinate value is in rad/s and Translational in m/s.-->
 							<default_speed_value>0</default_speed_value>
 							<!--The minimum and maximum values that the coordinate can range between. Rotational coordinate range in radians and Translational in meters.-->
-							<range>-0.95993108859688125 0</range>
+							<range>-1.0471975511965976 -0.35604716740684322</range>
 							<!--Flag indicating whether or not the values of the coordinates should be limited to the range, above.-->
 							<clamped>true</clamped>
 							<!--Flag indicating whether or not the values of the coordinates should be constrained to the current (e.g. default) value, above.-->
@@ -5775,11 +5775,11 @@
 						</Coordinate>
 						<Coordinate name="clav_elev_l">
 							<!--The value of this coordinate before any value has been set. Rotational coordinate value is in radians and Translational in meters.-->
-							<default_value>0.10698090014167946</default_value>
+							<default_value>0.16154366432955708</default_value>
 							<!--The speed value of this coordinate before any value has been set. Rotational coordinate value is in rad/s and Translational in m/s.-->
 							<default_speed_value>0</default_speed_value>
 							<!--The minimum and maximum values that the coordinate can range between. Rotational coordinate range in radians and Translational in meters.-->
-							<range>-0.22689280275926285 0.38397243543875248</range>
+							<range>-0.18849555921538758 0.35604716740684322</range>
 							<!--Flag indicating whether or not the values of the coordinates should be limited to the range, above.-->
 							<clamped>true</clamped>
 							<!--Flag indicating whether or not the values of the coordinates should be constrained to the current (e.g. default) value, above.-->
@@ -5923,11 +5923,11 @@
 					<coordinates>
 						<Coordinate name="scapula_abduction_l">
 							<!--The value of this coordinate before any value has been set. Rotational coordinate value is in radians and Translational in meters.-->
-							<default_value>-0.23798260886351033</default_value>
+							<default_value>-0.36797989468117803</default_value>
 							<!--The speed value of this coordinate before any value has been set. Rotational coordinate value is in rad/s and Translational in m/s.-->
 							<default_speed_value>0</default_speed_value>
 							<!--The minimum and maximum values that the coordinate can range between. Rotational coordinate range in radians and Translational in meters.-->
-							<range>-0.73303828583761843 0.27925268031909273</range>
+							<range>-0.79587013890941416 0.25132741228718342</range>
 							<!--Flag indicating whether or not the values of the coordinates should be limited to the range, above.-->
 							<clamped>true</clamped>
 							<!--Flag indicating whether or not the values of the coordinates should be constrained to the current (e.g. default) value, above.-->
@@ -5939,11 +5939,11 @@
 						</Coordinate>
 						<Coordinate name="scapula_winging_l">
 							<!--The value of this coordinate before any value has been set. Rotational coordinate value is in radians and Translational in meters.-->
-							<default_value>0.20378863736917097</default_value>
+							<default_value>0.18346821382096243</default_value>
 							<!--The speed value of this coordinate before any value has been set. Rotational coordinate value is in rad/s and Translational in m/s.-->
 							<default_speed_value>0</default_speed_value>
 							<!--The minimum and maximum values that the coordinate can range between. Rotational coordinate range in radians and Translational in meters.-->
-							<range>-0.3490658503988659 0.3490658503988659</range>
+							<range>-0.35604716740684322 0.18849555921538758</range>
 							<!--Flag indicating whether or not the values of the coordinates should be limited to the range, above.-->
 							<clamped>true</clamped>
 							<!--Flag indicating whether or not the values of the coordinates should be constrained to the current (e.g. default) value, above.-->
@@ -5955,11 +5955,11 @@
 						</Coordinate>
 						<Coordinate name="scapula_elevation_l">
 							<!--The value of this coordinate before any value has been set. Rotational coordinate value is in radians and Translational in meters.-->
-							<default_value>0.11877864193306184</default_value>
+							<default_value>0.14429893487387263</default_value>
 							<!--The speed value of this coordinate before any value has been set. Rotational coordinate value is in rad/s and Translational in m/s.-->
 							<default_speed_value>0</default_speed_value>
 							<!--The minimum and maximum values that the coordinate can range between. Rotational coordinate range in radians and Translational in meters.-->
-							<range>-0.20943951023931953 0.20943951023931953</range>
+							<range>-0.16755160819145562 0.16755160819145562</range>
 							<!--Flag indicating whether or not the values of the coordinates should be limited to the range, above.-->
 							<clamped>true</clamped>
 							<!--Flag indicating whether or not the values of the coordinates should be constrained to the current (e.g. default) value, above.-->
@@ -5971,11 +5971,11 @@
 						</Coordinate>
 						<Coordinate name="scapula_upward_rot_l">
 							<!--The value of this coordinate before any value has been set. Rotational coordinate value is in radians and Translational in meters.-->
-							<default_value>0.26569763284024822</default_value>
+							<default_value>0.36146773108537156</default_value>
 							<!--The speed value of this coordinate before any value has been set. Rotational coordinate value is in rad/s and Translational in m/s.-->
 							<default_speed_value>0</default_speed_value>
 							<!--The minimum and maximum values that the coordinate can range between. Rotational coordinate range in radians and Translational in meters.-->
-							<range>-0.174532925199433 1.5707963267948966</range>
+							<range>0.10471975511965977 1.8011797880581479</range>
 							<!--Flag indicating whether or not the values of the coordinates should be limited to the range, above.-->
 							<clamped>true</clamped>
 							<!--Flag indicating whether or not the values of the coordinates should be constrained to the current (e.g. default) value, above.-->
@@ -6139,7 +6139,7 @@
 					<coordinates>
 						<Coordinate name="plane_elv_l">
 							<!--The value of this coordinate before any value has been set. Rotational coordinate value is in radians and Translational in meters.-->
-							<default_value>-0.44907590310800199</default_value>
+							<default_value>-0.44908507720446361</default_value>
 							<!--The speed value of this coordinate before any value has been set. Rotational coordinate value is in rad/s and Translational in m/s.-->
 							<default_speed_value>0</default_speed_value>
 							<!--The minimum and maximum values that the coordinate can range between. Rotational coordinate range in radians and Translational in meters.-->
@@ -6155,11 +6155,11 @@
 						</Coordinate>
 						<Coordinate name="shoulder_elev_l">
 							<!--The value of this coordinate before any value has been set. Rotational coordinate value is in radians and Translational in meters.-->
-							<default_value>0.08750707190171475</default_value>
+							<default_value>0.087491960403362809</default_value>
 							<!--The speed value of this coordinate before any value has been set. Rotational coordinate value is in rad/s and Translational in m/s.-->
 							<default_speed_value>0</default_speed_value>
 							<!--The minimum and maximum values that the coordinate can range between. Rotational coordinate range in radians and Translational in meters.-->
-							<range>-1.0471975511965981 1.9058995431778079</range>
+							<range>-0.020943951023931952 1.9058995431778079</range>
 							<!--Flag indicating whether or not the values of the coordinates should be limited to the range, above.-->
 							<clamped>true</clamped>
 							<!--Flag indicating whether or not the values of the coordinates should be constrained to the current (e.g. default) value, above.-->
@@ -6171,7 +6171,7 @@
 						</Coordinate>
 						<Coordinate name="axial_rot_l">
 							<!--The value of this coordinate before any value has been set. Rotational coordinate value is in radians and Translational in meters.-->
-							<default_value>0.63419223694390447</default_value>
+							<default_value>0.63419581096084443</default_value>
 							<!--The speed value of this coordinate before any value has been set. Rotational coordinate value is in rad/s and Translational in m/s.-->
 							<default_speed_value>0</default_speed_value>
 							<!--The minimum and maximum values that the coordinate can range between. Rotational coordinate range in radians and Translational in meters.-->
@@ -6319,7 +6319,7 @@
 					<coordinates>
 						<Coordinate name="elbow_flexion_l">
 							<!--The value of this coordinate before any value has been set. Rotational coordinate value is in radians and Translational in meters.-->
-							<default_value>0.1795723242937981</default_value>
+							<default_value>0.17949692811247439</default_value>
 							<!--The speed value of this coordinate before any value has been set. Rotational coordinate value is in rad/s and Translational in m/s.-->
 							<default_speed_value>0</default_speed_value>
 							<!--The minimum and maximum values that the coordinate can range between. Rotational coordinate range in radians and Translational in meters.-->
@@ -6817,7 +6817,7 @@
 						<!--Default appearance attributes for this AbstractGeometryPath.-->
 						<Appearance>
 							<!--Flag indicating whether the associated Geometry is visible or hidden.-->
-							<visible>false</visible>
+							<visible>true</visible>
 							<!--The color, (red, green, blue), [0, 1], used to display the geometry. -->
 							<color>0.80000000000000004 0.10000000000000001 0.10000000000000001</color>
 						</Appearance>
@@ -6884,7 +6884,7 @@
 						<!--Default appearance attributes for this AbstractGeometryPath.-->
 						<Appearance>
 							<!--Flag indicating whether the associated Geometry is visible or hidden.-->
-							<visible>false</visible>
+							<visible>true</visible>
 							<!--The color, (red, green, blue), [0, 1], used to display the geometry. -->
 							<color>0.80000000000000004 0.10000000000000001 0.10000000000000001</color>
 						</Appearance>
@@ -6951,7 +6951,7 @@
 						<!--Default appearance attributes for this AbstractGeometryPath.-->
 						<Appearance>
 							<!--Flag indicating whether the associated Geometry is visible or hidden.-->
-							<visible>false</visible>
+							<visible>true</visible>
 							<!--The color, (red, green, blue), [0, 1], used to display the geometry. -->
 							<color>0.80000000000000004 0.10000000000000001 0.10000000000000001</color>
 						</Appearance>
@@ -7018,7 +7018,7 @@
 						<!--Default appearance attributes for this AbstractGeometryPath.-->
 						<Appearance>
 							<!--Flag indicating whether the associated Geometry is visible or hidden.-->
-							<visible>false</visible>
+							<visible>true</visible>
 							<!--The color, (red, green, blue), [0, 1], used to display the geometry. -->
 							<color>0.80000000000000004 0.10000000000000001 0.10000000000000001</color>
 						</Appearance>
@@ -7085,7 +7085,7 @@
 						<!--Default appearance attributes for this AbstractGeometryPath.-->
 						<Appearance>
 							<!--Flag indicating whether the associated Geometry is visible or hidden.-->
-							<visible>false</visible>
+							<visible>true</visible>
 							<!--The color, (red, green, blue), [0, 1], used to display the geometry. -->
 							<color>0.80000000000000004 0.10000000000000001 0.10000000000000001</color>
 						</Appearance>
@@ -7152,7 +7152,7 @@
 						<!--Default appearance attributes for this AbstractGeometryPath.-->
 						<Appearance>
 							<!--Flag indicating whether the associated Geometry is visible or hidden.-->
-							<visible>false</visible>
+							<visible>true</visible>
 							<!--The color, (red, green, blue), [0, 1], used to display the geometry. -->
 							<color>0.80000000000000004 0.10000000000000001 0.10000000000000001</color>
 						</Appearance>
@@ -7219,7 +7219,7 @@
 						<!--Default appearance attributes for this AbstractGeometryPath.-->
 						<Appearance>
 							<!--Flag indicating whether the associated Geometry is visible or hidden.-->
-							<visible>false</visible>
+							<visible>true</visible>
 							<!--The color, (red, green, blue), [0, 1], used to display the geometry. -->
 							<color>0.80000000000000004 0.10000000000000001 0.10000000000000001</color>
 						</Appearance>
@@ -7296,7 +7296,7 @@
 						<!--Default appearance attributes for this AbstractGeometryPath.-->
 						<Appearance>
 							<!--Flag indicating whether the associated Geometry is visible or hidden.-->
-							<visible>false</visible>
+							<visible>true</visible>
 							<!--The color, (red, green, blue), [0, 1], used to display the geometry. -->
 							<color>0.80000000000000004 0.10000000000000001 0.10000000000000001</color>
 						</Appearance>
@@ -7385,7 +7385,7 @@
 						<!--Default appearance attributes for this AbstractGeometryPath.-->
 						<Appearance>
 							<!--Flag indicating whether the associated Geometry is visible or hidden.-->
-							<visible>false</visible>
+							<visible>true</visible>
 							<!--The color, (red, green, blue), [0, 1], used to display the geometry. -->
 							<color>0.80000000000000004 0.10000000000000001 0.10000000000000001</color>
 						</Appearance>
@@ -7458,7 +7458,7 @@
 						<!--Default appearance attributes for this AbstractGeometryPath.-->
 						<Appearance>
 							<!--Flag indicating whether the associated Geometry is visible or hidden.-->
-							<visible>false</visible>
+							<visible>true</visible>
 							<!--The color, (red, green, blue), [0, 1], used to display the geometry. -->
 							<color>0.80000000000000004 0.10000000000000001 0.10000000000000001</color>
 						</Appearance>
@@ -7531,7 +7531,7 @@
 						<!--Default appearance attributes for this AbstractGeometryPath.-->
 						<Appearance>
 							<!--Flag indicating whether the associated Geometry is visible or hidden.-->
-							<visible>false</visible>
+							<visible>true</visible>
 							<!--The color, (red, green, blue), [0, 1], used to display the geometry. -->
 							<color>0.80000000000000004 0.10000000000000001 0.10000000000000001</color>
 						</Appearance>
@@ -7616,7 +7616,7 @@
 						<!--Default appearance attributes for this AbstractGeometryPath.-->
 						<Appearance>
 							<!--Flag indicating whether the associated Geometry is visible or hidden.-->
-							<visible>false</visible>
+							<visible>true</visible>
 							<!--The color, (red, green, blue), [0, 1], used to display the geometry. -->
 							<color>0.80000000000000004 0.10000000000000001 0.10000000000000001</color>
 						</Appearance>
@@ -7683,7 +7683,7 @@
 						<!--Default appearance attributes for this AbstractGeometryPath.-->
 						<Appearance>
 							<!--Flag indicating whether the associated Geometry is visible or hidden.-->
-							<visible>false</visible>
+							<visible>true</visible>
 							<!--The color, (red, green, blue), [0, 1], used to display the geometry. -->
 							<color>0.80000000000000004 0.10000000000000001 0.10000000000000001</color>
 						</Appearance>
@@ -7750,7 +7750,7 @@
 						<!--Default appearance attributes for this AbstractGeometryPath.-->
 						<Appearance>
 							<!--Flag indicating whether the associated Geometry is visible or hidden.-->
-							<visible>false</visible>
+							<visible>true</visible>
 							<!--The color, (red, green, blue), [0, 1], used to display the geometry. -->
 							<color>0.80000000000000004 0.10000000000000001 0.10000000000000001</color>
 						</Appearance>
@@ -7817,7 +7817,7 @@
 						<!--Default appearance attributes for this AbstractGeometryPath.-->
 						<Appearance>
 							<!--Flag indicating whether the associated Geometry is visible or hidden.-->
-							<visible>false</visible>
+							<visible>true</visible>
 							<!--The color, (red, green, blue), [0, 1], used to display the geometry. -->
 							<color>0.80000000000000004 0.10000000000000001 0.10000000000000001</color>
 						</Appearance>
@@ -7884,7 +7884,7 @@
 						<!--Default appearance attributes for this AbstractGeometryPath.-->
 						<Appearance>
 							<!--Flag indicating whether the associated Geometry is visible or hidden.-->
-							<visible>false</visible>
+							<visible>true</visible>
 							<!--The color, (red, green, blue), [0, 1], used to display the geometry. -->
 							<color>0.80000000000000004 0.10000000000000001 0.10000000000000001</color>
 						</Appearance>
@@ -7951,7 +7951,7 @@
 						<!--Default appearance attributes for this AbstractGeometryPath.-->
 						<Appearance>
 							<!--Flag indicating whether the associated Geometry is visible or hidden.-->
-							<visible>false</visible>
+							<visible>true</visible>
 							<!--The color, (red, green, blue), [0, 1], used to display the geometry. -->
 							<color>0.80000000000000004 0.10000000000000001 0.10000000000000001</color>
 						</Appearance>
@@ -8030,7 +8030,7 @@
 						<!--Default appearance attributes for this AbstractGeometryPath.-->
 						<Appearance>
 							<!--Flag indicating whether the associated Geometry is visible or hidden.-->
-							<visible>false</visible>
+							<visible>true</visible>
 							<!--The color, (red, green, blue), [0, 1], used to display the geometry. -->
 							<color>0.80000000000000004 0.10000000000000001 0.10000000000000001</color>
 						</Appearance>
@@ -8097,7 +8097,7 @@
 						<!--Default appearance attributes for this AbstractGeometryPath.-->
 						<Appearance>
 							<!--Flag indicating whether the associated Geometry is visible or hidden.-->
-							<visible>false</visible>
+							<visible>true</visible>
 							<!--The color, (red, green, blue), [0, 1], used to display the geometry. -->
 							<color>0.80000000000000004 0.10000000000000001 0.10000000000000001</color>
 						</Appearance>
@@ -8180,7 +8180,7 @@
 						<!--Default appearance attributes for this AbstractGeometryPath.-->
 						<Appearance>
 							<!--Flag indicating whether the associated Geometry is visible or hidden.-->
-							<visible>false</visible>
+							<visible>true</visible>
 							<!--The color, (red, green, blue), [0, 1], used to display the geometry. -->
 							<color>0.80000000000000004 0.10000000000000001 0.10000000000000001</color>
 						</Appearance>
@@ -8259,7 +8259,7 @@
 						<!--Default appearance attributes for this AbstractGeometryPath.-->
 						<Appearance>
 							<!--Flag indicating whether the associated Geometry is visible or hidden.-->
-							<visible>false</visible>
+							<visible>true</visible>
 							<!--The color, (red, green, blue), [0, 1], used to display the geometry. -->
 							<color>0.80000000000000004 0.10000000000000001 0.10000000000000001</color>
 						</Appearance>
@@ -8338,7 +8338,7 @@
 						<!--Default appearance attributes for this AbstractGeometryPath.-->
 						<Appearance>
 							<!--Flag indicating whether the associated Geometry is visible or hidden.-->
-							<visible>false</visible>
+							<visible>true</visible>
 							<!--The color, (red, green, blue), [0, 1], used to display the geometry. -->
 							<color>0.80000000000000004 0.10000000000000001 0.10000000000000001</color>
 						</Appearance>
@@ -8417,7 +8417,7 @@
 						<!--Default appearance attributes for this AbstractGeometryPath.-->
 						<Appearance>
 							<!--Flag indicating whether the associated Geometry is visible or hidden.-->
-							<visible>false</visible>
+							<visible>true</visible>
 							<!--The color, (red, green, blue), [0, 1], used to display the geometry. -->
 							<color>0.80000000000000004 0.10000000000000001 0.10000000000000001</color>
 						</Appearance>
@@ -8506,7 +8506,7 @@
 						<!--Default appearance attributes for this AbstractGeometryPath.-->
 						<Appearance>
 							<!--Flag indicating whether the associated Geometry is visible or hidden.-->
-							<visible>false</visible>
+							<visible>true</visible>
 							<!--The color, (red, green, blue), [0, 1], used to display the geometry. -->
 							<color>0.80000000000000004 0.10000000000000001 0.10000000000000001</color>
 						</Appearance>
@@ -8595,7 +8595,7 @@
 						<!--Default appearance attributes for this AbstractGeometryPath.-->
 						<Appearance>
 							<!--Flag indicating whether the associated Geometry is visible or hidden.-->
-							<visible>false</visible>
+							<visible>true</visible>
 							<!--The color, (red, green, blue), [0, 1], used to display the geometry. -->
 							<color>0.80000000000000004 0.10000000000000001 0.10000000000000001</color>
 						</Appearance>
@@ -8662,7 +8662,7 @@
 						<!--Default appearance attributes for this AbstractGeometryPath.-->
 						<Appearance>
 							<!--Flag indicating whether the associated Geometry is visible or hidden.-->
-							<visible>false</visible>
+							<visible>true</visible>
 							<!--The color, (red, green, blue), [0, 1], used to display the geometry. -->
 							<color>0.80000000000000004 0.10000000000000001 0.10000000000000001</color>
 						</Appearance>
@@ -8729,7 +8729,7 @@
 						<!--Default appearance attributes for this AbstractGeometryPath.-->
 						<Appearance>
 							<!--Flag indicating whether the associated Geometry is visible or hidden.-->
-							<visible>false</visible>
+							<visible>true</visible>
 							<!--The color, (red, green, blue), [0, 1], used to display the geometry. -->
 							<color>0.80000000000000004 0.10000000000000001 0.10000000000000001</color>
 						</Appearance>
@@ -8802,7 +8802,7 @@
 						<!--Default appearance attributes for this AbstractGeometryPath.-->
 						<Appearance>
 							<!--Flag indicating whether the associated Geometry is visible or hidden.-->
-							<visible>false</visible>
+							<visible>true</visible>
 							<!--The color, (red, green, blue), [0, 1], used to display the geometry. -->
 							<color>0.80000000000000004 0.10000000000000001 0.10000000000000001</color>
 						</Appearance>
@@ -8919,7 +8919,7 @@
 						<!--Default appearance attributes for this AbstractGeometryPath.-->
 						<Appearance>
 							<!--Flag indicating whether the associated Geometry is visible or hidden.-->
-							<visible>false</visible>
+							<visible>true</visible>
 							<!--The color, (red, green, blue), [0, 1], used to display the geometry. -->
 							<color>0.80000000000000004 0.10000000000000001 0.10000000000000001</color>
 						</Appearance>
@@ -9052,7 +9052,7 @@
 						<!--Default appearance attributes for this AbstractGeometryPath.-->
 						<Appearance>
 							<!--Flag indicating whether the associated Geometry is visible or hidden.-->
-							<visible>false</visible>
+							<visible>true</visible>
 							<!--The color, (red, green, blue), [0, 1], used to display the geometry. -->
 							<color>0.80000000000000004 0.10000000000000001 0.10000000000000001</color>
 						</Appearance>
@@ -9175,7 +9175,7 @@
 						<!--Default appearance attributes for this AbstractGeometryPath.-->
 						<Appearance>
 							<!--Flag indicating whether the associated Geometry is visible or hidden.-->
-							<visible>false</visible>
+							<visible>true</visible>
 							<!--The color, (red, green, blue), [0, 1], used to display the geometry. -->
 							<color>0.80000000000000004 0.10000000000000001 0.10000000000000001</color>
 						</Appearance>
@@ -9308,7 +9308,7 @@
 						<!--Default appearance attributes for this AbstractGeometryPath.-->
 						<Appearance>
 							<!--Flag indicating whether the associated Geometry is visible or hidden.-->
-							<visible>false</visible>
+							<visible>true</visible>
 							<!--The color, (red, green, blue), [0, 1], used to display the geometry. -->
 							<color>0.80000000000000004 0.10000000000000001 0.10000000000000001</color>
 						</Appearance>
@@ -9385,7 +9385,7 @@
 						<!--Default appearance attributes for this AbstractGeometryPath.-->
 						<Appearance>
 							<!--Flag indicating whether the associated Geometry is visible or hidden.-->
-							<visible>false</visible>
+							<visible>true</visible>
 							<!--The color, (red, green, blue), [0, 1], used to display the geometry. -->
 							<color>0.80000000000000004 0.10000000000000001 0.10000000000000001</color>
 						</Appearance>
@@ -9462,7 +9462,7 @@
 						<!--Default appearance attributes for this AbstractGeometryPath.-->
 						<Appearance>
 							<!--Flag indicating whether the associated Geometry is visible or hidden.-->
-							<visible>false</visible>
+							<visible>true</visible>
 							<!--The color, (red, green, blue), [0, 1], used to display the geometry. -->
 							<color>0.80000000000000004 0.10000000000000001 0.10000000000000001</color>
 						</Appearance>
@@ -9529,7 +9529,7 @@
 						<!--Default appearance attributes for this AbstractGeometryPath.-->
 						<Appearance>
 							<!--Flag indicating whether the associated Geometry is visible or hidden.-->
-							<visible>false</visible>
+							<visible>true</visible>
 							<!--The color, (red, green, blue), [0, 1], used to display the geometry. -->
 							<color>0.80000000000000004 0.10000000000000001 0.10000000000000001</color>
 						</Appearance>
@@ -9608,7 +9608,7 @@
 						<!--Default appearance attributes for this AbstractGeometryPath.-->
 						<Appearance>
 							<!--Flag indicating whether the associated Geometry is visible or hidden.-->
-							<visible>false</visible>
+							<visible>true</visible>
 							<!--The color, (red, green, blue), [0, 1], used to display the geometry. -->
 							<color>0.80000000000000004 0.10000000000000001 0.10000000000000001</color>
 						</Appearance>
@@ -9711,7 +9711,7 @@
 						<!--Default appearance attributes for this AbstractGeometryPath.-->
 						<Appearance>
 							<!--Flag indicating whether the associated Geometry is visible or hidden.-->
-							<visible>false</visible>
+							<visible>true</visible>
 							<!--The color, (red, green, blue), [0, 1], used to display the geometry. -->
 							<color>0.80000000000000004 0.10000000000000001 0.10000000000000001</color>
 						</Appearance>
@@ -9817,7 +9817,7 @@
 						<!--Default appearance attributes for this AbstractGeometryPath.-->
 						<Appearance>
 							<!--Flag indicating whether the associated Geometry is visible or hidden.-->
-							<visible>false</visible>
+							<visible>true</visible>
 							<!--The color, (red, green, blue), [0, 1], used to display the geometry. -->
 							<color>0.80000000000000004 0.10000000000000001 0.10000000000000001</color>
 						</Appearance>
@@ -9890,7 +9890,7 @@
 						<!--Default appearance attributes for this AbstractGeometryPath.-->
 						<Appearance>
 							<!--Flag indicating whether the associated Geometry is visible or hidden.-->
-							<visible>false</visible>
+							<visible>true</visible>
 							<!--The color, (red, green, blue), [0, 1], used to display the geometry. -->
 							<color>0.80000000000000004 0.10000000000000001 0.10000000000000001</color>
 						</Appearance>
@@ -9975,7 +9975,7 @@
 						<!--Default appearance attributes for this AbstractGeometryPath.-->
 						<Appearance>
 							<!--Flag indicating whether the associated Geometry is visible or hidden.-->
-							<visible>false</visible>
+							<visible>true</visible>
 							<!--The color, (red, green, blue), [0, 1], used to display the geometry. -->
 							<color>0.80000000000000004 0.10000000000000001 0.10000000000000001</color>
 						</Appearance>
@@ -10072,7 +10072,7 @@
 						<!--Default appearance attributes for this AbstractGeometryPath.-->
 						<Appearance>
 							<!--Flag indicating whether the associated Geometry is visible or hidden.-->
-							<visible>false</visible>
+							<visible>true</visible>
 							<!--The color, (red, green, blue), [0, 1], used to display the geometry. -->
 							<color>0.80000000000000004 0.10000000000000001 0.10000000000000001</color>
 						</Appearance>
@@ -10145,7 +10145,7 @@
 						<!--Default appearance attributes for this AbstractGeometryPath.-->
 						<Appearance>
 							<!--Flag indicating whether the associated Geometry is visible or hidden.-->
-							<visible>false</visible>
+							<visible>true</visible>
 							<!--The color, (red, green, blue), [0, 1], used to display the geometry. -->
 							<color>0.80000000000000004 0.10000000000000001 0.10000000000000001</color>
 						</Appearance>
@@ -10236,7 +10236,7 @@
 						<!--Default appearance attributes for this AbstractGeometryPath.-->
 						<Appearance>
 							<!--Flag indicating whether the associated Geometry is visible or hidden.-->
-							<visible>false</visible>
+							<visible>true</visible>
 							<!--The color, (red, green, blue), [0, 1], used to display the geometry. -->
 							<color>0.80000000000000004 0.10000000000000001 0.10000000000000001</color>
 						</Appearance>
@@ -10321,6 +10321,82 @@
 					<!--Tendon strain at a tension of 1 normalized force. Default: 0.049.-->
 					<tendon_strain_at_one_norm_force>0.033000000000000002</tendon_strain_at_one_norm_force>
 				</DeGrooteFregly2016Muscle>
+				<DeGrooteFregly2016Muscle name="FDB_r">
+					<!--Flag indicating whether the force is applied or not. If true the forceis applied to the MultibodySystem otherwise the force is not applied.NOTE: Prior to OpenSim 4.0, this behavior was controlled by the 'isDisabled' property, where 'true' meant that force was not being applied. Thus, if 'isDisabled' is true, then 'appliesForce` is false.-->
+					<appliesForce>true</appliesForce>
+					<!--Minimum allowed value for control signal. Used primarily when solving for control values.-->
+					<min_control>0.01</min_control>
+					<!--Maximum allowed value for control signal. Used primarily when solving for control values.-->
+					<max_control>1</max_control>
+					<!--The path of the actuator which defines length and lengthening speed.-->
+					<GeometryPath name="path">
+						<!--Default appearance attributes for this AbstractGeometryPath.-->
+						<Appearance>
+							<!--Flag indicating whether the associated Geometry is visible or hidden.-->
+							<visible>true</visible>
+							<!--The color, (red, green, blue), [0, 1], used to display the geometry. -->
+							<color>0.80000000000000004 0.10000000000000001 0.10000000000000001</color>
+						</Appearance>
+						<!--The set of points defining the path-->
+						<PathPointSet>
+							<objects>
+								<PathPoint name="FDB_r_P1">
+									<!--Path to a Component that satisfies the Socket 'parent_frame' of type PhysicalFrame (description: The frame in which this path point is defined.).-->
+									<socket_parent_frame>/bodyset/calcn_r</socket_parent_frame>
+									<!--The fixed location of the path point expressed in its parent frame.-->
+									<location>0.032360605933673785 -0.016 -0.015208299999999999</location>
+								</PathPoint>
+								<PathPoint name="FDB_r_P3">
+									<!--Path to a Component that satisfies the Socket 'parent_frame' of type PhysicalFrame (description: The frame in which this path point is defined.).-->
+									<socket_parent_frame>/bodyset/toes_r</socket_parent_frame>
+									<!--The fixed location of the path point expressed in its parent frame.-->
+									<location>0.014999999999999999 -0.0027273077122499994 -0.014256576749999998</location>
+								</PathPoint>
+							</objects>
+							<groups />
+						</PathPointSet>
+						<!--The wrap objects that are associated with this path-->
+						<PathWrapSet>
+							<objects>
+								<PathWrap name="pathwrap">
+									<!--A WrapObject that this PathWrap interacts with.-->
+									<wrap_object>MetatarsalHead_r</wrap_object>
+									<!--The wrapping method used to solve the path around the wrap object.-->
+									<method>hybrid</method>
+									<!--The range of indices to use to compute the path over the wrap object.-->
+									<range>1 2</range>
+								</PathWrap>
+							</objects>
+							<groups />
+						</PathWrapSet>
+					</GeometryPath>
+					<!--Maximum isometric force that the fibers can generate-->
+					<max_isometric_force>600</max_isometric_force>
+					<!--Optimal length of the muscle fibers-->
+					<optimal_fiber_length>0.022999999999999996</optimal_fiber_length>
+					<!--Resting length of the tendon-->
+					<tendon_slack_length>0.12299999999999997</tendon_slack_length>
+					<!--Angle between tendon and fibers at optimal fiber length expressed in radians-->
+					<pennation_angle_at_optimal>0.34910000000000002</pennation_angle_at_optimal>
+					<!--Maximum contraction velocity of the fibers, in optimal fiberlengths/second-->
+					<max_contraction_velocity>10</max_contraction_velocity>
+					<!--Compute muscle dynamics ignoring tendon compliance. Tendon is assumed to be rigid.-->
+					<ignore_tendon_compliance>false</ignore_tendon_compliance>
+					<!--Compute muscle dynamics ignoring activation dynamics. Activation is equivalent to excitation.-->
+					<ignore_activation_dynamics>false</ignore_activation_dynamics>
+					<!--Smaller value means activation can increase more rapidly. Default: 0.015 seconds.-->
+					<activation_time_constant>0.01</activation_time_constant>
+					<!--Smaller value means activation can decrease more rapidly. Default: 0.060 seconds.-->
+					<deactivation_time_constant>0.040000000000000001</deactivation_time_constant>
+					<!--Value of activation in the default state returned by initSystem(). Default: 0.5.-->
+					<default_activation>0.050000000000000003</default_activation>
+					<!--Use this property to define the linear damping force that is added to the total muscle fiber force. It is computed by multiplying this damping parameter by the normalized fiber velocity and the max isometric force. Default: 0.-->
+					<fiber_damping>0</fiber_damping>
+					<!--Fiber strain when the passive fiber force is 1 normalized force. Default: 0.6.-->
+					<passive_fiber_strain_at_one_norm_force>0.59999999999999998</passive_fiber_strain_at_one_norm_force>
+					<!--Tendon strain at a tension of 1 normalized force. Default: 0.049.-->
+					<tendon_strain_at_one_norm_force>0.033000000000000002</tendon_strain_at_one_norm_force>
+				</DeGrooteFregly2016Muscle>
 				<DeGrooteFregly2016Muscle name="glut_med1_l">
 					<!--Flag indicating whether the force is applied or not. If true the forceis applied to the MultibodySystem otherwise the force is not applied.NOTE: Prior to OpenSim 4.0, this behavior was controlled by the 'isDisabled' property, where 'true' meant that force was not being applied. Thus, if 'isDisabled' is true, then 'appliesForce` is false.-->
 					<appliesForce>true</appliesForce>
@@ -10333,7 +10409,7 @@
 						<!--Default appearance attributes for this AbstractGeometryPath.-->
 						<Appearance>
 							<!--Flag indicating whether the associated Geometry is visible or hidden.-->
-							<visible>false</visible>
+							<visible>true</visible>
 							<!--The color, (red, green, blue), [0, 1], used to display the geometry. -->
 							<color>0.80000000000000004 0.10000000000000001 0.10000000000000001</color>
 						</Appearance>
@@ -10400,7 +10476,7 @@
 						<!--Default appearance attributes for this AbstractGeometryPath.-->
 						<Appearance>
 							<!--Flag indicating whether the associated Geometry is visible or hidden.-->
-							<visible>false</visible>
+							<visible>true</visible>
 							<!--The color, (red, green, blue), [0, 1], used to display the geometry. -->
 							<color>0.80000000000000004 0.10000000000000001 0.10000000000000001</color>
 						</Appearance>
@@ -10467,7 +10543,7 @@
 						<!--Default appearance attributes for this AbstractGeometryPath.-->
 						<Appearance>
 							<!--Flag indicating whether the associated Geometry is visible or hidden.-->
-							<visible>false</visible>
+							<visible>true</visible>
 							<!--The color, (red, green, blue), [0, 1], used to display the geometry. -->
 							<color>0.80000000000000004 0.10000000000000001 0.10000000000000001</color>
 						</Appearance>
@@ -10534,7 +10610,7 @@
 						<!--Default appearance attributes for this AbstractGeometryPath.-->
 						<Appearance>
 							<!--Flag indicating whether the associated Geometry is visible or hidden.-->
-							<visible>false</visible>
+							<visible>true</visible>
 							<!--The color, (red, green, blue), [0, 1], used to display the geometry. -->
 							<color>0.80000000000000004 0.10000000000000001 0.10000000000000001</color>
 						</Appearance>
@@ -10601,7 +10677,7 @@
 						<!--Default appearance attributes for this AbstractGeometryPath.-->
 						<Appearance>
 							<!--Flag indicating whether the associated Geometry is visible or hidden.-->
-							<visible>false</visible>
+							<visible>true</visible>
 							<!--The color, (red, green, blue), [0, 1], used to display the geometry. -->
 							<color>0.80000000000000004 0.10000000000000001 0.10000000000000001</color>
 						</Appearance>
@@ -10668,7 +10744,7 @@
 						<!--Default appearance attributes for this AbstractGeometryPath.-->
 						<Appearance>
 							<!--Flag indicating whether the associated Geometry is visible or hidden.-->
-							<visible>false</visible>
+							<visible>true</visible>
 							<!--The color, (red, green, blue), [0, 1], used to display the geometry. -->
 							<color>0.80000000000000004 0.10000000000000001 0.10000000000000001</color>
 						</Appearance>
@@ -10735,7 +10811,7 @@
 						<!--Default appearance attributes for this AbstractGeometryPath.-->
 						<Appearance>
 							<!--Flag indicating whether the associated Geometry is visible or hidden.-->
-							<visible>false</visible>
+							<visible>true</visible>
 							<!--The color, (red, green, blue), [0, 1], used to display the geometry. -->
 							<color>0.80000000000000004 0.10000000000000001 0.10000000000000001</color>
 						</Appearance>
@@ -10812,7 +10888,7 @@
 						<!--Default appearance attributes for this AbstractGeometryPath.-->
 						<Appearance>
 							<!--Flag indicating whether the associated Geometry is visible or hidden.-->
-							<visible>false</visible>
+							<visible>true</visible>
 							<!--The color, (red, green, blue), [0, 1], used to display the geometry. -->
 							<color>0.80000000000000004 0.10000000000000001 0.10000000000000001</color>
 						</Appearance>
@@ -10901,7 +10977,7 @@
 						<!--Default appearance attributes for this AbstractGeometryPath.-->
 						<Appearance>
 							<!--Flag indicating whether the associated Geometry is visible or hidden.-->
-							<visible>false</visible>
+							<visible>true</visible>
 							<!--The color, (red, green, blue), [0, 1], used to display the geometry. -->
 							<color>0.80000000000000004 0.10000000000000001 0.10000000000000001</color>
 						</Appearance>
@@ -10974,7 +11050,7 @@
 						<!--Default appearance attributes for this AbstractGeometryPath.-->
 						<Appearance>
 							<!--Flag indicating whether the associated Geometry is visible or hidden.-->
-							<visible>false</visible>
+							<visible>true</visible>
 							<!--The color, (red, green, blue), [0, 1], used to display the geometry. -->
 							<color>0.80000000000000004 0.10000000000000001 0.10000000000000001</color>
 						</Appearance>
@@ -11047,7 +11123,7 @@
 						<!--Default appearance attributes for this AbstractGeometryPath.-->
 						<Appearance>
 							<!--Flag indicating whether the associated Geometry is visible or hidden.-->
-							<visible>false</visible>
+							<visible>true</visible>
 							<!--The color, (red, green, blue), [0, 1], used to display the geometry. -->
 							<color>0.80000000000000004 0.10000000000000001 0.10000000000000001</color>
 						</Appearance>
@@ -11132,7 +11208,7 @@
 						<!--Default appearance attributes for this AbstractGeometryPath.-->
 						<Appearance>
 							<!--Flag indicating whether the associated Geometry is visible or hidden.-->
-							<visible>false</visible>
+							<visible>true</visible>
 							<!--The color, (red, green, blue), [0, 1], used to display the geometry. -->
 							<color>0.80000000000000004 0.10000000000000001 0.10000000000000001</color>
 						</Appearance>
@@ -11199,7 +11275,7 @@
 						<!--Default appearance attributes for this AbstractGeometryPath.-->
 						<Appearance>
 							<!--Flag indicating whether the associated Geometry is visible or hidden.-->
-							<visible>false</visible>
+							<visible>true</visible>
 							<!--The color, (red, green, blue), [0, 1], used to display the geometry. -->
 							<color>0.80000000000000004 0.10000000000000001 0.10000000000000001</color>
 						</Appearance>
@@ -11266,7 +11342,7 @@
 						<!--Default appearance attributes for this AbstractGeometryPath.-->
 						<Appearance>
 							<!--Flag indicating whether the associated Geometry is visible or hidden.-->
-							<visible>false</visible>
+							<visible>true</visible>
 							<!--The color, (red, green, blue), [0, 1], used to display the geometry. -->
 							<color>0.80000000000000004 0.10000000000000001 0.10000000000000001</color>
 						</Appearance>
@@ -11333,7 +11409,7 @@
 						<!--Default appearance attributes for this AbstractGeometryPath.-->
 						<Appearance>
 							<!--Flag indicating whether the associated Geometry is visible or hidden.-->
-							<visible>false</visible>
+							<visible>true</visible>
 							<!--The color, (red, green, blue), [0, 1], used to display the geometry. -->
 							<color>0.80000000000000004 0.10000000000000001 0.10000000000000001</color>
 						</Appearance>
@@ -11400,7 +11476,7 @@
 						<!--Default appearance attributes for this AbstractGeometryPath.-->
 						<Appearance>
 							<!--Flag indicating whether the associated Geometry is visible or hidden.-->
-							<visible>false</visible>
+							<visible>true</visible>
 							<!--The color, (red, green, blue), [0, 1], used to display the geometry. -->
 							<color>0.80000000000000004 0.10000000000000001 0.10000000000000001</color>
 						</Appearance>
@@ -11467,7 +11543,7 @@
 						<!--Default appearance attributes for this AbstractGeometryPath.-->
 						<Appearance>
 							<!--Flag indicating whether the associated Geometry is visible or hidden.-->
-							<visible>false</visible>
+							<visible>true</visible>
 							<!--The color, (red, green, blue), [0, 1], used to display the geometry. -->
 							<color>0.80000000000000004 0.10000000000000001 0.10000000000000001</color>
 						</Appearance>
@@ -11546,7 +11622,7 @@
 						<!--Default appearance attributes for this AbstractGeometryPath.-->
 						<Appearance>
 							<!--Flag indicating whether the associated Geometry is visible or hidden.-->
-							<visible>false</visible>
+							<visible>true</visible>
 							<!--The color, (red, green, blue), [0, 1], used to display the geometry. -->
 							<color>0.80000000000000004 0.10000000000000001 0.10000000000000001</color>
 						</Appearance>
@@ -11613,7 +11689,7 @@
 						<!--Default appearance attributes for this AbstractGeometryPath.-->
 						<Appearance>
 							<!--Flag indicating whether the associated Geometry is visible or hidden.-->
-							<visible>false</visible>
+							<visible>true</visible>
 							<!--The color, (red, green, blue), [0, 1], used to display the geometry. -->
 							<color>0.80000000000000004 0.10000000000000001 0.10000000000000001</color>
 						</Appearance>
@@ -11696,7 +11772,7 @@
 						<!--Default appearance attributes for this AbstractGeometryPath.-->
 						<Appearance>
 							<!--Flag indicating whether the associated Geometry is visible or hidden.-->
-							<visible>false</visible>
+							<visible>true</visible>
 							<!--The color, (red, green, blue), [0, 1], used to display the geometry. -->
 							<color>0.80000000000000004 0.10000000000000001 0.10000000000000001</color>
 						</Appearance>
@@ -11775,7 +11851,7 @@
 						<!--Default appearance attributes for this AbstractGeometryPath.-->
 						<Appearance>
 							<!--Flag indicating whether the associated Geometry is visible or hidden.-->
-							<visible>false</visible>
+							<visible>true</visible>
 							<!--The color, (red, green, blue), [0, 1], used to display the geometry. -->
 							<color>0.80000000000000004 0.10000000000000001 0.10000000000000001</color>
 						</Appearance>
@@ -11854,7 +11930,7 @@
 						<!--Default appearance attributes for this AbstractGeometryPath.-->
 						<Appearance>
 							<!--Flag indicating whether the associated Geometry is visible or hidden.-->
-							<visible>false</visible>
+							<visible>true</visible>
 							<!--The color, (red, green, blue), [0, 1], used to display the geometry. -->
 							<color>0.80000000000000004 0.10000000000000001 0.10000000000000001</color>
 						</Appearance>
@@ -11933,7 +12009,7 @@
 						<!--Default appearance attributes for this AbstractGeometryPath.-->
 						<Appearance>
 							<!--Flag indicating whether the associated Geometry is visible or hidden.-->
-							<visible>false</visible>
+							<visible>true</visible>
 							<!--The color, (red, green, blue), [0, 1], used to display the geometry. -->
 							<color>0.80000000000000004 0.10000000000000001 0.10000000000000001</color>
 						</Appearance>
@@ -12022,7 +12098,7 @@
 						<!--Default appearance attributes for this AbstractGeometryPath.-->
 						<Appearance>
 							<!--Flag indicating whether the associated Geometry is visible or hidden.-->
-							<visible>false</visible>
+							<visible>true</visible>
 							<!--The color, (red, green, blue), [0, 1], used to display the geometry. -->
 							<color>0.80000000000000004 0.10000000000000001 0.10000000000000001</color>
 						</Appearance>
@@ -12111,7 +12187,7 @@
 						<!--Default appearance attributes for this AbstractGeometryPath.-->
 						<Appearance>
 							<!--Flag indicating whether the associated Geometry is visible or hidden.-->
-							<visible>false</visible>
+							<visible>true</visible>
 							<!--The color, (red, green, blue), [0, 1], used to display the geometry. -->
 							<color>0.80000000000000004 0.10000000000000001 0.10000000000000001</color>
 						</Appearance>
@@ -12178,7 +12254,7 @@
 						<!--Default appearance attributes for this AbstractGeometryPath.-->
 						<Appearance>
 							<!--Flag indicating whether the associated Geometry is visible or hidden.-->
-							<visible>false</visible>
+							<visible>true</visible>
 							<!--The color, (red, green, blue), [0, 1], used to display the geometry. -->
 							<color>0.80000000000000004 0.10000000000000001 0.10000000000000001</color>
 						</Appearance>
@@ -12245,7 +12321,7 @@
 						<!--Default appearance attributes for this AbstractGeometryPath.-->
 						<Appearance>
 							<!--Flag indicating whether the associated Geometry is visible or hidden.-->
-							<visible>false</visible>
+							<visible>true</visible>
 							<!--The color, (red, green, blue), [0, 1], used to display the geometry. -->
 							<color>0.80000000000000004 0.10000000000000001 0.10000000000000001</color>
 						</Appearance>
@@ -12318,7 +12394,7 @@
 						<!--Default appearance attributes for this AbstractGeometryPath.-->
 						<Appearance>
 							<!--Flag indicating whether the associated Geometry is visible or hidden.-->
-							<visible>false</visible>
+							<visible>true</visible>
 							<!--The color, (red, green, blue), [0, 1], used to display the geometry. -->
 							<color>0.80000000000000004 0.10000000000000001 0.10000000000000001</color>
 						</Appearance>
@@ -12435,7 +12511,7 @@
 						<!--Default appearance attributes for this AbstractGeometryPath.-->
 						<Appearance>
 							<!--Flag indicating whether the associated Geometry is visible or hidden.-->
-							<visible>false</visible>
+							<visible>true</visible>
 							<!--The color, (red, green, blue), [0, 1], used to display the geometry. -->
 							<color>0.80000000000000004 0.10000000000000001 0.10000000000000001</color>
 						</Appearance>
@@ -12568,7 +12644,7 @@
 						<!--Default appearance attributes for this AbstractGeometryPath.-->
 						<Appearance>
 							<!--Flag indicating whether the associated Geometry is visible or hidden.-->
-							<visible>false</visible>
+							<visible>true</visible>
 							<!--The color, (red, green, blue), [0, 1], used to display the geometry. -->
 							<color>0.80000000000000004 0.10000000000000001 0.10000000000000001</color>
 						</Appearance>
@@ -12691,7 +12767,7 @@
 						<!--Default appearance attributes for this AbstractGeometryPath.-->
 						<Appearance>
 							<!--Flag indicating whether the associated Geometry is visible or hidden.-->
-							<visible>false</visible>
+							<visible>true</visible>
 							<!--The color, (red, green, blue), [0, 1], used to display the geometry. -->
 							<color>0.80000000000000004 0.10000000000000001 0.10000000000000001</color>
 						</Appearance>
@@ -12824,7 +12900,7 @@
 						<!--Default appearance attributes for this AbstractGeometryPath.-->
 						<Appearance>
 							<!--Flag indicating whether the associated Geometry is visible or hidden.-->
-							<visible>false</visible>
+							<visible>true</visible>
 							<!--The color, (red, green, blue), [0, 1], used to display the geometry. -->
 							<color>0.80000000000000004 0.10000000000000001 0.10000000000000001</color>
 						</Appearance>
@@ -12901,7 +12977,7 @@
 						<!--Default appearance attributes for this AbstractGeometryPath.-->
 						<Appearance>
 							<!--Flag indicating whether the associated Geometry is visible or hidden.-->
-							<visible>false</visible>
+							<visible>true</visible>
 							<!--The color, (red, green, blue), [0, 1], used to display the geometry. -->
 							<color>0.80000000000000004 0.10000000000000001 0.10000000000000001</color>
 						</Appearance>
@@ -12978,7 +13054,7 @@
 						<!--Default appearance attributes for this AbstractGeometryPath.-->
 						<Appearance>
 							<!--Flag indicating whether the associated Geometry is visible or hidden.-->
-							<visible>false</visible>
+							<visible>true</visible>
 							<!--The color, (red, green, blue), [0, 1], used to display the geometry. -->
 							<color>0.80000000000000004 0.10000000000000001 0.10000000000000001</color>
 						</Appearance>
@@ -13045,7 +13121,7 @@
 						<!--Default appearance attributes for this AbstractGeometryPath.-->
 						<Appearance>
 							<!--Flag indicating whether the associated Geometry is visible or hidden.-->
-							<visible>false</visible>
+							<visible>true</visible>
 							<!--The color, (red, green, blue), [0, 1], used to display the geometry. -->
 							<color>0.80000000000000004 0.10000000000000001 0.10000000000000001</color>
 						</Appearance>
@@ -13124,7 +13200,7 @@
 						<!--Default appearance attributes for this AbstractGeometryPath.-->
 						<Appearance>
 							<!--Flag indicating whether the associated Geometry is visible or hidden.-->
-							<visible>false</visible>
+							<visible>true</visible>
 							<!--The color, (red, green, blue), [0, 1], used to display the geometry. -->
 							<color>0.80000000000000004 0.10000000000000001 0.10000000000000001</color>
 						</Appearance>
@@ -13227,7 +13303,7 @@
 						<!--Default appearance attributes for this AbstractGeometryPath.-->
 						<Appearance>
 							<!--Flag indicating whether the associated Geometry is visible or hidden.-->
-							<visible>false</visible>
+							<visible>true</visible>
 							<!--The color, (red, green, blue), [0, 1], used to display the geometry. -->
 							<color>0.80000000000000004 0.10000000000000001 0.10000000000000001</color>
 						</Appearance>
@@ -13333,7 +13409,7 @@
 						<!--Default appearance attributes for this AbstractGeometryPath.-->
 						<Appearance>
 							<!--Flag indicating whether the associated Geometry is visible or hidden.-->
-							<visible>false</visible>
+							<visible>true</visible>
 							<!--The color, (red, green, blue), [0, 1], used to display the geometry. -->
 							<color>0.80000000000000004 0.10000000000000001 0.10000000000000001</color>
 						</Appearance>
@@ -13406,7 +13482,7 @@
 						<!--Default appearance attributes for this AbstractGeometryPath.-->
 						<Appearance>
 							<!--Flag indicating whether the associated Geometry is visible or hidden.-->
-							<visible>false</visible>
+							<visible>true</visible>
 							<!--The color, (red, green, blue), [0, 1], used to display the geometry. -->
 							<color>0.80000000000000004 0.10000000000000001 0.10000000000000001</color>
 						</Appearance>
@@ -13491,7 +13567,7 @@
 						<!--Default appearance attributes for this AbstractGeometryPath.-->
 						<Appearance>
 							<!--Flag indicating whether the associated Geometry is visible or hidden.-->
-							<visible>false</visible>
+							<visible>true</visible>
 							<!--The color, (red, green, blue), [0, 1], used to display the geometry. -->
 							<color>0.80000000000000004 0.10000000000000001 0.10000000000000001</color>
 						</Appearance>
@@ -13588,7 +13664,7 @@
 						<!--Default appearance attributes for this AbstractGeometryPath.-->
 						<Appearance>
 							<!--Flag indicating whether the associated Geometry is visible or hidden.-->
-							<visible>false</visible>
+							<visible>true</visible>
 							<!--The color, (red, green, blue), [0, 1], used to display the geometry. -->
 							<color>0.80000000000000004 0.10000000000000001 0.10000000000000001</color>
 						</Appearance>
@@ -13661,7 +13737,7 @@
 						<!--Default appearance attributes for this AbstractGeometryPath.-->
 						<Appearance>
 							<!--Flag indicating whether the associated Geometry is visible or hidden.-->
-							<visible>false</visible>
+							<visible>true</visible>
 							<!--The color, (red, green, blue), [0, 1], used to display the geometry. -->
 							<color>0.80000000000000004 0.10000000000000001 0.10000000000000001</color>
 						</Appearance>
@@ -13752,7 +13828,7 @@
 						<!--Default appearance attributes for this AbstractGeometryPath.-->
 						<Appearance>
 							<!--Flag indicating whether the associated Geometry is visible or hidden.-->
-							<visible>false</visible>
+							<visible>true</visible>
 							<!--The color, (red, green, blue), [0, 1], used to display the geometry. -->
 							<color>0.80000000000000004 0.10000000000000001 0.10000000000000001</color>
 						</Appearance>
@@ -13837,6 +13913,82 @@
 					<!--Tendon strain at a tension of 1 normalized force. Default: 0.049.-->
 					<tendon_strain_at_one_norm_force>0.033000000000000002</tendon_strain_at_one_norm_force>
 				</DeGrooteFregly2016Muscle>
+				<DeGrooteFregly2016Muscle name="FDB_l">
+					<!--Flag indicating whether the force is applied or not. If true the forceis applied to the MultibodySystem otherwise the force is not applied.NOTE: Prior to OpenSim 4.0, this behavior was controlled by the 'isDisabled' property, where 'true' meant that force was not being applied. Thus, if 'isDisabled' is true, then 'appliesForce` is false.-->
+					<appliesForce>true</appliesForce>
+					<!--Minimum allowed value for control signal. Used primarily when solving for control values.-->
+					<min_control>0.01</min_control>
+					<!--Maximum allowed value for control signal. Used primarily when solving for control values.-->
+					<max_control>1</max_control>
+					<!--The path of the actuator which defines length and lengthening speed.-->
+					<GeometryPath name="path">
+						<!--Default appearance attributes for this AbstractGeometryPath.-->
+						<Appearance>
+							<!--Flag indicating whether the associated Geometry is visible or hidden.-->
+							<visible>true</visible>
+							<!--The color, (red, green, blue), [0, 1], used to display the geometry. -->
+							<color>0.80000000000000004 0.10000000000000001 0.10000000000000001</color>
+						</Appearance>
+						<!--The set of points defining the path-->
+						<PathPointSet>
+							<objects>
+								<PathPoint name="FDB_l_P1">
+									<!--Path to a Component that satisfies the Socket 'parent_frame' of type PhysicalFrame (description: The frame in which this path point is defined.).-->
+									<socket_parent_frame>/bodyset/calcn_l</socket_parent_frame>
+									<!--The fixed location of the path point expressed in its parent frame.-->
+									<location>0.032360605933673785 -0.016 0.015208299999999999</location>
+								</PathPoint>
+								<PathPoint name="FDB_l_P3">
+									<!--Path to a Component that satisfies the Socket 'parent_frame' of type PhysicalFrame (description: The frame in which this path point is defined.).-->
+									<socket_parent_frame>/bodyset/toes_l</socket_parent_frame>
+									<!--The fixed location of the path point expressed in its parent frame.-->
+									<location>0.014999999999999999 -0.0027273077122499994 0.014256576749999998</location>
+								</PathPoint>
+							</objects>
+							<groups />
+						</PathPointSet>
+						<!--The wrap objects that are associated with this path-->
+						<PathWrapSet>
+							<objects>
+								<PathWrap name="pathwrap">
+									<!--A WrapObject that this PathWrap interacts with.-->
+									<wrap_object>MetatarsalHead_l</wrap_object>
+									<!--The wrapping method used to solve the path around the wrap object.-->
+									<method>hybrid</method>
+									<!--The range of indices to use to compute the path over the wrap object.-->
+									<range>1 2</range>
+								</PathWrap>
+							</objects>
+							<groups />
+						</PathWrapSet>
+					</GeometryPath>
+					<!--Maximum isometric force that the fibers can generate-->
+					<max_isometric_force>600</max_isometric_force>
+					<!--Optimal length of the muscle fibers-->
+					<optimal_fiber_length>0.023000000000000007</optimal_fiber_length>
+					<!--Resting length of the tendon-->
+					<tendon_slack_length>0.12300000000000004</tendon_slack_length>
+					<!--Angle between tendon and fibers at optimal fiber length expressed in radians-->
+					<pennation_angle_at_optimal>0.34910000000000002</pennation_angle_at_optimal>
+					<!--Maximum contraction velocity of the fibers, in optimal fiberlengths/second-->
+					<max_contraction_velocity>10</max_contraction_velocity>
+					<!--Compute muscle dynamics ignoring tendon compliance. Tendon is assumed to be rigid.-->
+					<ignore_tendon_compliance>false</ignore_tendon_compliance>
+					<!--Compute muscle dynamics ignoring activation dynamics. Activation is equivalent to excitation.-->
+					<ignore_activation_dynamics>false</ignore_activation_dynamics>
+					<!--Smaller value means activation can increase more rapidly. Default: 0.015 seconds.-->
+					<activation_time_constant>0.01</activation_time_constant>
+					<!--Smaller value means activation can decrease more rapidly. Default: 0.060 seconds.-->
+					<deactivation_time_constant>0.040000000000000001</deactivation_time_constant>
+					<!--Value of activation in the default state returned by initSystem(). Default: 0.5.-->
+					<default_activation>0.050000000000000003</default_activation>
+					<!--Use this property to define the linear damping force that is added to the total muscle fiber force. It is computed by multiplying this damping parameter by the normalized fiber velocity and the max isometric force. Default: 0.-->
+					<fiber_damping>0</fiber_damping>
+					<!--Fiber strain when the passive fiber force is 1 normalized force. Default: 0.6.-->
+					<passive_fiber_strain_at_one_norm_force>0.59999999999999998</passive_fiber_strain_at_one_norm_force>
+					<!--Tendon strain at a tension of 1 normalized force. Default: 0.049.-->
+					<tendon_strain_at_one_norm_force>0.033000000000000002</tendon_strain_at_one_norm_force>
+				</DeGrooteFregly2016Muscle>
 				<DeGrooteFregly2016Muscle name="ercspn_r">
 					<!--Flag indicating whether the force is applied or not. If true the forceis applied to the MultibodySystem otherwise the force is not applied.NOTE: Prior to OpenSim 4.0, this behavior was controlled by the 'isDisabled' property, where 'true' meant that force was not being applied. Thus, if 'isDisabled' is true, then 'appliesForce` is false.-->
 					<appliesForce>true</appliesForce>
@@ -13849,7 +14001,7 @@
 						<!--Default appearance attributes for this AbstractGeometryPath.-->
 						<Appearance>
 							<!--Flag indicating whether the associated Geometry is visible or hidden.-->
-							<visible>false</visible>
+							<visible>true</visible>
 							<!--The color, (red, green, blue), [0, 1], used to display the geometry. -->
 							<color>0.80000000000000004 0.10000000000000001 0.10000000000000001</color>
 						</Appearance>
@@ -13916,7 +14068,7 @@
 						<!--Default appearance attributes for this AbstractGeometryPath.-->
 						<Appearance>
 							<!--Flag indicating whether the associated Geometry is visible or hidden.-->
-							<visible>false</visible>
+							<visible>true</visible>
 							<!--The color, (red, green, blue), [0, 1], used to display the geometry. -->
 							<color>0.80000000000000004 0.10000000000000001 0.10000000000000001</color>
 						</Appearance>
@@ -13983,7 +14135,7 @@
 						<!--Default appearance attributes for this AbstractGeometryPath.-->
 						<Appearance>
 							<!--Flag indicating whether the associated Geometry is visible or hidden.-->
-							<visible>false</visible>
+							<visible>true</visible>
 							<!--The color, (red, green, blue), [0, 1], used to display the geometry. -->
 							<color>0.80000000000000004 0.10000000000000001 0.10000000000000001</color>
 						</Appearance>
@@ -14050,7 +14202,7 @@
 						<!--Default appearance attributes for this AbstractGeometryPath.-->
 						<Appearance>
 							<!--Flag indicating whether the associated Geometry is visible or hidden.-->
-							<visible>false</visible>
+							<visible>true</visible>
 							<!--The color, (red, green, blue), [0, 1], used to display the geometry. -->
 							<color>0.80000000000000004 0.10000000000000001 0.10000000000000001</color>
 						</Appearance>
@@ -14117,7 +14269,7 @@
 						<!--Default appearance attributes for this AbstractGeometryPath.-->
 						<Appearance>
 							<!--Flag indicating whether the associated Geometry is visible or hidden.-->
-							<visible>false</visible>
+							<visible>true</visible>
 							<!--The color, (red, green, blue), [0, 1], used to display the geometry. -->
 							<color>0.80000000000000004 0.10000000000000001 0.10000000000000001</color>
 						</Appearance>
@@ -14184,7 +14336,7 @@
 						<!--Default appearance attributes for this AbstractGeometryPath.-->
 						<Appearance>
 							<!--Flag indicating whether the associated Geometry is visible or hidden.-->
-							<visible>false</visible>
+							<visible>true</visible>
 							<!--The color, (red, green, blue), [0, 1], used to display the geometry. -->
 							<color>0.80000000000000004 0.10000000000000001 0.10000000000000001</color>
 						</Appearance>
@@ -14251,7 +14403,7 @@
 						<!--Default appearance attributes for this AbstractGeometryPath.-->
 						<Appearance>
 							<!--Flag indicating whether the associated Geometry is visible or hidden.-->
-							<visible>false</visible>
+							<visible>true</visible>
 							<!--The color, (red, green, blue), [0, 1], used to display the geometry. -->
 							<color>0.80000000000000004 0.10000000000000001 0.10000000000000001</color>
 						</Appearance>
@@ -14319,7 +14471,7 @@
 						<!--Default appearance attributes for this AbstractGeometryPath.-->
 						<Appearance>
 							<!--Flag indicating whether the associated Geometry is visible or hidden.-->
-							<visible>false</visible>
+							<visible>true</visible>
 							<!--The color, (red, green, blue), [0, 1], used to display the geometry. -->
 							<color>0.80000000000000004 0.10000000000000001 0.10000000000000001</color>
 						</Appearance>
@@ -14359,9 +14511,9 @@
 					<!--Maximum isometric force that the fibers can generate-->
 					<max_isometric_force>470.39999999999998</max_isometric_force>
 					<!--Optimal length of the muscle fibers-->
-					<optimal_fiber_length>0.077853057103724047</optimal_fiber_length>
+					<optimal_fiber_length>0.075829949563185506</optimal_fiber_length>
 					<!--Resting length of the tendon-->
-					<tendon_slack_length>0.02994348350143233</tendon_slack_length>
+					<tendon_slack_length>0.029165365216609812</tendon_slack_length>
 					<!--Angle between tendon and fibers at optimal fiber length expressed in radians-->
 					<pennation_angle_at_optimal>0</pennation_angle_at_optimal>
 					<!--Maximum contraction velocity of the fibers, in optimal fiberlengths/second-->
@@ -14395,7 +14547,7 @@
 						<!--Default appearance attributes for this AbstractGeometryPath.-->
 						<Appearance>
 							<!--Flag indicating whether the associated Geometry is visible or hidden.-->
-							<visible>false</visible>
+							<visible>true</visible>
 							<!--The color, (red, green, blue), [0, 1], used to display the geometry. -->
 							<color>0.80000000000000004 0.10000000000000001 0.10000000000000001</color>
 						</Appearance>
@@ -14435,9 +14587,9 @@
 					<!--Maximum isometric force that the fibers can generate-->
 					<max_isometric_force>1043</max_isometric_force>
 					<!--Optimal length of the muscle fibers-->
-					<optimal_fiber_length>0.11729490283813272</optimal_fiber_length>
+					<optimal_fiber_length>0.10587557784593102</optimal_fiber_length>
 					<!--Resting length of the tendon-->
-					<tendon_slack_length>0.028100819668408016</tendon_slack_length>
+					<tendon_slack_length>0.025365045269211513</tendon_slack_length>
 					<!--Angle between tendon and fibers at optimal fiber length expressed in radians-->
 					<pennation_angle_at_optimal>0</pennation_angle_at_optimal>
 					<!--Maximum contraction velocity of the fibers, in optimal fiberlengths/second-->
@@ -14471,7 +14623,7 @@
 						<!--Default appearance attributes for this AbstractGeometryPath.-->
 						<Appearance>
 							<!--Flag indicating whether the associated Geometry is visible or hidden.-->
-							<visible>false</visible>
+							<visible>true</visible>
 							<!--The color, (red, green, blue), [0, 1], used to display the geometry. -->
 							<color>0.80000000000000004 0.10000000000000001 0.10000000000000001</color>
 						</Appearance>
@@ -14511,9 +14663,9 @@
 					<!--Maximum isometric force that the fibers can generate-->
 					<max_isometric_force>414.39999999999998</max_isometric_force>
 					<!--Optimal length of the muscle fibers-->
-					<optimal_fiber_length>0.10318324387898382</optimal_fiber_length>
+					<optimal_fiber_length>0.11412064620447809</optimal_fiber_length>
 					<!--Resting length of the tendon-->
-					<tendon_slack_length>0.028571309618389506</tendon_slack_length>
+					<tendon_slack_length>0.031599862477505805</tendon_slack_length>
 					<!--Angle between tendon and fibers at optimal fiber length expressed in radians-->
 					<pennation_angle_at_optimal>0</pennation_angle_at_optimal>
 					<!--Maximum contraction velocity of the fibers, in optimal fiberlengths/second-->
@@ -14547,7 +14699,7 @@
 						<!--Default appearance attributes for this AbstractGeometryPath.-->
 						<Appearance>
 							<!--Flag indicating whether the associated Geometry is visible or hidden.-->
-							<visible>false</visible>
+							<visible>true</visible>
 							<!--The color, (red, green, blue), [0, 1], used to display the geometry. -->
 							<color>0.80000000000000004 0.10000000000000001 0.10000000000000001</color>
 						</Appearance>
@@ -14578,9 +14730,9 @@
 					<!--Maximum isometric force that the fibers can generate-->
 					<max_isometric_force>201.59999999999999</max_isometric_force>
 					<!--Optimal length of the muscle fibers-->
-					<optimal_fiber_length>0.11125119151182426</optimal_fiber_length>
+					<optimal_fiber_length>0.1053020282522355</optimal_fiber_length>
 					<!--Resting length of the tendon-->
-					<tendon_slack_length>0.026652903024128267</tendon_slack_length>
+					<tendon_slack_length>0.025227637646941959</tendon_slack_length>
 					<!--Angle between tendon and fibers at optimal fiber length expressed in radians-->
 					<pennation_angle_at_optimal>0</pennation_angle_at_optimal>
 					<!--Maximum contraction velocity of the fibers, in optimal fiberlengths/second-->
@@ -14614,7 +14766,7 @@
 						<!--Default appearance attributes for this AbstractGeometryPath.-->
 						<Appearance>
 							<!--Flag indicating whether the associated Geometry is visible or hidden.-->
-							<visible>false</visible>
+							<visible>true</visible>
 							<!--The color, (red, green, blue), [0, 1], used to display the geometry. -->
 							<color>0.80000000000000004 0.10000000000000001 0.10000000000000001</color>
 						</Appearance>
@@ -14654,9 +14806,9 @@
 					<!--Maximum isometric force that the fibers can generate-->
 					<max_isometric_force>430</max_isometric_force>
 					<!--Optimal length of the muscle fibers-->
-					<optimal_fiber_length>0.15694907613898892</optimal_fiber_length>
+					<optimal_fiber_length>0.14143423340660877</optimal_fiber_length>
 					<!--Resting length of the tendon-->
-					<tendon_slack_length>0.01</tendon_slack_length>
+					<tendon_slack_length>0.014887814042800923</tendon_slack_length>
 					<!--Angle between tendon and fibers at optimal fiber length expressed in radians-->
 					<pennation_angle_at_optimal>0</pennation_angle_at_optimal>
 					<!--Maximum contraction velocity of the fibers, in optimal fiberlengths/second-->
@@ -14690,7 +14842,7 @@
 						<!--Default appearance attributes for this AbstractGeometryPath.-->
 						<Appearance>
 							<!--Flag indicating whether the associated Geometry is visible or hidden.-->
-							<visible>false</visible>
+							<visible>true</visible>
 							<!--The color, (red, green, blue), [0, 1], used to display the geometry. -->
 							<color>0.80000000000000004 0.10000000000000001 0.10000000000000001</color>
 						</Appearance>
@@ -14730,9 +14882,9 @@
 					<!--Maximum isometric force that the fibers can generate-->
 					<max_isometric_force>508</max_isometric_force>
 					<!--Optimal length of the muscle fibers-->
-					<optimal_fiber_length>0.14382436131771731</optimal_fiber_length>
+					<optimal_fiber_length>0.14212631477852214</optimal_fiber_length>
 					<!--Resting length of the tendon-->
-					<tendon_slack_length>0.011221666682786789</tendon_slack_length>
+					<tendon_slack_length>0.011089179306516681</tendon_slack_length>
 					<!--Angle between tendon and fibers at optimal fiber length expressed in radians-->
 					<pennation_angle_at_optimal>0</pennation_angle_at_optimal>
 					<!--Maximum contraction velocity of the fibers, in optimal fiberlengths/second-->
@@ -14766,7 +14918,7 @@
 						<!--Default appearance attributes for this AbstractGeometryPath.-->
 						<Appearance>
 							<!--Flag indicating whether the associated Geometry is visible or hidden.-->
-							<visible>false</visible>
+							<visible>true</visible>
 							<!--The color, (red, green, blue), [0, 1], used to display the geometry. -->
 							<color>0.80000000000000004 0.10000000000000001 0.10000000000000001</color>
 						</Appearance>
@@ -14806,9 +14958,9 @@
 					<!--Maximum isometric force that the fibers can generate-->
 					<max_isometric_force>387.80000000000001</max_isometric_force>
 					<!--Optimal length of the muscle fibers-->
-					<optimal_fiber_length>0.075798135077533288</optimal_fiber_length>
+					<optimal_fiber_length>0.078445550868782257</optimal_fiber_length>
 					<!--Resting length of the tendon-->
-					<tendon_slack_length>0.01</tendon_slack_length>
+					<tendon_slack_length>0.0082574264072402381</tendon_slack_length>
 					<!--Angle between tendon and fibers at optimal fiber length expressed in radians-->
 					<pennation_angle_at_optimal>0</pennation_angle_at_optimal>
 					<!--Maximum contraction velocity of the fibers, in optimal fiberlengths/second-->
@@ -14842,7 +14994,7 @@
 						<!--Default appearance attributes for this AbstractGeometryPath.-->
 						<Appearance>
 							<!--Flag indicating whether the associated Geometry is visible or hidden.-->
-							<visible>false</visible>
+							<visible>true</visible>
 							<!--The color, (red, green, blue), [0, 1], used to display the geometry. -->
 							<color>0.80000000000000004 0.10000000000000001 0.10000000000000001</color>
 						</Appearance>
@@ -14882,9 +15034,9 @@
 					<!--Maximum isometric force that the fibers can generate-->
 					<max_isometric_force>200.19999999999999</max_isometric_force>
 					<!--Optimal length of the muscle fibers-->
-					<optimal_fiber_length>0.07269847006640015</optimal_fiber_length>
+					<optimal_fiber_length>0.083234311582272902</optimal_fiber_length>
 					<!--Resting length of the tendon-->
-					<tendon_slack_length>0.01105960497967548</tendon_slack_length>
+					<tendon_slack_length>0.012662420626106426</tendon_slack_length>
 					<!--Angle between tendon and fibers at optimal fiber length expressed in radians-->
 					<pennation_angle_at_optimal>0</pennation_angle_at_optimal>
 					<!--Maximum contraction velocity of the fibers, in optimal fiberlengths/second-->
@@ -14918,7 +15070,7 @@
 						<!--Default appearance attributes for this AbstractGeometryPath.-->
 						<Appearance>
 							<!--Flag indicating whether the associated Geometry is visible or hidden.-->
-							<visible>false</visible>
+							<visible>true</visible>
 							<!--The color, (red, green, blue), [0, 1], used to display the geometry. -->
 							<color>0.80000000000000004 0.10000000000000001 0.10000000000000001</color>
 						</Appearance>
@@ -14958,9 +15110,9 @@
 					<!--Maximum isometric force that the fibers can generate-->
 					<max_isometric_force>407.39999999999998</max_isometric_force>
 					<!--Optimal length of the muscle fibers-->
-					<optimal_fiber_length>0.08081453128218595</optimal_fiber_length>
+					<optimal_fiber_length>0.097540071500119022</optimal_fiber_length>
 					<!--Resting length of the tendon-->
-					<tendon_slack_length>0.019642420797753534</tendon_slack_length>
+					<tendon_slack_length>0.023707656267390041</tendon_slack_length>
 					<!--Angle between tendon and fibers at optimal fiber length expressed in radians-->
 					<pennation_angle_at_optimal>0</pennation_angle_at_optimal>
 					<!--Maximum contraction velocity of the fibers, in optimal fiberlengths/second-->
@@ -14994,7 +15146,7 @@
 						<!--Default appearance attributes for this AbstractGeometryPath.-->
 						<Appearance>
 							<!--Flag indicating whether the associated Geometry is visible or hidden.-->
-							<visible>false</visible>
+							<visible>true</visible>
 							<!--The color, (red, green, blue), [0, 1], used to display the geometry. -->
 							<color>0.80000000000000004 0.10000000000000001 0.10000000000000001</color>
 						</Appearance>
@@ -15034,9 +15186,9 @@
 					<!--Maximum isometric force that the fibers can generate-->
 					<max_isometric_force>280</max_isometric_force>
 					<!--Optimal length of the muscle fibers-->
-					<optimal_fiber_length>0.13895324748466517</optimal_fiber_length>
+					<optimal_fiber_length>0.14326839809797487</optimal_fiber_length>
 					<!--Resting length of the tendon-->
-					<tendon_slack_length>0.01673074589485829</tendon_slack_length>
+					<tendon_slack_length>0.017250314092912056</tendon_slack_length>
 					<!--Angle between tendon and fibers at optimal fiber length expressed in radians-->
 					<pennation_angle_at_optimal>0</pennation_angle_at_optimal>
 					<!--Maximum contraction velocity of the fibers, in optimal fiberlengths/second-->
@@ -15070,7 +15222,7 @@
 						<!--Default appearance attributes for this AbstractGeometryPath.-->
 						<Appearance>
 							<!--Flag indicating whether the associated Geometry is visible or hidden.-->
-							<visible>false</visible>
+							<visible>true</visible>
 							<!--The color, (red, green, blue), [0, 1], used to display the geometry. -->
 							<color>0.80000000000000004 0.10000000000000001 0.10000000000000001</color>
 						</Appearance>
@@ -15101,9 +15253,9 @@
 					<!--Maximum isometric force that the fibers can generate-->
 					<max_isometric_force>648.20000000000005</max_isometric_force>
 					<!--Optimal length of the muscle fibers-->
-					<optimal_fiber_length>0.067421674317036981</optimal_fiber_length>
+					<optimal_fiber_length>0.067449970577609791</optimal_fiber_length>
 					<!--Resting length of the tendon-->
-					<tendon_slack_length>0.10266257875507825</tendon_slack_length>
+					<tendon_slack_length>0.10270566530119207</tendon_slack_length>
 					<!--Angle between tendon and fibers at optimal fiber length expressed in radians-->
 					<pennation_angle_at_optimal>0</pennation_angle_at_optimal>
 					<!--Maximum contraction velocity of the fibers, in optimal fiberlengths/second-->
@@ -15137,7 +15289,7 @@
 						<!--Default appearance attributes for this AbstractGeometryPath.-->
 						<Appearance>
 							<!--Flag indicating whether the associated Geometry is visible or hidden.-->
-							<visible>false</visible>
+							<visible>true</visible>
 							<!--The color, (red, green, blue), [0, 1], used to display the geometry. -->
 							<color>0.80000000000000004 0.10000000000000001 0.10000000000000001</color>
 						</Appearance>
@@ -15183,9 +15335,9 @@
 					<!--Maximum isometric force that the fibers can generate-->
 					<max_isometric_force>707.70000000000005</max_isometric_force>
 					<!--Optimal length of the muscle fibers-->
-					<optimal_fiber_length>0.12020085067415928</optimal_fiber_length>
+					<optimal_fiber_length>0.098228209288224622</optimal_fiber_length>
 					<!--Resting length of the tendon-->
-					<tendon_slack_length>0.11252845595027677</tendon_slack_length>
+					<tendon_slack_length>0.091958323588976237</tendon_slack_length>
 					<!--Angle between tendon and fibers at optimal fiber length expressed in radians-->
 					<pennation_angle_at_optimal>0.087266460000000004</pennation_angle_at_optimal>
 					<!--Maximum contraction velocity of the fibers, in optimal fiberlengths/second-->
@@ -15219,7 +15371,7 @@
 						<!--Default appearance attributes for this AbstractGeometryPath.-->
 						<Appearance>
 							<!--Flag indicating whether the associated Geometry is visible or hidden.-->
-							<visible>false</visible>
+							<visible>true</visible>
 							<!--The color, (red, green, blue), [0, 1], used to display the geometry. -->
 							<color>0.80000000000000004 0.10000000000000001 0.10000000000000001</color>
 						</Appearance>
@@ -15265,9 +15417,9 @@
 					<!--Maximum isometric force that the fibers can generate-->
 					<max_isometric_force>1324.4000000000001</max_isometric_force>
 					<!--Optimal length of the muscle fibers-->
-					<optimal_fiber_length>0.09203716811330391</optimal_fiber_length>
+					<optimal_fiber_length>0.091808066028869789</optimal_fiber_length>
 					<!--Resting length of the tendon-->
-					<tendon_slack_length>0.073707321144479407</tendon_slack_length>
+					<tendon_slack_length>0.073523846345564844</tendon_slack_length>
 					<!--Angle between tendon and fibers at optimal fiber length expressed in radians-->
 					<pennation_angle_at_optimal>0.087266460000000004</pennation_angle_at_optimal>
 					<!--Maximum contraction velocity of the fibers, in optimal fiberlengths/second-->
@@ -15301,7 +15453,7 @@
 						<!--Default appearance attributes for this AbstractGeometryPath.-->
 						<Appearance>
 							<!--Flag indicating whether the associated Geometry is visible or hidden.-->
-							<visible>false</visible>
+							<visible>true</visible>
 							<!--The color, (red, green, blue), [0, 1], used to display the geometry. -->
 							<color>0.80000000000000004 0.10000000000000001 0.10000000000000001</color>
 						</Appearance>
@@ -15347,9 +15499,9 @@
 					<!--Maximum isometric force that the fibers can generate-->
 					<max_isometric_force>2597.8000000000002</max_isometric_force>
 					<!--Optimal length of the muscle fibers-->
-					<optimal_fiber_length>0.077</optimal_fiber_length>
+					<optimal_fiber_length>0.073191153779276832</optimal_fiber_length>
 					<!--Resting length of the tendon-->
-					<tendon_slack_length>0.065</tendon_slack_length>
+					<tendon_slack_length>0.062623447083873213</tendon_slack_length>
 					<!--Angle between tendon and fibers at optimal fiber length expressed in radians-->
 					<pennation_angle_at_optimal>0.087266460000000004</pennation_angle_at_optimal>
 					<!--Maximum contraction velocity of the fibers, in optimal fiberlengths/second-->
@@ -15383,7 +15535,7 @@
 						<!--Default appearance attributes for this AbstractGeometryPath.-->
 						<Appearance>
 							<!--Flag indicating whether the associated Geometry is visible or hidden.-->
-							<visible>false</visible>
+							<visible>true</visible>
 							<!--The color, (red, green, blue), [0, 1], used to display the geometry. -->
 							<color>0.80000000000000004 0.10000000000000001 0.10000000000000001</color>
 						</Appearance>
@@ -15521,9 +15673,9 @@
 					<!--Maximum isometric force that the fibers can generate-->
 					<max_isometric_force>201.59999999999999</max_isometric_force>
 					<!--Optimal length of the muscle fibers-->
-					<optimal_fiber_length>0.16912094873608982</optimal_fiber_length>
+					<optimal_fiber_length>0.18762811560413681</optimal_fiber_length>
 					<!--Resting length of the tendon-->
-					<tendon_slack_length>0.064953991690959112</tendon_slack_length>
+					<tendon_slack_length>0.072062007415529081</tendon_slack_length>
 					<!--Angle between tendon and fibers at optimal fiber length expressed in radians-->
 					<pennation_angle_at_optimal>0</pennation_angle_at_optimal>
 					<!--Maximum contraction velocity of the fibers, in optimal fiberlengths/second-->
@@ -15557,7 +15709,7 @@
 						<!--Default appearance attributes for this AbstractGeometryPath.-->
 						<Appearance>
 							<!--Flag indicating whether the associated Geometry is visible or hidden.-->
-							<visible>false</visible>
+							<visible>true</visible>
 							<!--The color, (red, green, blue), [0, 1], used to display the geometry. -->
 							<color>0.80000000000000004 0.10000000000000001 0.10000000000000001</color>
 						</Appearance>
@@ -15695,9 +15847,9 @@
 					<!--Maximum isometric force that the fibers can generate-->
 					<max_isometric_force>315</max_isometric_force>
 					<!--Optimal length of the muscle fibers-->
-					<optimal_fiber_length>0.21742087724114015</optimal_fiber_length>
+					<optimal_fiber_length>0.23858407546677482</optimal_fiber_length>
 					<!--Resting length of the tendon-->
-					<tendon_slack_length>0.077357955193101458</tendon_slack_length>
+					<tendon_slack_length>0.084887782875038481</tendon_slack_length>
 					<!--Angle between tendon and fibers at optimal fiber length expressed in radians-->
 					<pennation_angle_at_optimal>0</pennation_angle_at_optimal>
 					<!--Maximum contraction velocity of the fibers, in optimal fiberlengths/second-->
@@ -15731,7 +15883,7 @@
 						<!--Default appearance attributes for this AbstractGeometryPath.-->
 						<Appearance>
 							<!--Flag indicating whether the associated Geometry is visible or hidden.-->
-							<visible>false</visible>
+							<visible>true</visible>
 							<!--The color, (red, green, blue), [0, 1], used to display the geometry. -->
 							<color>0.80000000000000004 0.10000000000000001 0.10000000000000001</color>
 						</Appearance>
@@ -15823,9 +15975,9 @@
 					<!--Maximum isometric force that the fibers can generate-->
 					<max_isometric_force>270.19999999999999</max_isometric_force>
 					<!--Optimal length of the muscle fibers-->
-					<optimal_fiber_length>0.26366142159373734</optimal_fiber_length>
+					<optimal_fiber_length>0.28051547839072322</optimal_fiber_length>
 					<!--Resting length of the tendon-->
-					<tendon_slack_length>0.053472809539422246</tendon_slack_length>
+					<tendon_slack_length>0.056890957570424269</tendon_slack_length>
 					<!--Angle between tendon and fibers at optimal fiber length expressed in radians-->
 					<pennation_angle_at_optimal>0</pennation_angle_at_optimal>
 					<!--Maximum contraction velocity of the fibers, in optimal fiberlengths/second-->
@@ -15859,7 +16011,7 @@
 						<!--Default appearance attributes for this AbstractGeometryPath.-->
 						<Appearance>
 							<!--Flag indicating whether the associated Geometry is visible or hidden.-->
-							<visible>false</visible>
+							<visible>true</visible>
 							<!--The color, (red, green, blue), [0, 1], used to display the geometry. -->
 							<color>0.80000000000000004 0.10000000000000001 0.10000000000000001</color>
 						</Appearance>
@@ -15899,9 +16051,9 @@
 					<!--Maximum isometric force that the fibers can generate-->
 					<max_isometric_force>408.80000000000001</max_isometric_force>
 					<!--Optimal length of the muscle fibers-->
-					<optimal_fiber_length>0.16235326059770996</optimal_fiber_length>
+					<optimal_fiber_length>0.11358908320718053</optimal_fiber_length>
 					<!--Resting length of the tendon-->
-					<tendon_slack_length>0.020833598976791379</tendon_slack_length>
+					<tendon_slack_length>0.014576051007337557</tendon_slack_length>
 					<!--Angle between tendon and fibers at optimal fiber length expressed in radians-->
 					<pennation_angle_at_optimal>0</pennation_angle_at_optimal>
 					<!--Maximum contraction velocity of the fibers, in optimal fiberlengths/second-->
@@ -15935,7 +16087,7 @@
 						<!--Default appearance attributes for this AbstractGeometryPath.-->
 						<Appearance>
 							<!--Flag indicating whether the associated Geometry is visible or hidden.-->
-							<visible>false</visible>
+							<visible>true</visible>
 							<!--The color, (red, green, blue), [0, 1], used to display the geometry. -->
 							<color>0.80000000000000004 0.10000000000000001 0.10000000000000001</color>
 						</Appearance>
@@ -15975,9 +16127,9 @@
 					<!--Maximum isometric force that the fibers can generate-->
 					<max_isometric_force>571.20000000000005</max_isometric_force>
 					<!--Optimal length of the muscle fibers-->
-					<optimal_fiber_length>0.21342563232874689</optimal_fiber_length>
+					<optimal_fiber_length>0.1790990884380389</optimal_fiber_length>
 					<!--Resting length of the tendon-->
-					<tendon_slack_length>0.050149192295825769</tendon_slack_length>
+					<tendon_slack_length>0.042083392365222252</tendon_slack_length>
 					<!--Angle between tendon and fibers at optimal fiber length expressed in radians-->
 					<pennation_angle_at_optimal>0</pennation_angle_at_optimal>
 					<!--Maximum contraction velocity of the fibers, in optimal fiberlengths/second-->
@@ -16011,7 +16163,7 @@
 						<!--Default appearance attributes for this AbstractGeometryPath.-->
 						<Appearance>
 							<!--Flag indicating whether the associated Geometry is visible or hidden.-->
-							<visible>false</visible>
+							<visible>true</visible>
 							<!--The color, (red, green, blue), [0, 1], used to display the geometry. -->
 							<color>0.80000000000000004 0.10000000000000001 0.10000000000000001</color>
 						</Appearance>
@@ -16051,9 +16203,9 @@
 					<!--Maximum isometric force that the fibers can generate-->
 					<max_isometric_force>683.20000000000005</max_isometric_force>
 					<!--Optimal length of the muscle fibers-->
-					<optimal_fiber_length>0.19722324216789003</optimal_fiber_length>
+					<optimal_fiber_length>0.14907957403933045</optimal_fiber_length>
 					<!--Resting length of the tendon-->
-					<tendon_slack_length>0.034185361975767596</tendon_slack_length>
+					<tendon_slack_length>0.025840459500150612</tendon_slack_length>
 					<!--Angle between tendon and fibers at optimal fiber length expressed in radians-->
 					<pennation_angle_at_optimal>0</pennation_angle_at_optimal>
 					<!--Maximum contraction velocity of the fibers, in optimal fiberlengths/second-->
@@ -16087,7 +16239,7 @@
 						<!--Default appearance attributes for this AbstractGeometryPath.-->
 						<Appearance>
 							<!--Flag indicating whether the associated Geometry is visible or hidden.-->
-							<visible>false</visible>
+							<visible>true</visible>
 							<!--The color, (red, green, blue), [0, 1], used to display the geometry. -->
 							<color>0.80000000000000004 0.10000000000000001 0.10000000000000001</color>
 						</Appearance>
@@ -16135,9 +16287,9 @@
 					<!--Maximum isometric force that the fibers can generate-->
 					<max_isometric_force>851.20000000000005</max_isometric_force>
 					<!--Optimal length of the muscle fibers-->
-					<optimal_fiber_length>0.1381666172993109</optimal_fiber_length>
+					<optimal_fiber_length>0.13093246969019545</optimal_fiber_length>
 					<!--Resting length of the tendon-->
-					<tendon_slack_length>0.0058794305233749334</tendon_slack_length>
+					<tendon_slack_length>0.0055715944549019347</tendon_slack_length>
 					<!--Angle between tendon and fibers at optimal fiber length expressed in radians-->
 					<pennation_angle_at_optimal>0</pennation_angle_at_optimal>
 					<!--Maximum contraction velocity of the fibers, in optimal fiberlengths/second-->
@@ -16171,7 +16323,7 @@
 						<!--Default appearance attributes for this AbstractGeometryPath.-->
 						<Appearance>
 							<!--Flag indicating whether the associated Geometry is visible or hidden.-->
-							<visible>false</visible>
+							<visible>true</visible>
 							<!--The color, (red, green, blue), [0, 1], used to display the geometry. -->
 							<color>0.80000000000000004 0.10000000000000001 0.10000000000000001</color>
 						</Appearance>
@@ -16219,9 +16371,9 @@
 					<!--Maximum isometric force that the fibers can generate-->
 					<max_isometric_force>1037.4000000000001</max_isometric_force>
 					<!--Optimal length of the muscle fibers-->
-					<optimal_fiber_length>0.0621364026454264</optimal_fiber_length>
+					<optimal_fiber_length>0.063327938829387961</optimal_fiber_length>
 					<!--Resting length of the tendon-->
-					<tendon_slack_length>0.07709686591160736</tendon_slack_length>
+					<tendon_slack_length>0.078575285992150495</tendon_slack_length>
 					<!--Angle between tendon and fibers at optimal fiber length expressed in radians-->
 					<pennation_angle_at_optimal>0</pennation_angle_at_optimal>
 					<!--Maximum contraction velocity of the fibers, in optimal fiberlengths/second-->
@@ -16255,7 +16407,7 @@
 						<!--Default appearance attributes for this AbstractGeometryPath.-->
 						<Appearance>
 							<!--Flag indicating whether the associated Geometry is visible or hidden.-->
-							<visible>false</visible>
+							<visible>true</visible>
 							<!--The color, (red, green, blue), [0, 1], used to display the geometry. -->
 							<color>0.80000000000000004 0.10000000000000001 0.10000000000000001</color>
 						</Appearance>
@@ -16303,9 +16455,9 @@
 					<!--Maximum isometric force that the fibers can generate-->
 					<max_isometric_force>967.39999999999998</max_isometric_force>
 					<!--Optimal length of the muscle fibers-->
-					<optimal_fiber_length>0.063453283808405619</optimal_fiber_length>
+					<optimal_fiber_length>0.064726774552876662</optimal_fiber_length>
 					<!--Resting length of the tendon-->
-					<tendon_slack_length>0.045453641696565648</tendon_slack_length>
+					<tendon_slack_length>0.046365884350198179</tendon_slack_length>
 					<!--Angle between tendon and fibers at optimal fiber length expressed in radians-->
 					<pennation_angle_at_optimal>0</pennation_angle_at_optimal>
 					<!--Maximum contraction velocity of the fibers, in optimal fiberlengths/second-->
@@ -16339,7 +16491,7 @@
 						<!--Default appearance attributes for this AbstractGeometryPath.-->
 						<Appearance>
 							<!--Flag indicating whether the associated Geometry is visible or hidden.-->
-							<visible>false</visible>
+							<visible>true</visible>
 							<!--The color, (red, green, blue), [0, 1], used to display the geometry. -->
 							<color>0.80000000000000004 0.10000000000000001 0.10000000000000001</color>
 						</Appearance>
@@ -16379,9 +16531,9 @@
 					<!--Maximum isometric force that the fibers can generate-->
 					<max_isometric_force>429.80000000000001</max_isometric_force>
 					<!--Optimal length of the muscle fibers-->
-					<optimal_fiber_length>0.1212937105907608</optimal_fiber_length>
+					<optimal_fiber_length>0.11424664714450103</optimal_fiber_length>
 					<!--Resting length of the tendon-->
-					<tendon_slack_length>0.032809794918887109</tendon_slack_length>
+					<tendon_slack_length>0.030903573192088189</tendon_slack_length>
 					<!--Angle between tendon and fibers at optimal fiber length expressed in radians-->
 					<pennation_angle_at_optimal>0</pennation_angle_at_optimal>
 					<!--Maximum contraction velocity of the fibers, in optimal fiberlengths/second-->
@@ -16415,7 +16567,7 @@
 						<!--Default appearance attributes for this AbstractGeometryPath.-->
 						<Appearance>
 							<!--Flag indicating whether the associated Geometry is visible or hidden.-->
-							<visible>false</visible>
+							<visible>true</visible>
 							<!--The color, (red, green, blue), [0, 1], used to display the geometry. -->
 							<color>0.80000000000000004 0.10000000000000001 0.10000000000000001</color>
 						</Appearance>
@@ -16455,9 +16607,9 @@
 					<!--Maximum isometric force that the fibers can generate-->
 					<max_isometric_force>695.79999999999995</max_isometric_force>
 					<!--Optimal length of the muscle fibers-->
-					<optimal_fiber_length>0.050653394147354557</optimal_fiber_length>
+					<optimal_fiber_length>0.051766996925115417</optimal_fiber_length>
 					<!--Resting length of the tendon-->
-					<tendon_slack_length>0.046969510936637857</tendon_slack_length>
+					<tendon_slack_length>0.048002124421470657</tendon_slack_length>
 					<!--Angle between tendon and fibers at optimal fiber length expressed in radians-->
 					<pennation_angle_at_optimal>0</pennation_angle_at_optimal>
 					<!--Maximum contraction velocity of the fibers, in optimal fiberlengths/second-->
@@ -16491,7 +16643,7 @@
 						<!--Default appearance attributes for this AbstractGeometryPath.-->
 						<Appearance>
 							<!--Flag indicating whether the associated Geometry is visible or hidden.-->
-							<visible>false</visible>
+							<visible>true</visible>
 							<!--The color, (red, green, blue), [0, 1], used to display the geometry. -->
 							<color>0.80000000000000004 0.10000000000000001 0.10000000000000001</color>
 						</Appearance>
@@ -16539,9 +16691,9 @@
 					<!--Maximum isometric force that the fibers can generate-->
 					<max_isometric_force>540.39999999999998</max_isometric_force>
 					<!--Optimal length of the muscle fibers-->
-					<optimal_fiber_length>0.062793457157142601</optimal_fiber_length>
+					<optimal_fiber_length>0.061225006772191302</optimal_fiber_length>
 					<!--Resting length of the tendon-->
-					<tendon_slack_length>0.054804940418216173</tendon_slack_length>
+					<tendon_slack_length>0.05343602662069951</tendon_slack_length>
 					<!--Angle between tendon and fibers at optimal fiber length expressed in radians-->
 					<pennation_angle_at_optimal>0.087266460000000004</pennation_angle_at_optimal>
 					<!--Maximum contraction velocity of the fibers, in optimal fiberlengths/second-->
@@ -16575,7 +16727,7 @@
 						<!--Default appearance attributes for this AbstractGeometryPath.-->
 						<Appearance>
 							<!--Flag indicating whether the associated Geometry is visible or hidden.-->
-							<visible>false</visible>
+							<visible>true</visible>
 							<!--The color, (red, green, blue), [0, 1], used to display the geometry. -->
 							<color>0.80000000000000004 0.10000000000000001 0.10000000000000001</color>
 						</Appearance>
@@ -16623,9 +16775,9 @@
 					<!--Maximum isometric force that the fibers can generate-->
 					<max_isometric_force>609</max_isometric_force>
 					<!--Optimal length of the muscle fibers-->
-					<optimal_fiber_length>0.069051713003028869</optimal_fiber_length>
+					<optimal_fiber_length>0.067515256583389319</optimal_fiber_length>
 					<!--Resting length of the tendon-->
-					<tendon_slack_length>0.051046293214604688</tendon_slack_length>
+					<tendon_slack_length>0.049910471936645336</tendon_slack_length>
 					<!--Angle between tendon and fibers at optimal fiber length expressed in radians-->
 					<pennation_angle_at_optimal>0.087266460000000004</pennation_angle_at_optimal>
 					<!--Maximum contraction velocity of the fibers, in optimal fiberlengths/second-->
@@ -16659,7 +16811,7 @@
 						<!--Default appearance attributes for this AbstractGeometryPath.-->
 						<Appearance>
 							<!--Flag indicating whether the associated Geometry is visible or hidden.-->
-							<visible>false</visible>
+							<visible>true</visible>
 							<!--The color, (red, green, blue), [0, 1], used to display the geometry. -->
 							<color>0.80000000000000004 0.10000000000000001 0.10000000000000001</color>
 						</Appearance>
@@ -16707,9 +16859,9 @@
 					<!--Maximum isometric force that the fibers can generate-->
 					<max_isometric_force>854</max_isometric_force>
 					<!--Optimal length of the muscle fibers-->
-					<optimal_fiber_length>0.067336826200844288</optimal_fiber_length>
+					<optimal_fiber_length>0.066014846946002625</optimal_fiber_length>
 					<!--Resting length of the tendon-->
-					<tendon_slack_length>0.055102257223991848</tendon_slack_length>
+					<tendon_slack_length>0.054020471148601312</tendon_slack_length>
 					<!--Angle between tendon and fibers at optimal fiber length expressed in radians-->
 					<pennation_angle_at_optimal>0</pennation_angle_at_optimal>
 					<!--Maximum contraction velocity of the fibers, in optimal fiberlengths/second-->
@@ -16743,7 +16895,7 @@
 						<!--Default appearance attributes for this AbstractGeometryPath.-->
 						<Appearance>
 							<!--Flag indicating whether the associated Geometry is visible or hidden.-->
-							<visible>false</visible>
+							<visible>true</visible>
 							<!--The color, (red, green, blue), [0, 1], used to display the geometry. -->
 							<color>0.80000000000000004 0.10000000000000001 0.10000000000000001</color>
 						</Appearance>
@@ -16783,9 +16935,9 @@
 					<!--Maximum isometric force that the fibers can generate-->
 					<max_isometric_force>326.19999999999999</max_isometric_force>
 					<!--Optimal length of the muscle fibers-->
-					<optimal_fiber_length>0.054734933210403396</optimal_fiber_length>
+					<optimal_fiber_length>0.055538398324014353</optimal_fiber_length>
 					<!--Resting length of the tendon-->
-					<tendon_slack_length>0.023153525046701942</tendon_slack_length>
+					<tendon_slack_length>0.023493400306266649</tendon_slack_length>
 					<!--Angle between tendon and fibers at optimal fiber length expressed in radians-->
 					<pennation_angle_at_optimal>0</pennation_angle_at_optimal>
 					<!--Maximum contraction velocity of the fibers, in optimal fiberlengths/second-->
@@ -16819,7 +16971,7 @@
 						<!--Default appearance attributes for this AbstractGeometryPath.-->
 						<Appearance>
 							<!--Flag indicating whether the associated Geometry is visible or hidden.-->
-							<visible>false</visible>
+							<visible>true</visible>
 							<!--The color, (red, green, blue), [0, 1], used to display the geometry. -->
 							<color>0.80000000000000004 0.10000000000000001 0.10000000000000001</color>
 						</Appearance>
@@ -16867,9 +17019,9 @@
 					<!--Maximum isometric force that the fibers can generate-->
 					<max_isometric_force>543.20000000000005</max_isometric_force>
 					<!--Optimal length of the muscle fibers-->
-					<optimal_fiber_length>0.059780570045622726</optimal_fiber_length>
+					<optimal_fiber_length>0.050831693853255248</optimal_fiber_length>
 					<!--Resting length of the tendon-->
-					<tendon_slack_length>0.028510733406373921</tendon_slack_length>
+					<tendon_slack_length>0.028443727607417198</tendon_slack_length>
 					<!--Angle between tendon and fibers at optimal fiber length expressed in radians-->
 					<pennation_angle_at_optimal>0</pennation_angle_at_optimal>
 					<!--Maximum contraction velocity of the fibers, in optimal fiberlengths/second-->
@@ -16903,7 +17055,7 @@
 						<!--Default appearance attributes for this AbstractGeometryPath.-->
 						<Appearance>
 							<!--Flag indicating whether the associated Geometry is visible or hidden.-->
-							<visible>false</visible>
+							<visible>true</visible>
 							<!--The color, (red, green, blue), [0, 1], used to display the geometry. -->
 							<color>0.80000000000000004 0.10000000000000001 0.10000000000000001</color>
 						</Appearance>
@@ -16943,9 +17095,9 @@
 					<!--Maximum isometric force that the fibers can generate-->
 					<max_isometric_force>1129</max_isometric_force>
 					<!--Optimal length of the muscle fibers-->
-					<optimal_fiber_length>0.10765818750474071</optimal_fiber_length>
+					<optimal_fiber_length>0.096482196152064714</optimal_fiber_length>
 					<!--Resting length of the tendon-->
-					<tendon_slack_length>0.21569210158290419</tendon_slack_length>
+					<tendon_slack_length>0.24016001766643974</tendon_slack_length>
 					<!--Angle between tendon and fibers at optimal fiber length expressed in radians-->
 					<pennation_angle_at_optimal>0.17453299999999999</pennation_angle_at_optimal>
 					<!--Maximum contraction velocity of the fibers, in optimal fiberlengths/second-->
@@ -16979,7 +17131,7 @@
 						<!--Default appearance attributes for this AbstractGeometryPath.-->
 						<Appearance>
 							<!--Flag indicating whether the associated Geometry is visible or hidden.-->
-							<visible>false</visible>
+							<visible>true</visible>
 							<!--The color, (red, green, blue), [0, 1], used to display the geometry. -->
 							<color>0.80000000000000004 0.10000000000000001 0.10000000000000001</color>
 						</Appearance>
@@ -17055,7 +17207,7 @@
 						<!--Default appearance attributes for this AbstractGeometryPath.-->
 						<Appearance>
 							<!--Flag indicating whether the associated Geometry is visible or hidden.-->
-							<visible>false</visible>
+							<visible>true</visible>
 							<!--The color, (red, green, blue), [0, 1], used to display the geometry. -->
 							<color>0.80000000000000004 0.10000000000000001 0.10000000000000001</color>
 						</Appearance>
@@ -17131,7 +17283,7 @@
 						<!--Default appearance attributes for this AbstractGeometryPath.-->
 						<Appearance>
 							<!--Flag indicating whether the associated Geometry is visible or hidden.-->
-							<visible>false</visible>
+							<visible>true</visible>
 							<!--The color, (red, green, blue), [0, 1], used to display the geometry. -->
 							<color>0.80000000000000004 0.10000000000000001 0.10000000000000001</color>
 						</Appearance>
@@ -17191,9 +17343,9 @@
 					<!--Maximum isometric force that the fibers can generate-->
 					<max_isometric_force>347</max_isometric_force>
 					<!--Optimal length of the muscle fibers-->
-					<optimal_fiber_length>0.12804870564651782</optimal_fiber_length>
+					<optimal_fiber_length>0.14106752274201026</optimal_fiber_length>
 					<!--Resting length of the tendon-->
-					<tendon_slack_length>0.23141929387354418</tendon_slack_length>
+					<tendon_slack_length>0.25493412976881236</tendon_slack_length>
 					<!--Angle between tendon and fibers at optimal fiber length expressed in radians-->
 					<pennation_angle_at_optimal>0</pennation_angle_at_optimal>
 					<!--Maximum contraction velocity of the fibers, in optimal fiberlengths/second-->
@@ -17227,7 +17379,7 @@
 						<!--Default appearance attributes for this AbstractGeometryPath.-->
 						<Appearance>
 							<!--Flag indicating whether the associated Geometry is visible or hidden.-->
-							<visible>false</visible>
+							<visible>true</visible>
 							<!--The color, (red, green, blue), [0, 1], used to display the geometry. -->
 							<color>0.80000000000000004 0.10000000000000001 0.10000000000000001</color>
 						</Appearance>
@@ -17273,9 +17425,9 @@
 					<!--Maximum isometric force that the fibers can generate-->
 					<max_isometric_force>495</max_isometric_force>
 					<!--Optimal length of the muscle fibers-->
-					<optimal_fiber_length>0.11482106354156191</optimal_fiber_length>
+					<optimal_fiber_length>0.12528231526763484</optimal_fiber_length>
 					<!--Resting length of the tendon-->
-					<tendon_slack_length>0.19013060974540652</tendon_slack_length>
+					<tendon_slack_length>0.21012540218938752</tendon_slack_length>
 					<!--Angle between tendon and fibers at optimal fiber length expressed in radians-->
 					<pennation_angle_at_optimal>0</pennation_angle_at_optimal>
 					<!--Maximum contraction velocity of the fibers, in optimal fiberlengths/second-->
@@ -17309,7 +17461,7 @@
 						<!--Default appearance attributes for this AbstractGeometryPath.-->
 						<Appearance>
 							<!--Flag indicating whether the associated Geometry is visible or hidden.-->
-							<visible>false</visible>
+							<visible>true</visible>
 							<!--The color, (red, green, blue), [0, 1], used to display the geometry. -->
 							<color>0.80000000000000004 0.10000000000000001 0.10000000000000001</color>
 						</Appearance>
@@ -17382,7 +17534,7 @@
 						<!--Default appearance attributes for this AbstractGeometryPath.-->
 						<Appearance>
 							<!--Flag indicating whether the associated Geometry is visible or hidden.-->
-							<visible>false</visible>
+							<visible>true</visible>
 							<!--The color, (red, green, blue), [0, 1], used to display the geometry. -->
 							<color>0.80000000000000004 0.10000000000000001 0.10000000000000001</color>
 						</Appearance>
@@ -17422,9 +17574,9 @@
 					<!--Maximum isometric force that the fibers can generate-->
 					<max_isometric_force>470.39999999999998</max_isometric_force>
 					<!--Optimal length of the muscle fibers-->
-					<optimal_fiber_length>0.077887690616189428</optimal_fiber_length>
+					<optimal_fiber_length>0.075829949563185506</optimal_fiber_length>
 					<!--Resting length of the tendon-->
-					<tendon_slack_length>0.029956804083149782</tendon_slack_length>
+					<tendon_slack_length>0.029165365216609812</tendon_slack_length>
 					<!--Angle between tendon and fibers at optimal fiber length expressed in radians-->
 					<pennation_angle_at_optimal>0</pennation_angle_at_optimal>
 					<!--Maximum contraction velocity of the fibers, in optimal fiberlengths/second-->
@@ -17458,7 +17610,7 @@
 						<!--Default appearance attributes for this AbstractGeometryPath.-->
 						<Appearance>
 							<!--Flag indicating whether the associated Geometry is visible or hidden.-->
-							<visible>false</visible>
+							<visible>true</visible>
 							<!--The color, (red, green, blue), [0, 1], used to display the geometry. -->
 							<color>0.80000000000000004 0.10000000000000001 0.10000000000000001</color>
 						</Appearance>
@@ -17498,9 +17650,9 @@
 					<!--Maximum isometric force that the fibers can generate-->
 					<max_isometric_force>1043</max_isometric_force>
 					<!--Optimal length of the muscle fibers-->
-					<optimal_fiber_length>0.11736620357948498</optimal_fiber_length>
+					<optimal_fiber_length>0.10587557784593102</optimal_fiber_length>
 					<!--Resting length of the tendon-->
-					<tendon_slack_length>0.028117901478669868</tendon_slack_length>
+					<tendon_slack_length>0.025365045269211513</tendon_slack_length>
 					<!--Angle between tendon and fibers at optimal fiber length expressed in radians-->
 					<pennation_angle_at_optimal>0</pennation_angle_at_optimal>
 					<!--Maximum contraction velocity of the fibers, in optimal fiberlengths/second-->
@@ -17534,7 +17686,7 @@
 						<!--Default appearance attributes for this AbstractGeometryPath.-->
 						<Appearance>
 							<!--Flag indicating whether the associated Geometry is visible or hidden.-->
-							<visible>false</visible>
+							<visible>true</visible>
 							<!--The color, (red, green, blue), [0, 1], used to display the geometry. -->
 							<color>0.80000000000000004 0.10000000000000001 0.10000000000000001</color>
 						</Appearance>
@@ -17574,9 +17726,9 @@
 					<!--Maximum isometric force that the fibers can generate-->
 					<max_isometric_force>414.39999999999998</max_isometric_force>
 					<!--Optimal length of the muscle fibers-->
-					<optimal_fiber_length>0.10296675726911482</optimal_fiber_length>
+					<optimal_fiber_length>0.11412064620447809</optimal_fiber_length>
 					<!--Resting length of the tendon-->
-					<tendon_slack_length>0.028511364750150463</tendon_slack_length>
+					<tendon_slack_length>0.031599862477505805</tendon_slack_length>
 					<!--Angle between tendon and fibers at optimal fiber length expressed in radians-->
 					<pennation_angle_at_optimal>0</pennation_angle_at_optimal>
 					<!--Maximum contraction velocity of the fibers, in optimal fiberlengths/second-->
@@ -17610,7 +17762,7 @@
 						<!--Default appearance attributes for this AbstractGeometryPath.-->
 						<Appearance>
 							<!--Flag indicating whether the associated Geometry is visible or hidden.-->
-							<visible>false</visible>
+							<visible>true</visible>
 							<!--The color, (red, green, blue), [0, 1], used to display the geometry. -->
 							<color>0.80000000000000004 0.10000000000000001 0.10000000000000001</color>
 						</Appearance>
@@ -17641,9 +17793,9 @@
 					<!--Maximum isometric force that the fibers can generate-->
 					<max_isometric_force>201.59999999999999</max_isometric_force>
 					<!--Optimal length of the muscle fibers-->
-					<optimal_fiber_length>0.11123352941628581</optimal_fiber_length>
+					<optimal_fiber_length>0.1053020282522355</optimal_fiber_length>
 					<!--Resting length of the tendon-->
-					<tendon_slack_length>0.026648671643653216</tendon_slack_length>
+					<tendon_slack_length>0.025227637646941959</tendon_slack_length>
 					<!--Angle between tendon and fibers at optimal fiber length expressed in radians-->
 					<pennation_angle_at_optimal>0</pennation_angle_at_optimal>
 					<!--Maximum contraction velocity of the fibers, in optimal fiberlengths/second-->
@@ -17677,7 +17829,7 @@
 						<!--Default appearance attributes for this AbstractGeometryPath.-->
 						<Appearance>
 							<!--Flag indicating whether the associated Geometry is visible or hidden.-->
-							<visible>false</visible>
+							<visible>true</visible>
 							<!--The color, (red, green, blue), [0, 1], used to display the geometry. -->
 							<color>0.80000000000000004 0.10000000000000001 0.10000000000000001</color>
 						</Appearance>
@@ -17717,9 +17869,9 @@
 					<!--Maximum isometric force that the fibers can generate-->
 					<max_isometric_force>430</max_isometric_force>
 					<!--Optimal length of the muscle fibers-->
-					<optimal_fiber_length>0.15676391617553989</optimal_fiber_length>
+					<optimal_fiber_length>0.14143423340660877</optimal_fiber_length>
 					<!--Resting length of the tendon-->
-					<tendon_slack_length>0.01</tendon_slack_length>
+					<tendon_slack_length>0.014887814042800923</tendon_slack_length>
 					<!--Angle between tendon and fibers at optimal fiber length expressed in radians-->
 					<pennation_angle_at_optimal>0</pennation_angle_at_optimal>
 					<!--Maximum contraction velocity of the fibers, in optimal fiberlengths/second-->
@@ -17753,7 +17905,7 @@
 						<!--Default appearance attributes for this AbstractGeometryPath.-->
 						<Appearance>
 							<!--Flag indicating whether the associated Geometry is visible or hidden.-->
-							<visible>false</visible>
+							<visible>true</visible>
 							<!--The color, (red, green, blue), [0, 1], used to display the geometry. -->
 							<color>0.80000000000000004 0.10000000000000001 0.10000000000000001</color>
 						</Appearance>
@@ -17793,9 +17945,9 @@
 					<!--Maximum isometric force that the fibers can generate-->
 					<max_isometric_force>508</max_isometric_force>
 					<!--Optimal length of the muscle fibers-->
-					<optimal_fiber_length>0.14380926625879487</optimal_fiber_length>
+					<optimal_fiber_length>0.14212631477852214</optimal_fiber_length>
 					<!--Resting length of the tendon-->
-					<tendon_slack_length>0.011220488914860461</tendon_slack_length>
+					<tendon_slack_length>0.011089179306516681</tendon_slack_length>
 					<!--Angle between tendon and fibers at optimal fiber length expressed in radians-->
 					<pennation_angle_at_optimal>0</pennation_angle_at_optimal>
 					<!--Maximum contraction velocity of the fibers, in optimal fiberlengths/second-->
@@ -17829,7 +17981,7 @@
 						<!--Default appearance attributes for this AbstractGeometryPath.-->
 						<Appearance>
 							<!--Flag indicating whether the associated Geometry is visible or hidden.-->
-							<visible>false</visible>
+							<visible>true</visible>
 							<!--The color, (red, green, blue), [0, 1], used to display the geometry. -->
 							<color>0.80000000000000004 0.10000000000000001 0.10000000000000001</color>
 						</Appearance>
@@ -17869,9 +18021,9 @@
 					<!--Maximum isometric force that the fibers can generate-->
 					<max_isometric_force>387.80000000000001</max_isometric_force>
 					<!--Optimal length of the muscle fibers-->
-					<optimal_fiber_length>0.075880617459961927</optimal_fiber_length>
+					<optimal_fiber_length>0.078445550868782257</optimal_fiber_length>
 					<!--Resting length of the tendon-->
-					<tendon_slack_length>0.01</tendon_slack_length>
+					<tendon_slack_length>0.0082574264072402381</tendon_slack_length>
 					<!--Angle between tendon and fibers at optimal fiber length expressed in radians-->
 					<pennation_angle_at_optimal>0</pennation_angle_at_optimal>
 					<!--Maximum contraction velocity of the fibers, in optimal fiberlengths/second-->
@@ -17905,7 +18057,7 @@
 						<!--Default appearance attributes for this AbstractGeometryPath.-->
 						<Appearance>
 							<!--Flag indicating whether the associated Geometry is visible or hidden.-->
-							<visible>false</visible>
+							<visible>true</visible>
 							<!--The color, (red, green, blue), [0, 1], used to display the geometry. -->
 							<color>0.80000000000000004 0.10000000000000001 0.10000000000000001</color>
 						</Appearance>
@@ -17945,9 +18097,9 @@
 					<!--Maximum isometric force that the fibers can generate-->
 					<max_isometric_force>200.19999999999999</max_isometric_force>
 					<!--Optimal length of the muscle fibers-->
-					<optimal_fiber_length>0.072949824417298748</optimal_fiber_length>
+					<optimal_fiber_length>0.083234311582272902</optimal_fiber_length>
 					<!--Resting length of the tendon-->
-					<tendon_slack_length>0.011097843471191493</tendon_slack_length>
+					<tendon_slack_length>0.012662420626106426</tendon_slack_length>
 					<!--Angle between tendon and fibers at optimal fiber length expressed in radians-->
 					<pennation_angle_at_optimal>0</pennation_angle_at_optimal>
 					<!--Maximum contraction velocity of the fibers, in optimal fiberlengths/second-->
@@ -17981,7 +18133,7 @@
 						<!--Default appearance attributes for this AbstractGeometryPath.-->
 						<Appearance>
 							<!--Flag indicating whether the associated Geometry is visible or hidden.-->
-							<visible>false</visible>
+							<visible>true</visible>
 							<!--The color, (red, green, blue), [0, 1], used to display the geometry. -->
 							<color>0.80000000000000004 0.10000000000000001 0.10000000000000001</color>
 						</Appearance>
@@ -18021,9 +18173,9 @@
 					<!--Maximum isometric force that the fibers can generate-->
 					<max_isometric_force>407.39999999999998</max_isometric_force>
 					<!--Optimal length of the muscle fibers-->
-					<optimal_fiber_length>0.081115669093502887</optimal_fiber_length>
+					<optimal_fiber_length>0.097540071500119022</optimal_fiber_length>
 					<!--Resting length of the tendon-->
-					<tendon_slack_length>0.019715614015781955</tendon_slack_length>
+					<tendon_slack_length>0.023707656267390041</tendon_slack_length>
 					<!--Angle between tendon and fibers at optimal fiber length expressed in radians-->
 					<pennation_angle_at_optimal>0</pennation_angle_at_optimal>
 					<!--Maximum contraction velocity of the fibers, in optimal fiberlengths/second-->
@@ -18057,7 +18209,7 @@
 						<!--Default appearance attributes for this AbstractGeometryPath.-->
 						<Appearance>
 							<!--Flag indicating whether the associated Geometry is visible or hidden.-->
-							<visible>false</visible>
+							<visible>true</visible>
 							<!--The color, (red, green, blue), [0, 1], used to display the geometry. -->
 							<color>0.80000000000000004 0.10000000000000001 0.10000000000000001</color>
 						</Appearance>
@@ -18097,9 +18249,9 @@
 					<!--Maximum isometric force that the fibers can generate-->
 					<max_isometric_force>280</max_isometric_force>
 					<!--Optimal length of the muscle fibers-->
-					<optimal_fiber_length>0.13930970112989521</optimal_fiber_length>
+					<optimal_fiber_length>0.14326839809797487</optimal_fiber_length>
 					<!--Resting length of the tendon-->
-					<tendon_slack_length>0.016773664901571669</tendon_slack_length>
+					<tendon_slack_length>0.017250314092912056</tendon_slack_length>
 					<!--Angle between tendon and fibers at optimal fiber length expressed in radians-->
 					<pennation_angle_at_optimal>0</pennation_angle_at_optimal>
 					<!--Maximum contraction velocity of the fibers, in optimal fiberlengths/second-->
@@ -18133,7 +18285,7 @@
 						<!--Default appearance attributes for this AbstractGeometryPath.-->
 						<Appearance>
 							<!--Flag indicating whether the associated Geometry is visible or hidden.-->
-							<visible>false</visible>
+							<visible>true</visible>
 							<!--The color, (red, green, blue), [0, 1], used to display the geometry. -->
 							<color>0.80000000000000004 0.10000000000000001 0.10000000000000001</color>
 						</Appearance>
@@ -18164,9 +18316,9 @@
 					<!--Maximum isometric force that the fibers can generate-->
 					<max_isometric_force>648.20000000000005</max_isometric_force>
 					<!--Optimal length of the muscle fibers-->
-					<optimal_fiber_length>0.067421673312632449</optimal_fiber_length>
+					<optimal_fiber_length>0.067449970577609791</optimal_fiber_length>
 					<!--Resting length of the tendon-->
-					<tendon_slack_length>0.10266257722567752</tendon_slack_length>
+					<tendon_slack_length>0.10270566530119207</tendon_slack_length>
 					<!--Angle between tendon and fibers at optimal fiber length expressed in radians-->
 					<pennation_angle_at_optimal>0</pennation_angle_at_optimal>
 					<!--Maximum contraction velocity of the fibers, in optimal fiberlengths/second-->
@@ -18200,7 +18352,7 @@
 						<!--Default appearance attributes for this AbstractGeometryPath.-->
 						<Appearance>
 							<!--Flag indicating whether the associated Geometry is visible or hidden.-->
-							<visible>false</visible>
+							<visible>true</visible>
 							<!--The color, (red, green, blue), [0, 1], used to display the geometry. -->
 							<color>0.80000000000000004 0.10000000000000001 0.10000000000000001</color>
 						</Appearance>
@@ -18246,9 +18398,9 @@
 					<!--Maximum isometric force that the fibers can generate-->
 					<max_isometric_force>707.70000000000005</max_isometric_force>
 					<!--Optimal length of the muscle fibers-->
-					<optimal_fiber_length>0.12017235778391756</optimal_fiber_length>
+					<optimal_fiber_length>0.098228209288224622</optimal_fiber_length>
 					<!--Resting length of the tendon-->
-					<tendon_slack_length>0.11250178175515686</tendon_slack_length>
+					<tendon_slack_length>0.091958323588976237</tendon_slack_length>
 					<!--Angle between tendon and fibers at optimal fiber length expressed in radians-->
 					<pennation_angle_at_optimal>0.087266460000000004</pennation_angle_at_optimal>
 					<!--Maximum contraction velocity of the fibers, in optimal fiberlengths/second-->
@@ -18282,7 +18434,7 @@
 						<!--Default appearance attributes for this AbstractGeometryPath.-->
 						<Appearance>
 							<!--Flag indicating whether the associated Geometry is visible or hidden.-->
-							<visible>false</visible>
+							<visible>true</visible>
 							<!--The color, (red, green, blue), [0, 1], used to display the geometry. -->
 							<color>0.80000000000000004 0.10000000000000001 0.10000000000000001</color>
 						</Appearance>
@@ -18328,9 +18480,9 @@
 					<!--Maximum isometric force that the fibers can generate-->
 					<max_isometric_force>1324.4000000000001</max_isometric_force>
 					<!--Optimal length of the muscle fibers-->
-					<optimal_fiber_length>0.092037171752744062</optimal_fiber_length>
+					<optimal_fiber_length>0.091808066028869789</optimal_fiber_length>
 					<!--Resting length of the tendon-->
-					<tendon_slack_length>0.073707324059099549</tendon_slack_length>
+					<tendon_slack_length>0.073523846345564844</tendon_slack_length>
 					<!--Angle between tendon and fibers at optimal fiber length expressed in radians-->
 					<pennation_angle_at_optimal>0.087266460000000004</pennation_angle_at_optimal>
 					<!--Maximum contraction velocity of the fibers, in optimal fiberlengths/second-->
@@ -18364,7 +18516,7 @@
 						<!--Default appearance attributes for this AbstractGeometryPath.-->
 						<Appearance>
 							<!--Flag indicating whether the associated Geometry is visible or hidden.-->
-							<visible>false</visible>
+							<visible>true</visible>
 							<!--The color, (red, green, blue), [0, 1], used to display the geometry. -->
 							<color>0.80000000000000004 0.10000000000000001 0.10000000000000001</color>
 						</Appearance>
@@ -18410,9 +18562,9 @@
 					<!--Maximum isometric force that the fibers can generate-->
 					<max_isometric_force>2597.8000000000002</max_isometric_force>
 					<!--Optimal length of the muscle fibers-->
-					<optimal_fiber_length>0.073176800288740504</optimal_fiber_length>
+					<optimal_fiber_length>0.073191153779276832</optimal_fiber_length>
 					<!--Resting length of the tendon-->
-					<tendon_slack_length>0.062611166022451772</tendon_slack_length>
+					<tendon_slack_length>0.062623447083873213</tendon_slack_length>
 					<!--Angle between tendon and fibers at optimal fiber length expressed in radians-->
 					<pennation_angle_at_optimal>0.087266460000000004</pennation_angle_at_optimal>
 					<!--Maximum contraction velocity of the fibers, in optimal fiberlengths/second-->
@@ -18446,7 +18598,7 @@
 						<!--Default appearance attributes for this AbstractGeometryPath.-->
 						<Appearance>
 							<!--Flag indicating whether the associated Geometry is visible or hidden.-->
-							<visible>false</visible>
+							<visible>true</visible>
 							<!--The color, (red, green, blue), [0, 1], used to display the geometry. -->
 							<color>0.80000000000000004 0.10000000000000001 0.10000000000000001</color>
 						</Appearance>
@@ -18584,9 +18736,9 @@
 					<!--Maximum isometric force that the fibers can generate-->
 					<max_isometric_force>201.59999999999999</max_isometric_force>
 					<!--Optimal length of the muscle fibers-->
-					<optimal_fiber_length>0.16923236826228127</optimal_fiber_length>
+					<optimal_fiber_length>0.18762811560413681</optimal_fiber_length>
 					<!--Resting length of the tendon-->
-					<tendon_slack_length>0.064996784396608748</tendon_slack_length>
+					<tendon_slack_length>0.072062007415529081</tendon_slack_length>
 					<!--Angle between tendon and fibers at optimal fiber length expressed in radians-->
 					<pennation_angle_at_optimal>0</pennation_angle_at_optimal>
 					<!--Maximum contraction velocity of the fibers, in optimal fiberlengths/second-->
@@ -18620,7 +18772,7 @@
 						<!--Default appearance attributes for this AbstractGeometryPath.-->
 						<Appearance>
 							<!--Flag indicating whether the associated Geometry is visible or hidden.-->
-							<visible>false</visible>
+							<visible>true</visible>
 							<!--The color, (red, green, blue), [0, 1], used to display the geometry. -->
 							<color>0.80000000000000004 0.10000000000000001 0.10000000000000001</color>
 						</Appearance>
@@ -18758,9 +18910,9 @@
 					<!--Maximum isometric force that the fibers can generate-->
 					<max_isometric_force>315</max_isometric_force>
 					<!--Optimal length of the muscle fibers-->
-					<optimal_fiber_length>0.21754952170384173</optimal_fiber_length>
+					<optimal_fiber_length>0.23858407546677482</optimal_fiber_length>
 					<!--Resting length of the tendon-->
-					<tendon_slack_length>0.07740372666044068</tendon_slack_length>
+					<tendon_slack_length>0.084887782875038481</tendon_slack_length>
 					<!--Angle between tendon and fibers at optimal fiber length expressed in radians-->
 					<pennation_angle_at_optimal>0</pennation_angle_at_optimal>
 					<!--Maximum contraction velocity of the fibers, in optimal fiberlengths/second-->
@@ -18794,7 +18946,7 @@
 						<!--Default appearance attributes for this AbstractGeometryPath.-->
 						<Appearance>
 							<!--Flag indicating whether the associated Geometry is visible or hidden.-->
-							<visible>false</visible>
+							<visible>true</visible>
 							<!--The color, (red, green, blue), [0, 1], used to display the geometry. -->
 							<color>0.80000000000000004 0.10000000000000001 0.10000000000000001</color>
 						</Appearance>
@@ -18886,9 +19038,9 @@
 					<!--Maximum isometric force that the fibers can generate-->
 					<max_isometric_force>270.19999999999999</max_isometric_force>
 					<!--Optimal length of the muscle fibers-->
-					<optimal_fiber_length>0.26366555755019938</optimal_fiber_length>
+					<optimal_fiber_length>0.28051547839072322</optimal_fiber_length>
 					<!--Resting length of the tendon-->
-					<tendon_slack_length>0.053473648347052191</tendon_slack_length>
+					<tendon_slack_length>0.056890957570424269</tendon_slack_length>
 					<!--Angle between tendon and fibers at optimal fiber length expressed in radians-->
 					<pennation_angle_at_optimal>0</pennation_angle_at_optimal>
 					<!--Maximum contraction velocity of the fibers, in optimal fiberlengths/second-->
@@ -18922,7 +19074,7 @@
 						<!--Default appearance attributes for this AbstractGeometryPath.-->
 						<Appearance>
 							<!--Flag indicating whether the associated Geometry is visible or hidden.-->
-							<visible>false</visible>
+							<visible>true</visible>
 							<!--The color, (red, green, blue), [0, 1], used to display the geometry. -->
 							<color>0.80000000000000004 0.10000000000000001 0.10000000000000001</color>
 						</Appearance>
@@ -18962,9 +19114,9 @@
 					<!--Maximum isometric force that the fibers can generate-->
 					<max_isometric_force>408.80000000000001</max_isometric_force>
 					<!--Optimal length of the muscle fibers-->
-					<optimal_fiber_length>0.16228980106561203</optimal_fiber_length>
+					<optimal_fiber_length>0.11358908320718053</optimal_fiber_length>
 					<!--Resting length of the tendon-->
-					<tendon_slack_length>0.020825455682113372</tendon_slack_length>
+					<tendon_slack_length>0.014576051007337557</tendon_slack_length>
 					<!--Angle between tendon and fibers at optimal fiber length expressed in radians-->
 					<pennation_angle_at_optimal>0</pennation_angle_at_optimal>
 					<!--Maximum contraction velocity of the fibers, in optimal fiberlengths/second-->
@@ -18998,7 +19150,7 @@
 						<!--Default appearance attributes for this AbstractGeometryPath.-->
 						<Appearance>
 							<!--Flag indicating whether the associated Geometry is visible or hidden.-->
-							<visible>false</visible>
+							<visible>true</visible>
 							<!--The color, (red, green, blue), [0, 1], used to display the geometry. -->
 							<color>0.80000000000000004 0.10000000000000001 0.10000000000000001</color>
 						</Appearance>
@@ -19038,9 +19190,9 @@
 					<!--Maximum isometric force that the fibers can generate-->
 					<max_isometric_force>571.20000000000005</max_isometric_force>
 					<!--Optimal length of the muscle fibers-->
-					<optimal_fiber_length>0.21342808168302513</optimal_fiber_length>
+					<optimal_fiber_length>0.1790990884380389</optimal_fiber_length>
 					<!--Resting length of the tendon-->
-					<tendon_slack_length>0.050149767827158902</tendon_slack_length>
+					<tendon_slack_length>0.042083392365222252</tendon_slack_length>
 					<!--Angle between tendon and fibers at optimal fiber length expressed in radians-->
 					<pennation_angle_at_optimal>0</pennation_angle_at_optimal>
 					<!--Maximum contraction velocity of the fibers, in optimal fiberlengths/second-->
@@ -19074,7 +19226,7 @@
 						<!--Default appearance attributes for this AbstractGeometryPath.-->
 						<Appearance>
 							<!--Flag indicating whether the associated Geometry is visible or hidden.-->
-							<visible>false</visible>
+							<visible>true</visible>
 							<!--The color, (red, green, blue), [0, 1], used to display the geometry. -->
 							<color>0.80000000000000004 0.10000000000000001 0.10000000000000001</color>
 						</Appearance>
@@ -19114,9 +19266,9 @@
 					<!--Maximum isometric force that the fibers can generate-->
 					<max_isometric_force>683.20000000000005</max_isometric_force>
 					<!--Optimal length of the muscle fibers-->
-					<optimal_fiber_length>0.19722139029165273</optimal_fiber_length>
+					<optimal_fiber_length>0.14907957403933045</optimal_fiber_length>
 					<!--Resting length of the tendon-->
-					<tendon_slack_length>0.034185040983886472</tendon_slack_length>
+					<tendon_slack_length>0.025840459500150612</tendon_slack_length>
 					<!--Angle between tendon and fibers at optimal fiber length expressed in radians-->
 					<pennation_angle_at_optimal>0</pennation_angle_at_optimal>
 					<!--Maximum contraction velocity of the fibers, in optimal fiberlengths/second-->
@@ -19150,7 +19302,7 @@
 						<!--Default appearance attributes for this AbstractGeometryPath.-->
 						<Appearance>
 							<!--Flag indicating whether the associated Geometry is visible or hidden.-->
-							<visible>false</visible>
+							<visible>true</visible>
 							<!--The color, (red, green, blue), [0, 1], used to display the geometry. -->
 							<color>0.80000000000000004 0.10000000000000001 0.10000000000000001</color>
 						</Appearance>
@@ -19198,9 +19350,9 @@
 					<!--Maximum isometric force that the fibers can generate-->
 					<max_isometric_force>851.20000000000005</max_isometric_force>
 					<!--Optimal length of the muscle fibers-->
-					<optimal_fiber_length>0.13810047718868551</optimal_fiber_length>
+					<optimal_fiber_length>0.13093246969019545</optimal_fiber_length>
 					<!--Resting length of the tendon-->
-					<tendon_slack_length>0.0058766160505823615</tendon_slack_length>
+					<tendon_slack_length>0.0055715944549019347</tendon_slack_length>
 					<!--Angle between tendon and fibers at optimal fiber length expressed in radians-->
 					<pennation_angle_at_optimal>0</pennation_angle_at_optimal>
 					<!--Maximum contraction velocity of the fibers, in optimal fiberlengths/second-->
@@ -19234,7 +19386,7 @@
 						<!--Default appearance attributes for this AbstractGeometryPath.-->
 						<Appearance>
 							<!--Flag indicating whether the associated Geometry is visible or hidden.-->
-							<visible>false</visible>
+							<visible>true</visible>
 							<!--The color, (red, green, blue), [0, 1], used to display the geometry. -->
 							<color>0.80000000000000004 0.10000000000000001 0.10000000000000001</color>
 						</Appearance>
@@ -19282,9 +19434,9 @@
 					<!--Maximum isometric force that the fibers can generate-->
 					<max_isometric_force>1037.4000000000001</max_isometric_force>
 					<!--Optimal length of the muscle fibers-->
-					<optimal_fiber_length>0.06213640520933416</optimal_fiber_length>
+					<optimal_fiber_length>0.063327938829387961</optimal_fiber_length>
 					<!--Resting length of the tendon-->
-					<tendon_slack_length>0.077096869092822318</tendon_slack_length>
+					<tendon_slack_length>0.078575285992150495</tendon_slack_length>
 					<!--Angle between tendon and fibers at optimal fiber length expressed in radians-->
 					<pennation_angle_at_optimal>0</pennation_angle_at_optimal>
 					<!--Maximum contraction velocity of the fibers, in optimal fiberlengths/second-->
@@ -19318,7 +19470,7 @@
 						<!--Default appearance attributes for this AbstractGeometryPath.-->
 						<Appearance>
 							<!--Flag indicating whether the associated Geometry is visible or hidden.-->
-							<visible>false</visible>
+							<visible>true</visible>
 							<!--The color, (red, green, blue), [0, 1], used to display the geometry. -->
 							<color>0.80000000000000004 0.10000000000000001 0.10000000000000001</color>
 						</Appearance>
@@ -19366,9 +19518,9 @@
 					<!--Maximum isometric force that the fibers can generate-->
 					<max_isometric_force>967.39999999999998</max_isometric_force>
 					<!--Optimal length of the muscle fibers-->
-					<optimal_fiber_length>0.063453310751896197</optimal_fiber_length>
+					<optimal_fiber_length>0.064726774552876662</optimal_fiber_length>
 					<!--Resting length of the tendon-->
-					<tendon_slack_length>0.045453660997060309</tendon_slack_length>
+					<tendon_slack_length>0.046365884350198179</tendon_slack_length>
 					<!--Angle between tendon and fibers at optimal fiber length expressed in radians-->
 					<pennation_angle_at_optimal>0</pennation_angle_at_optimal>
 					<!--Maximum contraction velocity of the fibers, in optimal fiberlengths/second-->
@@ -19402,7 +19554,7 @@
 						<!--Default appearance attributes for this AbstractGeometryPath.-->
 						<Appearance>
 							<!--Flag indicating whether the associated Geometry is visible or hidden.-->
-							<visible>false</visible>
+							<visible>true</visible>
 							<!--The color, (red, green, blue), [0, 1], used to display the geometry. -->
 							<color>0.80000000000000004 0.10000000000000001 0.10000000000000001</color>
 						</Appearance>
@@ -19442,9 +19594,9 @@
 					<!--Maximum isometric force that the fibers can generate-->
 					<max_isometric_force>429.80000000000001</max_isometric_force>
 					<!--Optimal length of the muscle fibers-->
-					<optimal_fiber_length>0.121255161900283</optimal_fiber_length>
+					<optimal_fiber_length>0.11424664714450103</optimal_fiber_length>
 					<!--Resting length of the tendon-->
-					<tendon_slack_length>0.032799367546991184</tendon_slack_length>
+					<tendon_slack_length>0.030903573192088189</tendon_slack_length>
 					<!--Angle between tendon and fibers at optimal fiber length expressed in radians-->
 					<pennation_angle_at_optimal>0</pennation_angle_at_optimal>
 					<!--Maximum contraction velocity of the fibers, in optimal fiberlengths/second-->
@@ -19478,7 +19630,7 @@
 						<!--Default appearance attributes for this AbstractGeometryPath.-->
 						<Appearance>
 							<!--Flag indicating whether the associated Geometry is visible or hidden.-->
-							<visible>false</visible>
+							<visible>true</visible>
 							<!--The color, (red, green, blue), [0, 1], used to display the geometry. -->
 							<color>0.80000000000000004 0.10000000000000001 0.10000000000000001</color>
 						</Appearance>
@@ -19518,9 +19670,9 @@
 					<!--Maximum isometric force that the fibers can generate-->
 					<max_isometric_force>695.79999999999995</max_isometric_force>
 					<!--Optimal length of the muscle fibers-->
-					<optimal_fiber_length>0.050653398059161747</optimal_fiber_length>
+					<optimal_fiber_length>0.051766996925115417</optimal_fiber_length>
 					<!--Resting length of the tendon-->
-					<tendon_slack_length>0.046969514563949988</tendon_slack_length>
+					<tendon_slack_length>0.048002124421470657</tendon_slack_length>
 					<!--Angle between tendon and fibers at optimal fiber length expressed in radians-->
 					<pennation_angle_at_optimal>0</pennation_angle_at_optimal>
 					<!--Maximum contraction velocity of the fibers, in optimal fiberlengths/second-->
@@ -19554,7 +19706,7 @@
 						<!--Default appearance attributes for this AbstractGeometryPath.-->
 						<Appearance>
 							<!--Flag indicating whether the associated Geometry is visible or hidden.-->
-							<visible>false</visible>
+							<visible>true</visible>
 							<!--The color, (red, green, blue), [0, 1], used to display the geometry. -->
 							<color>0.80000000000000004 0.10000000000000001 0.10000000000000001</color>
 						</Appearance>
@@ -19602,9 +19754,9 @@
 					<!--Maximum isometric force that the fibers can generate-->
 					<max_isometric_force>540.39999999999998</max_isometric_force>
 					<!--Optimal length of the muscle fibers-->
-					<optimal_fiber_length>0.062793495073364791</optimal_fiber_length>
+					<optimal_fiber_length>0.061225006772191302</optimal_fiber_length>
 					<!--Resting length of the tendon-->
-					<tendon_slack_length>0.054804973510776962</tendon_slack_length>
+					<tendon_slack_length>0.05343602662069951</tendon_slack_length>
 					<!--Angle between tendon and fibers at optimal fiber length expressed in radians-->
 					<pennation_angle_at_optimal>0.087266460000000004</pennation_angle_at_optimal>
 					<!--Maximum contraction velocity of the fibers, in optimal fiberlengths/second-->
@@ -19638,7 +19790,7 @@
 						<!--Default appearance attributes for this AbstractGeometryPath.-->
 						<Appearance>
 							<!--Flag indicating whether the associated Geometry is visible or hidden.-->
-							<visible>false</visible>
+							<visible>true</visible>
 							<!--The color, (red, green, blue), [0, 1], used to display the geometry. -->
 							<color>0.80000000000000004 0.10000000000000001 0.10000000000000001</color>
 						</Appearance>
@@ -19686,9 +19838,9 @@
 					<!--Maximum isometric force that the fibers can generate-->
 					<max_isometric_force>609</max_isometric_force>
 					<!--Optimal length of the muscle fibers-->
-					<optimal_fiber_length>0.069051733669029614</optimal_fiber_length>
+					<optimal_fiber_length>0.067515256583389319</optimal_fiber_length>
 					<!--Resting length of the tendon-->
-					<tendon_slack_length>0.051046308491890173</tendon_slack_length>
+					<tendon_slack_length>0.049910471936645336</tendon_slack_length>
 					<!--Angle between tendon and fibers at optimal fiber length expressed in radians-->
 					<pennation_angle_at_optimal>0.087266460000000004</pennation_angle_at_optimal>
 					<!--Maximum contraction velocity of the fibers, in optimal fiberlengths/second-->
@@ -19722,7 +19874,7 @@
 						<!--Default appearance attributes for this AbstractGeometryPath.-->
 						<Appearance>
 							<!--Flag indicating whether the associated Geometry is visible or hidden.-->
-							<visible>false</visible>
+							<visible>true</visible>
 							<!--The color, (red, green, blue), [0, 1], used to display the geometry. -->
 							<color>0.80000000000000004 0.10000000000000001 0.10000000000000001</color>
 						</Appearance>
@@ -19770,9 +19922,9 @@
 					<!--Maximum isometric force that the fibers can generate-->
 					<max_isometric_force>854</max_isometric_force>
 					<!--Optimal length of the muscle fibers-->
-					<optimal_fiber_length>0.067336803974304651</optimal_fiber_length>
+					<optimal_fiber_length>0.066014846946002625</optimal_fiber_length>
 					<!--Resting length of the tendon-->
-					<tendon_slack_length>0.055102239035838746</tendon_slack_length>
+					<tendon_slack_length>0.054020471148601312</tendon_slack_length>
 					<!--Angle between tendon and fibers at optimal fiber length expressed in radians-->
 					<pennation_angle_at_optimal>0</pennation_angle_at_optimal>
 					<!--Maximum contraction velocity of the fibers, in optimal fiberlengths/second-->
@@ -19806,7 +19958,7 @@
 						<!--Default appearance attributes for this AbstractGeometryPath.-->
 						<Appearance>
 							<!--Flag indicating whether the associated Geometry is visible or hidden.-->
-							<visible>false</visible>
+							<visible>true</visible>
 							<!--The color, (red, green, blue), [0, 1], used to display the geometry. -->
 							<color>0.80000000000000004 0.10000000000000001 0.10000000000000001</color>
 						</Appearance>
@@ -19846,9 +19998,9 @@
 					<!--Maximum isometric force that the fibers can generate-->
 					<max_isometric_force>326.19999999999999</max_isometric_force>
 					<!--Optimal length of the muscle fibers-->
-					<optimal_fiber_length>0.054734937435300848</optimal_fiber_length>
+					<optimal_fiber_length>0.055538398324014353</optimal_fiber_length>
 					<!--Resting length of the tendon-->
-					<tendon_slack_length>0.023153526833883612</tendon_slack_length>
+					<tendon_slack_length>0.023493400306266649</tendon_slack_length>
 					<!--Angle between tendon and fibers at optimal fiber length expressed in radians-->
 					<pennation_angle_at_optimal>0</pennation_angle_at_optimal>
 					<!--Maximum contraction velocity of the fibers, in optimal fiberlengths/second-->
@@ -19882,7 +20034,7 @@
 						<!--Default appearance attributes for this AbstractGeometryPath.-->
 						<Appearance>
 							<!--Flag indicating whether the associated Geometry is visible or hidden.-->
-							<visible>false</visible>
+							<visible>true</visible>
 							<!--The color, (red, green, blue), [0, 1], used to display the geometry. -->
 							<color>0.80000000000000004 0.10000000000000001 0.10000000000000001</color>
 						</Appearance>
@@ -19930,9 +20082,9 @@
 					<!--Maximum isometric force that the fibers can generate-->
 					<max_isometric_force>543.20000000000005</max_isometric_force>
 					<!--Optimal length of the muscle fibers-->
-					<optimal_fiber_length>0.059780583510822667</optimal_fiber_length>
+					<optimal_fiber_length>0.050831693853255248</optimal_fiber_length>
 					<!--Resting length of the tendon-->
-					<tendon_slack_length>0.028510739828238509</tendon_slack_length>
+					<tendon_slack_length>0.028443727607417198</tendon_slack_length>
 					<!--Angle between tendon and fibers at optimal fiber length expressed in radians-->
 					<pennation_angle_at_optimal>0</pennation_angle_at_optimal>
 					<!--Maximum contraction velocity of the fibers, in optimal fiberlengths/second-->
@@ -19966,7 +20118,7 @@
 						<!--Default appearance attributes for this AbstractGeometryPath.-->
 						<Appearance>
 							<!--Flag indicating whether the associated Geometry is visible or hidden.-->
-							<visible>false</visible>
+							<visible>true</visible>
 							<!--The color, (red, green, blue), [0, 1], used to display the geometry. -->
 							<color>0.80000000000000004 0.10000000000000001 0.10000000000000001</color>
 						</Appearance>
@@ -20006,9 +20158,9 @@
 					<!--Maximum isometric force that the fibers can generate-->
 					<max_isometric_force>1129</max_isometric_force>
 					<!--Optimal length of the muscle fibers-->
-					<optimal_fiber_length>0.1076581860841027</optimal_fiber_length>
+					<optimal_fiber_length>0.096482196152064714</optimal_fiber_length>
 					<!--Resting length of the tendon-->
-					<tendon_slack_length>0.21569209873667017</tendon_slack_length>
+					<tendon_slack_length>0.24016001766643974</tendon_slack_length>
 					<!--Angle between tendon and fibers at optimal fiber length expressed in radians-->
 					<pennation_angle_at_optimal>0.17453299999999999</pennation_angle_at_optimal>
 					<!--Maximum contraction velocity of the fibers, in optimal fiberlengths/second-->
@@ -20042,7 +20194,7 @@
 						<!--Default appearance attributes for this AbstractGeometryPath.-->
 						<Appearance>
 							<!--Flag indicating whether the associated Geometry is visible or hidden.-->
-							<visible>false</visible>
+							<visible>true</visible>
 							<!--The color, (red, green, blue), [0, 1], used to display the geometry. -->
 							<color>0.80000000000000004 0.10000000000000001 0.10000000000000001</color>
 						</Appearance>
@@ -20118,7 +20270,7 @@
 						<!--Default appearance attributes for this AbstractGeometryPath.-->
 						<Appearance>
 							<!--Flag indicating whether the associated Geometry is visible or hidden.-->
-							<visible>false</visible>
+							<visible>true</visible>
 							<!--The color, (red, green, blue), [0, 1], used to display the geometry. -->
 							<color>0.80000000000000004 0.10000000000000001 0.10000000000000001</color>
 						</Appearance>
@@ -20194,7 +20346,7 @@
 						<!--Default appearance attributes for this AbstractGeometryPath.-->
 						<Appearance>
 							<!--Flag indicating whether the associated Geometry is visible or hidden.-->
-							<visible>false</visible>
+							<visible>true</visible>
 							<!--The color, (red, green, blue), [0, 1], used to display the geometry. -->
 							<color>0.80000000000000004 0.10000000000000001 0.10000000000000001</color>
 						</Appearance>
@@ -20254,9 +20406,9 @@
 					<!--Maximum isometric force that the fibers can generate-->
 					<max_isometric_force>347</max_isometric_force>
 					<!--Optimal length of the muscle fibers-->
-					<optimal_fiber_length>0.12804870395726348</optimal_fiber_length>
+					<optimal_fiber_length>0.14106752274201026</optimal_fiber_length>
 					<!--Resting length of the tendon-->
-					<tendon_slack_length>0.23141929082059612</tendon_slack_length>
+					<tendon_slack_length>0.25493412976881236</tendon_slack_length>
 					<!--Angle between tendon and fibers at optimal fiber length expressed in radians-->
 					<pennation_angle_at_optimal>0</pennation_angle_at_optimal>
 					<!--Maximum contraction velocity of the fibers, in optimal fiberlengths/second-->
@@ -20290,7 +20442,7 @@
 						<!--Default appearance attributes for this AbstractGeometryPath.-->
 						<Appearance>
 							<!--Flag indicating whether the associated Geometry is visible or hidden.-->
-							<visible>false</visible>
+							<visible>true</visible>
 							<!--The color, (red, green, blue), [0, 1], used to display the geometry. -->
 							<color>0.80000000000000004 0.10000000000000001 0.10000000000000001</color>
 						</Appearance>
@@ -20336,9 +20488,9 @@
 					<!--Maximum isometric force that the fibers can generate-->
 					<max_isometric_force>495</max_isometric_force>
 					<!--Optimal length of the muscle fibers-->
-					<optimal_fiber_length>0.11482106367682379</optimal_fiber_length>
+					<optimal_fiber_length>0.12528231526763484</optimal_fiber_length>
 					<!--Resting length of the tendon-->
-					<tendon_slack_length>0.1901306099693848</tendon_slack_length>
+					<tendon_slack_length>0.21012540218938752</tendon_slack_length>
 					<!--Angle between tendon and fibers at optimal fiber length expressed in radians-->
 					<pennation_angle_at_optimal>0</pennation_angle_at_optimal>
 					<!--Maximum contraction velocity of the fibers, in optimal fiberlengths/second-->
@@ -20945,7 +21097,7 @@
 					<!--Default appearance for this Geometry-->
 					<Appearance>
 						<!--Flag indicating whether the associated Geometry is visible or hidden.-->
-						<visible>true</visible>
+						<visible>false</visible>
 						<!--The color, (red, green, blue), [0, 1], used to display the geometry. -->
 						<color>0.50196081399917603 0.50196081399917603 0.50196081399917603</color>
 					</Appearance>

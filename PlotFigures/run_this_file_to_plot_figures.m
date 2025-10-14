@@ -16,7 +16,7 @@ clc
 results_folder = fullfile(pathRepoFolder,'PredSimResults');
 % result_paths{1} = fullfile(pathRepo,'Tests','ReferenceResults','DHondt_et_al_2024_4seg','DHondt_et_al_2024_4seg_paper.mat');
 result_paths{1} = fullfile(results_folder,'DHondt_et_al_2025_pc2',...
-    'DHondt_et_al_2025_v2.mat');
+    'DHondt_et_al_2025_v3.mat');
 
 % Cell array with legend name for each result
 legend_names = {'Updated (v2.2)'};
@@ -61,12 +61,12 @@ figure_savename = 'MyFirstPredictiveSimulationFigure';
 % initilise the counter for dynamic indexing
 fig_count = 1;
 
-% figure_settings(fig_count).name = 'all_angles';
-% figure_settings(fig_count).dofs = {'all_coords'};
-% figure_settings(fig_count).variables = {'Qs'};
-% figure_settings(fig_count).savepath = fullfile(figure_folder,[figure_savename '_' figure_settings(fig_count).name]);
-% figure_settings(fig_count).filetype = {};
-% fig_count = fig_count+1;
+figure_settings(fig_count).name = 'all_angles';
+figure_settings(fig_count).dofs = {'all_coords'};
+figure_settings(fig_count).variables = {'Qs'};
+figure_settings(fig_count).savepath = fullfile(figure_folder,[figure_savename '_' figure_settings(fig_count).name]);
+figure_settings(fig_count).filetype = {};
+fig_count = fig_count+1;
 
 % figure_settings(fig_count).name = 'all_angles';
 % figure_settings(fig_count).dofs = {'all_coords'};
@@ -92,6 +92,13 @@ fig_count = fig_count+1;
 figure_settings(fig_count).name = 'lengths_r';
 figure_settings(fig_count).dofs = {'muscles_r'};
 figure_settings(fig_count).variables = {'lMtilde'};
+figure_settings(fig_count).savepath = fullfile(figure_folder,[figure_savename '_' figure_settings(fig_count).name]);
+figure_settings(fig_count).filetype = {};
+fig_count = fig_count+1;
+
+figure_settings(fig_count).name = 'FT_r';
+figure_settings(fig_count).dofs = {'muscles_r'};
+figure_settings(fig_count).variables = {'Fpass'};
 figure_settings(fig_count).savepath = fullfile(figure_folder,[figure_savename '_' figure_settings(fig_count).name]);
 figure_settings(fig_count).filetype = {};
 fig_count = fig_count+1;

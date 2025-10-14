@@ -38,23 +38,23 @@ S.solver.IG_selection_gaitCyclePercent = 100;
 
 % give the path to the osim model of your subject
 osim_path = fullfile(pathRepo,'Subjects',S.subject.name,...
-    [S.subject.name '_v2.2.osim']);
+    [S.subject.name '_v4.1.osim']);
 
 S.misc.poly_order.upper = 6;
 
 S.bounds.activation_all_muscles.lower = 0.02;
 
 S.OpenSimADOptions.useSerialisedFunction = true;
-S.solver.nlpsol_options.expand = true;
+% S.solver.nlpsol_options.expand = true;
 
 % S.solver.N_threads = 10;
 
-S.solver.ipopt_options.hsllib = ['C:\Users\Public\PredictiveSimulations\' ...
-    'HSL_solvers\build\bin\libhsl.dll'];
+S.solver.ipopt_options.hsllib = ['C:\GBW_MyPrograms\coin-or\coinhsl\' ...
+    'build\with-openmp-v2\bin\libhsl.dll'];
 S.solver.linear_solver = 'ma97';
 
 % S.weights.E = 0;
-% S.solver.N_meshes = 2;
+% S.solver.N_meshes = 10;
 % S.misc.msk_geom_n_samples = 100;
 % S.misc.poly_order.upper = 7;
 
