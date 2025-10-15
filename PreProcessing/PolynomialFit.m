@@ -48,7 +48,7 @@ end
 
 %% Construct the polynomials for the moment arms and muscle length
 
-for m_nr=1:size(MuscleData.q,2)
+for m_nr=1:size(MuscleData.lMT,2)
     
     index_dof_crossing = find(muscle_spanning_joint_info(m_nr,:)==1);
 

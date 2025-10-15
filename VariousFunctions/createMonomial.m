@@ -69,7 +69,7 @@ arguments
     der_order (1,1) {mustBeInteger, mustBeNonnegative} = 1;
 end
 
-if size(x,2)==1 && size(x,1)>=1
+if size(x,2)==1 && size(x,1)>=1 && size(x,1)<10
     x = x';
 end
 
