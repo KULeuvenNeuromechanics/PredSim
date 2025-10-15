@@ -52,6 +52,7 @@ S.solver.IG_selection_gaitCyclePercent = 100;
 % give the path to the osim model of your subject
 osim_path = fullfile(pathRepo,'Subjects',S.subject.name,[S.subject.name '.osim']);
 
+
 %% Run predictive simulations
 
 [savename] = runPredSim(S, osim_path);
