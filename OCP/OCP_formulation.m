@@ -100,6 +100,9 @@ else
     guess = getGuess_DI_opti(S,model_info,scaling,d);
 end
 
+if S.solver.adaptIG
+    [guess] = adaptInitialGuess(S, model_info, scaling, guess, bounds);
+end
 
 if (S.misc.visualize_bounds)
     visualizebounds
