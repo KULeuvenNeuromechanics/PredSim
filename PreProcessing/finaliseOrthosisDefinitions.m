@@ -24,8 +24,8 @@ function [S] = finaliseOrthosisDefinitions(S, osim_path)
 init.Nmesh = S.solver.N_meshes;
 init.osimPath = osim_path;
 
-statecounter = uint16(0);
-controlcounter = uint16(0);
+statecounter = uint32(0);
+controlcounter = uint32(0);
 % first loop: assemble cellstring of all orthosis states and controls
 for i=1:length(S.orthosis.settings)
     orthosis_settings_i = S.orthosis.settings{i};
@@ -44,7 +44,7 @@ for i=1:length(S.orthosis.settings)
         S.orthosis.settings{i}.states.names = {meta_arg(isX).name};
         S.orthosis.settings{i}.states.bounds_nsc = {meta_arg(isX).bounds_nsc};
         S.orthosis.settings{i}.states.bounds = {meta_arg(isX).bounds};
-        statecounter = statecounter + uint16(1);
+        statecounter = statecounter + uint32(1);
     else
         S.orthosis.settings{i}.states.names = {};
         S.orthosis.settings{i}.states.bounds_nsc = {};
@@ -56,7 +56,7 @@ for i=1:length(S.orthosis.settings)
         S.orthosis.settings{i}.controls.names = {meta_arg(isU).name};
         S.orthosis.settings{i}.controls.bounds_nsc = {meta_arg(isU).bounds_nsc};
         S.orthosis.settings{i}.controls.bounds = {meta_arg(isU).bounds};
-        controlcounter = controlcounter + uint16(1);
+        controlcounter = controlcounter + uint32(1);
     else
         S.orthosis.settings{i}.controls.names = {};
         S.orthosis.settings{i}.controls.bounds_nsc = {};
