@@ -15,11 +15,14 @@ clc
 % which you want to appear on the plotted figures.
 results_folder = fullfile(pathRepoFolder,'PredSimResults');
 % result_paths{1} = fullfile(pathRepo,'Tests','ReferenceResults','DHondt_et_al_2024_4seg','DHondt_et_al_2024_4seg_paper.mat');
-result_paths{1} = fullfile(results_folder,'DHondt_et_al_2025_pc2',...
-    'DHondt_et_al_2025_v3.mat');
+% result_paths{1} = fullfile(results_folder,'DHondt_et_al_2025_pc2','DHondt_et_al_2025_v3.mat');
+result_paths{1} = fullfile('C:\Users\u0150099\OneDrive - KU Leuven\PredSimResults','DHondt_et_al_2025_job164.mat');
+result_paths{2} = fullfile('C:\Users\u0150099\OneDrive - KU Leuven\PredSimResults','DHondt_et_al_2025_job165.mat');
+result_paths{3} = fullfile('C:\Users\u0150099\OneDrive - KU Leuven\PredSimResults','DHondt_et_al_2025_job166.mat');
+result_paths{4} = fullfile('C:\Users\u0150099\OneDrive - KU Leuven\PredSimResults','DHondt_et_al_2025_job168.mat');
 
 % Cell array with legend name for each result
-legend_names = {'Updated (v2.2)'};
+legend_names = {'a > 0.05','a > 0.02','a > 0.01', 'a > 0.02 | lMT'};
 
 % Path to the folder where figures are saved
 figure_folder = results_folder;
@@ -126,12 +129,12 @@ fig_count = fig_count+1;
 % figure_settings(fig_count).filetype = {};
 % fig_count = fig_count+1;
 
-% figure_settings(fig_count).name = 'limit torques';
-% figure_settings(fig_count).dofs = {'all_coords'};
-% figure_settings(fig_count).variables = {'T_limit'};
-% figure_settings(fig_count).savepath = fullfile(figure_folder,[figure_savename '_' figure_settings(fig_count).name]);
-% figure_settings(fig_count).filetype = {};
-% fig_count = fig_count+1;
+figure_settings(fig_count).name = 'limit torques';
+figure_settings(fig_count).dofs = {'all_coords'};
+figure_settings(fig_count).variables = {'T_limit'};
+figure_settings(fig_count).savepath = fullfile(figure_folder,[figure_savename '_' figure_settings(fig_count).name]);
+figure_settings(fig_count).filetype = {};
+fig_count = fig_count+1;
 
 % figure_settings(fig_count).name = 'ankle_muscles';
 % figure_settings(fig_count).dofs = {'soleus_r','med_gas_r','lat_gas_r','tib_ant_r'};
