@@ -25,7 +25,8 @@ function [mno, der_mno] = createMonomial(x, order, der_dim, der_order)
 %   Derivatives can be calculated from the chain rule:
 %       ydx = jac_mno' * coeff;
 %   With
-%       jac_mno = [0,    0; 
+%       jac_mno = [dmno_dx1, dmno_dx2]
+%               = [0,    0; 
 %                  0,    1; 
 %                  0,  2*x2; 
 %                  1,    0; 
@@ -44,7 +45,9 @@ function [mno, der_mno] = createMonomial(x, order, der_dim, der_order)
 %   * Maximum order of the monomials. 
 %
 %   - der_dim - (optional) Default: 2
-%   * Matrix with sampled values of the Jacobian of Y to X.
+%   * Dimensions of the matrix with derivatives. 
+%       2: Derivatives matrices for samples are concatenated vertically.
+%       3: Derivatives matrices for samples are concatenated in the 3rd dim.
 %
 %   - der_order - (optional) Default: 1
 %   * Matrix with sampled values of the Jacobian of Y to X.
@@ -62,7 +65,7 @@ function [mno, der_mno] = createMonomial(x, order, der_dim, der_order)
 arguments
     x (:,:)
     order (1,1) {mustBeInteger, mustBeNonnegative}
-    der_dim (1,1) {mustBeMember(der_dim,{2,3})} = 2;
+    der_dim (1,1) {mustBeInteger, mustBeNonnegative} = 2;
     der_order (1,1) {mustBeInteger, mustBeNonnegative} = 1;
 end
 
@@ -75,55 +78,52 @@ n_points = size(x,1);
 
 
 
+
+%% Matrix with powers
+% Generate all combinations of 0:order with sum<=order
+% adapted from https://github.com/opensim-org/opensim-core/blob/main/
+%   OpenSim/Common/MultivariatePolynomialFunction.cpp
 mno_pow = generate_combinations([], 1, 0, n_dof, order, {});
-mno_pow = cell2mat(mno_pow);
+mno_pow = cell2mat(mno_pow');
 
 n_coeff = size(mno_pow,1);
 
+%% Monomial
+mno = zeros(n_points, n_coeff, 'like', x);
+for i=1:n_points
+    mno(i,:) = eval_monomial(x(i,:), mno_pow);
+end
+
+%% Derivative
 if nargout == 1
-    der_mno = [];
+    return
 end
 
-if n_points == 1
-
-    mno = eval_monomial(x, mno_pow)';
-
-    if der_dim
-        der_mno = zeros(n_dof, n_coeff, 'like', x);
-        for j=1:n_dof
-            der_mno(j,:) = eval_der_monomial(x, mno_pow, j, der_order);
+if der_dim == 2
+    der_mno = zeros(n_points*n_dof, n_coeff, 'like', x);
+    for j=1:n_dof
+        for i=1:n_points
+            der_mno(i+(j-1)*n_points,:) = ...
+                eval_der_monomial(x(i,:), mno_pow, j, der_order);
         end
     end
 
-else
-    mno = zeros(n_points, n_coeff, 'like', x);
-    for i=1:n_points
-        mno(i,:) = eval_monomial(x(i,:), mno_pow);
-    end
-    
-    if der_dim == 3
-        der_mno = zeros(n_points, n_coeff, n_dof, 'like', x);
-        for j=1:n_dof
-            for i=1:n_points
-                der_mno(i,:,j) = eval_der_monomial(x(i,:), mno_pow, j, der_order);
-            end
-        end
-    elseif der_dim == 2
-        der_mno = zeros(n_points*n_dof, n_coeff, 'like', x);
-        for j=1:n_dof
-            for i=1:n_points
-                der_mno(i+(j-1)*n_points,:) = eval_der_monomial(x(i,:), mno_pow, j, der_order);
-            end
+elseif der_dim == 3
+    der_mno = zeros(n_points, n_coeff, n_dof, 'like', x);
+    for j=1:n_dof
+        for i=1:n_points
+            der_mno(i,:,j) = ...
+                eval_der_monomial(x(i,:), mno_pow, j, der_order);
         end
     end
-end
 
 end
 
-%%
+end % end of function
 
-% adapted from https://github.com/opensim-org/opensim-core/blob/main/
-%   OpenSim/Common/MultivariatePolynomialFunction.cpp#L339
+
+%% helper functions
+
 function combinations = generate_combinations(current, level, sum,...
     dimension, order, combinations)
     if level > dimension
@@ -153,12 +153,12 @@ function [y] = eval_der_monomial(x, powers, idx, der)
     end
     coeff = ones(size(powers,1),1);
     for i=1:der
+        % y = c*x^p
+        % dydx = p*c*x^(p-1)
         coeff = coeff.*powers(:,idx);
         powers(:,idx) = powers(:,idx)-1;
         powers(powers<0) = 0;
     end
-    y = x(1) .^powers(:,1).*coeff;
-    for i=2:size(powers,2)
-        y = y.* (x(i) .^powers(:,i));
-    end
+
+    y = eval_monomial(x,powers).*coeff;
 end
