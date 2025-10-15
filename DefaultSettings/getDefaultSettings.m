@@ -204,6 +204,11 @@ if ~isfield(S.misc,'msk_geom_n_samples')
     S.misc.msk_geom_n_samples = 5000;
 end
 
+% always perform a new fit of msk geometry
+if ~isfield(S.misc,'msk_geom_always_new_fit')
+    S.misc.msk_geom_always_new_fit = false;
+end
+
 % rmse threshold for muscle-tendon length approximation
 if ~isfield(S.misc,'threshold_lMT_fit')
     S.misc.threshold_lMT_fit = 0.003;
@@ -212,6 +217,12 @@ end
 % rmse threshold for muscle-tendon momentarm approximation
 if ~isfield(S.misc,'threshold_dM_fit')
     S.misc.threshold_dM_fit = 0.003;
+end
+
+% reduce the number of coefficients in the fit, based on statistical
+% significance
+if ~isfield(S.misc,'reduce_coeff_fit')
+    S.misc.reduce_coeff_fit = true;
 end
 
 % visualize IG and bounds

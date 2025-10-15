@@ -25,7 +25,7 @@ function [coeff, stats, mu] = mvpolyfit(X, Y, order, YdX, options)
 %   References
 %   [1] Harba and Serrancolí, 2025
 %
-%   See also n_art_mat mvpolyval polyfit
+%   See also createMonimial mvpolyval polyfit
 %
 % INPUT:
 %   - X -
@@ -49,7 +49,7 @@ function [coeff, stats, mu] = mvpolyfit(X, Y, order, YdX, options)
 %       - reduced_coeff_n_bins  divide the coefficients in bins instead of
 %                               adding one by one when trying to reduce the 
 %                               amount of coefficients.
-%       - mldivide              custom function to perform A\b
+%       - mldivide_impl         function to perform A\b
 %
 % OUTPUT:
 %   - coeff -
@@ -83,7 +83,7 @@ arguments
     options.reduced_coeff = false;
     options.reduced_coeff_n_bins = 10;
 
-    options.mldivide = [];
+    options.mldivide_impl = 'mldivide';
 end
 
 %% check input sizes
@@ -105,11 +105,11 @@ if ~isempty(YdX)
     end
 end
 
-if ~isempty(options.mldivide)
-    if ischar(options.mldivide) || isstring(options.mldivide)
-        mldivide_impl = str2func(options.mldivide);
-    elseif isa(options.mldivide,'function_handle')
-        mldivide_impl = options.mldivide;
+if ~isempty(options.mldivide_impl)
+    if ischar(options.mldivide_impl) || isstring(options.mldivide_impl)
+        mldivide_impl = str2func(options.mldivide_impl);
+    elseif isa(options.mldivide_impl,'function_handle')
+        mldivide_impl = options.mldivide_impl;
     end
 end
 
@@ -131,11 +131,11 @@ for fit_order=min(order):max(order)
 
     % Create matrices
     if isempty(YdX)
-        [mno] = n_art_mat(x_sc, fit_order);
+        [mno] = createMonomial(x_sc, fit_order);
         X_aug = mno;
         Y_aug = Y;
     else
-        [mno,jac_mno] = n_art_mat(x_sc, fit_order, 2);
+        [mno,jac_mno] = createMonomial(x_sc, fit_order, 2);
         if nargout >= 3
             % chain rule!
             jac_mno = jac_mno./repelem(mu(2,:)',n_points,1);
@@ -145,11 +145,7 @@ for fit_order=min(order):max(order)
     end
     
     % Fit coeff
-    if isempty(options.mldivide)
-        coeff = X_aug \ Y_aug;
-    else
-        coeff = mldivide_impl(X_aug, Y_aug);
-    end
+    coeff = mldivide_impl(X_aug, Y_aug);
     
     % Evaluate acceptance criteria
     Y_fit = mno*coeff;
@@ -234,11 +230,7 @@ if options.reduced_coeff
 
         % Coefficient values that best fit data using only the subset of 
         % selected coefficients
-        if isempty(options.mldivide)
-            coeff_aux = X_aug(:, selected_index) \ Y_aug;
-        else
-            coeff_aux = mldivide_impl(X_aug(:, selected_index), Y_aug);
-        end
+        coeff_aux = mldivide_impl(X_aug(:, selected_index), Y_aug);
             
 
         % Update the full coefficient vector with the selected ones

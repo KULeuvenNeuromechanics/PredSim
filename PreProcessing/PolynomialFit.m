@@ -19,26 +19,21 @@ function [MuscleInfo] = PolynomialFit(S,MuscleData,muscle_spanning_joint_info)
 %   - MuscleInfo -
 %   * structure with information about the polynomials
 % 
-% Original author: Original code from Wouter Aerts, adapted by Antoine Falisse
-% Original date: 19/December/2018
-%
-% update:
-%   Compatibility with generalized code structure. 
-%   Get muscle_spanning_joint_info from input 
-%
-% Last edit by: Lars D'Hondt
-% Last edit date: 05/April/2022
+% Original author: Lars D'Hondt
+% Original date: 15 October 2025
 % --------------------------------------------------------------------------
 
 
 %%
+% On HPC (any linux?):
 % When using OpenBLAS as BLAS/LAPACK libraries, the built-in mldivide
 % leads to segmentation violations. The current workaround is to provide
 % a custom function in the LinearAlgebra subdirectory that directly calls
 % LAPACK, which is compiled below if not yet done.
 lapack_version = version('-lapack');
 if startsWith(lapack_version, 'Intel')
-    mldivide_impl = [];
+    % Use built-in matlab function
+    mldivide_impl = 'mldivide';
 else
     % Compile if not yet done
     if (exist('mldivide_lapack') == 0)
@@ -53,42 +48,30 @@ end
 
 %% Construct the polynomials for the moment arms and muscle length
 
-muscle_sel = 1:length(MuscleData.muscle_names);
-
-q_all = MuscleData.q;
-
-max_order = S.misc.poly_order.upper;
-nr_samples = length(q_all(:,1));
-
-lMT_all_error = zeros(length(muscle_sel), 1);
-DM_all_error = zeros(length(muscle_sel), length(q_all(1,:)));
-order_all = zeros(length(muscle_sel), 1);
-
-for m_nr=1:length(muscle_sel)
-    muscle_index = muscle_sel(m_nr);
+for m_nr=1:size(MuscleData.q,2)
     
-    index_dof_crossing = find(muscle_spanning_joint_info(muscle_index,:)==1);
-    nr_dof_crossing = length(index_dof_crossing);
-    if nr_dof_crossing == 0
+    index_dof_crossing = find(muscle_spanning_joint_info(m_nr,:)==1);
+
+    if isempty(index_dof_crossing)
+        fprintf("\t\tMuscle '%s' does not cross any coordinates.\n",...
+            MuscleData.muscle_names{m_nr})
+        % Should this be a warning or error instead?
+        % Does this break the simulation?
         continue
     end
     
-    lMT = MuscleData.lMT(:,muscle_index);
-    dM = zeros(nr_samples, nr_dof_crossing);
-    for dof_nr = 1:nr_dof_crossing
-        dM(:,dof_nr) = MuscleData.dM(:,muscle_index,index_dof_crossing(dof_nr));
-    end
-
-    [coeff, stats, mu] = mvpolyfit(q_all(:,index_dof_crossing), lMT,...
-        [S.misc.poly_order.lower,S.misc.poly_order.upper], -dM,...
-        "reduced_coeff",1,...
+    [coeff, stats, mu] = mvpolyfit(MuscleData.q(:,index_dof_crossing),...
+        MuscleData.lMT(:,m_nr),...
+        [S.misc.poly_order.lower, S.misc.poly_order.upper],...
+        -squeeze(MuscleData.dM(:,m_nr,index_dof_crossing)),... % dM = -jac(lMT,q)
+        "reduced_coeff",S.misc.reduce_coeff_fit,...
         "threshold_rmse_y",S.misc.threshold_lMT_fit,...
         "threshold_rmse_ydx",S.misc.threshold_dM_fit,...
-        "mldivide",mldivide_impl);
+        "mldivide_impl",mldivide_impl);
     
     
     MuscleInfo.muscle(m_nr).DOF = MuscleData.dof_names(index_dof_crossing);
-    MuscleInfo.muscle(m_nr).m_name = MuscleData.muscle_names{muscle_index};
+    MuscleInfo.muscle(m_nr).m_name = MuscleData.muscle_names{m_nr};
     MuscleInfo.muscle(m_nr).coeff = coeff;
     MuscleInfo.muscle(m_nr).order = stats.order;
     MuscleInfo.muscle(m_nr).lMT_error_rms = stats.rmse_y;
