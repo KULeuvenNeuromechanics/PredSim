@@ -278,9 +278,10 @@ if options.reduced_coeff
         stats.coeff_p_bin = coeff_idx;
         stats.coeff_used = sort(selected_index);
 
-        stats.rmse_red_aug = rmse_2;
-        stats.rmse_red_y = rmse_y_2;
-        stats.rmse_red_ydx = rmse_ydx_2;
+        stats.rmse_red_y = rmse_y;
+        stats.rmse_red_ydx = rmse_ydx;
+        stats.rel_err_red_y = err_y./abs(Y);
+        stats.rel_err_red_ydx = err_ydx./abs(YdX);
     end
     coeff = coeff_2;
 
