@@ -53,10 +53,6 @@ for m_nr=1:size(MuscleData.lMT,2)
     index_dof_crossing = find(muscle_spanning_joint_info(m_nr,:)==1);
 
     if isempty(index_dof_crossing)
-        fprintf("\t\tMuscle '%s' does not cross any coordinates.\n",...
-            MuscleData.muscle_names{m_nr})
-        % Should this be a warning or error instead?
-        % Does this break the simulation?
         continue
     end
     
