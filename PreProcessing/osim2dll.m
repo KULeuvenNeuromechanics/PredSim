@@ -32,8 +32,7 @@ if ispc
     libextension = '.dll';
 elseif isunix
     libextension = '.so';
-end
-if S.OpenSimADOptions.useSerialisedFunction
+elseif S.OpenSimADOptions.useSerialisedFunction
     libextension = '.casadi';
 end
 external_function_dll = fullfile(S.misc.subject_path,['F_', osim_file_name, libextension]);
