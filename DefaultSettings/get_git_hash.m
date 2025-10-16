@@ -24,7 +24,7 @@ function [local_hash, branch_name, remote_hash] = get_git_hash(pathRepo)
 % Original date: 28/02/2023
 %
 % Last edit by: Bram Van Den Bosch
-% Last edit date: 16/09/2025
+% Last edit date: 16/10/2025
 % --------------------------------------------------------------------------
 
 % save current working directory
@@ -33,17 +33,18 @@ pathInitDir = pwd;
 cd(pathRepo)
 
 % fetch latest refs from remote
-system('git fetch');
+[status,response] = system('git fetch');
 
-% get hash of the local instance
-[status,local_hash] = system('git rev-parse HEAD');
-local_hash = strtrim(local_hash);
-
-if contains(local_hash,"'git' is not recognized as an internal or external command")
+% check if git works
+if contains(response,"'git' is not recognized as an internal or external command")
     warning('Unable to get git hash. Git seems not to be installed on your machine or cannot be executed from the command line.');
 elseif status ~= 0 
     warning('Unable to get git hash. It is advised to get PredSim through GitHub to have version control and to receive future updates.');
 end
+
+% get hash of the local instance
+[status,local_hash] = system('git rev-parse HEAD');
+local_hash = strtrim(local_hash);
 
 if status == 0
     % get name of the current branch
