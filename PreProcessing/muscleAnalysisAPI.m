@@ -80,8 +80,7 @@ end
 import org.opensim.modeling.*;
 model = Model(osim_path);
 s = model.initSystem;
-% Get state vector
-state_vars = model.getStateVariableValues(s);
+
 % Get set of muscles and other forces
 if ligaments_bool
     force_set = model.getForceSet();
@@ -90,23 +89,28 @@ else
 end
 coord_set = model.getCoordinateSet;
 
+% names of states corresponding to coordinate position values
+q_state_names = cell(1,n_coord);
+qdot_state_names = cell(1,n_coord);
+for i=1:n_coord
+    q_state_names{i} = coord_set.get(coord_names{i}).getStateVariableNames().get(0);
+    qdot_state_names{i} = coord_set.get(coord_names{i}).getStateVariableNames().get(1);
+end
+
+% coordinates that are crossed by any muscle
+coordi_crossed = find(sum(muscle_spanning_joint_info,1)>0);
+
 %% Evaluate muscle-tendon unit lenght and moment arms
 % Initialise matrices for results
 lMT = zeros(n_data_points,n_muscle);
 dM = zeros(n_data_points,n_muscle,n_coord);
 Qs2 = nan(size(Qs));
 
-% names of states corresponding to coordinate position values
-for i=1:n_coord
-    q_state_names{i} = coord_set.get(coord_names{i}).getStateVariableNames().get(0);
-    qdot_state_names{i} = coord_set.get(coord_names{i}).getStateVariableNames().get(1);
-end
-
 % Loop through dummy states
 for j=1:n_data_points
 
-    % Set each coordinate value
-    for i=1:n_coord
+    % Set coordinate values
+    for i=coordi_crossed
         if ~isnan(Qs(j,i))
             model.setStateVariableValue(s,q_state_names{i},Qs(j,i));
         end
@@ -114,13 +118,12 @@ for j=1:n_data_points
     model.realizePosition(s);
     model.assemble(s)
 
-    % Loop over muscles
+    % Get path length
     for m=1:n_muscle
         muscle_m = force_set.get(muscle_names{m});
         if ligaments_bool
             muscle_m = Ligament.safeDownCast(muscle_m);
         end
-        % Get MTU length
         lMT(j,m) = muscle_m.getLength(s);
     end
 
@@ -134,7 +137,7 @@ for j=1:n_data_points
         end
 
     else % muscle
-        for i=1:n_coord
+        for i=coordi_crossed
             % The moment arm is defined as -dl/dq.
             % By settings the velocity of coordinate i to -1 and all other
             % velocities to 0, the moment arm can be calculated as
@@ -178,4 +181,4 @@ MuscleData.dM = dM;
 
 
 
-
+end % end of function
