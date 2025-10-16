@@ -142,6 +142,15 @@ be written to the job output file (by default looking like `slurm-<jobid>.out`.
 > receive errors saying your file contains DOS line breaks instead of UNIX
 > line breaks. You can rectify this by running `dos2unix <fn>` on the cluster.
 
+If you have already completed these setup steps, you can simply navigate to 
+your [OnDemand Dashboard](https://ondemand.hpc.kuleuven.be/) > Login Server Shell Access > start a simulation
+using the predefined settings:
+```bash
+cd $VSC_DATA/PredSim
+sbatch run_simulation.slurm
+```
+
+
 ## How to use the code
 
 The code is written such that as a user you only have to interact with [*main.m*](./main.m).  
