@@ -44,9 +44,12 @@ pathmain = pwd;
 % addpath(genpath(pathRepo));
 % Loading external functions.
 setup.derivatives =  'AD'; % Algorithmic differentiation
-cd(S.misc.subject_path)
-F  = external('F', fullfile(S.misc.subject_path, S.misc.external_function));
-cd(pathmain);
+
+if S.OpenSimADOptions.useSerialisedFunction
+    F = Function.load(fullfile(S.misc.subject_path, S.misc.external_function));
+else
+    F = external('F',fullfile(S.misc.subject_path, S.misc.external_function));
+end
 
 %% Collocation Scheme
 % We use a pseudospectral direct collocation method, i.e. we use Lagrange
@@ -598,6 +601,13 @@ end
 f_coll = Function('f_coll',coll_input_vars_def,...
         {eq_constr, ineq_constr_deact, ineq_constr_act,...
         ineq_constr_distance{:}, ineq_constr_syn,J});
+
+if S.OpenSimADOptions.useSerialisedFunction
+    try
+        f_coll = f_coll.expand();
+    catch
+    end
+end
 
 % Repeat function for each mesh interval and assign evaluation to multiple threads
 f_coll_map = f_coll.map(N,S.solver.parallel_mode,S.solver.N_threads);

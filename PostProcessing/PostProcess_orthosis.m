@@ -42,8 +42,11 @@ acts = acts(1:N,:);
 [Mcoord2, toExtFun2] = f_casadi.f_orthosis_mesh_all(qs',qdots',qddots',acts');
 
 
-F  = external('F',replace(fullfile(R.S.misc.subject_path,R.S.misc.external_function),'\','/'));
-
+if R.S.OpenSimADOptions.useSerialisedFunction
+    F = Function.load(replace(fullfile(R.S.misc.subject_path,R.S.misc.external_function),'\','/'));
+else
+    F = external('F',replace(fullfile(R.S.misc.subject_path,R.S.misc.external_function),'\','/'));
+end
 
 % Create zero input vector for external function
 F_ext_input = zeros(model_info.ExtFunIO.input.nInputs,N);
