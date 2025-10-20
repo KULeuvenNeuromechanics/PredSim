@@ -54,7 +54,7 @@ F_all = F.map(S.solver.N_meshes,S.solver.parallel_mode,S.solver.N_threads);
 
 model_info.ExtFunIO.nOutputs = F.size1_out(0);
 
-for N = [S.solver.N_meshes,1] %changed to first do N=Nmeshes
+for N = [1,S.solver.N_meshes]
 
 
 %% Define variables
@@ -91,99 +91,56 @@ end
 
 
 %% loop over all selected orthoses
-if ~isempty([S.orthosis.settings{:}])
 
-    for i=1:length(S.orthosis.settings)
 
-        orthosis_i = S.orthosis.settings{i}.object;
-        Nmesh = orthosis_i.getNmesh();
-        if Nmesh==N
+for i=1:length(S.orthosis.settings)
 
-            % Get casadi Function of this orthosis
-            [f_orthosis_i, f_orthosis_pp_i] =...
-                orthosis_i.wrapCasadiFunction(model_info.ExtFunIO,model_info.muscle_info.muscle_names,S.orthosis.stateNames_all,S.orthosis.controlNames_all);
+    orthosis_i = S.orthosis.settings{i}.object;
+    Nmesh = orthosis_i.getNmesh();
+    if Nmesh==N
 
-            % Add to struct for post-processing
-            separate_orthoses(i).wrap = f_orthosis_i;
-            separate_orthoses(i).wrap_pp = f_orthosis_pp_i;
+        % Get casadi Function of this orthosis
+        [f_orthosis_i, f_orthosis_pp_i] =...
+            orthosis_i.wrapCasadiFunction(model_info.ExtFunIO,model_info.muscle_info.muscle_names,S.orthosis.stateNames_all,S.orthosis.controlNames_all);
 
-            % evaluate function 
-            if ortstatespresent
-                [Mcoordk_i, toExtFun_i, stateDyn_i] = f_orthosis_i(q_SX,qdot_SX,qddot_SX,act_SX,fromExtFun_SX,ortArg_SX{:});
-                stateDyn_SX = stateDyn_SX + stateDyn_i; % Each orthosis uniquely defines a subset of x_dot, zero otherwise
-            else
-                [Mcoordk_i, toExtFun_i] = f_orthosis_i(q_SX,qdot_SX,qddot_SX,act_SX,fromExtFun_SX,ortArg_SX{:});
-            end
+        % Add to struct for post-processing
+        separate_orthoses(i).wrap = f_orthosis_i;
+        separate_orthoses(i).wrap_pp = f_orthosis_pp_i;
 
-            % accumulate outputs
-            Mcoordk_SX = Mcoordk_SX + Mcoordk_i;
-            toExtFun_SX = toExtFun_SX + toExtFun_i;
-            
+        % evaluate function 
+        if ortstatespresent
+            [Mcoordk_i, toExtFun_i, stateDyn_i] = f_orthosis_i(q_SX,qdot_SX,qddot_SX,act_SX,fromExtFun_SX,ortArg_SX{:});
+            stateDyn_SX = stateDyn_SX + stateDyn_i; % Each orthosis uniquely defines a subset of x_dot, zero otherwise
+        else
+            [Mcoordk_i, toExtFun_i] = f_orthosis_i(q_SX,qdot_SX,qddot_SX,act_SX,fromExtFun_SX,ortArg_SX{:});
+        end
 
-            % create Casadi function for orthosis state dynamics
-            if ortstatespresent
-                separate_orthoses(i).dynamics = Function(['f_Orthosis_dynamics_',num2str(N)],...
-                    [{q_SX, qdot_SX, qddot_SX, act_SX, fromExtFun_SX}, ortArg_SX],...
-                    {stateDyn_i},...
-                    [{'qs','qdots','qddots','act','fromExtFun'}, ortArg_names],...
-                    {'orthStateDyn'});   
-            end
+        % accumulate outputs
+        Mcoordk_SX = Mcoordk_SX + Mcoordk_i;
+        toExtFun_SX = toExtFun_SX + toExtFun_i;
+        
+
+        % create Casadi function for orthosis state dynamics
+        if ortstatespresent
+            separate_orthoses(i).dynamics = Function(['f_Orthosis_dynamics_',num2str(N)],...
+                [{q_SX, qdot_SX, qddot_SX, act_SX, fromExtFun_SX}, ortArg_SX],...
+                {stateDyn_i},...
+                [{'qs','qdots','qddots','act','fromExtFun'}, ortArg_names],...
+                {'orthStateDyn'});   
         end
     end
-    if ortstatespresent
-        ortRes_SX = {stateDyn_SX};
-        ortRes_names = {'stateDyn'};
-    end
-else
-    Nmesh=N; % so casadi functions below are created, albeit empty.
 end
-
+if ortstatespresent
+    ortRes_SX = {stateDyn_SX};
+    ortRes_names = {'stateDyn'};
+end
 
 %% create casadi Function for combination of orthoses
-if Nmesh==N
-    fun = Function(['f_Orthosis_mesh_',num2str(N),'_wo_ext'],...
-        [{q_SX, qdot_SX, qddot_SX, act_SX, fromExtFun_SX}, ortArg_SX],...
-        [{Mcoordk_SX, toExtFun_SX}, ortRes_SX],...
-        [{'qs','qdots','qddots','act','fromExtFun'}, ortArg_names],...
-        [{'M_coord','toExtFun'}, ortRes_names]);
-else
-    ortArg_rep = {};
-    if ortstatespresent
-        ortArg_rep{end+1} = repmat(orthStates_SX,1,Nmesh);
-    end
-    if ortcontrolspresent
-        ortArg_rep{end+1} = repmat(orthControls_SX,1,Nmesh);
-    end
-    % call function with Nmesh rows in the arguments
-    if ortstatespresent
-        [res_Mcoordk_SX, res_toExtFun_SX, res_stateDyn_SX] = fun(repmat(q_SX,1,Nmesh),repmat(qdot_SX,1,Nmesh),...
-            repmat(qddot_SX,1,Nmesh),repmat(act_SX,1,Nmesh),...
-            repmat(fromExtFun_SX,1,Nmesh),ortArg_rep{:});
-        res_stateDyn_SX_1 = res_stateDyn_SX(:,1);
-    else
-        [res_Mcoordk_SX, res_toExtFun_SX] = fun(repmat(q_SX,1,Nmesh),repmat(qdot_SX,1,Nmesh),...
-            repmat(qddot_SX,1,Nmesh),repmat(act_SX,1,Nmesh),...
-            repmat(fromExtFun_SX,1,Nmesh),ortArg_rep{:});
-    end
-    res_Mcoordk_SX_1 = res_Mcoordk_SX(:,1);
-    res_toExtFun_SX_1 = res_toExtFun_SX(:,1);
-    
-    % redefine mapping fun
-    if ortstatespresent
-        fun = Function(['f_Orthosis_mesh_',num2str(N),'_wo_ext'],...
-            [{q_SX, qdot_SX, qddot_SX, act_SX, fromExtFun_SX}, ortArg_SX],...
-            {res_Mcoordk_SX_1, res_toExtFun_SX_1,res_stateDyn_SX_1},...
-            [{'qs','qdots','qddots','act','fromExtFun'}, ortArg_names],...
-            {'M_coord','toExtFun','stateDyn'});
-    else
-        fun = Function(['f_Orthosis_mesh_',num2str(N),'_wo_ext'],...
-            [{q_SX, qdot_SX, qddot_SX, act_SX, fromExtFun_SX}, ortArg_SX],...
-            {res_Mcoordk_SX_1, res_toExtFun_SX_1},...
-            [{'qs','qdots','qddots','act','fromExtFun'}, ortArg_names],...
-            {'M_coord','toExtFun'});
-    end
-
-end
+fun = Function(['f_Orthosis_mesh_',num2str(N),'_wo_ext'],...
+    [{q_SX, qdot_SX, qddot_SX, act_SX, fromExtFun_SX}, ortArg_SX],...
+    [{Mcoordk_SX, toExtFun_SX}, ortRes_SX],...
+    [{'qs','qdots','qddots','act','fromExtFun'}, ortArg_names],...
+    [{'M_coord','toExtFun'}, ortRes_names]);
 
 %% Create casadi Function for combination of orthoses, and include external function
 % inputs

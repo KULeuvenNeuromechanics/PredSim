@@ -26,6 +26,7 @@ init.osimPath = osim_path;
 
 statecounter = uint32(0);
 controlcounter = uint32(0);
+S.orthosis.isTimeVariable = false;
 % first loop: assemble cellstring of all orthosis states and controls
 for i=1:length(S.orthosis.settings)
     orthosis_settings_i = S.orthosis.settings{i};
@@ -34,6 +35,11 @@ for i=1:length(S.orthosis.settings)
     fun = str2func(orthosis_settings_i.function_name);
     orthosis = fun(init, orthosis_settings_i);    
     S.orthosis.settings{i}.object = orthosis;
+    
+    % Flag that at least one orthosis is time variable
+    if orthosis.getNmesh() > 1
+        S.orthosis.isTimeVariable = true;
+    end
 
     [~,~,~,~,~,~,meta_arg,~] = getArgRes(orthosis);
 

@@ -29,7 +29,7 @@ function [exo] = hipexo(init, settings_orthosis)
 % --------------------------------------------------------------------------
 
 % create Orthosis object
-exo = Orthosis('exo',init,true);
+exo = Orthosis('exo',init, true);
 
 % read settings that were passed from main.m
 if isfield(settings_orthosis,'isFullGaitCycle')
@@ -39,15 +39,15 @@ else
 end
 
 side = settings_orthosis.left_right; % 'l' for left or 'r' for right
-gain = settings_orthosis.gain;
+% gain = settings_orthosis.gain;
+% 
+% emg1 = exo.var_muscle(['glut_max1_',side]);
+% emg2 = exo.var_muscle(['glut_max2_',side]);
+% emg3 = exo.var_muscle(['glut_max3_',side]);
+% 
+% emg = (emg1 + emg2 + emg3)/3;
 
-emg1 = exo.var_muscle(['glut_max1_',side]);
-emg2 = exo.var_muscle(['glut_max2_',side]);
-emg3 = exo.var_muscle(['glut_max3_',side]);
-
-emg = (emg1 + emg2 + emg3)/3;
-
-u_hipfl_emg = -(emg-0.05)*gain; % only use activation above lower bound (0.05)
+%u_hipfl_emg = -(emg-0.05)*gain; % only use activation above lower bound (0.05)
 
 % Simple first order dynamics dx/dt = (u-x)/tau
 tc_tau = 0.1; % time constant in seconds
@@ -57,10 +57,13 @@ control_u = exo.var_opti(['control_u_' side '_side'],'control',[settings_orthosi
 %control_exo = u_hipfl_emg + control_u; % to make it interesting
 control_exo = control_u;
 
-exo.addDynamics((control_exo-state_x)/tc_tau,['state_x_' side '_side']);
+exo.addDynamics((control_exo-state_x)/tc_tau,['state_x_' side '_side']); %state and control
+%exo.addDynamics((emg-state_x)/tc_tau,['state_x_' side '_side']); %state, but no control
 exo.addCoordForce(state_x,['hip_flexion_',side]);
+%exo.addCoordForce(control_u,['hip_flexion_',side]); % add control straight away
 
-exo.addVarToPostProcessing(state_x,['state_x_' side '_side'])
-exo.addVarToPostProcessing(control_exo,['control_u_' side '_side'])
+%exo.addVarToPostProcessing(state_x,['state_x_' side '_side'])
+%exo.addVarToPostProcessing(control_exo,['control_u_' side '_side'])
+%exo.addVarToPostProcessing(control_u,['control_u_' side '_side'])
 end
 
