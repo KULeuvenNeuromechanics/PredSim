@@ -14,8 +14,9 @@ clc
 % Construct a cell array with full paths to files with saved results for
 % which you want to appear on the plotted figures.
 results_folder = fullfile(pathRepoFolder,'PredSimResults');
-result_paths{1} = fullfile(pathRepo,'Tests','ReferenceResults','Falisse_et_al_2022','Falisse_et_al_2022_paper.mat');
-% result_paths{2} = fullfile(results_folder,'Falisse_et_al_2022_Results','Falisse_et_al_2022_v1.mat');
+%result_paths{1} = fullfile(pathRepo,'Tests','ReferenceResults','Falisse_et_al_2022','Falisse_et_al_2022_paper.mat');
+result_paths{1} = fullfile(results_folder,'Falisse_et_al_2022','Falisse_et_al_2022_v21.mat');
+result_paths{2} = fullfile(results_folder,'Falisse_et_al_2022','Falisse_et_al_2022_v23.mat');
 
 
 % Cell array with legend name for each result
@@ -125,6 +126,12 @@ fig_count = fig_count+1;
 % figure_settings(fig_count).filetype = {};
 % fig_count = fig_count+1;
 
+figure_settings(fig_count).name = 'orthosis_signals';
+figure_settings(fig_count).dofs = {'hip_flexion_l', 'control_u_l_side', 'state_x_l_side'};
+figure_settings(fig_count).variables = {'orthosis'};  % <--- this triggers plot_figure_orthosis
+figure_settings(fig_count).savepath = fullfile(figure_folder,[figure_savename '_orthosis']);
+figure_settings(fig_count).filetype = {'png'};
+fig_count = fig_count + 1;
 %%
 
 plot_figures(result_paths,legend_names,figure_settings);

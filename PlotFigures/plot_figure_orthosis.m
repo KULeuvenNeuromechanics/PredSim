@@ -23,7 +23,7 @@ function [fig_hand] = plot_figure_orthosis(R, namesToPlot, varargin)
 % Original author: Lars D'Hondt
 % Original date: 24/May/2022
 %
-% Last edit by: ChatGPT (GPT-5)
+% Last edit by: Sander De Groof
 % Last edit date: 21/Oct/2025
 % --------------------------------------------------------------------------
 
@@ -138,7 +138,7 @@ for i = 1:length(namesToPlot)
     end
 
     % --- plot data
-    plot(percentage_gait_cycle, data, ...
+    plot(ax,percentage_gait_cycle, data, ...
         'DisplayName', sprintf('%s (%s)', name, src), ...
         'Color', colorToUse, 'LineWidth', 1.5);
 end
@@ -147,7 +147,7 @@ end
 xlabel('Gait cycle (%)')
 ylabel('Value')
 title(legName, 'Interpreter','none')
-legend('Location','best','Interpreter',legInt)
+legend(ax,'Location','best','Interpreter',legInt)
 grid on
 box on
 
