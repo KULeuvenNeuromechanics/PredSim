@@ -37,7 +37,7 @@ For this repository the Git Bash commands are:
     git clone https://github.com/<your_username>/PredSim_private.git
     ```
 
- 6. If you want, add the original repo as remote to fetch (potential) future changes. This creates the diagonal link in the figure below.
+ 6. If you want, add the original repo as remote to fetch (potential) future changes. This creates the diagonal link in Figure 1.
     ```bash
     cd PredSim_private
     git remote add upstream https://github.com/KULeuvenNeuromechanics/PredSim.git
@@ -64,6 +64,7 @@ For this repository the Git Bash commands are:
 <img src="./FiguresForDocumentation/PredSim_private-public_link.jpg" width="500" height="auto" label="fig1">
 </p>
 
+> Figure 1. Different types of repositories, and how they can be linked.
 
 After completing these steps, you have created 2 linked PredSim repositories: 
 - private remote (orange, top right), to which you can invite others to collaborate
@@ -78,6 +79,9 @@ The public local repository (dark blue, bottom left) can be obtained by simply c
 <p align="center">
 <img src="./FiguresForDocumentation/update_private.JPG" width="500" height="auto" title="fig2">
 </p>
+
+> Figure 2. Updating PredSim_private based on the public PredSim repository.
+The numbered arrows illustrate the steps described below.
 
 ### Automated
 
@@ -139,6 +143,8 @@ If you have developer access to the public PredSim repository, creating a pull r
 <img src="./FiguresForDocumentation/push_to_public.JPG" width="500" height="auto" title="fig3">
 </p>
 
+> Figure 3. Contribute from PredSim_private to the public PredSim repository (developer access to PredSim).
+The numbered arrows illustrate the steps described below.
 
 0. In File Explorer, go to the directory with the private PredSim code, e.g. `C:\GBW_MyPrograms\PredSim_private`
 
@@ -163,6 +169,9 @@ This will open the git command window.
 <p align="center">
 <img src="./FiguresForDocumentation/push_to_public_fork.JPG" width="500" height="auto" title="fig4">
 </p>
+
+> Figure 4. Contribute from PredSim_private to the public PredSim repository (no developer access to PredSim).
+The numbered arrows illustrate the steps described below.
 
 If you already have a (public) fork of PredSim, skip steps 1 and 2.
 
