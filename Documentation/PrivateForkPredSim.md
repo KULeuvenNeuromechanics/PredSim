@@ -155,7 +155,7 @@ This will open the git command window.
 
    `git push upstream amazing_new_code`
 
-   If you want your public branch to have a different name, do this instead:
+   If you want your public branch to have a different name (e.g. because the private branch *tmp_3-final2* does not have a desciptive name) do this instead:
 
       1.1. Create a new branch *amazing_new_code* in the public PredSim repository
 
@@ -190,7 +190,7 @@ This will open the git command window.
 
    `git push fork amazing_new_code`
 
-   If you want your public branch to have a different name, do this instead:
+   If you want your public branch to have a different name (e.g. because the private branch *tmp_3-final2* does not have a desciptive name) do this instead:
 
       3.1. Create a new branch *amazing_new_code* in your public fork
 
