@@ -185,7 +185,6 @@ else
     ortstatespresent = false;
     ortcontrolspresent = false;
 end
-%DONE: Add orthosis states opti variables (controls and states) at mesh points and collocation points.
 %TODO: also define initial guesses (now uses all zero) and find a place to store these settings.
 if ortstatespresent
     % Orthosis states bounds 
@@ -247,17 +246,31 @@ end
 
 
 
-%% Helper function for orthoses
-% DONE, may need to be edited to support orthosis states
-% variables
+%% Helper function for orthoses (only relevant for time-variable orthoses)
 a_MX = MX.sym('a',NMuscle,N);
 Qs_MX = MX.sym('Qs',nq.all,N);
 Qdots_MX = MX.sym('Qdots',nq.all,N);
 Qddots_MX = MX.sym('Qddots',nq.all,N);
+
 if ortstatespresent
     x_exo_MX = MX.sym('x_exo',S.orthosis.Nstates_all,N);
-    x_exo_col_MX = MX.sym('x_exo_col',S.orthosis.Nstates_all,d*N); %TODO: this is still a problem
-    xdot_exo_col_MX = MX.zeros(S.orthosis.Nstates_all,d*N); % placeholder for interlacing
+    x_exo_col_MX = MX.sym('x_exo_col',S.orthosis.Nstates_all,d*N);
+
+    a_col_MX = MX.sym('a',NMuscle,d*N);
+    Qs_col_MX = MX.sym('Qs',nq.all,d*N);
+    Qdots_col_MX = MX.sym('Qdots',nq.all,d*N);
+    Qddots_col_MX = MX.sym('Qddots',nq.all,d*N);
+
+    % zero placeholders for interlacing
+    sparsity_temp = f_casadi.f_orthosis_mesh_all.sparsity_out(0);
+    size_temp = sparsity_temp.size();
+    M_ort_coord_MX = MX.zeros(size_temp(1),d*N);
+
+    sparsity_temp = f_casadi.f_orthosis_mesh_all.sparsity_out(1);
+    size_temp = sparsity_temp.size();
+    M_ort_body_MX = MX.zeros(size_temp(1),d*N);
+
+    xdot_exo_col_MX = MX.zeros(S.orthosis.Nstates_all,d*N); 
 end
 if ortcontrolspresent
     u_exo_MX = MX.sym('u_exo',S.orthosis.Ncontrols_all,N);
@@ -278,6 +291,10 @@ if ortstatespresent
     x_exo_MX_nsc = unscale_vector(x_exo_MX,x_exo_bounds, x_exo_bounds_nsc);   
     x_exo_col_MX_nsc = unscale_vector(x_exo_col_MX,x_exo_bounds, x_exo_bounds_nsc);   
     ortArg_MX_nsc{end+1} = x_exo_MX_nsc;
+
+    Qs_col_MX_nsc = Qs_col_MX.*(scaling.Qs'*ones(1,size(Qs_MX,2)));
+    Qdots_col_MX_nsc = Qdots_col_MX.*(scaling.Qdots'*ones(1,size(Qdots_MX,2)));
+    Qddots_col_MX_nsc = Qddots_col_MX.*(scaling.Qdotdots'*ones(1,size(Qddots_MX,2)));
     
 end
 if ortcontrolspresent
@@ -289,33 +306,27 @@ if ortcontrolspresent
 end
 
 % evaluate orthosis function,create, and evaluate helper functions
-if ortstatespresent
-    % helper for M_ort_coord_opti and M_ort_body_opti
-    [M_ort_coord_MX, M_ort_body_MX, xdot_exo_MX] = f_casadi.f_orthosis_mesh_all(Qs_MX_nsc, Qdots_MX_nsc,...
-        Qddots_MX_nsc, a_MX,ortArg_MX_nsc{:});
-    f_orthosis_mesh_all = Function('f_orthosis_mesh_all',[{Qs_MX, Qdots_MX,...
-        Qddots_MX, a_MX}, ortArg_MX],{M_ort_coord_MX, M_ort_body_MX, xdot_exo_MX});
-        % evaluate helper function
-    [M_ort_coord_opti, M_ort_body_opti, ~] = f_orthosis_mesh_all(Qs(:,1:N), Qdots(:,1:N),...
-        A_col(:,1:d:d*N), a(:,1:N), ortArg_MX_opti{:}); 
-        % note: A is at 1st collocation point of mesh interval instead of at 1st mesh point
-    
-    % Helper for 
+if ortstatespresent           
     % Loop over collocation points
-    for k=1:d
+    for j=1:d
         ortArg_col_MX_nsc = {};
-        % collect k-th collocation point in eacht mesh interval
-        ortArg_col_MX_nsc{end+1} = x_exo_col_MX_nsc(:,k:d:d*N);
+        
+        ortArg_col_MX_nsc{end+1} = x_exo_col_MX_nsc(:,j:d:d*N);
         if ortcontrolspresent
             ortArg_col_MX_nsc{end+1} = u_exo_MX_nsc(:,1:N);
         end
-
-        [~,~, xdot_exo_col_MX_z] = f_casadi.f_orthosis_mesh_all(Qs_MX_nsc, Qdots_MX_nsc,...
-            Qddots_MX_nsc, a_MX,ortArg_col_MX_nsc{:});
-        % interlace xdot_exo_col
-        xdot_exo_col_MX(:,k:d:d*N) = xdot_exo_col_MX_z;
+        % call "f_orthosis_mesh_all" function with k-th collocation point
+        % in each mesh interval as arguments
+        [M_ort_coord_MX_j, M_ort_body_MX_j, xdot_exo_col_MX_j] ...
+            = f_casadi.f_orthosis_mesh_all(Qs_col_MX_nsc(:,j:d:d*N), Qdots_col_MX_nsc(:,j:d:d*N),...
+            Qddots_col_MX_nsc(:,j:d:d*N), a_col_MX(:,j:d:d*N) ,ortArg_col_MX_nsc{:});
+        % interlace 
+        M_ort_coord_MX(:,j:d:d*N) = M_ort_coord_MX_j;
+        M_ort_body_MX(:,j:d:d*N) = M_ort_body_MX_j;
+        xdot_exo_col_MX(:,j:d:d*N) = xdot_exo_col_MX_j;
     end % End loop over collocation points
-
+    
+    % arguments for orthosis dynamics helper function and its evaluation
     ortArg_col_MX = {x_exo_col_MX};
     ortArg_col_opti = {x_exo_col};
     if ortcontrolspresent
@@ -323,23 +334,21 @@ if ortstatespresent
         ortArg_col_opti{end+1} = u_exo(:,1:N);
     end
     % define helper function for orthosis dynamics and evaluate
-    f_orthosis_dynamics_all = Function('f_orthosis_dynamics_all',[{Qs_MX, Qdots_MX,...
-    Qddots_MX, a_MX}, ortArg_col_MX],{xdot_exo_col_MX});
-    xdot_exo_col_opti = f_orthosis_dynamics_all(Qs(:,1:N), Qdots(:,1:N),...
-        A_col(:,1:d:d*N), a(:,1:N), ortArg_col_opti{:});
-    
-       
+    f_orthosis_mesh_all_interlaced = Function('f_orthosis_mesh_all_interlaced',[{Qs_col_MX, Qdots_col_MX,...
+    Qddots_col_MX, a_col_MX}, ortArg_col_MX],{M_ort_coord_MX,M_ort_body_MX,xdot_exo_col_MX});
+    [M_ort_coord_opti, M_ort_body_opti, xdot_exo_col_opti] = f_orthosis_mesh_all_interlaced(Qs_col, Qdots_col,...
+        A_col, a_col, ortArg_col_opti{:});      
 else
+    % no states ==> no interlacing required
     [M_ort_coord_MX, M_ort_body_MX] = f_casadi.f_orthosis_mesh_all(Qs_MX_nsc, Qdots_MX_nsc,...
         Qddots_MX_nsc, a_MX,ortArg_MX_nsc{:});
     f_orthosis_mesh_all = Function('f_orthosis_mesh_all',[{Qs_MX, Qdots_MX,...
         Qddots_MX, a_MX}, ortArg_MX],{M_ort_coord_MX, M_ort_body_MX});
     [M_ort_coord_opti, M_ort_body_opti] = f_orthosis_mesh_all(Qs(:,1:N), Qdots(:,1:N),...
-        A_col(:,1:3:3*N), a(:,1:N), ortArg_MX_opti{:}); 
+        A_col(:,1:d:d*N), a(:,1:N), ortArg_MX_opti{:}); 
 end
 
 % note: A is at 1st collocation point of mesh interval instead of at 1st mesh point
-
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % If Muscle synergies, add additional variables:
@@ -432,8 +441,14 @@ dFTtildej   = MX.sym('dFTtildej',NMuscle,d);
 Aj          = MX.sym('Aj',nq.all,d);
 
 % Define CasADi variables for orthosis moments (or forces)
-M_ort_coordk = MX.sym('M_ort_coord',nq.all,1); % moments on coordinates
-M_ort_bodyk = MX.sym('M_ort_body',model_info.ExtFunIO.input.nInputs,1); % moments on bodies
+if ortstatespresent
+    % these come from interlaced helper
+    M_ort_coordk = MX.sym('M_ort_coord',nq.all,d); % moments on coordinates
+    M_ort_bodyk = MX.sym('M_ort_body',model_info.ExtFunIO.input.nInputs,d); % moments on bodies
+else
+    M_ort_coordk = MX.sym('M_ort_coord',nq.all,1); % moments on coordinates
+    M_ort_bodyk = MX.sym('M_ort_body',model_info.ExtFunIO.input.nInputs,1); % moments on bodies
+end
 
 % If muscle synergies, define CasADi variables for additional variables
 if (S.subject.synergies)
@@ -559,16 +574,19 @@ for j=1:d
     [f_orthosis_mesh_k_retvals{:}] = f_casadi.f_orthosis_mesh_k(Qskj_nsc(:,j+1),...
     Qdotskj_nsc(:,j+1), Aj_nsc(:,j), akj(:,j+1), ortArg_nsc{:});
 
-    % add orthosis moments from input variables
-    M_ort_coord_totj = M_ort_coordk + f_orthosis_mesh_k_retvals{1};
-    M_ort_body_totj = M_ort_bodyk + f_orthosis_mesh_k_retvals{2};
-
     if ortstatespresent 
+            % add orthosis moments from input variables (interlaced)
+            M_ort_coord_totj = M_ort_coordk(:,j) + f_orthosis_mesh_k_retvals{1};
+            M_ort_body_totj = M_ort_bodyk(:,j) + f_orthosis_mesh_k_retvals{2};
         if (~S.orthosis.isTimeVariable)
             eq_constr{end+1} = (h*f_orthosis_mesh_k_retvals{3} - xp_nsc)./scaling_factors(x_exo_bounds,x_exo_bounds_nsc);
         else
             eq_constr{end+1} = (h*xdotj(:,j) - xp_nsc)./scaling_factors(x_exo_bounds,x_exo_bounds_nsc);
         end
+    else
+        % add orthosis moments from input variables
+        M_ort_coord_totj = M_ort_coordk + f_orthosis_mesh_k_retvals{1};
+        M_ort_body_totj = M_ort_bodyk + f_orthosis_mesh_k_retvals{2};
     end
 
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -742,7 +760,6 @@ end
 if (S.subject.synergies)
     coll_input_vars_def = [coll_input_vars_def,{SynH_rk,SynH_lk,SynW_rk,SynW_lk}];
 end
-%DONE: add decision variables: orthosis states and excitation, hereafter (single mesh step)
 if ortstatespresent
     if (S.orthosis.isTimeVariable)
         coll_input_vars_def = [coll_input_vars_def,{xk,xj,xdotj}]; 
@@ -771,7 +788,6 @@ end
 if (S.subject.synergies)    
     coll_input_vars_eval = [coll_input_vars_eval,{SynH_r(:,1:end-1), SynH_l(:,1:end-1), SynW_r,SynW_l}];
 end
-%DONE: add decision variables: orthosis states and excitation, hereafter (full mesh)
 if ortstatespresent
     if (S.orthosis.isTimeVariable)
         coll_input_vars_eval = [coll_input_vars_eval,{x_exo(:,1:end-1),x_exo_col,xdot_exo_col_opti}]; 
@@ -842,7 +858,7 @@ for k=1:N
 
     if ortstatespresent
         xkj = [x_exo(:,k), x_exo_col(:,(k-1)*d+1:k*d)];
-        opti.subject_to(x_exo(:,k+1) == xkj*D); %DONE add orthosis (controller) states continuity constaints
+        opti.subject_to(x_exo(:,k+1) == xkj*D);
     end
 
 end % End loop over mesh points
@@ -895,7 +911,6 @@ else
         opti.subject_to(SynH_r(:,end) - SynH_r(:,1) == 0);
         opti.subject_to(SynH_l(:,end) - SynH_l(:,1) == 0);
     end
-    %DONE: added fullgaitcycle orthosis continuity constraint
     if ortstatespresent
         opti.subject_to(x_exo(:,end) - x_exo(:,1) == 0);
     end

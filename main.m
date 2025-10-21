@@ -57,7 +57,7 @@ S.solver.IG_selection_gaitCyclePercent = 100;
 osim_path = fullfile(pathRepo,'Subjects',S.subject.name,[S.subject.name '.osim']);
 
 % Mesh settings
-S.solver.N_meshes = 5;
+S.solver.N_meshes = 20;
 
 %% Add exoskeleton
 
