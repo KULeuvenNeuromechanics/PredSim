@@ -51,15 +51,30 @@ for i = 1:length(varargin)
     end
 end
 
-%% Determine figure
+%% Determine figure (updated for subplots)
 if ~exist('fig_hand','var') || isempty(fig_hand)
     fig_hand = figure('Name','Orthosis signals');
 end
 
-% Create axes explicitly
-ax = axes(fig_hand); 
-hold(ax,'on');
+% === NEW SECTION: safely add a new subplot each call ===
+existingAxes = findobj(fig_hand, 'Type', 'axes');
+nAx = numel(existingAxes);
 
+% Compute normalized height per axis
+axHeight = 1 / (nAx + 1);
+axMargin = 0.05; % small gap between axes
+
+% Reposition existing axes to make room for the new one
+for k = 1:nAx
+    set(existingAxes(nAx - k + 1), ...
+        'Position', [0.13, axMargin + k*axHeight, 0.82, axHeight - axMargin]);
+end
+
+% Create new axes at the bottom for the next plot
+axBottom = [0.13, axMargin, 0.82, axHeight - axMargin];
+ax = axes('Parent', fig_hand, 'Position', axBottom);
+hold(ax, 'on');
+% ======================================================
 
 % Use number of mesh points from solver instead of relying on orthosis.states (may not exist)
 percentage_gait_cycle = linspace(0,100,R.S.solver.N_meshes);
@@ -144,19 +159,11 @@ for i = 1:length(namesToPlot)
 end
 
 %% Format axes
-xlabel('Gait cycle (%)')
-ylabel('Value')
-title(legName, 'Interpreter','none')
+xlabel(ax,'Gait cycle (%)')
+ylabel(ax,'Value')
+title(ax,legName, 'Interpreter','none')
 legend(ax,'Location','best','Interpreter',legInt)
-grid on
-box on
+grid(ax,'on')
+box(ax,'on')
 
 end
-
-
-
-
-
-
-
-
