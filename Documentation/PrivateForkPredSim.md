@@ -107,7 +107,7 @@ In this command window, run the following commands:
     
     If this branch does not yet exist, create the branch locally
 
-    `git checkout -b master_public`
+    `git checkout -B master_public master`
 
     and add it to the online repo
 
