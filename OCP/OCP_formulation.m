@@ -569,24 +569,26 @@ for j=1:d
     
 
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    f_orthosis_mesh_k_retvals = cell(1,3);
-    % Orthosis moments on collocation point
-    [f_orthosis_mesh_k_retvals{:}] = f_casadi.f_orthosis_mesh_k(Qskj_nsc(:,j+1),...
-    Qdotskj_nsc(:,j+1), Aj_nsc(:,j), akj(:,j+1), ortArg_nsc{:});
 
     if ortstatespresent 
-            % add orthosis moments from input variables (interlaced)
-            M_ort_coord_totj = M_ort_coordk(:,j) + f_orthosis_mesh_k_retvals{1};
-            M_ort_body_totj = M_ort_bodyk(:,j) + f_orthosis_mesh_k_retvals{2};
+            % Orthosis moments on collocation point
+            [M_ort_coordj, M_ort_bodyj, xdot] = f_casadi.f_orthosis_mesh_k(Qskj_nsc(:,j+1),...
+            Qdotskj_nsc(:,j+1), Aj_nsc(:,j), akj(:,j+1), ortArg_nsc{:});
+            % add orthosis moments from input variables (interlaced) 
+            % one of the terms is always zero
+            M_ort_coord_totj = M_ort_coordk(:,j) + M_ort_coordj;
+            M_ort_body_totj = M_ort_bodyk(:,j) + M_ort_bodyj;
         if (~S.orthosis.isTimeVariable)
-            eq_constr{end+1} = (h*f_orthosis_mesh_k_retvals{3} - xp_nsc)./scaling_factors(x_exo_bounds,x_exo_bounds_nsc);
+            eq_constr{end+1} = (h*xdot - xp_nsc)./scaling_factors(x_exo_bounds,x_exo_bounds_nsc);
         else
             eq_constr{end+1} = (h*xdotj(:,j) - xp_nsc)./scaling_factors(x_exo_bounds,x_exo_bounds_nsc);
         end
     else
+        [M_ort_coordj, M_ort_bodyj] = f_casadi.f_orthosis_mesh_k(Qskj_nsc(:,j+1),...
+        Qdotskj_nsc(:,j+1), Aj_nsc(:,j), akj(:,j+1), ortArg_nsc{:});
         % add orthosis moments from input variables
-        M_ort_coord_totj = M_ort_coordk + f_orthosis_mesh_k_retvals{1};
-        M_ort_body_totj = M_ort_bodyk + f_orthosis_mesh_k_retvals{2};
+        M_ort_coord_totj = M_ort_coordk + M_ort_coordj;
+        M_ort_body_totj = M_ort_bodyk + M_ort_bodyj;
     end
 
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
