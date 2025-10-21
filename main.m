@@ -7,13 +7,15 @@
 clear
 close all
 clc
+
 % path to the repository folder
 [pathRepo,~,~] = fileparts(mfilename('fullpath'));
 % path to the folder that contains the repository folder
 [pathRepoFolder,~,~] = fileparts(pathRepo);
 
-%% Initialize S
 addpath(fullfile(pathRepo,'DefaultSettings'))
+
+%% Initialize S
 
 [S] = initializeSettings('Falisse_et_al_2022');
 
@@ -42,7 +44,7 @@ osim_path = fullfile(pathRepo,'Subjects',S.subject.name,[S.subject.name '.osim']
 %% Plot results
 % see .\PlotFigures\run_this_file_to_plot_figures.m for more
 
-if ~S.solver.run_as_batch_job
+if (~S.solver.run_as_batch_job)
 
     % set path to reference result
     result_paths{1} = fullfile(pathRepo,'Tests','ReferenceResults',...
