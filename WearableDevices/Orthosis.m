@@ -43,28 +43,28 @@ classdef Orthosis < handle
 % Original date: January 2024
 % --------------------------------------------------------------------------
 
-    properties(Access = protected)
+    properties (Access = protected)
 
         name = []; % name of the orthosis
         Nmesh = 1; % number of meshpoints used to describe the time-varying behaviour of the orthosis. Set to 1 if time-independent.
-
+        Nstates = uint16(0);
+        Ncontrols = uint16(0);
 
         arg = {}; % input arguments of CasADi Function describing orthosis mechanics
-        res = {}; % output arguments of CasADi Function describing orthosis mechanics
+        res = {}; % output arguments of CasADi Function describing orthosis mechanics (forces and moments)
         res_pp = {}; % output arguments for post-processing function
         names_arg = {}; % names of input arguments of CasADi Function describing orthosis mechanics
         names_res = {}; % names of output arguments of CasADi Function describing orthosis mechanics
         names_res_pp = {}; % names of post-processing output arguments
         meta_arg = []; % metadata of input arguments of CasADi Function describing orthosis mechanics
         meta_res = []; % metadata of output arguments of CasADi Function describing orthosis mechanics
+
         fun = []; % handle of CasADi Function
-
-
+        
         BodyForces = {}; % input3DBodyForces for OpenSimAD
         BodyMoments = {}; % input3DBodyMoments for OpenSimAD
         PointPositions = {}; % export3DPositions for OpenSimAD
-        PointVelocities = {}; % export3DVelocities for OpenSimAD
-        
+        PointVelocities = {}; % export3DVelocities for OpenSimAD        
 
         osimPath = []; % path to model file
         warningOsimPathNotSet = false; % only warn once that osimPath was not set.
@@ -141,6 +141,16 @@ classdef Orthosis < handle
             N_mesh = self.Nmesh;
         end
 
+        function N = getNstates(self)
+            % Get the number of states
+            N = self.Nstates;
+        end
+
+        function N = getNcontrols(self)
+            % Get the number of controls
+            N = self.Ncontrols;
+        end
+
         function fun = getFunction(self)
             % [internal] Get the CasADi Function describing the Orthosis
             if isempty(self.fun)
@@ -169,6 +179,17 @@ classdef Orthosis < handle
             PointVelocities = self.PointPositions;
         end
 
+        function [arg,res,res_pp,names_arg,names_res,names_res_pp,meta_arg,meta_res] = getArgRes(self)
+            arg = self.arg; % input arguments of CasADi Function describing orthosis mechanics
+            res = self.res; % output arguments of CasADi Function describing orthosis mechanics (forces and moments)
+            res_pp = self.res_pp; % output arguments for post-processing function
+            names_arg = self.names_arg; % names of input arguments of CasADi Function describing orthosis mechanics
+            names_res = self.names_res; % names of output arguments of CasADi Function describing orthosis mechanics
+            names_res_pp = self.names_res_pp; % names of post-processing output arguments
+            meta_arg = self.meta_arg; % metadata of input arguments of CasADi Function describing orthosis mechanics
+            meta_res = self.meta_res; % metadata of output arguments of CasADi Function describing orthosis mechanics
+        end
+
         function [] = setOsimPath(self,osimPath)
             arguments
                 self Orthosis
@@ -180,6 +201,54 @@ classdef Orthosis < handle
         end
 
     %% create a variable 
+    function varopti = var_opti(self,var_name,state_control,bounds,scaledbounds)
+            arguments
+                self Orthosis
+                var_name char
+                state_control char {mustBeMember(state_control,{'state','control'})};
+                bounds (1,2) double                
+                scaledbounds (1,2) double = [-1,1]
+            end
+            % Create a variable that will be optimized for. States are
+            % subject to user-defined dynamics (method "addDynamics")
+            %
+            % EXAMPLE
+            %
+            % INPUT:
+            %   - var_name - [char]
+            %   * Name of the variable
+            %   - state_control - [char]
+            %   * State or control variable
+            %
+            % OUTPUT:
+            %   - varopti - [1x1 variable]
+            %   * Variable
+            %
+
+            var_name_full = ['optivar_',var_name];
+            varopti = casadi.SX.sym(var_name_full,1,self.Nmesh);
+            self.arg{end+1} = varopti;
+            self.names_arg{end+1} = var_name_full;
+            %self.osimCoordsUsed{end+1} = 'bar';
+            self.meta_arg(end+1).name = var_name;
+            self.meta_arg(end).type = 'optivar';
+            switch state_control
+                case 'state'
+                    self.meta_arg(end).subtype = 'x';
+                    self.Nstates = self.Nstates + uint16(1);
+                case 'control'
+                    self.meta_arg(end).subtype = 'u';
+                    self.Ncontrols = self.Ncontrols + uint16(1);
+            end
+
+            if bounds(1)>= bounds(2)
+                error('bounds input must be: [lower, upper], and lower should not equal upper')
+            end
+            self.meta_arg(end).bounds_nsc = bounds;
+            self.meta_arg(end).bounds = scaledbounds;
+
+        end % end of var_opti
+        
         function coord = var_coord(self,osim_coord_name,pos_vel_acc)
             arguments
                 self Orthosis
@@ -555,6 +624,80 @@ classdef Orthosis < handle
             end
         end % end of addBodyMoment
 
+        function [] = addDynamics(self,value,optivar_names)
+            arguments
+                self Orthosis
+                value
+                optivar_names
+            end
+            % Add internal orthosis dynamics such as those of the actuator
+            % and its controller.
+            %
+            % EXAMPLE
+
+            %
+            % INPUT:
+            %   - value - n-by-N_mesh matrix of Casadi expressions 
+            %         for the derivatives of the states x_dot = f(x,u) =
+            %         value for the n-column vector of stated defined in
+            %           optivar_names
+            %       The expressions may include any "var" expression:
+            %       var_opti (control or state), var_coord, var_muscle,
+            %       etc...
+            %   - optivar_names - 
+            %     The expressions may include any "var" expression:
+            %       var_opti (control or state), var_coord, var_muscle,
+            %       etc...
+        
+            % --- Validate value ---
+            n = size(value,1);
+            length = size(value,2);
+            if ~isa(value,'casadi.SX')
+                error('value must be an array of CasADi.SX objects.');
+            end
+            if length~=self.Nmesh
+                error('Expected "%s" to have size %i columns, but it has %i columns',...
+                    inputname(2),self.Nmesh,length);
+            end
+        
+            % --- Validate optivar_names ---
+            if n == 1
+                if ~ischar(optivar_names)
+                    error('optivar_names must be a char when n == 1.');
+                end
+            else
+                if ~(iscellstr(optivar_names) && (isequal(size(optivar_names),[n,1]) || isequal(size(optivar_names),[1,n])))
+                    error('optivar_names must be a cell array of strings of size [n,1] or [1,n] when n > 0.');
+                end
+            end
+            
+
+            for m = 1:n
+                % loop over all optivars
+                if n ==1
+                    current_optivar = optivar_names;
+                    current_value = value;
+                else
+                    current_optivar = optivar_names{m};
+                    current_value = value(m,:);
+                end
+                [~] = validateOptivar(self, current_optivar);
+                F_name = [current_optivar, '_dot'];
+    
+                if ~any(cellfun(@(x)strcmp(x,F_name), self.names_res))
+                    self.res{end+1} = current_value;
+                    self.names_res{end+1} = F_name;
+                    self.meta_res(end+1).name = current_optivar;
+                    self.meta_res(end).type = 'dyn'; % type and subtype fields can be used later for wrapping
+                    self.meta_res(end).subtype = 'stateDyn';
+                else
+                    warning('Cannot add dynamics for state "%s" more than once, expression will be ignored.',...
+                    current_optivar);
+                end
+            end
+
+        end % end of addDynamics
+
     %% analysis
         function [] = addVarToPostProcessing(self,var,label)
             arguments
@@ -637,20 +780,23 @@ classdef Orthosis < handle
                 self.names_arg, [self.names_res, self.names_res_pp]);
         end
 
-        function [wrap_fun, wrap_fun_pp] = wrapCasadiFunction(self,ExtFunIO,muscleNames)
+        function [wrap_fun, wrap_fun_pp] = wrapCasadiFunction(self,ExtFunIO,muscleNames,stateNames,controlNames)
             arguments
                 self
                 ExtFunIO
                 muscleNames
+                stateNames
+                controlNames
             end
             % [internal] Wrap the CasADi Function of the orthosis for easy integration with PredSim
-            %
             % INPUTS:
             %   - ExtFunIO - [struct]
             %   * model_info.ExtFunIO
             %
             %   - muscleNames - [cell array of chars]
             %   * model_info.muscle_info.muscle_names
+            %   - stateNames - [cell array of chars]
+            %   - controlNames - [cell array of chars]
             %
             % OUTPUTS:
             %   - wrap_fun - [casadi.Function]
@@ -666,27 +812,47 @@ classdef Orthosis < handle
                 self.createCasadiFunction();
             end
 
+            Nstates_all = length(stateNames);
+            Ncontrols_all = length(controlNames);
+
             % all inputs for wrapper function
             arg_SX.q = SX.sym('q',ExtFunIO.jointi.nq.all,self.Nmesh);
             arg_SX.qdot = SX.sym('qdot',ExtFunIO.jointi.nq.all,self.Nmesh);
             arg_SX.qddot = SX.sym('qddot',ExtFunIO.jointi.nq.all,self.Nmesh);
             arg_SX.act = SX.sym('a',length(muscleNames),self.Nmesh);
             arg_SX.fromExtFun = SX.sym('fromExtFun',ExtFunIO.nOutputs,self.Nmesh); % GRFs, point kinematics
-
+            if self.Nstates > 0
+                arg_SX.x = SX.sym('optivar_x',Nstates_all, self.Nmesh); % orthosis internal state
+            end
+            if self.Ncontrols > 0
+                arg_SX.u = SX.sym('optivar_u',Ncontrols_all, self.Nmesh); % orthosis controls (to be optimized)
+            end
+            
             % all outputs for wrapper function
             res_SX.Mcoord = SX(ExtFunIO.jointi.nq.all,self.Nmesh);
             res_SX.toExtFun = SX(ExtFunIO.input.nInputs,self.Nmesh); % bodyforces, bodymoments
-
+            if self.Nstates > 0
+                res_SX.stateDyn = SX(Nstates_all, self.Nmesh); % orthosis internal state dynamics
+            end
             % create inputs for function from inputs of wrapper function
             arg_fun = cell(1,self.fun.n_in);
             res_fun = cell(1,self.fun.n_out);
+
             for j=1:length(arg_fun)
-                if strcmp(self.meta_arg(j).type,'muscle')
-                    idx = find(strcmp(muscleNames,self.meta_arg(j).name));
-                else
-                    idx = ExtFunIO.(self.meta_arg(j).type).(self.meta_arg(j).name);
+                switch self.meta_arg(j).type
+                    case 'muscle'
+                        idx = find(strcmp(muscleNames,self.meta_arg(j).name));
+                    case 'optivar'
+                        switch self.meta_arg(j).subtype
+                            case 'x'
+                                idx = find(strcmp(stateNames,self.meta_arg(j).name));
+                            case 'u'
+                                idx = find(strcmp(controlNames,self.meta_arg(j).name));
+                        end
+                    otherwise
+                        idx = ExtFunIO.(self.meta_arg(j).type).(self.meta_arg(j).name);
                 end
-                arg_fun{j} = arg_SX.(self.meta_arg(j).subtype)(idx,:);
+                    arg_fun{j} = arg_SX.(self.meta_arg(j).subtype)(idx,:);
             end
 
             % evaluate function
@@ -701,10 +867,14 @@ classdef Orthosis < handle
 
             % assign outputs from function to outputs of wrapper function
             for j=1:length(self.meta_res)
-                if strcmp(self.meta_res(j).type,'coordi')
-                    idx = ExtFunIO.(self.meta_res(j).type).(self.meta_res(j).name);
-                else
-                    idx = ExtFunIO.input.(self.meta_res(j).type).(self.meta_res(j).name);
+
+                switch self.meta_res(j).type
+                    case 'coordi'
+                        idx = ExtFunIO.(self.meta_res(j).type).(self.meta_res(j).name);
+                    case 'dyn'
+                        idx = find(strcmp(stateNames,self.meta_res(j).name));
+                    otherwise
+                        idx = ExtFunIO.input.(self.meta_res(j).type).(self.meta_res(j).name);
                 end
                 res_SX.(self.meta_res(j).subtype)(idx,:) = res_fun{j};
             end
@@ -712,13 +882,15 @@ classdef Orthosis < handle
             % collect outputs for post-processing function
             wrap_res_pp = res_fun(length(self.meta_res)+1:end);
 
-            % input arguments for wrapper function
+            % input arguments for wrapper function 
+            % (convert struct to cell array)
             arg_names = fieldnames(arg_SX);
             for i=1:length(arg_names)
                 wrap_arg{i} = arg_SX.(arg_names{i});
             end
 
             % output arguments for wrapper function
+            % (convert struct to cell array)
             res_names = fieldnames(res_SX);
             for i=1:length(res_names)
                 wrap_res{i} = res_SX.(res_names{i});
@@ -827,6 +999,51 @@ classdef Orthosis < handle
                     'input validation'],self.name);
             end
         end % end of inputExistsInOsimModel
+
+        %TODO: Validation function needs to be tested
+        function idx = validateOptivar(self, current_optivar)
+            current_optivar_fullname = ['optivar_' current_optivar];
+            % Ensure current_optivar is a char
+            if ~ischar(current_optivar_fullname)
+                error('validateOptivar:InvalidInput', ...
+                    'current_optivar must be a char, but got type %s.', class(current_optivar_fullname));
+            end
+        
+            % --- Check if it appears in self.names_arg ---
+            matches = strcmp(current_optivar_fullname, self.names_arg);
+        
+            if ~any(matches)
+                error('validateOptivar:NameNotFound', ...
+                    'The variable "%s" does not exist in self.names_arg.', current_optivar_fullname);
+            end
+        
+            if sum(matches) > 1
+                error('validateOptivar:DuplicateName', ...
+                    'The variable "%s" appears multiple times in self.names_arg, but it must be unique.', current_optivar_fullname);
+            end
+        
+            % Get index of match
+            idx = find(matches);
+        
+            % --- Check meta_arg type ---
+            if ~isfield(self.meta_arg, 'type') || ~isfield(self.meta_arg, 'subtype')
+                error('validateOptivar:MissingFields', ...
+                    'self.meta_arg is missing required fields "type" and/or "subtype".');
+            end
+        
+            if ~strcmp(self.meta_arg(idx).type, 'optivar')
+                error('validateOptivar:WrongType', ...
+                    'The entry "%s" exists, but has type "%s" instead of "optivar". These dynamics are defined elsewhere.', ...
+                    current_optivar_fullname, self.meta_arg(idx).type);
+            end
+        
+            if ~strcmp(self.meta_arg(idx).subtype, 'x')
+                error('validateOptivar:WrongSubtype', ...
+                    'The entry "%s" exists with type "optivar", but subtype "%s" instead of "x". Only states (subtype x) can have dynamics defined, not controls (subtype u)', ...
+                    current_optivar_fullname, self.meta_arg(idx).subtype);
+            end
+        end
+
 
     end % end of protected methods
 

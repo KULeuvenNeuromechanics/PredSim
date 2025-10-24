@@ -23,8 +23,8 @@ function [] = plot_figures(result_paths,legend_names,figure_settings)
 % Original author: Lars D'Hondt
 % Original date: 20/May/2022
 %
-% Last edit by: 
-% Last edit date: 
+% Last edit by: Sander De Groof
+% Last edit date: 21/Oct/2025
 % --------------------------------------------------------------------------
 
 % generate colours, in this case a rainbow
@@ -48,11 +48,22 @@ for i=1:length(result_paths)
     % loop over figures
     for j=1:length(figure_settings)
         % check figure type
-        if strcmp(figure_settings(j).dofs,'custom')
+        % >>> CHANGED: also allow orthosis variable to trigger custom handling
+        if any(strcmp(figure_settings(j).dofs,'custom')) || any(strcmp(figure_settings(j).variables,'orthosis'))
             % use custom figure function
             if strcmp(figure_settings(j).variables,'GRF')
                 % use "plot_figure_grf.m"
                 fig_hands{j} = plot_figure_grf(R,legend_names{i},colors(i,:),fig_hands{j});
+
+            % >>> ADDED: call new orthosis plotting function
+            elseif strcmp(figure_settings(j).variables,'orthosis')
+                % use "plot_figure_orthosis.m"
+                % plots orthosis states, controls, or exo torques
+                fig_hands{j} = plot_figure_orthosis(R, ...
+                    figure_settings(j).dofs, ...   % names of orthosis vars or DOFs
+                    fig_hands{j}, ...              % figure handle (colors default cycle)
+                    legend_names{i});              % legend label
+            % >>> END ADDITION
 
             elseif strcmp(figure_settings(j).variables,'my_first_figure')
                 % call you custom figure function here
@@ -123,6 +134,4 @@ for j=1:length(figure_settings)
         end
     end
 end
-
-
 

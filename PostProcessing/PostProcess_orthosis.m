@@ -32,14 +32,28 @@ qdots(R.ground_reaction.idx_GC,:) = R.kinematics.Qdots_rad;
 qddots(R.ground_reaction.idx_GC,:) = R.kinematics.Qddots_rad;
 acts(R.ground_reaction.idx_GC,:) = R.muscles.a;
 
+ortArg = {};
+if isfield(R,'orthosis')
+    if isfield(R.orthosis,'states')
+        states(R.ground_reaction.idx_GC,:) = R.orthosis.states;
+        states = states(1:N,:);
+        ortArg{end+1} = states';
+    end
+    if isfield(R.orthosis,'controls')
+        controls(R.ground_reaction.idx_GC,:) = R.orthosis.controls;
+        controls = controls(1:N,:);
+        ortArg{end+1} = controls';
+    end
+end
+
 qs = qs(1:N,:);
 qdots = qdots(1:N,:);
 qddots = qddots(1:N,:);
 acts = acts(1:N,:);
 
-[Mcoord1, toExtFun1] = f_casadi.f_orthosis_mesh_k(qs', qdots', qddots', acts');
+[Mcoord1, toExtFun1] = f_casadi.f_orthosis_mesh_k(qs', qdots', qddots', acts',ortArg{:});
 
-[Mcoord2, toExtFun2] = f_casadi.f_orthosis_mesh_all(qs',qdots',qddots',acts');
+[Mcoord2, toExtFun2] = f_casadi.f_orthosis_mesh_all(qs',qdots',qddots',acts',ortArg{:});
 
 
 F  = external('F',replace(fullfile(R.S.misc.subject_path,R.S.misc.external_function),'\','/'));
@@ -82,7 +96,7 @@ for i=1:length(f_casadi.separate_orthoses)
 
     res_fun = cell(1,f_pp_i.n_out);
 
-    [res_fun{:}] = f_pp_i(qs', qdots', qddots', acts',fromExtFun);
+    [res_fun{:}] = f_pp_i(qs', qdots', qddots', acts',fromExtFun,ortArg{:});
 
     for j=1:f_pp_i.n_out
         res_pp.x = full(res_fun{j});
