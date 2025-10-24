@@ -676,14 +676,16 @@ classdef Orthosis < handle
                 % loop over all optivars
                 if n ==1
                     current_optivar = optivar_names;
+                    current_value = value;
                 else
                     current_optivar = optivar_names{m};
+                    current_value = value(m,:);
                 end
                 [~] = validateOptivar(self, current_optivar);
                 F_name = [current_optivar, '_dot'];
     
                 if ~any(cellfun(@(x)strcmp(x,F_name), self.names_res))
-                    self.res{end+1} = value;
+                    self.res{end+1} = current_value;
                     self.names_res{end+1} = F_name;
                     self.meta_res(end+1).name = current_optivar;
                     self.meta_res(end).type = 'dyn'; % type and subtype fields can be used later for wrapping

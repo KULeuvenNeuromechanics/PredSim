@@ -50,7 +50,7 @@ for i=1:length(S.orthosis.settings)
         S.orthosis.settings{i}.states.names = {meta_arg(isX).name};
         S.orthosis.settings{i}.states.bounds_nsc = {meta_arg(isX).bounds_nsc};
         S.orthosis.settings{i}.states.bounds = {meta_arg(isX).bounds};
-        statecounter = statecounter + uint32(1);
+        statecounter = statecounter + nnz(isX);
     else
         S.orthosis.settings{i}.states.names = {};
         S.orthosis.settings{i}.states.bounds_nsc = {};
@@ -62,7 +62,7 @@ for i=1:length(S.orthosis.settings)
         S.orthosis.settings{i}.controls.names = {meta_arg(isU).name};
         S.orthosis.settings{i}.controls.bounds_nsc = {meta_arg(isU).bounds_nsc};
         S.orthosis.settings{i}.controls.bounds = {meta_arg(isU).bounds};
-        controlcounter = controlcounter + uint32(1);
+        controlcounter = controlcounter + nnz(isU);
     else
         S.orthosis.settings{i}.controls.names = {};
         S.orthosis.settings{i}.controls.bounds_nsc = {};

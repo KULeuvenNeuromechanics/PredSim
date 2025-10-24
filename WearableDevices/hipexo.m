@@ -49,17 +49,28 @@ side = settings_orthosis.left_right; % 'l' for left or 'r' for right
 
 %u_hipfl_emg = -(emg-0.05)*gain; % only use activation above lower bound (0.05)
 
+%test time variable control
+% timebase = 0:init.Nmesh;
+% if strcmp(side,'l')
+%     TimeVarControl = 10*sin(2*pi*timebase/timebase(end)); %10Nm torque in the middle of cycle
+% else
+%     TimeVarControl = 10*sin(2*pi*timebase/timebase(end)+pi); %10Nm torque in the middle of cycle
+% end
+
 % Simple first order dynamics dx/dt = (u-x)/tau
-tc_tau = 0.1; % time constant in seconds
+tc_tau = 0.05; % time constant in seconds
 state_x = exo.var_opti(['state_x_' side '_side'],'state',[settings_orthosis.dynamics.xl settings_orthosis.dynamics.xu]);
+state_x2 = exo.var_opti(['state_x2_' side '_side'],'state',[settings_orthosis.dynamics.xl settings_orthosis.dynamics.xu]);
 control_u = exo.var_opti(['control_u_' side '_side'],'control',[settings_orthosis.dynamics.ul settings_orthosis.dynamics.uu]);
 
 %control_exo = u_hipfl_emg + control_u; % to make it interesting
 control_exo = control_u;
 
-exo.addDynamics((control_exo-state_x)/tc_tau,['state_x_' side '_side']); %state and control
+%exo.addDynamics((control_exo-state_x)/tc_tau,['state_x_' side '_side']); %state and control
+exo.addDynamics([(control_exo-state_x)/tc_tau;(control_exo-state_x2)/tc_tau],{['state_x_' side '_side'],['state_x2_' side '_side']}); %state and control
 %exo.addDynamics((emg-state_x)/tc_tau,['state_x_' side '_side']); %state, but no control
 exo.addCoordForce(state_x,['hip_flexion_',side]);
+%exo.addCoordForce(state_x+TimeVarControl,['hip_flexion_',side]);
 %exo.addCoordForce(control_u,['hip_flexion_',side]); % add control straight away
 
 %exo.addVarToPostProcessing(state_x,['state_x_' side '_side'])
