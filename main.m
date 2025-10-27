@@ -15,6 +15,7 @@ clc
 
 addpath(fullfile(pathRepo,'DefaultSettings'))
 
+
 %% Initialize S
 
 [S] = initializeSettings('Falisse_et_al_2022');
