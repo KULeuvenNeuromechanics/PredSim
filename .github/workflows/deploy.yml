@@ -1,10 +1,11 @@
 name: Deploy Sphinx to GitHub Pages
+# Builds the website and deploys the updates online when the master branch is updated.
 
 on:
   push:
     branches: ["master"]
-  release:
-    types: [published]
+  #release:
+  #  types: [published]
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -39,7 +40,7 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install Documentation/requirements.txt
+          pip install -r Documentation/requirements.txt
 
       - name: Build Sphinx documentation
         run: |
@@ -47,10 +48,12 @@ jobs:
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
           path: './Documentation/build/html'
+
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
