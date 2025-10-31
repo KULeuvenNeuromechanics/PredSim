@@ -41,6 +41,13 @@ if isenv('EBROOTCASADIMINMATLAB')
     addpath(fullfile(getenv('EBROOTCASADIMINMATLAB'), 'matlab'))
 end
 
+% Keep a unique opensim log file for each Slurm job and reset logger level
+if isenv('SLURM_JOB_ID')
+    org.opensim.modeling.Logger.removeFileSink()
+    org.opensim.modeling.Logger.addFileSink(fullfile(pathRepoFolder,'PredSimResults',['opensim-', getenv('SLURM_JOB_ID'), '.log']))
+	org.opensim.modeling.Logger.setLevelString('Error')
+end
+
 %% Initialize S
 
 [S] = initializeSettings('Falisse_et_al_2022');
