@@ -38,7 +38,11 @@ n_coord = model_info.ExtFunIO.jointi.nq.all;
 separate_orthoses = {};
 
 % external function
-F = external('F',fullfile(S.misc.subject_path, S.misc.external_function));
+if S.OpenSimADOptions.useSerialisedFunction
+    F = Function.load(fullfile(S.misc.subject_path, S.misc.external_function));
+else
+    F = external('F',fullfile(S.misc.subject_path, S.misc.external_function));
+end
 F_k = F;
 F_all = F.map(S.solver.N_meshes,S.solver.parallel_mode,S.solver.N_threads);
 
