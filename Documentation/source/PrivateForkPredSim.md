@@ -1,3 +1,6 @@
+Creating a private fork
+=======================
+
 The [PredSim repository](https://github.com/KULeuvenNeuromechanics/PredSim) is public and Github does not allow the creation of private forks for public repositories.
 If you want to have a private version that can still fetch updates from the public repository, you can use this workaround.
 

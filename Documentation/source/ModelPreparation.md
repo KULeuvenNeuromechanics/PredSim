@@ -1,5 +1,6 @@
 
-# Preparing a musculoskeletal model for use with PredSim
+Preparing a musculoskeletal model for use with PredSim
+======================================================
 
 - [What information does PredSim use to describe the musculoskeletal dynamics?](#what-information-does-predsim-use-to-describe-the-musculoskeletal-dynamics)
 - [Limitations on the OpenSim model](#limitations-on-the-opensim-model)
