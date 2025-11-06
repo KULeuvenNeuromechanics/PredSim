@@ -19,7 +19,7 @@ The order of *coordinates*, *muscles*, and *ligaments* is given in *R.colheaders
 
 
 ### R.S: settings used to generate these results
-See the [overview of settings](../README.md#Required-Settings) for more information about the settings.
+See the [overview of settings](./SettingsOverview.md) for more information about the settings.
 
 ### R.objective
 | Field | Description | Dimension | Unit |
@@ -84,7 +84,7 @@ Optional, if muscle synergies are implemented:
 | SynW_r | synergy weights, right muscles | synergies_right x muscles_right | [-] |
 | SynW_l | synergy weights, left muscles | synergies_left x muscles_left | [-] |
 
-<img src="./FiguresForDocumentation/Hill-type%20muscle%20model.svg" width="400" height="auto">
+<img src="./_static/Hill-type%20muscle%20model.svg" width="400" height="auto">
 
 Hill-type muscle
 

@@ -11,14 +11,21 @@ Check the `user forum`_ and `known bugs`_.
 Common problems and how to solve them
 -------------------------------------
 
-``PredSim/opensimAD/`` is empty
+.. _err no opensimad:
 
-    Open git command prompt, go to ``PredSim/``, and run ``git submodule update --init``.
+.. dropdown:: The folder ``PredSim/opensimAD/`` is empty.
+
+    1. Open git command prompt
+    2. go to ``PredSim/``
+    3. run ``git submodule update --init``.
 
 
-'cmake' is not recognized as an internal or external command, operable program or batch file.
+.. _err no cmake:
 
-    See :ref:`_setup_cmake`.
+.. dropdown:: A matlab error preceded by 
+    ``'cmake' is not recognized as an internal or external command, operable program or batch file.``
+
+    CMake is not :ref:`installed correctly  <setup_cmake>`.
 
 
 

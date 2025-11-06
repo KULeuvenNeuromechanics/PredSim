@@ -78,7 +78,7 @@ Replace the `<credit_account>` entry with your own (you can check to which
 credit accounts you have access by running the `sam-balance` command) and
 submit the job script from your PredSim directory with `sbatch run_simulation.slurm`.
 To see the status of your job, execute `squeue -M ALL`, terminal output will
-be written to the job output file (by default looking like `slurm-<jobid>.out`.
+be written to the job output file (by default looking like `slurm-<jobid>.out`).
 
 > [!NOTE]
 > If you upload files from a Windows machine to the Linux cluster, you might
