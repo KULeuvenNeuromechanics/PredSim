@@ -59,7 +59,7 @@ if isfield(model_info,'slope') && abs(model_info.slope)>0
 
     % rotate data mot file
     data = JointAngleMuscleAct.data;
-	R =    [cos(fi)	-sin(fi)	0	
+	Rotm =    [cos(fi)	-sin(fi)	0	
 		sin(fi)	cos(fi)	0	
 		0	0	1];
 
@@ -69,9 +69,9 @@ if isfield(model_info,'slope') && abs(model_info.slope)>0
     i_pelvis_tx = find(strcmp(JointAngleMuscleAct.labels,'pelvis_tx'));
     data_tpelvis =data(:,i_pelvis_tx:i_pelvis_tx+2);
 
-    data(:,i_pelvis_tx) = data_tpelvis*R(:,1);
-    data(:,i_pelvis_tx+1) = data_tpelvis*R(:,2);
-    data(:,i_pelvis_tx+2) = data_tpelvis*R(:,3);
+    data(:,i_pelvis_tx) = data_tpelvis*Rotm(:,1);
+    data(:,i_pelvis_tx+1) = data_tpelvis*Rotm(:,2);
+    data(:,i_pelvis_tx+2) = data_tpelvis*Rotm(:,3);
 
     % structure for output
     slope_mot.data = data;
