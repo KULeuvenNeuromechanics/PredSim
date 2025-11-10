@@ -51,3 +51,38 @@ filenameJointAngles = fullfile(R.S.misc.save_folder,...
     [R.S.misc.result_filename '.mot']);
 write_motionFile_v40(JointAngleMuscleAct, filenameJointAngles);
 
+% if gravity vector was tilted (walking on a slope) also export new mot
+% file with gravity vector along y-axis.
+if isfield(model_info,'slope') && abs(model_info.slope)>0
+    % convert slope to angle
+    fi = atan2(model_info.slope,1);
+
+    % rotate data mot file
+    data = JointAngleMuscleAct.data;
+	R =    [cos(fi)	-sin(fi)	0	
+		sin(fi)	cos(fi)	0	
+		0	0	1];
+
+    i_pelvis_tilt = strcmp(JointAngleMuscleAct.labels,'pelvis_tilt');
+    data(:,i_pelvis_tilt) = data(:,i_pelvis_tilt)+fi*180/pi;
+
+    i_pelvis_tx = find(strcmp(JointAngleMuscleAct.labels,'pelvis_tx'));
+    data_tpelvis =data(:,i_pelvis_tx:i_pelvis_tx+2);
+
+    data(:,i_pelvis_tx) = data_tpelvis*R(:,1);
+    data(:,i_pelvis_tx+1) = data_tpelvis*R(:,2);
+    data(:,i_pelvis_tx+2) = data_tpelvis*R(:,3);
+
+    % structure for output
+    slope_mot.data = data;
+    slope_mot.labels = JointAngleMuscleAct.labels;
+    slope_mot.inDeg = 'yes';
+
+    % export mot file
+    filenameJointAngles = fullfile(R.S.misc.save_folder,...
+    [R.S.misc.result_filename '_slope.mot']);
+    write_motionFile_v40(slope_mot, filenameJointAngles);
+
+
+end
+

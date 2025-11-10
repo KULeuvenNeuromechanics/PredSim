@@ -52,7 +52,7 @@ S.solver.par_cluster_name = 'Cores4';
 
 % benchmark specific studies
 S_benchmark.studies = {'vanderzee2022','browning2008','koelewijn2019',...
-    'gomenuka2014'};
+    'gomenuka2014','schertzer2014'};
 % options are:
 %   vanderzee2022: variations in gait speed
 %   koelewijn2019: variation in gait speed and slope

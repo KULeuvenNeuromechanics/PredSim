@@ -38,6 +38,7 @@ else
     model_info.mass = S.subject.mass;
 end
 
+
 %% External function
 % load IO from external function
 % We load IO into a struct, because having a variable named "IO" conflicts
@@ -84,6 +85,12 @@ for i=1:model.getForceSet().getSize()
 end
 model_info.ligament_info.ligament_names = ligament_names;
 model_info.ligament_info.NLigament = length(ligament_names);
+
+% gravity vector and potential tilt of gravity vector
+gravity_osim = model.getGravity();
+model_info.gravity = [gravity_osim.get(0), gravity_osim.get(1), gravity_osim.get(2)];
+fi = atan2(model_info.gravity(2),model_info.gravity(1));
+model_info.slope = tan(3*pi/2-fi);
 
 %% OpenSim API
 % indices of coordinates in the OpenSim API state vector

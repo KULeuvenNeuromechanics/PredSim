@@ -266,6 +266,13 @@ if ~isfield(S.misc,'result_filename')
     S.misc.result_filename = [];
 end
 
+% id of your simulation (this is mainly used to connect experimental data
+% from (url) to your simulation result
+if ~isfield(S.misc,'benchmark_id')
+    S.misc.benchmark_id = [];
+end
+
+
 %% post_process
 if ~isfield(S,'post_process')
     S.post_process = [];
