@@ -347,7 +347,7 @@ if isfield(S_benchmark,'studies') && ~isempty(S_benchmark.studies)
             % id for benchmarking
             S.misc.benchmark_id = ids_browning{ct_sim};
             % add total added mass to settings
-            S.misc.benchmark_added_mass =  S_benchmark.browning.addedmass{ct_sim};
+            S.misc.benchmark_added_mass =  S_benchmark.browning.addedmass(ct_sim);
             % check if save_folder already exists and contains a matfile,
             % if this is the case do not run the simulation
             mat_files = dir(fullfile(S.misc.save_folder,'*.mat'));
@@ -419,13 +419,15 @@ if isfield(S_benchmark,'studies') && ~isempty(S_benchmark.studies)
         end
     end
 
-    % run simulations as in schertzer2014
+    % run simulations as in schertzer2014    
     S_benchmark.schertzer.gait_speeds = [4 5 6]./3.6;
-    S_benchmark.schertzer.names = S_benchmark.converted_models.schertzer2014.modelnames; % based on convert models schertzer
+    nsim_schertzer = length(S_benchmark.converted_models.schertzer2014.modelnames) *...
+        length(S_benchmark.schertzer.gait_speeds);
+    S_benchmark.schertzer.names = cell(nsim_schertzer,1);
     ct_sim = 1;
     % create identifiers for gomenuka
     for i_speed = 1:length(S_benchmark.schertzer.gait_speeds)
-        for imodel = 1 :length(S_benchmark.schertzer.names)
+        for imodel = 1 :length(S_benchmark.converted_models.schertzer2014.modelnames)
             model_name = S_benchmark.converted_models.schertzer2014.modelnames{imodel};
             osim_path_sel = S_benchmark.converted_models.schertzer2014.osim_path{imodel};
             % start from default input settings
@@ -440,11 +442,11 @@ if isfield(S_benchmark,'studies') && ~isempty(S_benchmark.studies)
             % create id for benchmaring
             speed_str = velocityToString(S.misc.forward_velocity);
             id_sel    = ['schertzer2014_' speed_str{1}, ...
-                '_' S_benchmark.converted_models.schertzer2014.location_added_mass{ct_sim} '_' ...
-                num2str(S_benchmark.converted_models.schertzer2014.added_mass(ct_sim)*2) 'kg'];
+                '_' S_benchmark.converted_models.schertzer2014.location_added_mass{imodel} '_' ...
+                num2str(S_benchmark.converted_models.schertzer2014.added_mass{imodel}*2) 'kg'];
             S.misc.benchmark_id = id_sel;
             % added mass
-            S.misc.benchmark_added_mass = S_benchmark.converted_models.schertzer2014.added_mass*2;
+            S.misc.benchmark_added_mass = S_benchmark.converted_models.schertzer2014.added_mass{imodel}*2;
             % adapt subject
             S.subject.name = model_name;
             % check if save_folder already exists and contains a matfile,
