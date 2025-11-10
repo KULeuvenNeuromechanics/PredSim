@@ -52,7 +52,11 @@ S.orthosis.settings = {};
 S.subject.adapt_IG_pelvis_y = 0;
 
 % save computername
-S.misc.computername = getenv('COMPUTERNAME');
+if ispc
+    S.misc.computername = getenv('COMPUTERNAME');
+elseif isunix
+    S.misc.computername = getenv('HOSTNAME');
+end
 
 % save path to repo
 S.misc.main_path = pathRepo;

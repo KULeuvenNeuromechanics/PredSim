@@ -45,7 +45,7 @@ pathmain = pwd;
 % Loading external functions.
 setup.derivatives =  'AD'; % Algorithmic differentiation
 cd(S.misc.subject_path)
-F  = external('F',S.misc.external_function);
+F  = external('F', fullfile(S.misc.subject_path, S.misc.external_function));
 cd(pathmain);
 
 %% Collocation Scheme
@@ -570,8 +570,6 @@ end % End loop over collocation points
 if (S.subject.synergies) && (S.subject.TrackSynW)
     J_TrackSynW = W.TrackSynW*f_casadi.TrackSynW(SynW_rk, SynW_lk);
     J = J + J_TrackSynW;
-else
-    J_TrackSynW = 0;
 end
 
 % Synergies: a - WH = 0

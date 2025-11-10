@@ -23,8 +23,8 @@ function [varargout] = run_pred_sim(S,osim_path)
 % Last edit date: 
 % --------------------------------------------------------------------------
 
-addpath([S.misc.main_path '\VariousFunctions'])
-addpath([S.misc.main_path '\WearableDevices'])
+addpath(fullfile(S.misc.main_path, 'VariousFunctions'))
+addpath(fullfile(S.misc.main_path, 'WearableDevices'))
 
 % Settings that are not specified get their default value
 S = getDefaultSettings(S,osim_path);
@@ -62,7 +62,10 @@ elseif S.post_process.rerun
     R.S = S;
 
 elseif isempty(S.misc.result_filename)
-    if strcmp(S.misc.savename,'structured')
+    if isenv('SLURM_JOB_ID')
+        % use job_id from slurm
+        S.misc.result_filename = [S.subject.name '_' getenv('SLURM_JOB_ID')];
+    elseif strcmp(S.misc.savename,'structured')
         % use a structured savename
         if S.solver.run_as_batch_job
             result_filename = [S.subject.name '_job' num2str(S.solver.job_id)];
@@ -105,7 +108,7 @@ disp(' ')
 disp(' ')
 
 %% PreProcessing
-addpath([S.misc.main_path '\PreProcessing'])
+addpath(fullfile(S.misc.main_path, 'PreProcessing'))
 disp('Start PreProcessing...')
 disp(' ')
 t0 = tic;
@@ -116,8 +119,8 @@ disp(' ')
 disp(' ')
 
 %% Creating casadi functions
-addpath([S.misc.main_path '\CasadiFunctions'])
-addpath([S.misc.main_path '\ModelComponents'])
+addpath(fullfile(S.misc.main_path, 'CasadiFunctions'))
+addpath(fullfile(S.misc.main_path, 'ModelComponents'))
 
 disp('Start creating CasADi functions...')
 disp(' ')

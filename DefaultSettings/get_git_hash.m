@@ -24,7 +24,7 @@ function [local_hash, branch_name, remote_hash] = get_git_hash(pathRepo)
 % Original date: 28/02/2023
 %
 % Last edit by: Bram Van Den Bosch
-% Last edit date: 26/05/2023
+% Last edit date: 16/10/2025
 % --------------------------------------------------------------------------
 
 % save current working directory
@@ -32,27 +32,34 @@ pathInitDir = pwd;
 % move to PredSim
 cd(pathRepo)
 
-% get hash of the local instance
-command = ['git rev-parse HEAD'];
-[status,local_hash] = system(command);
+% fetch latest refs from remote
+[status,response] = system('git fetch');
 
-if contains(local_hash,"'git' is not recognized as an internal or external command")
+% check if git works
+if contains(response,"'git' is not recognized as an internal or external command")
     warning('Unable to get git hash. Git seems not to be installed on your machine or cannot be executed from the command line.');
 elseif status ~= 0 
     warning('Unable to get git hash. It is advised to get PredSim through GitHub to have version control and to receive future updates.');
 end
 
+% get hash of the local instance
+[status,local_hash] = system('git rev-parse HEAD');
+local_hash = strtrim(local_hash);
+
 if status == 0
     % get name of the current branch
-    command = ['git branch --show-current'];
-    [~,branch_name] = system(command);
+    [~,branch_name] = system('git branch --show-current');
+    branch_name = strtrim(branch_name);
     
     % get the hash of the latest commit on the remote
-    command = ['git rev-parse origin/' branch_name];
-    [~,remote_hash] = system(command);
+    command = ['git rev-parse --verify origin/' branch_name];
+    [remote_status,remote_hash] = system(command);
+    remote_hash = strtrim(remote_hash);
     
     % display warning, pointing to the most recent commit on the remote
-    if ~strcmp(local_hash,remote_hash)
+    if remote_status ~= 0
+        warning(['No corresponding remote branch, see : ' branch_name]);
+    elseif ~strcmp(local_hash,remote_hash)
         warning(['There is a more recent version of this branch on the remote: https://github.com/KULeuvenNeuromechanics/PredSim/tree/' remote_hash]);
     end
 end

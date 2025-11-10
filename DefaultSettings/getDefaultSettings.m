@@ -663,8 +663,13 @@ end
 %   Visual studio 2017: 'Visual Studio 15 2017 Win64'
 %   Visual studio 2017: 'Visual Studio 16 2019'
 %   Visual studio 2017: 'Visual Studio 17 2022'
+%   Unix Makefiles: on Linux and similar systems
 if ~isfield(S.OpenSimADOptions,'compiler')
-    S.OpenSimADOptions.compiler = findVisualStudioInstallation;
+    if ispc
+        S.OpenSimADOptions.compiler = findVisualStudioInstallation;
+    elseif isunix
+        S.OpenSimADOptions.compiler = 'Unix Makefiles'
+    end
 end
 
 % Input forces acting on bodies

@@ -28,7 +28,12 @@ function [S] = osim2dll(S, osim_path)
 
 % external function files
 [~,osim_file_name,~] = fileparts(osim_path);
-external_function_dll = fullfile(S.misc.subject_path,['F_', osim_file_name, '.dll']);
+if ispc
+    libextension = '.dll';
+elseif isunix
+    libextension = '.so';
+end
+external_function_dll = fullfile(S.misc.subject_path,['F_', osim_file_name, libextension]);
 external_function_lib = fullfile(S.misc.subject_path,['F_', osim_file_name, '.lib']); % not needed, yet...
 external_function_cpp = fullfile(S.misc.subject_path,['F_', osim_file_name, '.cpp']);
 external_function_IO  = fullfile(S.misc.subject_path,['F_' osim_file_name '_IO.mat']);
@@ -147,7 +152,11 @@ else
     t0 = tic;
     disp('   Creating new external function...')
 
-    addpath(fullfile(S.misc.main_path,'opensimAD','utilities'))
+    if ispc
+        addpath(fullfile(S.misc.main_path,'opensimAD','utilities'))
+    elseif isunix
+        addpath(fullfile(S.misc.main_path,'opensimAD_linux','utilities'))
+    end
 
     outputFilename = ['F_' osim_file_name];
 
@@ -171,6 +180,6 @@ else
 
 end
 
-S.misc.external_function = ['F_' osim_file_name '.dll'];
+S.misc.external_function = ['F_' osim_file_name libextension];
 
 end % end of function

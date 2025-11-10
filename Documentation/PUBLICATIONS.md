@@ -11,12 +11,13 @@ The goal is to showcase the variety of studies using PredSim, provide reading ma
 2. **Edit** this file (`PUBLICATIONS.md`) and add your publication to the list below.
 3. Use the [APA reference style](https://apastyle.apa.org/style-grammar-guidelines/references/examples). Please do add the DOI or URL.
 4. **Submit a pull request** with your addition.
-
+5. Congrats, you are now a contributor to PredSim! 
 ---
 
 ## 📄 Publication List
 
 ### 2025
+- Van Den Bosch, B., D’Hondt, L., Jonkers, I., Desloovere, K., Van Campenhout, A., & De Groote, F. (2025). Estimating the contribution of musculoskeletal impairments to altered gait kinematics in children with cerebral palsy using predictive simulations. Journal of NeuroEngineering and Rehabilitation, 22(1), 225. https://doi.org/10.1186/s12984-025-01767-w
 - Vandekerckhove, I., D’Hondt, L., Gupta, D., Van Den Bosch, B., Van den Hauwe, M., Goemans, N., ... & De Groote, F. (2025). Muscle weakness but also contractures contribute to the progressive gait pathology in children with Duchenne muscular dystrophy: a simulation study. Journal of NeuroEngineering and Rehabilitation, 22(1), 103. https://doi.org/10.1186/s12984-025-01631-x
 - Thornton, L. H. Developing and utilising musculoskeletal models to predict the locomotor and energetic performance of hopping macropods (Doctoral dissertation, University of the Sunshine Coast, Queensland). https://doi.org/10.25907/00899
 
