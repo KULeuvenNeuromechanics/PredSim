@@ -260,8 +260,7 @@ if isfield(S_benchmark,'studies') && ~isempty(S_benchmark.studies)
                 disp(['added sim vanderzee number ' num2str(i_speed) ' to batch' ])
             else
                 % temporary fix to add id to old simulations if needed
-                mat_files = dir(fullfile(S.misc.save_folder,'*.mat'));
-                
+                add_id_to_simresults(S.misc.save_folder, S.misc.benchmark_id)
             end
             % append name
             S_benchmark.vanderzee.names{i_speed} = ['speed_' ...
@@ -309,6 +308,9 @@ if isfield(S_benchmark,'studies') && ~isempty(S_benchmark.studies)
                     % run predsim
                     runPredSim(S, osim_path_sel);
                     disp(['added sim koelewijn number ' num2str(ct_sim) ' to batch' ])
+                else
+                    % temporary fix to add id to old simulations if needed
+                    add_id_to_simresults(S.misc.save_folder, S.misc.benchmark_id)
                 end
                 % append name
                 S_benchmark.koelewijn.names{ct_sim} = save_name;
