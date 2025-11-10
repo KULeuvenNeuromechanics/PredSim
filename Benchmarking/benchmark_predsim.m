@@ -12,6 +12,9 @@ function [] = benchmark_predsim(S,osim_path,S_benchmark)
 
 % also keep diary of this script ? does it work to have two diary function
 % inside each other ?
+if ~isfolder(S_benchmark.out_folder)
+    mkdir(S_benchmark.out_folder)
+end
 log_name = fullfile(S_benchmark.out_folder,'log_benchmark.txt');
 diary(log_name);
 
@@ -32,9 +35,6 @@ end
 % The only input is S and osim_path, maybe additional input S_benchmark
 S_input = S; % make copy of S
 osim_path_default = osim_path;
-if ~isfolder(S_benchmark.out_folder)
-    mkdir(S_benchmark.out_folder)
-end
 S.misc.save_folder = S_benchmark.out_folder;
 
 
