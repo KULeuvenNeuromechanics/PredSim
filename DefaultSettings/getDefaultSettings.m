@@ -266,6 +266,19 @@ if ~isfield(S.misc,'result_filename')
     S.misc.result_filename = [];
 end
 
+% id of your simulation (this is mainly used to connect experimental data
+% from (url) to your simulation result
+if ~isfield(S.misc,'benchmark_id')
+    S.misc.benchmark_id = [];
+end
+
+% added mass to simulation model (typically used to simulate conditions
+% with external mass added to body segments, e.g. Browning2008).
+if ~isfield(S.misc,'benchmark_added_mass')
+    S.misc.benchmark_added_mass = 0;
+end
+
+
 %% post_process
 if ~isfield(S,'post_process')
     S.post_process = [];
@@ -717,5 +730,10 @@ if ~isfield(S.OpenSimADOptions,'verify_ID')
     S.OpenSimADOptions.verify_ID = false;
 end 
 
+%% Flow control
+
+if ~isfield(S.flow_control,'pre_processing_only')
+    S.flow_control.pre_processing_only = false;
+end
 
 end
