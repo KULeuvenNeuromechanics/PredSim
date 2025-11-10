@@ -112,7 +112,7 @@ if ~isempty(Dat(1).benchmark.id)
 end
 
 % Plot ground reaction forces
-if ~isempty(Dat(1).benchmark.grf)
+if ~isempty(Dat(1).benchmark.grf_r)
     figure('Name',[study_name ': grf'],'Color',[1 1 1]);
     t = tiledlayout(2,nsubplot_dofs,'TileSpacing','compact','Padding','compact');
     grf_headers = {'Fx','Fy','Fz'};
@@ -122,21 +122,27 @@ if ~isempty(Dat(1).benchmark.grf)
             Cs = Colours(isim,:);
             nexttile(coord);
             % experimental grf
-            Fsel = Dat(isim).benchmark.grf.(grf_headers{coord});
+            Fsel = Dat(isim).benchmark.grf_r.(grf_headers{coord});
             Fsel = Fsel*msim*g;
             plot(Fsel,'Color',Cs);hold on;
 
             % simulated grf
             nexttile(coord+3);
             if bool_rot_grf
-                dsel = Dat(isim).R.ground_reaction.GRF_r_rot(:,coord);
+                dsel = Dat(isim).R.ground_reaction.GRF_r(:,coord);
+                if isfield(model_info,'slope')
+                    dsel = Dat(isim).R.ground_reaction.GRF_r(:,coord);
+                    fi = tan(model_info.slope);
+                    Rotm = rotz(fi);
+                    dsel = dsel*Rotm(1:3,1:3)';
+                else
+                    disp(['warning could not rotate forces for slope walking']);
+                end
             else
                 dsel = Dat(isim).R.ground_reaction.GRF_r(:,coord);
             end
             dsel_int = interp1(1:length(dsel),dsel,linspace(1,length(dsel),100));
             legs(isim) =plot(dsel_int,'Color',Cs);hold on;
-
-
         end
     end
     hL = legend(legs,headers,'NumColumns',3,'Box','off', ...

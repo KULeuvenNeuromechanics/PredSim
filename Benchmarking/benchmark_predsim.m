@@ -501,7 +501,7 @@ if isfield(S_benchmark,'gait_speeds') && S_benchmark.gait_speeds
             ['speed_' num2str(round(gait_speeds(i_speed)*100))];
         % id for benchmarking
         str_speed = velocityToString(S.misc.forward_velocity);
-        S.misc.benchmark_id = ['gait_speeds_' str_speed];
+        S.misc.benchmark_id = ['gait_speeds_' str_speed{1}];
         % check if save_folder already exists and contains a matfile,
         % if this is the case do not run the simulation
         mat_files = dir(fullfile(S.misc.save_folder,'*.mat'));
@@ -513,7 +513,6 @@ if isfield(S_benchmark,'gait_speeds') && S_benchmark.gait_speeds
             % temporary fix to add id to old simulations if needed
             add_id_to_simresults(S.misc.save_folder, S.misc.benchmark_id)
         end
-
     end
 end
 

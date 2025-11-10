@@ -61,30 +61,10 @@ S_benchmark.studies = {'vanderzee2022','browning2008','koelewijn2019',...
 %   gomenuka2014: added mass to pelvis, walking on a slope and various
 %   speeds
 
-
 % % benchmark gait speed simulations
 S_benchmark.gait_speeds = true;
 S_benchmark.gait_speed_range = [0.6 2];
 S_benchmark.gait_speeds_selection = 0.6:0.2:2;
-% 
-% % benchmark walking on a slope
-% S_benchmark.slope = false;
-% S_benchmark.slope_range = [0 24]; % in %
-% S_benchmark.slope_range_selection = 0:2:24;
-% 
-% % benchmarking walking with added mass
-% S_benchmark.added_mass = false;
-% S_benchmark.added_mass_studies = {'Browning','Schertzer','Huang'}; % add studies you want to replicate here
-
-% option to replicate specific studies ?. THis is a bit harder as I have to
-% compile specific models for each study (e.g. schertzer has walking at
-% specific slope with added mass to specific body part)
-%   - Koelewijn
-%   - Schertzer
-%   - Browning
-%   - Abe2015
-%   - Van Der Zee (gait speeds)
-
 
 % path information
 S_benchmark.out_folder = fullfile(pathRepo,'Results','Benchmark_Falisse2022');
@@ -103,4 +83,4 @@ benchmark_predsim(S,osim_path,S_benchmark);
 % utilities to compare simulations and experiments. 
 % please run this function when all simulations are finished
 
-%benchmark_results(S_benchmark.out_folder,'BoolPlot',true);
+%add_benchmarkdata_to_simresults(S_benchmark.out_folder,'BoolPlot',true);

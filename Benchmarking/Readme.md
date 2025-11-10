@@ -1,6 +1,23 @@
 ## Benchmarking
 
-info about why benchmarking and refer to paper
+This tool enables you to compare predictive simulations with your model to several experiments (we call this benchmarking). We started with comparing simulations to several simple gait conditions (e.g. walking on a slope, walking with added mass to the ankles, ...). You can find more detailed information in the paper "benchmarking the predictive capability of human gait simulations, Afschrift et al 2025 (URL)".
+
+
+
+The tools are quite simple
+
+1. the matlab function *benchmark_predim.m* will execute predsim simulations for several gait conditions. If you want you can add new gait conditions to this function
+
+2. You now have to compare you simulations to experimental data. The experimental data is stored in this repository ([GitHub - MaartenAfschrift/predsim_benchmark_data: data+ functions to compare predsim benchmark simulations with experiments](https://github.com/MaartenAfschrift/predsim_benchmark_data)). Please have a look at the readme of this repo if you want to use this data/contribute. You can now chose: write your own code to compare experiments to simulations or use my scripts that might be in some cases sufficients
+   
+   1. add_benchmarkdata_to_simresults.: matlab function simply loops over all simulations in your benchmarking results folder (S_benchmark.out_folder). Looks for the data that belongs to this simulation (from data repo) and adds a structure benchmarking to the results file. You can run this function when all simulations are finished. This function downloads the experimental data from the github repo automatically and saves it in PredSim/Benchmarking/Data.
+   
+   2. when running add_benchmarkdata_to_simresults with BoolPlot = true you also get some default figures
+
+
+
+
+
 
 
 ## Content datafiles
@@ -33,6 +50,7 @@ Feel free to add other outputs (like exoskeleton, exoskeleton_controller) to thi
 to add will be treated as empty.
 
 Tot nondim outputs based on:
+
 - frequency:  sqrt(g/l)
 - moments:    m*g*l
 - forces:     m*g
@@ -41,8 +59,6 @@ Tot nondim outputs based on:
 ## identifier for simulation
 
 We use an unique identifier for each experimental condition and the connected predictive simulation. This makes it easier to connect experimental data to simulation. This identifier is a string. If you add experimental data to () it would be nice to also add this identifier to the list below.
-
-
 
 **Koelewijn 2019:**
 
@@ -58,7 +74,6 @@ We use an unique identifier for each experimental condition and the connected pr
 
 - 1.3, 8%slope: **koelewijn2019_1p3ms_8incline**
 
-
 **Browning2008**
 
 - xkg femur: browning2008_femurxkg
@@ -71,20 +86,15 @@ We use an unique identifier for each experimental condition and the connected pr
 - x speed (in m/s): vanderzee2022_xms 
 - example: vanderzee2022_0p7ms for walking at 0.7 m/s
 
-
 **Gomenuka2014**
 
 - walking on slope x with added mass y at z m/s: gomenuka2014_slope_xpct_ykmh_mass_zpctmass
 - example for walking on slope 7 percent at 3 km/h and 25% added mass: gomenuka_slope_7pct_3kmh_25pctmass
 
-
 **Gait Speeds**
+
 - walking at x m/s: gait_speeds_xms
 - example: for walking at 0.85 ms: gait_speeds_0p85ms
-
-
-
-
 
 ### Idea benchmarking workflow
 
