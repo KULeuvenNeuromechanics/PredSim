@@ -1,129 +1,114 @@
-## Benchmarking
+# Benchmarking Predictive Simulations of Human Gait
 
-This tool enables you to compare predictive simulations with your model to several experiments (we call this benchmarking). We started with comparing simulations to several simple gait conditions (e.g. walking on a slope, walking with added mass to the ankles, ...). You can find more detailed information in the paper "benchmarking the predictive capability of human gait simulations, Afschrift et al 2025 (URL)".
+This repository provides tools to **benchmark** predictive simulations of human gait against experimental data.  
+The goal is to assess how well your model reproduces experimentally observed adaptations under various gait conditions (e.g., walking on slopes, walking with ankle loads, etc.).
 
+For more background and methodology, please refer to our paper:  
+**Afschrift et al. (2025) — *Benchmarking the predictive capability of human gait simulations*** (link forthcoming).
 
+---
 
-The tools are quite simple
+## Overview
 
-1. the matlab function *benchmark_predim.m* will execute predsim simulations for several gait conditions. If you want you can add new gait conditions to this function
+This repository contains MATLAB scripts to:
 
-2. You now have to compare you simulations to experimental data. The experimental data is stored in this repository ([GitHub - MaartenAfschrift/predsim_benchmark_data: data+ functions to compare predsim benchmark simulations with experiments](https://github.com/MaartenAfschrift/predsim_benchmark_data)). Please have a look at the readme of this repo if you want to use this data/contribute. You can now chose: write your own code to compare experiments to simulations or use my scripts that might be in some cases sufficients
-   
-   1. add_benchmarkdata_to_simresults.: matlab function simply loops over all simulations in your benchmarking results folder (S_benchmark.out_folder). Looks for the data that belongs to this simulation (from data repo) and adds a structure benchmarking to the results file. You can run this function when all simulations are finished. This function downloads the experimental data from the github repo automatically and saves it in PredSim/Benchmarking/Data.
-   
-   2. when running add_benchmarkdata_to_simresults with BoolPlot = true you also get some default figures
+1. Run predictive simulations for several experimental gait conditions.
+2. Compare your simulation results to experimental data. (Automatically download and link benchmark datasets for analysis and visualization.)
 
+Experimental datasets are hosted in a separate repository:  
+👉 [**predsim_benchmark_data**](https://github.com/MaartenAfschrift/predsim_benchmark_data)
 
+---
 
+## Getting Started
 
+### 1. Running Benchmark Simulations
 
+Use the MATLAB function **`benchmark_predsim.m`** to execute predictive simulations for multiple gait conditions.
 
+You can extend or modify the benchmark by adding new gait conditions directly in this function.
 
-## Content datafiles
+Example script: **`benchmark_falisse2022.m`**
 
-Data is stored as a json file. This json file contains non-dimensionalised data
-in the following structure.
+This example shows how to call the benchmarking function.
 
-- ik: matrix with inverse kinematics data for one gait cycle (nfr x ndof)
-- ik_std: matrix with standard deviation inverse kinematics data for one gait cycle (nfr x ndof)
-- ik_header: header inverse kinematics
-- id: matrix with inverse dynamics data for one gait cycle (nfr x ndof)
-- id_std: matrix with standard deviation inverse dynamics data for one gait cycle (nfr x ndof)
-- id: header inverse dynamics
-- grf_r: matrix with ground reaction force on right leg (nfr x 3)
-- grf_r_std: matrix with std ground reaction force on right leg
-- grf_l: matrix with ground reaction force on left leg (nfr x 3)
-- grf_l_std: matrix with std ground reaction force on left leg (nfr x 3)
-- grf_header: header GRF (default is {'Fx','Fy','Fz'};
-- stride_frequency: stride frequency
-- Pmetab_mean: mean metabolic power
-- subject_height: (average) height of participant(s) (in meter !)
-- subject_mass: (average) mass of the participant(s) (in kg !)
-- speed: walking speed in m/s
-- slope: slope (e.g. slope = 0.08 for walking on an 8% incline)
-- added_mass:  total added mass to subject (in kg)
-- location_added_mass: name of body (without _l or _r)
-- study: name of the study (e.g. browning2008)
+#### Required Inputs
 
-Feel free to add other outputs (like exoskeleton, exoskeleton_controller) to this. Everything you forget 
-to add will be treated as empty.
+- **`S`** – Default settings structure for *PredSim* (see PredSim manual).  
+- **`osim_path`** – Path to your OpenSim model (standard PredSim input).  
+- **`S_benchmark`** – Structure defining which simulations to run and where to save them.
 
-Tot nondim outputs based on:
+Example configuration:
 
-- frequency:  sqrt(g/l)
-- moments:    m*g*l
-- forces:     m*g
-- Pmetab:     m*g^1.5*sqrt(l)
+```matlab
+S_benchmark.studies = {'vanderzee2022', 'browning2008'};
+S_benchmark.out_folder = fullfile(pathRepo, 'Results', 'Benchmark_Falisse2022');
 
-## identifier for simulation
+S_benchmark.gait_speeds = true;
+S_benchmark.gait_speeds_selection = 0.6:0.2:2;
+```
 
-We use an unique identifier for each experimental condition and the connected predictive simulation. This makes it easier to connect experimental data to simulation. This identifier is a string. If you add experimental data to () it would be nice to also add this identifier to the list below.
+---
 
-**Koelewijn 2019:**
+### 2. Comparing Simulations with Experimental Data
 
-- 0.8 m/s, 0% slope: **koelewijn2019_0p8ms**
+After running your simulations, you can compare them to experimental results using data from the [**predsim_benchmark_data**](https://github.com/MaartenAfschrift/predsim_benchmark_data) repository.
 
-- 1.3m/s, 0% slope: **koelewijn2019_1p3ms**
+You can either:
 
-- 0.8, -8%slope: **koelewijn2019_0p8ms_8decline**
+- Write your own comparison scripts, **or**
+- Use the provided helper functions for automatic comparison and visualization.
 
-- 1.3, -8%slope: **koelewijn2019_1p3ms_8decline**
+#### Key Functions
 
-- 0.8, 8%slope: **koelewijn2019_0p8ms_8incline**
+**`add_benchmarkdata_to_simresults.m`**
 
-- 1.3, 8%slope: **koelewijn2019_1p3ms_8incline**
+- Automatically downloads the required experimental datasets from GitHub and stores them in `PredSim/Benchmarking/Data`.
+- Loops through all simulations in your results folder (`S_benchmark.out_folder`).
+- Finds corresponding experimental data (using unique identifiers).
+- Adds a `benchmarking` structure to each simulation result file.
 
-**Browning2008**
+To visualize results:
 
-- xkg femur: browning2008_femurxkg
-- xkg foot: browning2008_footxkg
-- xkg pelvis: browning2008_pelvisxkg
-- xkg tibia: browning2008_tibiaxkg
+```matlab
+add_benchmarkdata_to_simresults(..., 'BoolPlot', true)
+```
 
-**VanDerZee2022**
+This generates default comparison figures for quick inspection.
 
-- x speed (in m/s): vanderzee2022_xms 
-- example: vanderzee2022_0p7ms for walking at 0.7 m/s
+---
 
-**Gomenuka2014**
+## Data Structure
 
-- walking on slope x with added mass y at z m/s: gomenuka2014_slope_xpct_ykmh_mass_zpctmass
-- example for walking on slope 7 percent at 3 km/h and 25% added mass: gomenuka_slope_7pct_3kmh_25pctmass
+Each benchmarked study has:
 
-**Gait Speeds**
+- A unique identifier linking simulation and experimental data.
+- Consistent metadata for gait conditions and measured variables.
 
-- walking at x m/s: gait_speeds_xms
-- example: for walking at 0.85 ms: gait_speeds_0p85ms
+More details about the data format and organization are available in the [**predsim_benchmark_data**](https://github.com/MaartenAfschrift/predsim_benchmark_data) repository.
 
-### Idea benchmarking workflow
+---
 
-The main idea is that you can test your simulation workflow on a set of gait conditions and compare your simulations to experiments. 
+## Citation
 
-**Input:**
+If you use this code or data in your research, please cite:
 
-- Simulation model
+> Afschrift, M., et al. (2025). *Benchmarking the predictive capability of human gait simulations.*
 
-- Settings used for you simulations 
+---
 
-**Output**
+## Contributing
 
-- Simulation results
+Contributions and extensions are welcome!  
+You can:
 
-- experimental values associated with motion, preferably scaled for the person (non-dimentionalised for paper and re-computed for antropometry of specific model used in simulation)
-  
-  - spatio-temporal
-  
-  - kinematics
-  
-  - kinetics
-  
-  - metabolic power
+- Add new gait conditions to `benchmark_predsim.m`
+- Contribute new experimental datasets or analysis tools to [**predsim_benchmark_data**](https://github.com/MaartenAfschrift/predsim_benchmark_data)
 
-**benchmark conditions:**
+Please submit a pull request or open an issue for discussion.
 
-- gait at various speeds [Abe2025, VanDerZee?]
+---
 
-- walking on a slope [Koelewijn?, McDonald?]
+## License
 
-- walking with added mass [schertzer dataset ?]
+This project is released under the [MIT License](LICENSE) (or specify your actual license).
