@@ -272,6 +272,12 @@ if ~isfield(S.misc,'benchmark_id')
     S.misc.benchmark_id = [];
 end
 
+% added mass to simulation model (typically used to simulate conditions
+% with external mass added to body segments, e.g. Browning2008).
+if ~isfield(S.misc,'benchmark_added_mass')
+    S.misc.benchmark_added_mass = 0;
+end
+
 
 %% post_process
 if ~isfield(S,'post_process')
