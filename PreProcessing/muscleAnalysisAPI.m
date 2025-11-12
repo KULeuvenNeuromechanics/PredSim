@@ -139,7 +139,7 @@ for j=1:n_data_points
     else % muscle
         for i=coordi_crossed
             % The moment arm is defined as -dl/dq.
-            % By settings the velocity of coordinate i to -1 and all other
+            % By setting the velocity of coordinate i to -1 and all other
             % velocities to 0, the moment arm can be calculated as
             % ldot = dl/dq * qdot.
             % This is ~3x faster than using computeMomentArm, and does give the
