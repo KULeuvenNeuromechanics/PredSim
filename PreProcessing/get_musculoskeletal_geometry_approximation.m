@@ -35,8 +35,10 @@ model_info.ExtFunIO.jointi.muscleActuated = find(sum(model_info.muscle_info.musc
 if strcmp(S.misc.msk_geom_eq,'polynomials') 
     % Only perform muscle analysis and fitting if the result is not yet
     % available, because the analysis takes long. (4 minutes)
-    if ~isfile(fullfile(S.misc.subject_path,S.misc.msk_geom_name)) || ...
-            S.misc.msk_geom_always_new_fit
+
+    msk_geom_path = fullfile(S.misc.subject_path,[S.misc.msk_geom_name,'.casadi']);
+
+    if ~isfile(msk_geom_path) || S.misc.msk_geom_always_new_fit
         % Analyze the muscle-tendon lengths, velocities, and moment arms in 
         % function of coordinate values
         t0 = tic;
