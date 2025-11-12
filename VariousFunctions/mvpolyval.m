@@ -31,6 +31,9 @@ function [y,ydx] = mvpolyval(coeff, x, mu)
 % OUTPUT:
 %   - y -
 %   * Polynomial evaluated at x
+%
+%   - ydx - (optional)
+%   * Derivative of the polynomial, evaluated at x
 % 
 % Original author: Lars D'Hondt
 % Original date: September 2025
