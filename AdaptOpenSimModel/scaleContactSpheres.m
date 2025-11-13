@@ -1,4 +1,4 @@
-function scaleContactSpheres(genericModelPath,modelpath_in,modelout_path,scale)
+function scaleContactSpheres(genericModelPath,modelpath_in,modelout_path,scale,varargin)
 % This code scales:
 % 1. the radius of the contact spheres based on the scaling factor of the
 % foot. 
@@ -22,10 +22,13 @@ function scaleContactSpheres(genericModelPath,modelpath_in,modelout_path,scale)
 % Original author: Bram Van Den Bosch
 % Original date: 27/March/2023
 %
-% Last edit by: Bram Van Den Bosch
-% Last edit date: 31/January/2024
+% Last edit by: Ellis Van Can
+% Last edit date: 13/November/2025
 % --------------------------------------------------------------------------
-
+if nargin>2
+    factorR = varargin{1};
+    factorL = varargin{2};
+end
 %% 1. get contact spheres
 
 contact_spheres = get_contact_spheres(modelpath_in);
@@ -40,7 +43,7 @@ model_2 = Model(modelpath_in);
 toesInCalcn_r_2 = model_2.getJointSet.get('mtp_r').get_frames(0).get_translation.getAsMat';
 toesInCalcn_l_2 = model_2.getJointSet.get('mtp_l').get_frames(0).get_translation.getAsMat';
 
-if ~exist('factorR')
+if ~exist('factorR') || ~exist('factorL')
     factorR = ones(1,3)*sqrt(sum(toesInCalcn_r_2.^2))/sqrt(sum(toesInCalcn_r_1.^2));
     factorL = ones(1,3)*sqrt(sum(toesInCalcn_l_2.^2))/sqrt(sum(toesInCalcn_l_1.^2));
 else
