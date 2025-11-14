@@ -1,4 +1,3 @@
-
 *Use the table of contents to easily navigate this README. Click on the three lines next to README.md just above this sentence.*
 
 Predictive Simulations of Locomotion
@@ -103,10 +102,11 @@ the cluster.
 
 #SBATCH --cluster=genius
 #SBATCH --partition=batch
-#SBATCH --ntasks-per-node=18
+#SBATCH --ntasks-per-node=1
 #SBATCH --nodes=1
 #SBATCH --account=<credit_account>
 #SBATCH --time=04:00:00
+#SBATCH --mem-per-cpu=6000M
 
 # Instead of installing dependencies yourself, you can simply load modules on
 # the cluster. The versions are just examples, you can check for available
