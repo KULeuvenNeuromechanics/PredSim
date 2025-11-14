@@ -19,13 +19,17 @@ addpath(fullfile(pathRepo,'DefaultSettings'))
 
 [S] = initializeSettings('Falisse_et_al_2022');
 
-%% Settings
+%% Settings (custom, defaults are defined in getDefaultSettings.m)
 
 % name of the subject
 S.subject.name = 'Falisse_et_al_2022';
 
 % path to folder where you want to store the results of the OCP
 S.misc.save_folder  = fullfile(pathRepoFolder,'PredSimResults',S.subject.name); 
+
+% gait cycle
+S.misc.gaitmotion_type = 'FullGaitCycle';
+%S.misc.gaitmotion_type = 'HalfGaitCycle';
 
 % either choose "quasi-random" or give the path to a .mot file you want to use as initial guess
 S.solver.IG_selection = fullfile(S.misc.main_path,'OCP','IK_Guess_Full_GC.mot');
@@ -35,6 +39,29 @@ S.solver.IG_selection_gaitCyclePercent = 100;
 % give the path to the osim model of your subject
 osim_path = fullfile(pathRepo,'Subjects',S.subject.name,[S.subject.name '.osim']);
 
+% Mesh settings
+S.solver.N_meshes = 20;
+
+%% Add exoskeleton
+
+% select orthosis function
+exo1.function_name = 'hipexo';
+
+% set parameters
+exo1.dynamics.xl = -17; % [Nm]
+exo1.dynamics.xu = 17; % [Nm]
+exo1.dynamics.ul = -15; % [Nm]
+exo1.dynamics.uu = 15; % [Nm]
+
+exo1.gain = 1; %EMG gain for gluteus maximus
+
+% add orthosis on left side
+exo1.left_right = 'l';
+S.orthosis.settings{1} = exo1;
+
+% add the same orthosis on right side
+exo1.left_right = 'r';
+S.orthosis.settings{2} = exo1;
 
 %% Run predictive simulations
 

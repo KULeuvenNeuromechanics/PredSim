@@ -37,6 +37,16 @@ n_coord = model_info.ExtFunIO.jointi.nq.all;
 
 separate_orthoses = {};
 
+% program flow booleans for orthosis states and controls
+orthosispresent = ~isempty([S.orthosis.settings{:}]);
+if orthosispresent
+    ortstatespresent = S.orthosis.Nstates_all > 0;
+    ortcontrolspresent = S.orthosis.Ncontrols_all > 0;
+else
+    ortstatespresent = false;
+    ortcontrolspresent = false;
+end
+
 % external function
 F = external('F',fullfile(S.misc.subject_path, S.misc.external_function));
 F_k = F;
@@ -55,46 +65,82 @@ qddot_SX = SX.sym('qddot',n_coord,N);
 act_SX = SX.sym('a',model_info.muscle_info.NMuscle,N);
 fromExtFun_SX = SX.sym('fromExtFun',F.size1_out(0),N); % GRFs, point kinematics
 
-% all outputs
-Mcoordk_SX = SX(n_coord,N);
-toExtFun_SX = SX(F.size1_in(0),N); % bodyforces, bodymoments
-
-
-%% loop over all selected orthoses
-if ~isempty(S.orthosis)
-
-    for i=1:length(S.orthosis.settings)
-
-        orthosis_i = S.orthosis.settings{i}.object;
-        Nmesh = orthosis_i.getNmesh();
-        if Nmesh==N
-
-            % Get casadi Function of this orthosis
-            [f_orthosis_i, f_orthosis_pp_i] =...
-                orthosis_i.wrapCasadiFunction(model_info.ExtFunIO,model_info.muscle_info.muscle_names);
-
-            % Add to struct for post-processing
-            separate_orthoses(i).wrap = f_orthosis_i;
-            separate_orthoses(i).wrap_pp = f_orthosis_pp_i;
-
-            % evaluate function
-            [Mcoordk_i, toExtFun_i] = f_orthosis_i(q_SX,qdot_SX,qddot_SX,act_SX,fromExtFun_SX);
-
-            % accumulate outputs
-            Mcoordk_SX = Mcoordk_SX + Mcoordk_i;
-            toExtFun_SX = toExtFun_SX + toExtFun_i;
-
-        end
+ortArg_SX = {};
+ortArg_names = {};
+ortRes_SX = {};
+ortRes_names = {};
+if orthosispresent
+    if ortstatespresent
+        orthStates_SX = SX.sym('x',S.orthosis.Nstates_all,N);
+        ortArg_SX{end+1} =  orthStates_SX;
+        ortArg_names{end+1} = 'orthStates';
+    end
+    if ortcontrolspresent
+        orthControls_SX = SX.sym('u',S.orthosis.Ncontrols_all,N);
+        ortArg_SX{end+1} = orthControls_SX;
+        ortArg_names{end+1} = 'orthControls';
     end
 end
 
+% all outputs
+Mcoordk_SX = SX(n_coord,N);
+toExtFun_SX = SX(F.size1_in(0),N); % bodyforces, bodymoments
+if ortstatespresent
+    stateDyn_SX = SX(S.orthosis.Nstates_all,N);
+end
+
+
+%% loop over all selected orthoses
+
+
+for i=1:length(S.orthosis.settings)
+
+    orthosis_i = S.orthosis.settings{i}.object;
+    Nmesh = orthosis_i.getNmesh();
+    if Nmesh==N
+
+        % Get casadi Function of this orthosis
+        [f_orthosis_i, f_orthosis_pp_i] =...
+            orthosis_i.wrapCasadiFunction(model_info.ExtFunIO,model_info.muscle_info.muscle_names,S.orthosis.stateNames_all,S.orthosis.controlNames_all);
+
+        % Add to struct for post-processing
+        separate_orthoses(i).wrap = f_orthosis_i;
+        separate_orthoses(i).wrap_pp = f_orthosis_pp_i;
+
+        % evaluate function 
+        if ortstatespresent
+            [Mcoordk_i, toExtFun_i, stateDyn_i] = f_orthosis_i(q_SX,qdot_SX,qddot_SX,act_SX,fromExtFun_SX,ortArg_SX{:});
+            stateDyn_SX = stateDyn_SX + stateDyn_i; % Each orthosis uniquely defines a subset of x_dot, zero otherwise
+        else
+            [Mcoordk_i, toExtFun_i] = f_orthosis_i(q_SX,qdot_SX,qddot_SX,act_SX,fromExtFun_SX,ortArg_SX{:});
+        end
+
+        % accumulate outputs
+        Mcoordk_SX = Mcoordk_SX + Mcoordk_i;
+        toExtFun_SX = toExtFun_SX + toExtFun_i;
+        
+
+        % create Casadi function for orthosis state dynamics
+        if ortstatespresent
+            separate_orthoses(i).dynamics = Function(['f_Orthosis_dynamics_',num2str(N)],...
+                [{q_SX, qdot_SX, qddot_SX, act_SX, fromExtFun_SX}, ortArg_SX],...
+                {stateDyn_i},...
+                [{'qs','qdots','qddots','act','fromExtFun'}, ortArg_names],...
+                {'orthStateDyn'});   
+        end
+    end
+end
+if ortstatespresent
+    ortRes_SX = {stateDyn_SX};
+    ortRes_names = {'stateDyn'};
+end
 
 %% create casadi Function for combination of orthoses
 fun = Function(['f_Orthosis_mesh_',num2str(N),'_wo_ext'],...
-    {q_SX, qdot_SX, qddot_SX, act_SX, fromExtFun_SX},...
-    {Mcoordk_SX, toExtFun_SX},...
-    {'qs','qdots','qddots','act','fromExtFun'},...
-    {'M_coord','toExtFun'});
+    [{q_SX, qdot_SX, qddot_SX, act_SX, fromExtFun_SX}, ortArg_SX],...
+    [{Mcoordk_SX, toExtFun_SX}, ortRes_SX],...
+    [{'qs','qdots','qddots','act','fromExtFun'}, ortArg_names],...
+    [{'M_coord','toExtFun'}, ortRes_names]);
 
 %% Create casadi Function for combination of orthoses, and include external function
 % inputs
@@ -103,6 +149,14 @@ qdots_MX = MX.sym('qdots',n_coord,N);
 qddots_MX = MX.sym('qddots',n_coord,N);
 act_MX = MX.sym('a',model_info.muscle_info.NMuscle,N);
 
+ortArg_MX = {};
+ortRes_MX = {};
+if ortstatespresent
+    ortArg_MX{end+1} = MX.sym('x',S.orthosis.Nstates_all,N); %orthStates_SX
+end
+if ortcontrolspresent
+    ortArg_MX{end+1} = MX.sym('u',S.orthosis.Ncontrols_all,N); %orthControls_SX 
+end
 
 % Create zero (sparse) input vector for external function
 F_ext_input = MX(model_info.ExtFunIO.input.nInputs,N);
@@ -119,28 +173,46 @@ else
     fromExtFun_MX = F_all(F_ext_input);
 end
 
+
+if N==1
+    funname = 'f_orthosis_mesh_k';
+else
+    funname = 'f_orthosis_mesh_all';
+end
+
 % Evaluate orthosis function
-[Mcoord_MX, toExtFun_MX] = fun(qs_MX,qdots_MX,qddots_MX,act_MX,fromExtFun_MX);
+if ortstatespresent
+    [Mcoord_MX, toExtFun_MX, stateDyn_MX] = fun(qs_MX,qdots_MX,qddots_MX,act_MX,fromExtFun_MX,ortArg_MX{:});
+    meshfun = Function(funname,[{qs_MX,qdots_MX,qddots_MX,act_MX}, ortArg_MX],...
+    {Mcoord_MX, toExtFun_MX, stateDyn_MX},[{'qs','qdots','qddots','act'}, ortArg_names],{'M_coord','M_body','stateDyn'});
+else
+    [Mcoord_MX, toExtFun_MX] = fun(qs_MX,qdots_MX,qddots_MX,act_MX,fromExtFun_MX,ortArg_MX{:});
+    meshfun = Function(funname,[{qs_MX,qdots_MX,qddots_MX,act_MX}, ortArg_MX],...
+    {Mcoord_MX, toExtFun_MX},[{'qs','qdots','qddots','act'}, ortArg_names],{'M_coord','M_body'});
+end
 
 % Create function to be used in OCP formulation
 if N==1
-    f_orthosis_mesh_k = Function('f_orthosis_mesh_k',{qs_MX,qdots_MX,qddots_MX,act_MX},...
-        {Mcoord_MX, toExtFun_MX},{'qs','qdots','qddots','act'},{'M_coord','M_body'});
+    f_orthosis_mesh_k = meshfun;
 else
-    f_orthosis_mesh_all = Function('f_orthosis_mesh_all',{qs_MX,qdots_MX,qddots_MX,act_MX},...
-        {Mcoord_MX, toExtFun_MX},{'qs','qdots','qddots','act'},{'M_coord','M_body'});
+    f_orthosis_mesh_all = meshfun;
 end
 
 end % for N = [1, Nmeshes]
 
 %% Cleanup
+%TODO: this section was commented out, removal of object must be postponed
+% until after orthosis NLP vars and constraints have been added dynamically
+% in OCP_formulation.m
+
 % delete Orthosis objects, because we don't need them anymore and don't want to save it
 % note: might want to handle this more cleanly
-if ~isempty(S.orthosis)
-    for i=1:length(S.orthosis.settings)
-%         S.orthosis.settings{i} = rmfield(S.orthosis.settings{i},'object');
-        S.orthosis.settings{i}.object.delete();
-    end
-end
+% if ~isempty(S.orthosis)
+%     for i=1:length(S.orthosis.settings)
+% %         S.orthosis.settings{i} = rmfield(S.orthosis.settings{i},'object');
+%         S.orthosis.settings{i}.object.delete();
+%     end
+% end
+
 
 end % end of function
