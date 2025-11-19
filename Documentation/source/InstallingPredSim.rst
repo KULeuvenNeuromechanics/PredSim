@@ -66,7 +66,7 @@ Download PredSim
 2. Clone the fork to your machine. If you have a computer with restricted permissions, make sure you have permission to run executables from the selected folder (For computers with KU Leuven BioMed Group policies, this is C:\GBW_MyPrograms\).
    *Do not download the code as zip.*
 3. Add the location where you installed CasADi to the MATLAB search path (``addpath(genpath('C:/path/to/casadi'))``), or use ``S.solver.CasADi_path``.
-4. Make sure the opensimAD submodule is installed. If ``PredSim/opensimAD/`` is empty, open git command prompt, go to ``PredSim/``, and run ``git submodule update --init``.
+
 
 After performing these steps, run the main script. (Expected run time is 40 minutes, depending on hardware.) If you don't receive any errors, your results should be the same as `the reference result <https://github.com/KULeuvenNeuromechanics/PredSim/tree/master/Tests/ReferenceResults/Falisse_et_al_2022>`_. If that is the case, you have successfully installed and set up the code. You are ready to do your own simulations.
 

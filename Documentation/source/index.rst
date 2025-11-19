@@ -31,7 +31,7 @@ This repository is a work in progress.
 
 📯❔ **Sharing Best Practices and General Questions**:
 
-   To share best practices, publications, or more general questions, we encourage you to use the discussions section.
+   To share best practices, publications, or more general questions, we encourage you to use the `user forum <https://github.com/KULeuvenNeuromechanics/PredSim/discussions>`__.
 
 
 Table of Contents
@@ -43,6 +43,7 @@ Table of Contents
 
    Installing PredSim <InstallingPredSim.rst>
    Getting started <GettingStarted.rst>
+   Troubleshooting <troubleshooting.rst>
    Run PredSim on a cluster <SetupCluster>
    Creating a private fork <PrivateForkPredSim>
 
@@ -54,7 +55,7 @@ Table of Contents
    Using custom models <ModelPreparation.md>
    Accessing results <ResultsStructure.md>
    Structure of the code <https://github.com/KULeuvenNeuromechanics/PredSim/wiki/Structure-of-the-code>
-   Troubleshooting <Troubleshooting.rst>
+   Troubleshooting <troubleshooting.rst>
    Release notes <https://github.com/KULeuvenNeuromechanics/PredSim/releases>
 
 .. toctree::
