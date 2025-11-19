@@ -28,9 +28,8 @@ source_suffix = {
     '.md': 'markdown',
 }
 
-# directory in source with html templates (currently not used)
-templates_path = ['_templates']
-# directory in source with 
+
+# directory in source with images
 html_static_path = ['_static']
 
 

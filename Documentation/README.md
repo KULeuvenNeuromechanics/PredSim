@@ -18,6 +18,10 @@ Updating the website consists of 3 steps.
 Open the files in [/source](./source) in a text editor or IDE and edit them.
 Mind the different syntax between [.rst](https://www.sphinx-doc.org/en/master/usage/restructuredtext/index.html) and [.md](https://www.markdownguide.org/cheat-sheet/) files.
 
+- [`conf.py`](./source/conf.py) contains general information about the project and determines the overal layout of the website.
+- [`index.rst`](./source/index.rst) serves as the home page of the website and contains the table of contents. The table of contents describes the structure of the website, and contains links to all other source files.
+- The [`_static` folder](./source/_static/) contains all images for the website.
+
 ### 2. Build the html files
 
 The html files for the website can be build by running the [build_website workflow](../.github/workflows/build_website.yml) through [github actions](https://github.com/KULeuvenNeuromechanics/PredSim/actions/workflows/build_website.yml). This creates an *artifact* github-pages.zip that can be downloaded.
