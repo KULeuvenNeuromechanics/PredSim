@@ -34,13 +34,13 @@ function fixContactSpherePositionAfterScaling(genericModelPath,scaledModelPath,v
 % Original author: Dhruv Gupta
 % Original date: 04/October/2022
 %
-% Last edit by: 
-% Last edit date: 
+% Last edit by: Ellis Van Can   
+% Last edit date: 12/November/2025
 % --------------------------------------------------------------------------
 
 if nargin>2
     factorR = varargin{1};
-    factorL = varargin{1};
+    factorL = varargin{2};
 end
 
 %% Step 1: Get the position of toes origin with respect to calcaneus
@@ -68,8 +68,12 @@ sphereName = cell(1,cGS.getSize-1);
 sphereLocation = nan(cGS.getSize-1,3);
 scaledLocation = nan(cGS.getSize-1,3);
 for i=1:cGS.getSize-1
-    clear sphere
-    sphere = cGS.get(i);
+    clear sphere   
+    if ~strcmp(char(cGS.get(0).getName),'floor') % 1018gait based model
+        sphere = cGS.get(i-1); 
+    else % 3D models
+        sphere = cGS.get(i); 
+    end
     sphereName{i} = char(sphere.getName);
     sphereLocation(i,:) = sphere.get_location.getAsMat';
     if strfind(sphereName{i},'_r')
@@ -84,8 +88,12 @@ clear cGS
 cGS = model_2.get_ContactGeometrySet;
 for i=1:cGS.getSize-1
     clear sphere
-    sphere = cGS.get(i);
-    idx = find(ismember(sphereName,char(sphere.getName)));
+    if ~strcmp(char(cGS.get(0).getName),'floor') % 1018gait based model
+        sphere = cGS.get(i-1); 
+    else % 3D models
+        sphere = cGS.get(i); 
+    end
+    idx = ismember(sphereName,char(sphere.getName));
     sphere.set_location(Vec3.createFromMat(scaledLocation(idx,:)));
 end
 
