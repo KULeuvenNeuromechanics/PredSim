@@ -491,12 +491,7 @@ end
 
 % default values for specific tension
 if ~isfield(S.subject,'default_specific_tension')
-    S.subject.default_specific_tension = 'default_specific_tension.csv';
-end
-
-% specific tension for selected muscles
-if ~isfield(S.subject,'set_specific_tension_selected_muscles')
-    S.subject.set_specific_tension_selected_muscles = [];
+    S.subject.default_specific_tension = 'default_specific_tensions.csv';
 end
 
 % joints that are considered base of a leg

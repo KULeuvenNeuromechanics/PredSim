@@ -241,12 +241,11 @@ Quickly navigate to:
 - **S.subject.set_stiffness_selected_ligaments**:
     - Use name-value pairs to use different stiffness models for specific ligaments. Default is *{'PlantarFascia',['plantarFasciaNatali2010'](../ModelComponents/plantarFasciaNatali2010.m)}* 
 - **S.subject.default_specific_tension**:
-    - file with default value for the specific tension of each muscle. Default is *'default_specific_tension.csv'* [char].
-    The provided file should be compatible with [`readtable`](https://mathworks.com/help/matlab/ref/readtable.html). The table should contain a column with coordinate names (header: name) and a column with specific tension values (header: specific_tension). Default values are taken from *Uchida et al. (2016).* 
-    If the model contains muscles that are not included in the file, their default specific tension will be set to 0.70.
+    - file with default value for the specific tension of each muscle. Default is *'default_specific_tensions.csv'* [char].
+    The provided file should be compatible with [`readtable`](https://mathworks.com/help/matlab/ref/readtable.html). The table should contain a column with coordinate names (header: name) and a column with specific tension values (header: specific_tension). Default values are taken from [Uchida et al. (2016)](https://simtk.org/frs/?group_id=1064). 
+    For the 2D model (i.e. gait1018), specific tensions of lumped muscles (e.g. hamstrings) are determined using the FMo-weighted average of the associated muscles in the 3D model.
+	If the model contains muscles that are not included in the file, their default specific tension will be set to 0.25.
     If a scalar value is passed instead of a file, that value will be used for all muscles.
-- **S.subject.set_specific_tension_selected_muscles**:
-    - Use name-value pairs to use different specific tension values for specific muscles. Has priority over values from *S.subject.default_specific_tension*.
 - **S.subject.base_joints_legs**:
     - Joint name that is the base of a leg, left and right. Default is 'hip' [char]. Inputs of the form 'hip_r', {'hip_l'}, {'hip_r','hip_l'} are equivalent.
 - **S.subject.base_joints_arms**:
