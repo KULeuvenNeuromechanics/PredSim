@@ -33,16 +33,16 @@ addpath(fullfile(pathRepoFolder,'DefaultSettings'))
 %% Settings
 
 % CasADi path
-S.solver.CasADi_path = "";
+% S.solver.CasADi_path = "";
 
 % name of the subject
 S.subject.name = model_name;
 
 % tracking data
-S.subject.TrackSim = true;
+S.subject.TrackKin = true;
 S.subject.TrackingFile = fullfile(S.misc.main_path,'Tests','vanCriekinge_referenceCoordinates.mot'); % mot file used for tracking 
-% S.subject.TrackingJoints = {'knee_angle_r', 'knee_angle_l'}; % list of joints to track
-S.subject.IncludeTrackingJoints = 'all';
+S.subject.IncludeTrackingJoints = {'knee_angle_r', 'knee_angle_l'}; % list of joints to track
+% S.subject.IncludeTrackingJoints = 'all';
 S.weights.kinematicsTracking = {{'all'},10};                
 S.misc.gaitmotion_type = 'FullGaitCycle';                                   % required for selected mot file
 
@@ -83,34 +83,27 @@ Qref_tot = getIK(S.subject.TrackingFile,tracking_result.model_info);        % lo
 Qref_time = Qref_tot.time;                                                  % extract tracking data time
 Nmeshes = tracking_result.R.S.solver.N_meshes;                              % define number of meshes
 
-% check joints to track
-if(strcmp(S.subject.TrackingJoints,'all'))       
-    % if tracking all joints
-    desir_coo_names = string(fieldnames(tracking_result.model_info.ExtFunIO.coordi));    
-else
-    % if tracking only selected joints
-    desir_coo_names = string(S.subject.TrackingJoints);                     
-end
+model_coo_names = string(fieldnames(tracking_result.model_info.ExtFunIO.coordi));    
 
 % create reference data
-NtrackJoints = length(desir_coo_names);                                     % number of joints to track
+NtrackJoints = length(model_coo_names);                                     % number of joints to track
 Ndata = length(Qref_time);                                                  % size of the experimental data
 Qref = zeros(Ndata,NtrackJoints);                                           % matrix to store tracking data  
 for jointIdx = 1:NtrackJoints
-    Qref(:,jointIdx) = Qref_tot.(desir_coo_names(jointIdx));                % fill matrix with data
+    Qref(:,jointIdx) = Qref_tot.(model_coo_names(jointIdx));                % fill matrix with data
 end
 
 % resample to be ( Nmeshes ) x ( number of joints to track )
 Qrefsync = interp1(linspace(1,Nmeshes,Ndata),Qref,linspace(1,Nmeshes,Nmeshes),'spline','extrap');
 
-isLinearCoo = contains(desir_coo_names,'tx') | ...                          % indices with non-rotational coordinates
-    contains(desir_coo_names,'ty');
+isLinearCoo = contains(model_coo_names,'tx') | ...                          % indices with non-rotational coordinates
+    contains(model_coo_names,'ty');
 Qrefsync(:,~isLinearCoo) = Qrefsync(:,~isLinearCoo)*180/pi;                 % correct dimensions
 
 % extract predicted kinematics
 Qpred = tracking_result.R.kinematics.Qs;
 
-isPelvisTx = contains(desir_coo_names,'tx');                                % index for pelvis translation
+isPelvisTx = contains(model_coo_names,'tx');                                % index for pelvis translation
 Qrefsync(:,~isPelvisTx) = circshift(Qrefsync(:,~isPelvisTx), ...            % shift predicted data to match tracking data
     -tracking_result.R.ground_reaction.idx_GC(end));
 
@@ -124,7 +117,7 @@ for i = 1:NtrackJoints
     grid on
     plot(linspace(1,Nmeshes,Nmeshes), Qrefsync(:,i), 'k--', 'LineWidth', 1)
     plot(linspace(1,Nmeshes,Nmeshes), Qpred(:,i), 'r', 'LineWidth', 1)
-    title(replace(desir_coo_names(i),"_"," "))
+    title(replace(model_coo_names(i),"_"," "))
     ylabel(ylabelList(i), "FontWeight", "bold")
     xlabel("Gait Cycle [ % ]", "FontWeight", "bold")
     legend(["Tracking Data", "Predicted Data"],"Location","best")
