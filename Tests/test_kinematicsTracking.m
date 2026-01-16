@@ -42,8 +42,8 @@ S.subject.name = model_name;
 S.subject.TrackSim = true;
 S.subject.TrackingFile = fullfile(S.misc.main_path,'Tests','vanCriekinge_referenceCoordinates.mot'); % mot file used for tracking 
 % S.subject.TrackingJoints = {'knee_angle_r', 'knee_angle_l'}; % list of joints to track
-S.subject.TrackingJoints = 'all';
-S.weights.kinematicsTracking = 10;                  
+S.subject.IncludeTrackingJoints = 'all';
+S.weights.kinematicsTracking = {{'all'},10};                
 S.misc.gaitmotion_type = 'FullGaitCycle';                                   % required for selected mot file
 
 % set weights to zero to test out tracking

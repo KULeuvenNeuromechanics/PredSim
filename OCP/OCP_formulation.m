@@ -286,16 +286,22 @@ if (S.subject.synergies)
 end
 
 %% If Tracking: Assign Tracking Data
-if(S.subject.TrackSim)
+if(S.subject.TrackKin)
     Qref_tot = getIK(S.subject.TrackingFile,model_info);                        % load .mot file with tracking data
     Qref_time = Qref_tot.time;                                                  % extract tracking data time
     Nmeshes = S.solver.N_meshes;                                                % define number of meshes
     
     % check joints to track
-    if(strcmp(S.subject.TrackingJoints,'all'))                      
+    if(strcmp(S.subject.IncludeTrackingJoints,'all'))                      
         desir_coo_names = string(fieldnames(model_info.ExtFunIO.coordi));       % if tracking all joints, 
     else
-        desir_coo_names = string(S.subject.TrackingJoints);                     % if tracking only selected joints
+        desir_coo_names = string(S.subject.IncludeTrackingJoints);              % if tracking only selected joints
+    end
+
+    % exclude joints to not track
+    if(isfield(S.subject,'ExcludeTrackingJoints'))
+        excludeBool = contains(desir_coo_names,S.subject.ExcludeTrackingJoints);
+        desir_coo_names = desir_coo_names(~excludeBool);
     end
     
     % create reference data
@@ -308,6 +314,38 @@ if(S.subject.TrackSim)
     
     % resample to be ( Nmeshes + 1 ) x ( number of joints to track )
     Qrefsync = interp1(linspace(1,Nmeshes,Ndata),Qref,linspace(1,Nmeshes,Nmeshes),'spline','extrap');
+
+    % assign kinematics tracking weights
+    if(~isfield(W,"kinematicsTracking"))
+        W.kinematicsTracking = repmat(W.kinematicsTracking,NtrackJoints,1);     % fill weights with ones if none specified
+    elseif(iscell(W.kinematicsTracking))
+        WkinTrack = ones(NtrackJoints,1);
+        if(mod(size(W.kinematicsTracking,2),2) > 0)                             % check each key is followed by a value
+            disp("Each key should be followed by a weight value!")
+        else
+            Ncells = size(W.kinematicsTracking,2)/2;                            % number of key cells    
+            for c = 1:Ncells                                                    % loop over key cells
+                keyCell = W.kinematicsTracking{1+(c-1)*2};                      % current keys with same weight
+                Nkeys = size(keyCell,2);
+                for k = 1:Nkeys                                                 % loop over keys in cell array
+                    key = keyCell{k};
+                    if(strcmp(key,'all'))                                       % if key is 'all', set all weight values to the value following 'all'
+                        WkinTrack(:) = W.kinematicsTracking{c*2};
+                    else
+                        [~,idx] = find(contains(desir_coo_names,key));          % if key is another char, find it inside the list of coordinates to get the right position
+                        if(~isempty(idx))
+                            WkinTrack(idx) = W.kinematicsTracking{c*2};         % assign the weight value
+                        else
+                            disp(key + " is not a valid key")
+                        end
+                    end
+                end
+            end
+        end
+        W.kinematicsTracking = WkinTrack;
+    else
+        disp("Weights for kinematics tracking should be a cell array!")
+    end
 end
 
 %% OCP: collocation equations
@@ -353,7 +391,9 @@ if (S.subject.synergies)
     SynW_lk         = MX.sym('SynW_lk',length(idx_m_l),S.subject.NSyn_l);
 end
 
-if S.subject.TrackSim
+% If tracking experimental kinematics, add symbolic variable for kinematic
+% tracking, for each joint to track
+if S.subject.TrackKin
     Qsk_track = MX.sym('Qsk_track', NtrackJoints);
 end
 
@@ -604,13 +644,13 @@ else
 end
 
 % Add tracking terms in the cost function if kinematics tracking is enabled
-if S.subject.TrackSim
+if S.subject.TrackKin
     Qsk_nsc = Qsk.*scaling.Qs';                                             % unscale kinematics
     model_coo_names = fieldnames(model_info.ExtFunIO.coordi);               % get the names of the coordinates
-    [~,desir_joint_idx] = ismember(model_coo_names,desir_coo_names);        % get desired joint indices  
+    [~,desir_joint_idx] = ismember(desir_coo_names,model_coo_names);        % get desired joint indices  
     Qsk_des = Qsk_nsc(desir_joint_idx(desir_joint_idx > 0));                % only interested in data to track
     track_err = Qsk_track-Qsk_des;                                          % compute the tracking error
-    J_TrackKin = W.kinematicsTracking*f_casadi.J_kin(track_err)*h;          % compute tracking cost
+    J_TrackKin = f_casadi.J_kin(track_err,W.kinematicsTracking)*h;          % compute tracking cost
     J = J + J_TrackKin;
 else
     J_TrackKin = 0;
@@ -638,8 +678,8 @@ end
 if (S.subject.synergies)
     coll_input_vars_def = [coll_input_vars_def,{SynH_rk,SynH_lk,SynW_rk,SynW_lk}];
 end
-if S.subject.TrackSim
-    coll_input_vars_def = [coll_input_vars_def,{Qsk_track}];
+if S.subject.TrackKin
+    coll_input_vars_def = [coll_input_vars_def,{Qsk_track}];                % add kinematics tracking symbolic variable
 end
 
 f_coll = Function('f_coll',coll_input_vars_def,...
@@ -659,7 +699,10 @@ end
 if (S.subject.synergies)    
     coll_input_vars_eval = [coll_input_vars_eval,{SynH_r(:,1:end-1), SynH_l(:,1:end-1), SynW_r,SynW_l}];
 end
-if S.subject.TrackSim
+
+% if tracking kinematics is enabled: add reference kinematics to the
+% mapping input
+if S.subject.TrackKin
     coll_input_vars_eval = [coll_input_vars_eval,{Qrefsync'}];
 end
 
@@ -1178,10 +1221,10 @@ if (S.subject.synergies) && (S.subject.TrackSynW)
 end
 
 % If tracking: reconstruct tracking cost
-if S.subject.TrackSim
+if S.subject.TrackKin
     q_opt_des = q_opt_unsc.rad(:,desir_joint_idx(desir_joint_idx > 0));     % only interested in data to track 
     track_err = q_opt_des-Qrefsync;                                         % compute tracking error
-    TrackKin_cost = W.kinematicsTracking*sum(f_casadi.J_kin(track_err'))*h_opt;
+    TrackKin_cost = sum(f_casadi.J_kin(track_err',W.kinematicsTracking))*h_opt;
     J_opt = J_opt + 1/dist_trav_opt*TrackKin_cost;                          % compute tracking cost
 end
 

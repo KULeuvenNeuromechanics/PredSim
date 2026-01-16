@@ -130,22 +130,29 @@ end
 
 %% Kinematics Tracking
 % Function for the number of joints to track
-if S.subject.TrackSim
+if S.subject.TrackKin
     % check joints to track
-    if(strcmp(S.subject.TrackingJoints,'all'))                      
+    if(strcmp(S.subject.IncludeTrackingJoints,'all'))                      
         desir_coo_names = string(fieldnames(model_info.ExtFunIO.coordi));   % if tracking all joints
     else
-        desir_coo_names = string(S.subject.TrackingJoints);                 % if tracking only selected joints
+        desir_coo_names = string(S.subject.IncludeTrackingJoints);          % if tracking only selected joints
+    end
+    
+    % exclude joints to not track
+    if(isfield(S.subject,'ExcludeTrackingJoints'))
+        excludeBool = contains(desir_coo_names,S.subject.ExcludeTrackingJoints);
+        desir_coo_names = desir_coo_names(~excludeBool);
     end
     
     % compute error
     NtrackJoints = length(desir_coo_names);                                 % number of joints to track
     e_temp_kin = SX.sym('NtrackJoints',NtrackJoints);                       % symbolic variable to store error (1xN joints to track)
+    w_kin = SX.sym('w_kin',NtrackJoints);
     J_temp_kin = 0;                                                         % initialize cost 
     for i=1:length(e_temp_kin)                                              % loop over joints to track
-        J_temp_kin = J_temp_kin + e_temp_kin(i).^2;
+        J_temp_kin = J_temp_kin + w_kin(i)*e_temp_kin(i).^2;
     end
     J_temp_kin = J_temp_kin/NtrackJoints;                                   % take average 
-    f_casadi.J_kin = Function('f_J_kin',{e_temp_kin},{J_temp_kin});         % create Casadi function
+    f_casadi.J_kin = Function('f_J_kin',{e_temp_kin,w_kin},{J_temp_kin});   % create Casadi function
 end
 end
