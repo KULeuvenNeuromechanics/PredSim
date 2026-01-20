@@ -121,7 +121,11 @@ Quickly navigate to:
     > 3. Read from model file. Qs: min and max coordinate values
 - **S.misc.msk_geom_n_samples**:
     - Number of samples for the dummy motion that is used to fit the approximated musculoskeletal geometry. Default is *5000* [double]
-
+- **S.misc.msk_geom_always_new_fit**:
+    - Perform a new fit for the approximated musculoskeletal geometry, potentially overwriting previously saved approximations. Default is *false* [bool].
+- **S.misc.reduce_coeff_fit**:
+    - After fitting the approximated musculoskeletal geometry, try to obtain an acceptable fit with a reduced set of coefficients. Default is *true* [bool].
+    This routine is based on [work by Harba and Serrancolí](https://github.com/gilserrancoli/ReducePoly_forMSK/tree/main/MuscleTendonLengthParameterizationReduction).
 - **S.misc.visualize_bounds**: 
     - specify if bounds and initial guess are visualized (0 or 1). Default is *0* [double]
 - **S.misc.dampingCoefficient**: 
