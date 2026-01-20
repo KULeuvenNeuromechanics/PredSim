@@ -203,7 +203,7 @@ if compare_printout
             dat_nextLine_ref = sscanf(nextLine_ref,'%i%*c %f %f %f %f %f %*s %f %f%*c %i',9);
             dat_nextLine_test = sscanf(nextLine_test,'%i%*c %f %f %f %f %f %*s %f %f%*c %i',9);
 
-            testEqualsRef = (dat_nextLine_ref == dat_nextLine_test);
+            testEqualsRef = all( abs(dat_nextLine_ref-dat_nextLine_test) < eps(dat_nextLine_ref));
 
             isNextIter = false;
             % loop over multiple lines printed within one iteration
