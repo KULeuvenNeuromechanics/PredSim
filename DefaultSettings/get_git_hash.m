@@ -62,6 +62,10 @@ if status == 0
     elseif ~strcmp(local_hash,remote_hash)
         warning(['There is a more recent version of this branch on the remote: https://github.com/KULeuvenNeuromechanics/PredSim/tree/' remote_hash]);
     end
+
+else
+    branch_name = '';
+    remote_hash = '';
 end
 
 % return to initial directory
