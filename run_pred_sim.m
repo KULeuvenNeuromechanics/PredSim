@@ -62,7 +62,7 @@ elseif S.post_process.rerun
     R.S = S;
 
 elseif isempty(S.misc.result_filename)
-    if isenv('SLURM_JOB_ID')
+    if ~isempty(getenv('SLURM_JOB_ID'))
         % use job_id from slurm
         S.misc.result_filename = [S.subject.name '_' getenv('SLURM_JOB_ID')];
     elseif strcmp(S.misc.savename,'structured')
