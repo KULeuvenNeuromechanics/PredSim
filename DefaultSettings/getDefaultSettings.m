@@ -666,7 +666,7 @@ if ~isfield(S.OpenSimADOptions,'compiler')
     if ispc
         S.OpenSimADOptions.compiler = findVisualStudioInstallation;
     elseif isunix
-        S.OpenSimADOptions.compiler = 'Unix Makefiles'
+        S.OpenSimADOptions.compiler = 'Unix Makefiles';
     end
 end
 
@@ -685,9 +685,28 @@ if ~isfield(S.OpenSimADOptions,'export3DPositions')
     S.OpenSimADOptions.export3DPositions = [];
 end
 
+% Export orientation of body
+if ~isfield(S.OpenSimADOptions,'export3DOrientations')
+    S.OpenSimADOptions.export3DOrientations = [];
+end
+if ~ispc && ~isempty(S.OpenSimADOptions.export3DOrientations)
+    S.OpenSimADOptions.export3DOrientations = [];
+    warning("Setting 'S.OpenSimADOptions.export3DOrientations' is " + ...
+        "only supported on windows, so will not be used.")
+end
+
 % Export velocities of points w.r.t. ground frame
 if ~isfield(S.OpenSimADOptions,'export3DVelocities')
     S.OpenSimADOptions.export3DVelocities = [];
+end
+
+if ~isfield(S.OpenSimADOptions,'export3DVelocitiesProjGround')
+    S.OpenSimADOptions.export3DVelocitiesProjGround = [];
+end
+if ~ispc && ~isempty(S.OpenSimADOptions.export3DVelocitiesProjGround)
+    S.OpenSimADOptions.export3DVelocitiesProjGround = [];
+    warning("Setting 'S.OpenSimADOptions.export3DVelocitiesProjGround' is " + ...
+        "only supported on windows, so will not be used.")
 end
 
 % If you want to choose the order of the joints and coordinate outputs
@@ -728,5 +747,17 @@ if ~isfield(S.OpenSimADOptions,'verify_ID')
     S.OpenSimADOptions.verify_ID = false;
 end 
 
-
+if ~isfield(S.OpenSimADOptions,'useSerialisedFunction')
+    S.OpenSimADOptions.useSerialisedFunction = false;
 end
+if ~ispc && S.OpenSimADOptions.useSerialisedFunction
+    S.OpenSimADOptions.useSerialisedFunction = false;
+    warning("Setting 'S.OpenSimADOptions.useSerialisedFunction' is " + ...
+        "only supported on windows, so will not be used.")
+end
+
+if ~isfield(S.OpenSimADOptions,'always_generate')
+    S.OpenSimADOptions.always_generate = false;
+end
+
+end % end of function
