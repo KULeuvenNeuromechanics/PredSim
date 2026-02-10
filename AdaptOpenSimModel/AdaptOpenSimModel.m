@@ -46,10 +46,10 @@ clc
 [pathRepo,~,~] = fileparts(pathHere);
 
 % .osim file to adapt
-path_osim_in = fullfile(pathRepo,'Subjects','Subject_to_adapt','Subject_to_adapt.osim'); 
+path_osim_in = fullfile(pathRepo,'Subjects','test_bug_3D','test_bug_3D.osim'); 
 % adapted .osim file
 % path_osim_out = fullfile(pathHere,'Falisse_et_al_2022.osim'); % scaled model (same as  .osim file to adapt)
-path_osim_out =fullfile(pathRepo,'Subjects','Subject_to_adapt','Subject_to_adapt.osim'); 
+path_osim_out =fullfile(pathRepo,'Subjects','test_bug_3D','test_bug_3D.osim'); 
 
 % reference model for contact
 path_reference_model = fullfile(pathRepo,'Subjects','DHondt_et_al_2024_4seg','DHondt_et_al_2024_4seg.osim'); 
@@ -174,8 +174,15 @@ end
 import org.opensim.modeling.*;
 model = Model(path_osim_in);
 model_name = char(model.getName);
-model_name = [model_name '_AdaptedForPredSim'];
-model.setName(model_name);
+
+% Check if model is already adapted
+if contains(model_name, 'AdaptedForPredSim')
+    warning('Model "%s" appears to have already been adapted for PredSim. Proceeding anyway...', model_name);
+else
+    model_name = [model_name '_AdaptedForPredSim'];
+    model.setName(model_name);
+end
+
 model.print(path_osim_out);
 
 %%
