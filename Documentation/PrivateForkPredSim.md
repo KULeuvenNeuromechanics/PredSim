@@ -7,7 +7,14 @@ Workflow below is adapted from [here](https://gist.github.com/0xjac/85097472043b
 
 The correct way of creating a private frok by duplicating the repo is documented [here](https://help.github.com/articles/duplicating-a-repository/).
 
-For this repository the Git Bash commands are:
+For this repository, the workflow is:
+
+0. In File Explorer, go to a directory where files can be stored temporarily. They will be removed again in a later step.
+
+   Right-click and choose *Git Bash here*. You might need to *right-click* > *more* > *Git Bash here* on windows 11.
+This will open the git command window.
+
+In this command window, run the following commands:
 
  1. Create a bare clone of the repository.
     (This is temporary and will be removed so just do it wherever.)
