@@ -108,7 +108,7 @@ In this command window, run the following commands:
 
     `git fetch upstream`
 
-2. In the private repository on your computer, make *master_public* the active branch.
+2. In the private repository on your computer, set the branch *master_public* as the active branch (if it already exists).
 
     `git checkout master_public`
     
