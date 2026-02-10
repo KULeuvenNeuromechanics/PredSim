@@ -35,7 +35,7 @@ function fixContactSpherePositionAfterScaling(genericModelPath,scaledModelPath,v
 % Original date: 04/October/2022
 %
 % Last edit by: Ellis Van Can   
-% Last edit date: 12/November/2025
+% Last edit date: 10/February/2026
 % --------------------------------------------------------------------------
 
 if nargin>2
@@ -64,37 +64,38 @@ end
 %% Step 2: Get the location of spheres in the generic model
 clear cGS
 cGS = model_1.get_ContactGeometrySet;
-sphereName = cell(1,cGS.getSize-1);
-sphereLocation = nan(cGS.getSize-1,3);
-scaledLocation = nan(cGS.getSize-1,3);
-for i=1:cGS.getSize-1
-    clear sphere   
-    if ~strcmp(char(cGS.get(0).getName),'floor') % 1018gait based model
-        sphere = cGS.get(i-1); 
-    else % 3D models
-        sphere = cGS.get(i); 
+sphereName = {};  sphereLocation = [];  scaledLocation = [];
+for i = 0:cGS.getSize-1
+    contactGeom = cGS.get(i);
+    
+    % Check if it's a ContactSphere (not ContactHalfSpace for floor)
+    if strcmp(char(contactGeom.getConcreteClassName()), 'ContactSphere')
+        sphereName{end+1} = char(contactGeom.getName);
+        sphereLocation(end+1,:) = contactGeom.get_location.getAsMat';
+        
+        if contains(char(contactGeom.getName), '_r')
+            scaledLocation(end+1,:) = factorR.*sphereLocation(end,:);
+        else
+            scaledLocation(end+1,:) = factorL.*sphereLocation(end,:);
+        end
     end
-    sphereName{i} = char(sphere.getName);
-    sphereLocation(i,:) = sphere.get_location.getAsMat';
-    if strfind(sphereName{i},'_r')
-        scaledLocation(i,:) = factorR.*sphereLocation(i,:);
-    else
-        scaledLocation(i,:) = factorL.*sphereLocation(i,:);
-    end        
 end
 
 %% Step 3: Put the scaled sphere locations in the scaled model and overwrite the model
 clear cGS
 cGS = model_2.get_ContactGeometrySet;
-for i=1:cGS.getSize-1
-    clear sphere
-    if ~strcmp(char(cGS.get(0).getName),'floor') % 1018gait based model
-        sphere = cGS.get(i-1); 
-    else % 3D models
-        sphere = cGS.get(i); 
+
+for i = 0:cGS.getSize-1
+    contactGeom = cGS.get(i);
+    
+    % Check if it's a ContactSphere
+    if strcmp(char(contactGeom.getConcreteClassName()), 'ContactSphere')
+        geomName = char(contactGeom.getName);
+        idx = ismember(sphereName, geomName);        
+        if any(idx)
+            contactGeom.set_location(Vec3.createFromMat(scaledLocation(idx,:)));
+        end
     end
-    idx = ismember(sphereName,char(sphere.getName));
-    sphere.set_location(Vec3.createFromMat(scaledLocation(idx,:)));
 end
 
 model_2.initSystem();

@@ -35,32 +35,41 @@
 % Original author: Lars D'Hondt
 % Original date: 27/May/2022
 %
-% Last edit by: Bram Van Den Bosch  
-% Last edit date: 31/January/2024
+% Last edit by: Ellis Van Can   
+% Last edit date: 10/February/2026
 % --------------------------------------------------------------------------
 
 
 clear
 clc
 [pathHere,~,~] = fileparts(mfilename('fullpath'));
+[pathRepo,~,~] = fileparts(pathHere);
 
 % .osim file to adapt
-path_osim_in = fullfile(pathHere,'Falisse_et_al_2022.osim');
-
+path_osim_in = fullfile(pathRepo,'Subjects','Subject_to_adapt','Subject_to_adapt.osim'); 
 % adapted .osim file
-path_osim_out = fullfile(pathHere,'Falisse_et_al_2022.osim');
+% path_osim_out = fullfile(pathHere,'Falisse_et_al_2022.osim'); % scaled model (same as  .osim file to adapt)
+path_osim_out =fullfile(pathRepo,'Subjects','Subject_to_adapt','Subject_to_adapt.osim'); 
 
 % reference model for contact
-path_reference_model = fullfile(pathHere,'Falisse_et_al_2022.osim');
+path_reference_model = fullfile(pathRepo,'Subjects','DHondt_et_al_2024_4seg','DHondt_et_al_2024_4seg.osim'); 
 
 % select what to do
-add_actuators_bool = 1;
-add_contact_bool = 0;
-use_reference_contacts_bool = 1;
-scale_contact_spheres_bool = 1;
-scale_contact_location_bool = 1;
-scale_ligaments_bool = 1;
+add_actuators_bool = 0; % Osim: open model: in model check Forces
+add_contact_bool = 0; % Osim: open model: in model check Contact Geometry
+use_reference_contacts_bool = 0; % disable
+scale_contact_spheres_bool = 1; % enable
+scale_contact_location_bool = 1; % enable
+scale_ligaments_bool = 1; % enable
 
+
+%% Define scaling factors for contact spheres and mass subject
+scale.stiffness = 0.823; % SstiffCS
+scale.dissipation = 0.848; %SdampingCS
+scale.factorR = 0.5; % SstiffCS
+scale.factorL = 0.6; %SdampingCS
+
+mass_subject = 36.73;
 %% Define contact spheres
 
 % contact spheres right side
@@ -161,20 +170,13 @@ for i=1:length(torq_act)
     ita = ita+1;
 end
 
-%% Define scaling factors for contact spheres
-
-scale.stiffness = 1;
-scale.dissipation = 1;
-
-%%
-
+%% Change model name
 import org.opensim.modeling.*;
 model = Model(path_osim_in);
 model_name = char(model.getName);
 model_name = [model_name '_AdaptedForPredSim'];
 model.setName(model_name);
 model.print(path_osim_out);
-
 
 %%
 SimmSpline_joint_to_polynomial(path_osim_out);
@@ -189,7 +191,7 @@ if add_contact_bool
     add_contact_spheres(path_osim_out,contact_spheres);
 end
 if scale_contact_spheres_bool
-    scaleContactSpheres(path_reference_model,path_osim_out,path_osim_out,scale)
+    scaleContactSpheres(path_reference_model,path_osim_in,path_osim_out,scale)
 end
 if scale_contact_location_bool
     fixContactSpherePositionAfterScaling(path_reference_model,path_osim_out);
@@ -197,3 +199,4 @@ end
 if scale_ligaments_bool
     scaleLigaments(path_osim_out, path_reference_model);
 end
+
