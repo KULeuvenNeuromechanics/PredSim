@@ -107,7 +107,7 @@ for i=1:length(base_legs)
     end
     
     jointi.(['leg' num2str(i) '_r']) = coordi';
-    leg_r = [leg_r coordi];
+    leg_r = [leg_r; coordi];
 
     limbs.all.joints = [limbs.all.joints; joints_limb_i];
     limbs.all.coords = [limbs.all.coords; coords_limb_i];
@@ -120,7 +120,7 @@ for i=1:length(base_legs)
     end
 
     jointi.(['leg' num2str(i) '_l']) = coordi';
-    leg_l = [leg_l coordi];
+    leg_l = [leg_l; coordi];
 
     limbs.all.joints = [limbs.all.joints; joints_limb_i];
     limbs.all.coords = [limbs.all.coords; coords_limb_i];
@@ -144,7 +144,7 @@ for i=1:length(base_arms)
     end
     
     jointi.(['arm' num2str(i) '_r']) = coordi';
-    arm_r = [arm_r coordi];
+    arm_r = [arm_r; coordi];
 
     limbs.all.joints = [limbs.all.joints; joints_limb_i];
     limbs.all.coords = [limbs.all.coords; coords_limb_i];
@@ -157,7 +157,7 @@ for i=1:length(base_arms)
     end
     
     jointi.(['arm' num2str(i) '_l']) = coordi';
-    arm_l = [arm_l coordi];
+    arm_l = [arm_l; coordi];
 
     limbs.all.joints = [limbs.all.joints; joints_limb_i];
     limbs.all.coords = [limbs.all.coords; coords_limb_i];
@@ -277,12 +277,12 @@ for i=1:length(joints_not_limbs)
         loc_l_0 = body_frame.findStationLocationInGround(state,station_l).getAsMat;
         loc_r_0 = body_frame.findStationLocationInGround(state,station_r).getAsMat;
 
-        model.getCoordinateSet.get(coords_i{j}).setValue(state,0.3);
+        model.getCoordinateSet.get(coords_i{j}).setValue(state,0.3,false);
         model.realizePosition(state);
         loc_l_p = body_frame.findStationLocationInGround(state,station_l).getAsMat - loc_l_0;
         loc_r_p = body_frame.findStationLocationInGround(state,station_r).getAsMat - loc_r_0;
 
-        model.getCoordinateSet.get(coords_i{j}).setValue(state,-0.3);
+        model.getCoordinateSet.get(coords_i{j}).setValue(state,-0.3,false);
         model.realizePosition(state);
         loc_l_n = body_frame.findStationLocationInGround(state,station_l).getAsMat - loc_l_0;
         loc_r_n = body_frame.findStationLocationInGround(state,station_r).getAsMat - loc_r_0;
@@ -388,7 +388,7 @@ function [joints_chain, coords_chain] = getKinematicChain(joint_table,starting_j
         joints_chain{end+1,1} = next_joint;
         % add coordinates to kinematic chain
         coords_i = joint_table.coordinates(strcmp(joint_table.joint,next_joint));
-        coords_chain = [coords_chain(:); coords_i{:}];
+        coords_chain = [coords_chain(:); coords_i{:}'];
         % get the child frame of this joint
         next_frame = joint_table.child(strcmp(joint_table.joint,next_joint));
         % get joints that have this frame as their parent frame and add

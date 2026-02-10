@@ -4,15 +4,19 @@
 *.sto
 *.log
 *.png
-!/Documentation/FiguresForDocumentation/*.png
 *.jpg
 !/Documentation/FiguresForDocumentation/*.jpg
 *.eps
 
+!/Documentation/source/_static/*.png
+
+Documentation/build/*
 Debug/*
 opensimAD/*
 Examples/ExampleResults
 App
+
+
 Subjects/*
 !Subjects/README.md
 
