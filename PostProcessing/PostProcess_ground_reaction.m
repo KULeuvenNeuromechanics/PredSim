@@ -30,7 +30,11 @@ N = size(R.kinematics.Qs,1);
 
 import casadi.*
 
-F  = external('F',replace(fullfile(R.S.misc.subject_path,R.S.misc.external_function),'\','/'));
+if R.S.OpenSimADOptions.useSerialisedFunction
+    F = Function.load(replace(fullfile(R.S.misc.subject_path,R.S.misc.external_function),'\','/'));
+else
+    F = external('F',replace(fullfile(R.S.misc.subject_path,R.S.misc.external_function),'\','/'));
+end
 
 Foutk_opt = zeros(N,F.nnz_out);
 
