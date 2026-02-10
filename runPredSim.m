@@ -34,6 +34,8 @@ elseif ~isempty(S.solver.CasADi_path) && ~isfolder(S.solver.CasADi_path)
         " \n\t%s",S.solver.CasADi_path)
 end
 
+% Disable OpenSim log files
+org.opensim.modeling.Logger.setLevelString("off");
 
 if S.solver.run_as_batch_job
     % add to batch
