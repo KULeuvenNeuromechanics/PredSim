@@ -19,9 +19,9 @@ function [MSVS_compiler] = findVisualStudioInstallation()
 % Last edit date: 
 % --------------------------------------------------------------------------
 
-MSVS_years = {'2022','2019','2017','2015'};
-MSVS_versions = {'17','16','15','14'};
-MSVS_bit = {'','',' Win64',' Win64'}; % 2019 and newer versions assume 64 bit
+MSVS_years = {'2026','2022','2019','2017','2015'};
+MSVS_versions = {'18','17','16','15','14','18'};
+MSVS_bit = {'','','',' Win64',' Win64'}; % 2019 and newer versions assume 64 bit
 MSVS_compiler = [];
 
 expected_path = 'c:/Program Files*/Microsoft Visual Studio/';
@@ -32,6 +32,7 @@ if ~isempty(dir(expected_path))
             MSVS_compiler = ['Visual Studio ',MSVS_versions{i},' ',MSVS_years{i}, MSVS_bit{i}];
             break
         end
+        % it also seems that 
     end
 end
 

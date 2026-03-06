@@ -1,21 +1,21 @@
 function [S] = getDefaultSettings(S,osim_path)
 % --------------------------------------------------------------------------
-% getDefaultSettings 
+% getDefaultSettings
 %   This functions sets default settings when the user didn't specify the
 %   setting in main.m.
-% 
+%
 % INPUT:
 %   - S -
 %   * setting structure S
-%   
+%
 %   - osim_path -
 %   * path to the osim model
 %
-% 
+%
 % OUTPUT:
 %   - S -
 %   * setting structure S
-% 
+%
 % Original author: Bram Van Den Bosch
 % Original date: 30/11/2021
 % --------------------------------------------------------------------------
@@ -184,7 +184,7 @@ end
 [~, model_name, ~] = fileparts(osim_path);
 model_name = char(strrep(model_name, ' ', '_'));
 S.misc.msk_geom_name = [model_name '_f_lMT_vMT_dM'];
-if strcmp(S.misc.msk_geom_eq,'polynomials') 
+if strcmp(S.misc.msk_geom_eq,'polynomials')
     S.misc.msk_geom_name = [S.misc.msk_geom_name '_poly_',...
         num2str(S.misc.poly_order.lower) '_' num2str(S.misc.poly_order.upper)];
 end
@@ -250,8 +250,8 @@ end
 
 % folder path to store the subject specific results
 if ~isfield(S.misc,'save_folder')
-   error("Please provide a folder to store the results in. " + ...
-       "Specify the folder path in S.misc.save_folder."); 
+    error("Please provide a folder to store the results in. " + ...
+        "Specify the folder path in S.misc.save_folder.");
 elseif ~isfolder(S.misc.save_folder)
     mkdir(S.misc.save_folder);
 end
@@ -323,7 +323,7 @@ if ~isfield(S.solver,'linear_solver')
     S.solver.linear_solver = 'mumps';
 end
 
-% the power (10^-x) the error has to reach before the OCP can 
+% the power (10^-x) the error has to reach before the OCP can
 % be regarded as solved; a higher number gives a more precise answer, but
 % requires more time
 if ~isfield(S.solver,'tol_ipopt')
@@ -388,14 +388,14 @@ else
                 'cycle for predictive simulation of a half gait cycle. Please ' ...
                 'adjust S.misc.gaitmotion_type or initial guess file.'])
         end
-        
+
     elseif EXT == ".mot" && ~isfile(S.solver.IG_selection)
         error(['The motion file path you specified does not exist. Check if ' ...
             'the path exists or if you made a typo.'])
-        
+
     elseif EXT == "" && NAME == "quasi-random"
-         disp('Using a quasi-random initial guess.')
-         
+        disp('Using a quasi-random initial guess.')
+
     elseif EXT == "" && NAME ~= "quasi-random"
         error(['Please specify what you want to use as an initial guess. ' ...
             'Either choose "quasi-random" or specify the path of a .mot file.'])
@@ -415,12 +415,12 @@ end
 
 % mass of the subject, in kilograms
 if ~isfield(S.subject,'mass')
-   S.subject.mass = [];
+    S.subject.mass = [];
 end
 
 % height of the pelvis for the initial guess, in meters
 if ~isfield(S.subject,'IG_pelvis_y')
-   S.subject.IG_pelvis_y = [];
+    S.subject.IG_pelvis_y = [];
 end
 
 % muscle strength
@@ -443,37 +443,37 @@ end
 
 % type of mtp joint used in the model
 if ~isfield(S.subject,'mtp_type')
-    S.subject.mtp_type = ''; 
+    S.subject.mtp_type = '';
 end
 
 % muscle tendon properties
 if ~isfield(S.subject,'scale_MT_params')
-    S.subject.scale_MT_params = []; 
+    S.subject.scale_MT_params = [];
 end
 
 % damping coefficient for all degrees of freedon
 if ~isfield(S.subject,'damping_coefficient_all_dofs')
-    S.subject.damping_coefficient_all_dofs = 0.1; 
+    S.subject.damping_coefficient_all_dofs = 0.1;
 end
 
 % different damping coefficient for specific degrees of freedon
 if ~isfield(S.subject,'set_damping_coefficient_selected_dofs')
-    S.subject.set_damping_coefficient_selected_dofs = []; 
+    S.subject.set_damping_coefficient_selected_dofs = [];
 end
 
 % stiffness coefficient for all degrees of freedon
 if ~isfield(S.subject,'stiffness_coefficient_all_dofs')
-    S.subject.stiffness_coefficient_all_dofs = 0; 
+    S.subject.stiffness_coefficient_all_dofs = 0;
 end
 
 % different stiffness coefficient for specific degrees of freedon
 if ~isfield(S.subject,'set_stiffness_coefficient_selected_dofs')
-    S.subject.set_stiffness_coefficient_selected_dofs = []; 
+    S.subject.set_stiffness_coefficient_selected_dofs = [];
 end
 
 % neutral position for stiffness coefficient for specific degrees of freedon
 if ~isfield(S.subject,'set_stiffness_offset_selected_dofs')
-    S.subject.set_stiffness_offset_selected_dofs = []; 
+    S.subject.set_stiffness_offset_selected_dofs = [];
 end
 
 % default limit torque coefficient
@@ -488,12 +488,12 @@ end
 
 % limit torque coefficient for specific degrees of freedon
 if ~isfield(S.subject,'set_limit_torque_coefficients_selected_dofs')
-    S.subject.set_limit_torque_coefficients_selected_dofs = []; 
+    S.subject.set_limit_torque_coefficients_selected_dofs = [];
 end
 
 % ligament stiffness for all ligaments
 if ~isfield(S.subject,'stiffness_all_ligaments')
-    S.subject.stiffness_all_ligaments = 'ligamentGefen2002'; 
+    S.subject.stiffness_all_ligaments = 'ligamentGefen2002';
 end
 
 % ligament stiffness for selected ligaments
@@ -553,7 +553,7 @@ if S.subject.synergies
 
         S.subject.NSyn_l = S.subject.NSyn_r;
     end
-    
+
     % Settings to configure synergy weights tracking
     if S.subject.TrackSynW
 
@@ -595,70 +595,70 @@ end
 
 % weight on metabolic energy rate
 if ~isfield(S.weights,'E')
-    S.weights.E = 500; 
+    S.weights.E = 500;
 end
 
 % exponent for the metabolic energy rate
 if ~isfield(S.weights,'E_exp')
-    S.weights.E_exp = 2; 
+    S.weights.E_exp = 2;
 end
 
 % weight on joint accelerations
 if ~isfield(S.weights,'q_dotdot')
-    S.weights.q_dotdot = 50000; 
+    S.weights.q_dotdot = 50000;
 end
 
 % weight on actuator excitations
 if ~isfield(S.weights,'e_torqAct')
-    S.weights.e_torqAct = 10^6; 
+    S.weights.e_torqAct = 10^6;
 end
 
 % weight on passive torques
 if ~isfield(S.weights,'pass_torq')
-    S.weights.pass_torq = 1000; 
+    S.weights.pass_torq = 1000;
 end
 
 % damping can be included in the passive torques that go in the cost
 % function
 if ~isfield(S.weights,'pass_torq_includes_damping')
-    S.weights.pass_torq_includes_damping = 0; 
+    S.weights.pass_torq_includes_damping = 0;
 end
 
 % weight on muscle activations
 if ~isfield(S.weights,'a')
-    S.weights.a = 2000; 
+    S.weights.a = 2000;
 end
 
 % exponent for the muscle activations
 if ~isfield(S.weights,'a_exp')
-    S.weights.a_exp = 2; 
+    S.weights.a_exp = 2;
 end
 
 % weight on synergy constraint, (a-WH)^2
 if ~isfield(S.weights,'SynConstr')
-    S.weights.SynConstr = 1e4; 
+    S.weights.SynConstr = 1e4;
 end
 
 % weight on synergy weights tracking
 if ~isfield(S.weights,'TrackSynW')
-    S.weights.TrackSynW = 1e2; 
+    S.weights.TrackSynW = 1e2;
 end
 
 % weight on slack controls
 if ~isfield(S.weights,'slack_ctrl')
-    S.weights.slack_ctrl = 0.001; 
+    S.weights.slack_ctrl = 0.001;
 end
 
 
 %% OpenSimADOptions
 
-% settings for functions to convert .osim model to expression graph 
+% settings for functions to convert .osim model to expression graph
 % file (.dll) to solve inverse dynamics
 if ~isfield(S,'OpenSimADOptions')
     S.OpenSimADOptions = [];
 end
 
-% select compiler for cpp projects 
+% select compiler for cpp projects
 %   Visual studio 2015: 'Visual Studio 14 2015 Win64'
 %   Visual studio 2017: 'Visual Studio 15 2017 Win64'
 %   Visual studio 2017: 'Visual Studio 16 2019'
@@ -666,7 +666,15 @@ end
 %   Unix Makefiles: on Linux and similar systems
 if ~isfield(S.OpenSimADOptions,'compiler')
     if ispc
-        S.OpenSimADOptions.compiler = findVisualStudioInstallation;
+        %S.OpenSimADOptions.compiler = findVisualStudioInstallation;
+        compiler_info = detectCompilerInfo;
+        if ~isempty(compiler_info.CMakeGenerators)
+            S.OpenSimADOptions.compiler = compiler_info.LatestCMakeGenerator;
+        else
+            error(['Could not detect Visual Studio in c:/Program Files or c:/Program Files (x86). ',...
+                'Please set S.Cpp2Dll.compiler to Visual Studio 14 2015 Win64, Visual Studio 15 2017 Win64,',...
+                'Visual Studio 16 2019, or Visual Studio 17 2022 based on your installed version']);
+        end
     elseif isunix
         S.OpenSimADOptions.compiler = 'Unix Makefiles'
     end
@@ -723,12 +731,12 @@ end
 % Print outputs from compiler
 if ~isfield(S.OpenSimADOptions,'verbose_mode')
     S.OpenSimADOptions.verbose_mode = false;
-end 
+end
 
 % Test external function versus ID Tool
 if ~isfield(S.OpenSimADOptions,'verify_ID')
     S.OpenSimADOptions.verify_ID = false;
-end 
+end
 
 %% Flow control
 
