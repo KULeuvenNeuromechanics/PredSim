@@ -146,7 +146,8 @@ for fit_order=min(order):max(order)
     
     % Fit coeff
     coeff = mldivide_impl(X_aug, Y_aug);
-    
+    coeff = coeff(1:size(X_aug, 2));
+      
     % Evaluate acceptance criteria
     Y_fit = mno*coeff;
     rmse_y = rms(Y - Y_fit);
@@ -231,7 +232,7 @@ if options.reduced_coeff
         % Coefficient values that best fit data using only the subset of 
         % selected coefficients
         coeff_aux = mldivide_impl(X_aug(:, selected_index), Y_aug);
-            
+        coeff_aux = coeff_aux(1:size(X_aug(:, selected_index),2));
 
         % Update the full coefficient vector with the selected ones
         coeff_2 = zeros(size(mno, 2), 1);
