@@ -36,10 +36,10 @@ function [] = completeModelScaling(osim_scaleTool, osim_generic, osim_scaled,...
 %   vol. 22, no. 1, p. 103, May 2025, doi: 10.1186/s12984-025-01631-x.
 %
 %
-%   See also 
+%   See also
 %   AdaptOpenSimModel
 %   scaleMuscleForce scaleLigaments 
-%   get_contact_spheres removeContactSpheres add_contact_spheres 
+%   scaleContactSpheres 
 %   getActuators removeActuators add_actuators
 %
 %
@@ -133,32 +133,12 @@ removeActuators(osim_scaled)
 add_actuators(osim_scaled,torq_act)
 
 %% contact spheres
+sf_contact.stiffness = sf_contact_stiffness;
+sf_contact.dissipation = sf_contact_dissipation;
+sf_contact.foot_left = scale_factor_foot_left;
+sf_contact.foot_right = scale_factor_foot_right;
 
-% get generic values
-[contact_spheres] = get_contact_spheres(osim_generic);
-
-% scale values
-for i=1:length(contact_spheres)
-
-    contact_spheres(i).stiffness = contact_spheres(i).stiffness*sf_contact_stiffness;
-    contact_spheres(i).dissipation = contact_spheres(i).dissipation*sf_contact_dissipation;
-
-    name = contact_spheres(i).name;
-    [leftname,~] = mirrorName(name);
-    if strcmp(name,leftname)
-        contact_spheres(i).radius = contact_spheres(i).radius*scale_factor_foot_left(1);
-        contact_spheres(i).location = contact_spheres(i).location.*scale_factor_foot_left;
-    else
-        contact_spheres(i).radius = contact_spheres(i).radius*scale_factor_foot_right(1);
-        contact_spheres(i).location = contact_spheres(i).location.*scale_factor_foot_right;
-    end
-end
-
-% remove contact spheres from scaled model to avoid duplicating them
-removeContactSpheres(osim_scaled)
-
-% add scaled contact spheres
-add_contact_spheres(osim_scaled,contact_spheres)
+scaleContactSpheres(osim_scaled, osim_scaled, sf_contact)
 
 
 end % end of function
