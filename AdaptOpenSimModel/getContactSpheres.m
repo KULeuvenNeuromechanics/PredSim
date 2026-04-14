@@ -1,6 +1,6 @@
-function [contact_spheres] = get_contact_spheres(osim_path)
+function [contact_spheres] = getContactSpheres(osim_path)
 % --------------------------------------------------------------------------
-% get_contact_spheres
+% getContactSpheres
 %   This functions reads the parameter values describing the contact spheres 
 %   of a given .osim model, and returns this information in a structured way.
 % 
@@ -34,13 +34,9 @@ function [contact_spheres] = get_contact_spheres(osim_path)
 %       % transition velocity of static to dynamic friction
 %       contact_spheres(1).transitionVelocity = 0.2;
 %       
-% 
 %
 % Original author: Lars D'Hondt
 % Original date: 25/Nov/2022
-%
-% Last edit by: 
-% Last edit date: 
 % --------------------------------------------------------------------------
 
 
@@ -92,23 +88,9 @@ for i=0:forceSet.getSize()-1
         
         csp = csp+1;
 
-
     end
 
-
-
-
 end
-
-
-
-
-
-
-
-
-
-
 
 
 

@@ -24,7 +24,7 @@ function scaleContactSpheres(osim_path_in,osim_path_out,scale)
 
 %% 1. get contact spheres
 
-contact_spheres = get_contact_spheres(osim_path_in);
+contact_spheres = getContactSpheres(osim_path_in);
 
 %Get the position of toes origin with respect to calcaneus
 import org.opensim.modeling.*;
