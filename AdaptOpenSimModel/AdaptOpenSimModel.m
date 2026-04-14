@@ -14,29 +14,9 @@
 %   See example below on how to specify contact spheres properties as a
 %   struct contact_spheres.
 %
-%   - use_reference_contacts_bool -
-%   * Creates a struct contact_spheres based on the contact properties of a
-%   reference model.
-%
-%   - scale_contact_spheres_bool -
-%   * Scales the contact spheres' radii based on foot length
-%   * Scales the contact spheres' stiffness and dissipation based on provided struct (see example below) 
-%
-%   - scale_contact_location_bool -
-%   * OpenSim scale tool does not adapt contact sphere locations. Use this
-%   setting to scale contact sphere locations with respect to a reference
-%   model.
-% 
-%   - scale_ligaments_bool -
-%   * OpenSim scale tool does not adapt ligament pcsa. Use this setting to 
-%   scale ligament pcsa_force with respect to a reference model.
-%
 %
 % Original author: Lars D'Hondt
-% Original date: 27/May/2022
-%
-% Last edit by: Bram Van Den Bosch  
-% Last edit date: 31/January/2024
+% Original date: 27 May 2022
 % --------------------------------------------------------------------------
 
 
@@ -50,16 +30,10 @@ path_osim_in = fullfile(pathHere,'Falisse_et_al_2022.osim');
 % adapted .osim file
 path_osim_out = fullfile(pathHere,'Falisse_et_al_2022.osim');
 
-% reference model for contact
-path_reference_model = fullfile(pathHere,'Falisse_et_al_2022.osim');
-
 % select what to do
 add_actuators_bool = 1;
 add_contact_bool = 0;
-use_reference_contacts_bool = 1;
-scale_contact_spheres_bool = 1;
-scale_contact_location_bool = 1;
-scale_ligaments_bool = 1;
+
 
 %% Define contact spheres
 
@@ -161,10 +135,6 @@ for i=1:length(torq_act)
     ita = ita+1;
 end
 
-%% Define scaling factors for contact spheres
-
-scale.stiffness = 1;
-scale.dissipation = 1;
 
 %%
 
@@ -179,21 +149,10 @@ model.print(path_osim_out);
 %%
 SimmSpline_joint_to_polynomial(path_osim_out);
 
-if use_reference_contacts_bool
-    contact_spheres = get_contact_spheres(path_reference_model);
-end
 if add_actuators_bool
     add_actuators(path_osim_out,torq_act);
 end
 if add_contact_bool
     add_contact_spheres(path_osim_out,contact_spheres);
 end
-if scale_contact_spheres_bool
-    scaleContactSpheres(path_reference_model,path_osim_out,path_osim_out,scale)
-end
-if scale_contact_location_bool
-    fixContactSpherePositionAfterScaling(path_reference_model,path_osim_out);
-end
-if scale_ligaments_bool
-    scaleLigaments(path_osim_out, path_reference_model);
-end
+
