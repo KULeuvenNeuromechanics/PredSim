@@ -7,12 +7,14 @@ function scaleContactSpheres(osim_path_in,osim_path_out,scale)
 % 
 % INPUT:
 %
-%   - osim_path_in: Path to the model whose contact spheres you want to scale
+%   - osim_path_in -
+%   * Path to the model whose contact spheres you want to scale
 %
-%   - osim_path_out: Path to where the model with scaled contact spheres
-%   will be written
+%   - osim_path_out -
+%   * Path to where the model with scaled contact spheres will be written.
 % 
-%   - scale: a struct with the fields 'stiffness', 'dissipation', 'foot_left',
+%   - scale -
+%   * a struct with the fields 'stiffness', 'dissipation', 'foot_left',
 %       and 'foot_right' containing the scaling factors to apply.
 % 
 % OUTPUT:

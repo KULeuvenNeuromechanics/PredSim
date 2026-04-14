@@ -12,10 +12,10 @@ function [] = completeModelScaling(osim_scaleTool, osim_generic, osim_scaled,...
 %   | muscle max isometric force | mass^(2/3)    | osim_scaleTool       |
 %   | ligament max force         | mass^(2/3)    | osim_scaleTool       |
 %   | actuator max torque        | mass*height   | osim_generic         |
-%   | contact sphere radius      | foot size     | osim_generic         |
-%   | contact sphere position    | foot size     | osim_generic         |
-%   | contact sphere stiffness   | mass/height^2 | osim_generic         |
-%   | contact sphere dissipation | height        | osim_generic         |
+%   | contact sphere radius      | foot size     | osim_scaleTool       |
+%   | contact sphere position    | foot size     | osim_scaleTool       |
+%   | contact sphere stiffness   | mass/height^2 | osim_scaleTool       |
+%   | contact sphere dissipation | 1/height      | osim_scaleTool       |
 % 
 %
 %   This function also saves a .mat file in the same folder as osim_scaled
@@ -46,17 +46,19 @@ function [] = completeModelScaling(osim_scaleTool, osim_generic, osim_scaled,...
 % INPUT:
 %   - osim_scaleTool -
 %   * Path to the OpenSim model file created by the OpenSim Scale Tool.
+%   (i.e. input model file)
 % 
 %   - osim_generic -
 %   * Path to the OpenSim model file with the unscaled model. This model
-%   serves as reference for contact spheres and actuators.
+%   serves as reference for actuators and mass.
 %
 %   - osim_scaled - (optional) Default: osim_scaleTool
-%   * Path to the OpenSim model file with the fully scaled model.
+%   * Path to the OpenSim model file with the fully scaled model. (i.e.
+%   output model file)
 %
 %   - height_subject - (optional) Default: 1.65
 %   * Height of the subject (i.e. scaled model) in meter. Used to
-%   calculated height ratio for scaling.
+%   calculate height ratio for scaling.
 %
 %   - height_generic - (optional) Default: 1.65
 %   * Height of the generic (unscaled) model in meter. Used to
@@ -64,10 +66,10 @@ function [] = completeModelScaling(osim_scaleTool, osim_generic, osim_scaled,...
 %   models used in Falisse et al. (2022) and D'Hondt et al. (2024).
 %
 %   - scale_factor_foot_left - (optional) Default: 1
-%   * Scale factor that was used to scale left foot in OpenSim  scale tool.
+%   * Scale factor that was used to scale left foot in OpenSim scale tool.
 %
 %   - scale_factor_foot_right - (optional) Default: scale_factor_foot_left
-%   * Scale factor that was used to scale right foot in OpenSim  scale tool.
+%   * Scale factor that was used to scale right foot in OpenSim scale tool.
 %
 % 
 % Original author: Lars D'Hondt
@@ -84,7 +86,10 @@ arguments
     scale_factor_foot_right = scale_factor_foot_left;
 end
 
-addpath('../VariousFunctions')
+% path to helper functions
+[pathHere,~,~] = fileparts(mfilename('fullpath'));
+[pathRepo,~,~] = fileparts(pathHere);
+addpath(fullfile(pathRepo, 'VariousFunctions'))
 
 %%
 
@@ -140,5 +145,6 @@ sf_contact.foot_right = scale_factor_foot_right;
 
 scaleContactSpheres(osim_scaled, osim_scaled, sf_contact)
 
+fprintf("The scaled OpenSim model is saved as:\n\t'%s'\n", osim_scaled)
 
 end % end of function
