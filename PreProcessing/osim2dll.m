@@ -28,7 +28,14 @@ function [S] = osim2dll(S, osim_path)
 
 % external function files
 [~,osim_file_name,~] = fileparts(osim_path);
-external_function_dll = fullfile(S.misc.subject_path,['F_', osim_file_name, '.dll']);
+if S.OpenSimADOptions.useSerialisedFunction
+    libextension = '.casadi';
+elseif ispc
+    libextension = '.dll';
+elseif isunix
+    libextension = '.so';
+end
+external_function_dll = fullfile(S.misc.subject_path,['F_', osim_file_name, libextension]);
 external_function_lib = fullfile(S.misc.subject_path,['F_', osim_file_name, '.lib']); % not needed, yet...
 external_function_cpp = fullfile(S.misc.subject_path,['F_', osim_file_name, '.cpp']);
 external_function_IO  = fullfile(S.misc.subject_path,['F_' osim_file_name '_IO.mat']);
@@ -139,7 +146,7 @@ if extFunOk
     end
 end
 
-if extFunOk
+if extFunOk && ~S.OpenSimADOptions.always_generate
     disp(['   Using existing external function: '])
     disp(['      ' external_function_dll])
 else
@@ -147,7 +154,11 @@ else
     t0 = tic;
     disp('   Creating new external function...')
 
-    addpath(fullfile(S.misc.main_path,'opensimAD','utilities'))
+    if ispc
+        addpath(fullfile(S.misc.main_path,'opensimAD','utilities'))
+    elseif isunix
+        addpath(fullfile(S.misc.main_path,'opensimAD_linux','utilities'))
+    end
 
     outputFilename = ['F_' osim_file_name];
 
@@ -157,20 +168,57 @@ else
     % mil lines). Compiler becomes bottleneck.
     secondOrderDerivatives = false;
 
-    generateExternalFunction(osim_path, S.misc.subject_path,...
-        S.OpenSimADOptions.jointsOrder, S.OpenSimADOptions.coordinatesOrder,...
-        S.OpenSimADOptions.input3DBodyForces, S.OpenSimADOptions.input3DBodyMoments,...
-        S.OpenSimADOptions.export3DPositions, S.OpenSimADOptions.export3DVelocities,...
-        S.OpenSimADOptions.exportGRFs, S.OpenSimADOptions.exportGRMs,...
-        S.OpenSimADOptions.exportSeparateGRFs, S.OpenSimADOptions.exportContactPowers,...
-        outputFilename, S.OpenSimADOptions.compiler,...
-        S.OpenSimADOptions.verbose_mode, S.OpenSimADOptions.verify_ID,...
-        secondOrderDerivatives);
+    try
+
+        if ispc % windows
+            generateExternalFunction(osim_path, S.misc.subject_path,...
+                S.OpenSimADOptions.jointsOrder, S.OpenSimADOptions.coordinatesOrder,...
+                S.OpenSimADOptions.input3DBodyForces, S.OpenSimADOptions.input3DBodyMoments,...
+                S.OpenSimADOptions.export3DPositions, S.OpenSimADOptions.export3DOrientations,...
+                S.OpenSimADOptions.export3DVelocities, S.OpenSimADOptions.export3DVelocitiesProjGround,...
+                S.OpenSimADOptions.exportGRFs, S.OpenSimADOptions.exportGRMs,...
+                S.OpenSimADOptions.exportSeparateGRFs, S.OpenSimADOptions.exportContactPowers,...
+                outputFilename, S.OpenSimADOptions.compiler,...
+                S.OpenSimADOptions.verbose_mode, S.OpenSimADOptions.verify_ID,...
+                secondOrderDerivatives, S.OpenSimADOptions.useSerialisedFunction);
+        
+        elseif isunix % linux (or macOS)
+            generateExternalFunction(osim_path, S.misc.subject_path,...
+                S.OpenSimADOptions.jointsOrder, S.OpenSimADOptions.coordinatesOrder,...
+                S.OpenSimADOptions.input3DBodyForces, S.OpenSimADOptions.input3DBodyMoments,...
+                S.OpenSimADOptions.export3DPositions,...
+                S.OpenSimADOptions.export3DVelocities,...
+                S.OpenSimADOptions.exportGRFs, S.OpenSimADOptions.exportGRMs,...
+                S.OpenSimADOptions.exportSeparateGRFs, S.OpenSimADOptions.exportContactPowers,...
+                outputFilename, S.OpenSimADOptions.compiler,...
+                S.OpenSimADOptions.verbose_mode, S.OpenSimADOptions.verify_ID,...
+                secondOrderDerivatives);
+        end
+
+    catch err
+        % MATLAB errors in OpenSimAD occur after the actual cause of the
+        % error (cmake, compiler, etc.). Print a warning to help the user
+        % with troubleshooting the actual problem.
+        warn_text = sprintf("OpenSimAD encountered an error.\n");
+        if S.OpenSimADOptions.verbose_mode
+            warn_text = warn_text + sprintf("Look for error messages in " + ...
+                "the text above to identify the cause (there could be multiple).\n");
+        else
+            warn_text = warn_text + ...
+                sprintf("Set S.OpenSimADOptions.verbose_mode = true; " + ...
+                "and re-run your simulation to get more information.\n");
+        end
+        warning(warn_text)
+
+        % Still give the MATLAB error incase it has useful info and to stop
+        % the simulation
+        rethrow(err)
+    end
 
     disp(['   ... external function created (' num2str(toc(t0),'%.2f') ' s)'])
 
 end
 
-S.misc.external_function = ['F_' osim_file_name '.dll'];
+S.misc.external_function = ['F_' osim_file_name libextension];
 
 end % end of function

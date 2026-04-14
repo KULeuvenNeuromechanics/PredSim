@@ -44,9 +44,12 @@ pathmain = pwd;
 % addpath(genpath(pathRepo));
 % Loading external functions.
 setup.derivatives =  'AD'; % Algorithmic differentiation
-cd(S.misc.subject_path)
-F  = external('F',S.misc.external_function);
-cd(pathmain);
+
+if S.OpenSimADOptions.useSerialisedFunction
+    F = Function.load(fullfile(S.misc.subject_path, S.misc.external_function));
+else
+    F = external('F',fullfile(S.misc.subject_path, S.misc.external_function));
+end
 
 %% Collocation Scheme
 % We use a pseudospectral direct collocation method, i.e. we use Lagrange
@@ -573,8 +576,6 @@ end % End loop over collocation points
 if (S.subject.synergies) && (S.subject.TrackSynW)
     J_TrackSynW = W.TrackSynW*f_casadi.TrackSynW(SynW_rk, SynW_lk);
     J = J + J_TrackSynW;
-else
-    J_TrackSynW = 0;
 end
 
 % Synergies: a - WH = 0
@@ -1113,7 +1114,7 @@ for k=1:N
         E_cost = E_cost + W.E*B(j+1)*...
             (f_casadi.J_muscles_exp(e_tot_opt_all,W.E_exp))/model_info.mass*h_opt;
         A_cost = A_cost + W.a*B(j+1)*...
-            (f_casadi.J_muscles(a_col_opt(count,:)))*h_opt;      
+            (f_casadi.J_muscles_exp(a_col_opt(count,:), W.a_exp))*h_opt;      
         Qdotdot_cost = Qdotdot_cost + W.q_dotdot*B(j+1)*...
             (f_casadi.J_not_arms_dof(qdotdot_col_opt(count,model_info.ExtFunIO.jointi.noarmsi)))*h_opt;
         Pass_cost = Pass_cost + W.pass_torq*B(j+1)*...

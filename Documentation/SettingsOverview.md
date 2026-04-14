@@ -121,7 +121,11 @@ Quickly navigate to:
     > 3. Read from model file. Qs: min and max coordinate values
 - **S.misc.msk_geom_n_samples**:
     - Number of samples for the dummy motion that is used to fit the approximated musculoskeletal geometry. Default is *5000* [double]
-
+- **S.misc.msk_geom_always_new_fit**:
+    - Perform a new fit for the approximated musculoskeletal geometry, potentially overwriting previously saved approximations. Default is *false* [bool].
+- **S.misc.reduce_coeff_fit**:
+    - After fitting the approximated musculoskeletal geometry, try to obtain an acceptable fit with a reduced set of coefficients. Default is *true* [bool].
+    This routine is based on [work by Harba and Serrancolí](https://github.com/gilserrancoli/ReducePoly_forMSK/tree/main/MuscleTendonLengthParameterizationReduction).
 - **S.misc.visualize_bounds**: 
     - specify if bounds and initial guess are visualized (0 or 1). Default is *0* [double]
 - **S.misc.dampingCoefficient**: 
@@ -151,7 +155,7 @@ Quickly navigate to:
 - **S.misc.result_filename**: 
     - File name for results. Used for the name of .mat file that saves the results, diary of the OCP, and name of the .mot file of the output motion. When rerunning post-processing of an existing result, giving this file name is required. Default value is empty.
 - **S.misc.savename**: 
-    - Type of savename to use if S.misc.result_filename is empty. Default is *structured* [char]. This sets S.misc.result_filename = <S.subject.name>_v\<n>. Where <S.subject.name> is defined in S.subject.name. n = 1 if <S.subject.name>_v1.mat does not exist. n is increased until n is found such that <S.subject.name>_v\<n>.mat does not exist. To change this structuring process, change its implementation in [run_pred_sim.m file](../run_pred_sim.m). An alternative option is *datetime* [char], this uses <S.subject.name>\_\<yyyymmddTHHMMSS>. Where \<yyyymmddTHHMMSS> is the system date and time when creating the savename.
+    - Type of savename to use if S.misc.result_filename is empty. Default is *structured* [char]. This sets S.misc.result_filename = <S.subject.name>_v\<n>. Where <S.subject.name> is defined in S.subject.name. n = 1 if <S.subject.name>_v1.mat does not exist. n is increased until n is found such that <S.subject.name>_v\<n>.mat does not exist. To change this structuring process, change its implementation in [run_pred_sim.m file](../run_pred_sim.m). An alternative option is *datetime* [char], this uses <S.subject.name>\_\<yyyymmddTHHMMSS>. Where \<yyyymmddTHHMMSS> is the system date and time when creating the savename. When running simulations in batch, sometimes non-unique *datetime* savenames are created with overwritten files as a result. To prevent this from happening, you can use *datetime_job* [char] with simulations in batch.
 
 
 #### S.post_process
@@ -202,17 +206,17 @@ Quickly navigate to:
 - **S.subject.adapt_IG_pelvis_y**: 
     - boolean to adjust the trajectory of height of pelvis from the ground for data-informed initial guess. Default is *0*. 0 means the trajectory will not be changed. If 1, the trajectory will be changed such that the average value of the trajectory is equal to S.subject.IG_pelvis_y.
 - **S.subject.muscle_strength**: 
-    - structure with [scaling factors for muscle strength](./FiguresForDocumentation/fig_muscle_tendon_properties_scaling.png). This scales the max muscle force of the active muscle force. Default is *[]*, that is, no scaling. Input as a cell array where 1st input is the muscle(s) name, 2nd is the scale factor. If more than one scaling is to be performed, add 2 more inputs. For example, S.subject.muscle_strength = {{'soleus_l','soleus_r'},0.9,{'tib_ant_l'},1.1} will scale both soleus by a factor of 0.9 and tibialis anterior left by a scale of 1.1.
+    - structure with [scaling factors for muscle strength](./FiguresForDocumentation/fig_muscle_tendon_properties_scaling.png). This scales the max muscle force of the active muscle force. Default is *[]*, that is, no scaling. Input as a cell array where 1st input is the muscle(s) name, 2nd is the scale factor. If more than one scaling is to be performed, add 2 more inputs. For example, S.subject.muscle_strength = {{'soleus_l','soleus_r'},0.9,{'tib_ant_l'},1.1} will scale both soleus by a factor of 0.9 and tibialis anterior left by a scale of 1.1. Use muscle name *'all'* to apply the scale factor to all muscles.
 - **S.subject.muscle_pass_stiff_scale**: 
-    - structure with [scaling factors for muscle passive stiffness](./FiguresForDocumentation/fig_muscle_tendon_properties_scaling.png). Default is *[]*, that is, no scaling. Input as a cell array where 1st input is the muscle(s) name, 2nd is the scale factor. If more than one scaling is to be performed, add 2 more inputs. For example, S.subject.muscle_pass_stiff_scale = {{'soleus_l','soleus_r'},0.9,{'tib_ant_l'},1.1} will scale both soleus by a factor of 0.9 and tibialis anterior left by a scale of 1.1.
+    - structure with [scaling factors for muscle passive stiffness](./FiguresForDocumentation/fig_muscle_tendon_properties_scaling.png). Default is *[]*, that is, no scaling. Input as a cell array where 1st input is the muscle(s) name, 2nd is the scale factor. If more than one scaling is to be performed, add 2 more inputs. For example, S.subject.muscle_pass_stiff_scale = {{'soleus_l','soleus_r'},0.9,{'tib_ant_l'},1.1} will scale both soleus by a factor of 0.9 and tibialis anterior left by a scale of 1.1. Use muscle name *'all'* to apply the scale factor to all muscles.
 - **S.subject.muscle_pass_stiff_shift**: 
-    - structure with [scaling factors for muscle passive stiffness shift](./FiguresForDocumentation/fig_muscle_tendon_properties_scaling.png). This property shifts the start of passive muscle force from normalized muscle length = 1 to the valuse specified in S.subject.muscle_pass_stiff_shift. Default is *[]*, that is, no scaling. Input as a cell array where 1st input is the muscle(s) name, 2nd is the scale factore. If more than one scaling is to be performed, add 2 more inputs. For example, S.subject.muscle_pass_stiff_shift = {{'soleus_l','soleus_r'},0.9,{'tib_ant_l'},1.1} will scale both soleus by a factor of 0.9 and tibialis anterior left by a scale of 1.1.
+    - structure with [scaling factors for muscle passive stiffness shift](./FiguresForDocumentation/fig_muscle_tendon_properties_scaling.png). This property shifts the start of passive muscle force from normalized muscle length = 1 to the valuse specified in S.subject.muscle_pass_stiff_shift. Default is *[]*, that is, no scaling. Input as a cell array where 1st input is the muscle(s) name, 2nd is the scale factor. If more than one scaling is to be performed, add 2 more inputs. For example, S.subject.muscle_pass_stiff_shift = {{'soleus_l','soleus_r'},0.9,{'tib_ant_l'},1.1} will scale both soleus by a factor of 0.9 and tibialis anterior left by a scale of 1.1. Use muscle name *'all'* to apply the scale factor to all muscles.
 - **S.subject.tendon_stiff_scale**: 
-    - structure with [scaling factors for tendon stiffnesses](./FiguresForDocumentation/fig_muscle_tendon_properties_scaling.png). Default is *[]*, that is, no scaling. Input as a cell array where 1st input is the muscle(s) name, 2nd is the scale factor. If more than one scaling is to be performed, add 2 more inputs. For example, S.subject.tendon_stiff_scale = {{'soleus_l','soleus_r'},0.9,{'tib_ant_l'},1.1} will scale both soleus by a factor of 0.9 and tibialis anterior left by a scale of 1.1.
+    - structure with [scaling factors for tendon stiffnesses](./FiguresForDocumentation/fig_muscle_tendon_properties_scaling.png). Default is *[]*, that is, no scaling. Input as a cell array where 1st input is the muscle(s) name, 2nd is the scale factor. If more than one scaling is to be performed, add 2 more inputs. For example, S.subject.tendon_stiff_scale = {{'soleus_l','soleus_r'},0.9,{'tib_ant_l'},1.1} will scale both soleus by a factor of 0.9 and tibialis anterior left by a scale of 1.1. Use muscle name *'all'* to apply the scale factor to all muscles.
 - **S.subject.mtp_type**: 
     - type of mtp joint. Default is *''* [char], which treats the mtp like any other joint. Select *'2022paper'* to use passive mtp joints whose kinematics do affect the crossing muscle-tendon units ([Falisse et al., 2022](../README.md#references)).
 - **S.subject.scale_MT_params**: 
-    - scale muscle tendon properties that are read from opensim model. Default is *[]*, that is, no scaling. Input as a cell array where 1st input is the muscle(s) name, 2nd is what property you want to scale (FMo, lMo, lTs, alphao or vMmax), 3rd is the scale factor itself. If more than one scaling is to be performed, add 3 more inputs. For example, S.subject.scale_MT_params = {{'soleus_l','soleus_r'},'FMo',0.9,{'tib_ant_l'},'lTs',1.1} will scale max isometric force of both soleus by a factor of 0.9 and tendon slack length of tibialis anterior left by a scale of 1.1.
+    - scale muscle tendon properties that are read from opensim model. Default is *[]*, that is, no scaling. Input as a cell array where 1st input is the muscle(s) name, 2nd is what property you want to scale (FMo, lMo, lTs, alphao or vMmax), 3rd is the scale factor itself. If more than one scaling is to be performed, add 3 more inputs. For example, S.subject.scale_MT_params = {{'soleus_l','soleus_r'},'FMo',0.9,{'tib_ant_l'},'lTs',1.1} will scale max isometric force of both soleus by a factor of 0.9 and tendon slack length of tibialis anterior left by a scale of 1.1. Use muscle name *'all'* to apply the scale factor to all muscles.
 - **S.subject.damping_coefficient_all_dofs**: 
     - damping coefficient for all coordinates (except coordinates connected to ground, generally pelvis (also called floating base)). Default is *0.1* Nms/rad [double]
 - **S.subject.set_damping_coefficient_selected_dofs**: 
@@ -287,8 +291,8 @@ These settings are passed to OpenSimAD.
     If you get an error about not finding a compiler, use this setting to specify your compiler:
        - Visual studio 2015: 'Visual Studio 14 2015 Win64'
        - Visual studio 2017: 'Visual Studio 15 2017 Win64'
-       - Visual studio 2017: 'Visual Studio 16 2019'
-       - Visual studio 2017: 'Visual Studio 17 2022'
+       - Visual studio 2019: 'Visual Studio 16 2019'
+       - Visual studio 2022: 'Visual Studio 17 2022'
 - **S.OpenSimADOptions.verbose_mode**:
     - print outputs from windows command prompt to matlab command window (and log file). Default is *false* [bool].
 - **S.OpenSimADOptions.verify_ID**:
@@ -303,9 +307,13 @@ These settings are passed to OpenSimAD.
 - **S.OpenSimADOptions.input3DBodyMoments**:
     - add 3D moment vectors that act on bodies. Default is empty. Needs further implementations before this can be used.
 - **S.OpenSimADOptions.export3DPositions**:
-    - export 3D position of points in bodies, in ground reference frame. Default is empty. Needs further implementations before this can be used.
+    - export 3D position of points in bodies, in another reference frame. Default is empty. Needs further implementations before this can be used.
+- **S.OpenSimADOptions.export3DOrientations**:
+    - export 3D orientation of bodies, in another reference frame. Default is empty. Needs further implementations before this can be used.
 - **S.OpenSimADOptions.export3DVelocities**:
-    - export 3D velocity of points in bodies, in ground reference frame. Default is empty. Needs further implementations before this can be used.
+    - export 3D velocity of points in bodies, in another reference frame. Default is empty. Needs further implementations before this can be used.
+- **S.OpenSimADOptions.export3DVelocitiesProjGround**:
+    - export 3D velocity of a point that is the projection onto the global xz-plane of a point in a body. Default is empty. Needs further implementations before this can be used.
 - **S.OpenSimADOptions.exportGRFs**: 
     - Export total ground reaction forces of left and right side. Default is *true* [bool]
 - **S.OpenSimADOptions.exportSeparateGRFs**: 
@@ -314,6 +322,11 @@ These settings are passed to OpenSimAD.
     - Export total ground reaction moments of left and right side. Default is *true* [bool]
 - **S.OpenSimADOptions.exportContactPowers**: 
     - Export power due to vertical compression of each contact element. Default is *true* [bool]
+- **S.OpenSimADOptions.useSerialisedFunction**:
+    - Use a serialised CasADi function instead of an external function. Default is *false* [bool]
+    This serialised function is created with CasADi 3.6.2, and should be compatible with any later version. To create it with another version, [compile your own GenF.exe](../opensimAD/README.md#compiling-genf) from a conda environment with the desired CasADi version.
+- **S.OpenSimADOptions.always_generate**:
+    - Always run OpenSimAD to generate a new function, even if one already exists. This will overwrite the existing function. Default is *false* [bool]
 
 
 #### S.orthosis

@@ -85,19 +85,23 @@ end
 model_info.ligament_info.ligament_names = ligament_names;
 model_info.ligament_info.NLigament = length(ligament_names);
 
-%% OpenSim API
-% indices of coordinates in the OpenSim API state vector
-model_info = getCoordinateIndexForStateVectorOpenSimAPI(S,osim_path,model_info);
-
 %% Symmetry
 [symQs, model_info.ExtFunIO.jointi] = identify_kinematic_chains(S,osim_path,model_info);
 
 orderMus = 1:length(model_info.muscle_info.muscle_names);
-orderMusInv = zeros(1,length(model_info.muscle_info.muscle_names));
+orderMusInv = orderMus;
 for i=1:length(model_info.muscle_info.muscle_names)
 
-    orderMusInv(i) = find(strcmp(model_info.muscle_info.muscle_names,...
+    idx_mus_inv_i = find(strcmp(model_info.muscle_info.muscle_names,...
         mirrorName(model_info.muscle_info.muscle_names{i})));
+    if ~isempty(idx_mus_inv_i)
+        orderMusInv(i) = idx_mus_inv_i;
+    else
+        if strcmpi(S.misc.gaitmotion_type,'HalfGaitCycle')
+            error("Model asymmetry detected while S.misc.gaitmotion_type = " + ...
+                "'HalfGaitCycle'")
+        end
+    end
 end
 symQs.MusInvA = orderMus;
 symQs.MusInvB = orderMusInv;

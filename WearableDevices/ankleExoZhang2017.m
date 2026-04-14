@@ -111,7 +111,7 @@ if isfield(settings_orthosis,'plotAssistanceProfile')
             legName = 'right';
         end
         hold on
-        plot(mesh_control/N_stride*100,T_ankle(3,:),'DisplayName',legName)
+        plot((1:N_control)/N_stride*100,T_ankle(3,:),'DisplayName',legName)
         xlabel('Stride [%]')
         ylabel('Assistance [Nm]')
         title('ankleExoZhang2017')

@@ -29,7 +29,7 @@ function [fig_hand] = plot_figure_template(R,varargin)
 % default color is blue
 colr = [0 0.4470 0.7410];
 % default legend name is filename
-legName = R.S.post_process.result_filename;
+legName = R.S.misc.result_filename;
 % by default, use no interpreter for legend, because default name contains "_"
 legInt = 'none';
 
