@@ -122,6 +122,8 @@ offset_Qs = opti.variable(size(Qs_0,1),size(Qs_0,2));
 offset_Qdots = opti.variable(size(Qdots_0,1),size(Qdots_0,2));
 offset_Qdotdots = opti.variable(size(Qdotdots_0,1),size(Qdotdots_0,2));
 
+opti.subject_to(offset_Qs(model_info.ExtFunIO.jointi.base_forward,1)==0)
+
 % add offsets
 Qs = Qs_0 + offset_Qs;
 Qs(model_info.ExtFunIO.jointi.base_vertical,:) =...
@@ -134,13 +136,13 @@ Qs_nsc = Qs.*(scaling.Qs'*ones(1,size(Qs,2)));
 Qdots_nsc = Qdots.*(scaling.Qdots'*ones(1,size(Qdots,2)));
 Qdotdots_nsc = Qdotdots.*(scaling.Qdotdots'*ones(1,size(Qdotdots,2)));
 
-% contrain bounds
+% constrain bounds
 opti.subject_to(bounds.Qs.lower'*ones(1,size(Qs,2)) < Qs < ...
     bounds.Qs.upper'*ones(1,size(Qs,2)));
 opti.subject_to(bounds.Qdots.lower'*ones(1,size(Qdots,2)) < Qdots < ...
-    bounds.Qs.upper'*ones(1,size(Qdots,2)));
+    bounds.Qdots.upper'*ones(1,size(Qdots,2)));
 opti.subject_to(bounds.Qdotdots.lower'*ones(1,size(Qdotdots,2)) < Qdotdots < ...
-    bounds.Qs.upper'*ones(1,size(Qdotdots,2)));
+    bounds.Qdotdots.upper'*ones(1,size(Qdotdots,2)));
 
 % Create input vector for external function
 F_ext_input = MX(model_info.ExtFunIO.input.nInputs, size(Qs,2));
@@ -371,7 +373,7 @@ if ~isempty(options.prevRes)
     end
     guess = setup.guess;
     scaling = setup.scaling;
-    bounds = setup.bounds
+    bounds = setup.bounds;
 end
 
 if ~isempty(options.S)
