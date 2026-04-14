@@ -1,4 +1,3 @@
-
 *Use the table of contents to easily navigate this README. Click on the three lines next to README.md just above this sentence.*
 
 Predictive Simulations of Locomotion
@@ -103,10 +102,11 @@ the cluster.
 
 #SBATCH --cluster=genius
 #SBATCH --partition=batch
-#SBATCH --ntasks-per-node=18
+#SBATCH --ntasks-per-node=1
 #SBATCH --nodes=1
 #SBATCH --account=<credit_account>
 #SBATCH --time=04:00:00
+#SBATCH --mem-per-cpu=6000M
 
 # Instead of installing dependencies yourself, you can simply load modules on
 # the cluster. The versions are just examples, you can check for available
@@ -128,7 +128,7 @@ export LAPACK_VERSION=${EBROOTOPENBLAS}/lib64/libopenblas.so
 
 # TODO Figure out if it useful to use more than a single thread
 export OMP_NUM_THREADS=1
-matlab -nodisplay -nosplash -singleCompThread -r "main"
+matlab -nodisplay -nosplash -singleCompThread -r "addpath('Examples'); 	run_on_VSC_cluster"
 ```
 
 Replace the `<credit_account>` entry with your own (you can check to which
@@ -141,6 +141,15 @@ be written to the job output file (by default looking like `slurm-<jobid>.out`.
 > If you upload files from a Windows machine to the Linux cluster, you might
 > receive errors saying your file contains DOS line breaks instead of UNIX
 > line breaks. You can rectify this by running `dos2unix <fn>` on the cluster.
+
+If you have already completed these setup steps, you can simply navigate to 
+your [OnDemand Dashboard](https://ondemand.hpc.kuleuven.be/) > Login Server Shell Access > start a simulation
+using the predefined settings:
+```bash
+cd $VSC_DATA/PredSim
+sbatch run_simulation.slurm
+```
+
 
 ## How to use the code
 

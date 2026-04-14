@@ -85,10 +85,6 @@ end
 model_info.ligament_info.ligament_names = ligament_names;
 model_info.ligament_info.NLigament = length(ligament_names);
 
-%% OpenSim API
-% indices of coordinates in the OpenSim API state vector
-model_info = getCoordinateIndexForStateVectorOpenSimAPI(S,osim_path,model_info);
-
 %% Symmetry
 [symQs, model_info.ExtFunIO.jointi] = identify_kinematic_chains(S,osim_path,model_info);
 
