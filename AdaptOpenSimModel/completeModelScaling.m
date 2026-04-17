@@ -40,7 +40,7 @@ function [] = completeModelScaling(osim_scaleTool, osim_generic, osim_scaled,...
 %   AdaptOpenSimModel
 %   scaleMuscleForce scaleLigaments 
 %   scaleContactSpheres 
-%   getActuators removeActuators add_actuators
+%   scaleActuators
 %
 %
 % INPUT:
@@ -100,8 +100,8 @@ sf_mass = mass_subject/mass_generic;
 sf_length = height_subject/height_generic;
 
 sf_moment = sf_mass * sf_length;
-sf_contact_stiffness = sf_mass/sf_length^2;
-sf_contact_dissipation = 1/sf_length;
+sf_contact_stiffness = 1; %sf_mass/sf_length^2;
+sf_contact_dissipation = 1; %1/sf_length;
 
 scale_factors.mass = sf_mass;
 scale_factors.length = sf_length;
@@ -123,19 +123,8 @@ scaleLigaments(osim_scaled, mass_generic)
 
 %% coordinate actuators
 
-% get generic values
-[torq_act] = getActuators(osim_generic);
+scaleActuators(osim_scaled, sf_moment)
 
-% scale values
-for i=1:length(torq_act)
-    torq_act(i).max_torque = torq_act(i).max_torque * sf_moment;
-end
-
-% remove actuators from scaled model before adding
-removeActuators(osim_scaled)
-
-% add to scaled model
-add_actuators(osim_scaled,torq_act)
 
 %% contact spheres
 sf_contact.stiffness = sf_contact_stiffness;
