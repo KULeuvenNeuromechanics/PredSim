@@ -100,8 +100,8 @@ the cluster.
 ```bash
 #!/bin/bash -l
 
-#SBATCH --cluster=genius
-#SBATCH --partition=batch
+#SBATCH --cluster=wice
+#SBATCH --partition=batch_icelake
 #SBATCH --ntasks-per-node=1
 #SBATCH --nodes=1
 #SBATCH --account=<credit_account>
