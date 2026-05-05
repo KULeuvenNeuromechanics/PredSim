@@ -41,7 +41,7 @@ To run this code you need to have the following softwares on your machine:
 - [OpenSim](https://simtk.org/projects/opensim) 4.3 or later. Older versions do not work.
 - [CasADi](https://web.casadi.org/get/). The code has been tested on CasADi 3.5.5 and later.
 - [Microsoft Visual Studio](https://visualstudio.microsoft.com/). In Visual Studio Installer, [select to include Desktop development with C++](./Documentation/FiguresForDocumentation/fig_MSVS.png). The code has been tested on MSVS Community 2015 up to 2026.
-- [CMake](https://cmake.org/download/). The code has been tested on CMake 3.22.0. Add CMake to your system Path. We recommend installing CMake 3.22.0. PredSim has not been tested on newer versions of CMake.
+- [CMake](https://cmake.org/download/). The code has been tested on CMake 3.22.0. Add CMake to your system Path.
 - [Git](https://git-scm.com/download/win). The code has been tested on Git 2.40.0.windows.1. Add Git to your system Path.
 
 
