@@ -1,5 +1,4 @@
-function [] = completeModelScaling(osim_scaleTool, osim_generic, osim_scaled,...
-    height_subject, height_generic, scale_factor_foot_left, scale_factor_foot_right)
+function [] = completeModelScaling(osim_scaleTool, osim_generic, opts)
 % --------------------------------------------------------------------------
 % completeModelScaling
 %   After running the OpenSim scale tool, run this function to scale model
@@ -44,6 +43,8 @@ function [] = completeModelScaling(osim_scaleTool, osim_generic, osim_scaled,...
 %
 %
 % INPUT:
+%
+% Required:
 %   - osim_scaleTool -
 %   * Path to the OpenSim model file created by the OpenSim Scale Tool.
 %   (i.e. input model file)
@@ -52,39 +53,69 @@ function [] = completeModelScaling(osim_scaleTool, osim_generic, osim_scaled,...
 %   * Path to the OpenSim model file with the unscaled model. This model
 %   serves as reference for actuators and mass.
 %
-%   - osim_scaled - (optional) Default: osim_scaleTool
+% Optional:
+% (name-value pairs)
+%
+%   - osim_scaled -  Default: osim_scaleTool
 %   * Path to the OpenSim model file with the fully scaled model. (i.e.
 %   output model file)
 %
-%   - height_subject - (optional) Default: 1.65
+%   - height_subject -  Default: 1.65
 %   * Height of the subject (i.e. scaled model) in meter. Used to
 %   calculate height ratio for scaling.
 %
-%   - height_generic - (optional) Default: 1.65
+%   - height_generic -  Default: 1.65
 %   * Height of the generic (unscaled) model in meter. Used to
 %   calculate height ratio for scaling. Default value of 1.65m is for
 %   models used in Falisse et al. (2022) and D'Hondt et al. (2024).
 %
-%   - scale_factor_foot_left - (optional) Default: 1
+%   - scale_factor_foot_left - Default: 1
 %   * Scale factor that was used to scale left foot in OpenSim scale tool.
 %
-%   - scale_factor_foot_right - (optional) Default: scale_factor_foot_left
+%   - scale_factor_foot_right - Default: scale_factor_foot_left
 %   * Scale factor that was used to scale right foot in OpenSim scale tool.
 %
+% Example:
+% completeModelScaling(osim_scaleTool, osim_generic,...
+%     height_subject=1.72, ...
+%     scale_factor_foot_left=0.5, ...
+%     scale_factor_foot_right=0.5)
+%
+%   The model name is updated with the following suffixes:
+%   - _AdaptedForPredSim     indicates the model has been adapted for PredSim
+%   - _sf                    indicates muscle forces have been scaled.
+%   A warning is shown if either suffix is already present.
 % 
 % Original author: Lars D'Hondt
 % Original date: 3 January 2025
-% --------------------------------------------------------------------------
 
+% Last edit by: Ellis Van Can
+%  Last edit date: 5 May 2026
+% --------------------------------------------------------------------------
 arguments
-    osim_scaleTool
-    osim_generic
-    osim_scaled = osim_scaleTool;
-    height_subject = 1.65;
-    height_generic = 1.65;
-    scale_factor_foot_left = 1;
-    scale_factor_foot_right = scale_factor_foot_left;
+    osim_scaleTool (1,:) char
+    osim_generic   (1,:) char
+    opts.osim_scaled             (1,:) char   = '';
+    opts.height_subject          (1,1) double = 1.65;
+    opts.height_generic          (1,1) double = 1.65;
+    opts.scale_factor_foot_left  (1,1) double = 1;
+    opts.scale_factor_foot_right (1,1) double = nan;  
 end
+
+% handle defaults that depend on other arguments
+if isempty(opts.osim_scaled)
+    opts.osim_scaled = osim_scaleTool;
+end
+if isnan(opts.scale_factor_foot_right)
+    opts.scale_factor_foot_right = opts.scale_factor_foot_left;
+end
+
+% unpack opts
+osim_scaled             = opts.osim_scaled;
+height_subject          = opts.height_subject;
+height_generic          = opts.height_generic;
+scale_factor_foot_left  = opts.scale_factor_foot_left;
+scale_factor_foot_right = opts.scale_factor_foot_right;
 
 % path to helper functions
 [pathHere,~,~] = fileparts(mfilename('fullpath'));
@@ -92,7 +123,6 @@ end
 addpath(fullfile(pathRepo, 'VariousFunctions'))
 
 %%
-
 mass_generic = getModelMass(osim_generic);
 mass_subject = getModelMass(osim_scaleTool);
 
@@ -134,6 +164,25 @@ sf_contact.foot_right = scale_factor_foot_right;
 
 scaleContactSpheres(osim_scaled, osim_scaled, sf_contact)
 
+%% Check scaling history and update model name
+import org.opensim.modeling.*;
+model = Model(osim_scaleTool);
+model_name = char(model.getName);
+
+if contains(model_name, 'AdaptedForPredSim')
+    warning('Model "%s" has already been adapted for PredSim.', model_name);
+else
+    model.setName([model_name '_AdaptedForPredSim']);
+end
+
+if contains(model_name, '_sf')                        
+    warning('Model "%s" has already been force-scaled.', model_name);
+else
+    model.setName([char(model.getName) '_sf']);         
+end
+
+
+model.print(osim_scaled);
 fprintf("The scaled OpenSim model is saved as:\n\t'%s'\n", osim_scaled)
 
 end % end of function
