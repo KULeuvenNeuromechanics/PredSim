@@ -37,8 +37,8 @@ To run this code you need to have the following softwares on your machine:
 - MATLAB. [Statistics and Machine Learning Toolbox](https://nl.mathworks.com/products/statistics.html) and [Signal Processing Toolbox](https://nl.mathworks.com/products/signal.html) are required. [Parallel Computing Toolbox](https://nl.mathworks.com/products/parallel-computing.html) is optional. The code has mainly been developed and tested on MATLAB 2021b, but is expected to run on any recent version.
 - [OpenSim](https://simtk.org/projects/opensim) 4.3 or later. Older versions do not work.
 - [CasADi](https://web.casadi.org/get/). The code has been tested on CasADi 3.5.5 and later.
-- [Microsoft Visual Studio](https://visualstudio.microsoft.com/). In Visual Studio Installer, [select to include Desktop development with C++](./Documentation/FiguresForDocumentation/fig_MSVS.png). The code has been tested on MSVS Community 2015, 2017, 2019, and 2022.
-- [CMake](https://cmake.org/download/). The code has been tested on CMake 3.22.0. Add CMake to your system Path.
+- [Microsoft Visual Studio](https://visualstudio.microsoft.com/). In Visual Studio Installer, [select to include Desktop development with C++](./Documentation/FiguresForDocumentation/fig_MSVS.png). The code has been tested on MSVS Community 2015, 2017, 2019, and 2022. Specific versions of Visual Studio can be found at https://my.visualstudio.com/Downloads.
+- [CMake](https://cmake.org/download/). The code has been tested on CMake 3.22.0 (available at https://github.com/Kitware/CMake/releases/tag/v3.22.0). Add CMake to your system Path.
 - [Git](https://git-scm.com/download/win). The code has been tested on Git 2.40.0.windows.1. Add Git to your system Path.
 
 
@@ -173,7 +173,7 @@ The [examples folder](./Examples/) contains scripts illustrating how to use sett
 - **S.misc.save_folder**: 
 	- Path to the folder where you want to store the simulation results. If the folder does not exist yet on your machine, it will be created automatically.
 - **S.solver.IG_selection**: 
-	- Either choose 'quasi-random' or give the path to a .mot file you want to use as initial guess. In a quasi-random initial guess, the model is translated forward at the imposed velocity while all other coordinates are kept constant (vertical position of floating base is S.subject.IG_pelvis_y, others are 0). 
+	- Either choose 'quasi-random' or give the path to a .mot file you want to use as initial guess. In a quasi-random initial guess, the model is being translated forward at the imposed velocity while all other coordinates are kept constant in anatomical position (vertical position of floating base is S.subject.IG_pelvis_y, others are 0). A [walking gait initial guess](./OCP/IK_Guess_Full_GC.mot) is provided.
 - **S.solver.IG_selection_gaitCyclePercent**: 
 	- If S.solver.IG_selection is a .mot file, S.solver.IG_selection_gaitCyclePercent is required. Here, specify what percent of gait cycle does the .mot file contain. For example, if the .mot file has 2 gait cycles, S.solver.IG_selection_gaitCyclePercent is 200.
 
