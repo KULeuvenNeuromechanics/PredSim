@@ -5,7 +5,16 @@
 - [Limitations on the OpenSim model](#limitations-on-the-opensim-model)
 - [Using a very different model](#using-a-very-different-model)
 
+## Workflow overview
 
+1. **`AdaptOpenSimModel.m`** — prepare the *generic* model before scaling
+   - converts SimmSplines to polynomials
+   - adds contact spheres and actuators
+
+2. **OpenSim Scale Tool** — scale the generic model to subject dimensions
+
+3. **`completeModelScaling.m`** — scale parameters not handled by the Scale Tool
+   - muscle forces, ligaments, actuator torques, contact spheres
 ## What information does PredSim use to describe the musculoskeletal dynamics?
 
 #### OpenSim model
