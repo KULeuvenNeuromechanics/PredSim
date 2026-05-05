@@ -54,6 +54,12 @@ for i=1:length(S.bounds.points)
         S.bounds.points(i).name = S.bounds.points(i).body;
     end
 
+    % default reference frame is ground
+    if ~isfield(S.bounds.points(i),'reference_frame') ||...
+            isempty(S.bounds.points(i).reference_frame)
+        S.bounds.points(i).reference_frame = 'ground';
+    end
+
     pointNames{i} = S.bounds.points(i).name;
 end
 
@@ -78,11 +84,13 @@ for i=1:length(S.bounds.distanceConstraints)
         S.bounds.points(end+1).body = S.bounds.distanceConstraints(i).point1;
         S.bounds.points(end).point_in_body = [0,0,0];
         S.bounds.points(end).name = S.bounds.distanceConstraints(i).point1;
+        S.bounds.points(end).reference_frame = 'ground';
     end
     if ~any(strcmp(pointNames,S.bounds.distanceConstraints(i).point2))
         S.bounds.points(end+1).body = S.bounds.distanceConstraints(i).point2;
         S.bounds.points(end).point_in_body = [0,0,0];
         S.bounds.points(end).name = S.bounds.distanceConstraints(i).point2;
+        S.bounds.points(end).reference_frame = 'ground';
     end
 
     % by default, take 3D distance
