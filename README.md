@@ -173,7 +173,7 @@ The [examples folder](./Examples/) contains scripts illustrating how to use sett
 - **S.misc.save_folder**: 
 	- Path to the folder where you want to store the simulation results. If the folder does not exist yet on your machine, it will be created automatically.
 - **S.solver.IG_selection**: 
-	- Either choose 'quasi-random' or give the path to a .mot file you want to use as initial guess. In a quasi-random initial guess, the model is translated forward at the imposed velocity while all other coordinates are kept constant (vertical position of floating base is S.subject.IG_pelvis_y, others are 0). A [walking gait initial guess](./OCP/IK_Guess_Full_GC.mot) is provided.
+	- Either choose 'quasi-random' or give the path to a .mot file you want to use as initial guess. In a quasi-random initial guess, the model is being translated forward at the imposed velocity while all other coordinates are kept constant in anatomical position (vertical position of floating base is S.subject.IG_pelvis_y, others are 0). A [walking gait initial guess](./OCP/IK_Guess_Full_GC.mot) is provided.
 - **S.solver.IG_selection_gaitCyclePercent**: 
 	- If S.solver.IG_selection is a .mot file, S.solver.IG_selection_gaitCyclePercent is required. Here, specify what percent of gait cycle does the .mot file contain. For example, if the .mot file has 2 gait cycles, S.solver.IG_selection_gaitCyclePercent is 200.
 
