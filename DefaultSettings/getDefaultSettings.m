@@ -500,6 +500,11 @@ if ~isfield(S.subject,'set_stiffness_selected_ligaments')
         {'PlantarFascia','plantarFasciaNatali2010'};
 end
 
+% default values for specific tension
+if ~isfield(S.subject,'default_specific_tension')
+    S.subject.default_specific_tension = 'default_specific_tensions.csv';
+end
+
 % joints that are considered base of a leg
 if ~isfield(S.subject,'base_joints_legs')
     S.subject.base_joints_legs = 'hip';
