@@ -70,15 +70,7 @@ elseif isempty(S.misc.result_filename)
         if S.solver.run_as_batch_job
             result_filename = [S.subject.name '_job' num2str(S.solver.job_id)];
         else
-            cond = 1;
-            ct = 1;
-            while cond
-                result_filename = [S.subject.name '_v' num2str(ct)];
-                if ~isfile(fullfile(OutFolder,[result_filename '.mat']))
-                    cond = 0;
-                end
-                ct = ct+1;
-            end
+            result_filename = S.subject.name;
         end
         S.misc.result_filename = result_filename;
 
@@ -91,6 +83,16 @@ elseif isempty(S.misc.result_filename)
         S.misc.result_filename = [S.subject.name '_' datestr(datetime,30),'_job', num2str(S.solver.job_id)];
         
     end   
+
+    % always ensure unique filename
+    ct = 1;
+    result_filename = S.misc.result_filename;
+    while isfile(fullfile(OutFolder, [result_filename '_log.txt']))
+        result_filename = sprintf('%s_v%d', S.misc.result_filename, ct); % append _v to base filename
+        ct = ct + 1;
+    end
+    S.misc.result_filename = result_filename;
+
 end
 
 if nargout == 1
