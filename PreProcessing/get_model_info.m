@@ -92,9 +92,9 @@ model_info.gravity = [gravity_osim.get(0), gravity_osim.get(1), gravity_osim.get
 fi = atan2(model_info.gravity(2),model_info.gravity(1));
 model_info.slope = tan(3*pi/2-fi);
 
-%% OpenSim API
-% indices of coordinates in the OpenSim API state vector
-model_info = getCoordinateIndexForStateVectorOpenSimAPI(S,osim_path,model_info);
+% %% OpenSim API
+% % indices of coordinates in the OpenSim API state vector
+% model_info = getCoordinateIndexForStateVectorOpenSimAPI(S,osim_path,model_info);
 
 %% Symmetry
 [symQs, model_info.ExtFunIO.jointi] = identify_kinematic_chains(S,osim_path,model_info);

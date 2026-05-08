@@ -260,7 +260,9 @@ if isfield(S_benchmark,'studies') && ~isempty(S_benchmark.studies)
                 disp(['added sim vanderzee number ' num2str(i_speed) ' to batch' ])
             else
                 % temporary fix to add id to old simulations if needed
-                add_id_to_simresults(S.misc.save_folder, S.misc.benchmark_id)
+                add_id_to_simresults(S.misc.save_folder, S.misc.benchmark_id);
+                disp(['sim Van Der Zee not added to batch because folder ',...
+                            S.misc.save_folder ' is not empty']);
             end
             % append name
             S_benchmark.vanderzee.names{i_speed} = ['speed_' ...
@@ -310,7 +312,9 @@ if isfield(S_benchmark,'studies') && ~isempty(S_benchmark.studies)
                     disp(['added sim koelewijn number ' num2str(ct_sim) ' to batch' ])
                 else
                     % temporary fix to add id to old simulations if needed
-                    add_id_to_simresults(S.misc.save_folder, S.misc.benchmark_id)
+                    add_id_to_simresults(S.misc.save_folder, S.misc.benchmark_id);
+                    disp(['sim Koelewijn not added to batch because folder ',...
+                            S.misc.save_folder ' is not empty']);
                 end
                 % append name
                 S_benchmark.koelewijn.names{ct_sim} = save_name;
@@ -357,7 +361,9 @@ if isfield(S_benchmark,'studies') && ~isempty(S_benchmark.studies)
                 disp(['added sim browning number ' num2str(ct_sim) ' to batch' ]);
             else
                 % temporary fix to add id to old simulations if needed
-                add_id_to_simresults(S.misc.save_folder, S.misc.benchmark_id)
+                add_id_to_simresults(S.misc.save_folder, S.misc.benchmark_id);
+                disp(['sim Browning not added to batch because folder ',...
+                            S.misc.save_folder ' is not empty']);
             end
             % append name
             S_benchmark.browning.names{ct_sim} = save_name;
@@ -409,10 +415,13 @@ if isfield(S_benchmark,'studies') && ~isempty(S_benchmark.studies)
                         disp(['added sim gomenuka number ' num2str(ct_sim) ' to batch' ])
                     else
                         % temporary fix to add id to old simulations if needed
-                        add_id_to_simresults(S.misc.save_folder, S.misc.benchmark_id)
+                        add_id_to_simresults(S.misc.save_folder, S.misc.benchmark_id);
+                        disp(['sim Gomenuka not added to batch because folder ',...
+                            S.misc.save_folder ' is not empty']);
                     end
                     % append name
                     S_benchmark.gomenuka.names{ct_sim} = save_name;
+                    S_benchmark.gomenuka.ids{ct_sim} = save_name;
                     ct_sim = ct_sim+1;
                 end
             end
@@ -424,6 +433,7 @@ if isfield(S_benchmark,'studies') && ~isempty(S_benchmark.studies)
     nsim_schertzer = length(S_benchmark.converted_models.schertzer2014.modelnames) *...
         length(S_benchmark.schertzer.gait_speeds);
     S_benchmark.schertzer.names = cell(nsim_schertzer,1);
+    S_benchmark.schertzer.ids = cell(nsim_schertzer,1);
     ct_sim = 1;
     % create identifiers for gomenuka
     for i_speed = 1:length(S_benchmark.schertzer.gait_speeds)
@@ -454,14 +464,16 @@ if isfield(S_benchmark,'studies') && ~isempty(S_benchmark.studies)
             mat_files = dir(fullfile(S.misc.save_folder,'*.mat'));
             if isempty(mat_files)
                 % run predsim
-                runPredSim(S, osim_path_sel);
+                %runPredSim(S, osim_path_sel);
                 disp(['added sim schertzer number ' num2str(ct_sim) ' to batch' ])
             else
                 % temporary fix to add id to old simulations if needed
-                add_id_to_simresults(S.misc.save_folder, S.misc.benchmark_id)
+                add_id_to_simresults(S.misc.save_folder, S.misc.benchmark_id);
+                disp(['sim schertzer not added to batch because folder '  S.misc.save_folder ' is not empty'])
             end
             % append name
             S_benchmark.schertzer.names{ct_sim} = save_name;
+            S_benchmark.schertzer.ids{ct_sim} = save_name;
             ct_sim = ct_sim+1;
         end
     end
@@ -511,7 +523,9 @@ if isfield(S_benchmark,'gait_speeds') && S_benchmark.gait_speeds
             disp(['added sim gaitspeeds number ' num2str(i_speed) ' to batch' ])
         else
             % temporary fix to add id to old simulations if needed
-            add_id_to_simresults(S.misc.save_folder, S.misc.benchmark_id)
+            add_id_to_simresults(S.misc.save_folder, S.misc.benchmark_id);
+            disp(['sim gait speed not added to batch because folder ',...
+                S.misc.save_folder ' is not empty']);
         end
     end
 end
