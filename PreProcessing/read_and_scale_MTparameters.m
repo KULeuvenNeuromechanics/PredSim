@@ -57,7 +57,7 @@ NMuscle = muscle_info.NMuscle;
 tendon_stiff = 35*ones(1,NMuscle);
 
 % specific tensions of muscle fibers
-specific_tension = getSpecificTensions(muscleNames)';
+specific_tension = getSpecificTensions(S, muscleNames)';
 
 % ratio of slow twitch muscle fibers
 slow_twitch_fiber_ratio = getSlowTwitchRatios(muscleNames)';
