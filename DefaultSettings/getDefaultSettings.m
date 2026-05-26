@@ -204,6 +204,11 @@ if ~isfield(S.misc,'msk_geom_n_samples')
     S.misc.msk_geom_n_samples = 5000;
 end
 
+% always perform a new fit of msk geometry
+if ~isfield(S.misc,'msk_geom_always_new_fit')
+    S.misc.msk_geom_always_new_fit = false;
+end
+
 % rmse threshold for muscle-tendon length approximation
 if ~isfield(S.misc,'threshold_lMT_fit')
     S.misc.threshold_lMT_fit = 0.003;
@@ -212,6 +217,12 @@ end
 % rmse threshold for muscle-tendon momentarm approximation
 if ~isfield(S.misc,'threshold_dM_fit')
     S.misc.threshold_dM_fit = 0.003;
+end
+
+% reduce the number of coefficients in the fit, based on statistical
+% significance
+if ~isfield(S.misc,'reduce_coeff_fit')
+    S.misc.reduce_coeff_fit = true;
 end
 
 % visualize IG and bounds
@@ -655,7 +666,7 @@ if ~isfield(S.OpenSimADOptions,'compiler')
     if ispc
         S.OpenSimADOptions.compiler = findVisualStudioInstallation;
     elseif isunix
-        S.OpenSimADOptions.compiler = 'Unix Makefiles'
+        S.OpenSimADOptions.compiler = 'Unix Makefiles';
     end
 end
 
@@ -674,9 +685,28 @@ if ~isfield(S.OpenSimADOptions,'export3DPositions')
     S.OpenSimADOptions.export3DPositions = [];
 end
 
+% Export orientation of body
+if ~isfield(S.OpenSimADOptions,'export3DOrientations')
+    S.OpenSimADOptions.export3DOrientations = [];
+end
+if ~ispc && ~isempty(S.OpenSimADOptions.export3DOrientations)
+    S.OpenSimADOptions.export3DOrientations = [];
+    warning("Setting 'S.OpenSimADOptions.export3DOrientations' is " + ...
+        "only supported on windows, so will not be used.")
+end
+
 % Export velocities of points w.r.t. ground frame
 if ~isfield(S.OpenSimADOptions,'export3DVelocities')
     S.OpenSimADOptions.export3DVelocities = [];
+end
+
+if ~isfield(S.OpenSimADOptions,'export3DVelocitiesProjGround')
+    S.OpenSimADOptions.export3DVelocitiesProjGround = [];
+end
+if ~ispc && ~isempty(S.OpenSimADOptions.export3DVelocitiesProjGround)
+    S.OpenSimADOptions.export3DVelocitiesProjGround = [];
+    warning("Setting 'S.OpenSimADOptions.export3DVelocitiesProjGround' is " + ...
+        "only supported on windows, so will not be used.")
 end
 
 % If you want to choose the order of the joints and coordinate outputs
@@ -717,5 +747,17 @@ if ~isfield(S.OpenSimADOptions,'verify_ID')
     S.OpenSimADOptions.verify_ID = false;
 end 
 
-
+if ~isfield(S.OpenSimADOptions,'useSerialisedFunction')
+    S.OpenSimADOptions.useSerialisedFunction = false;
 end
+if ~ispc && S.OpenSimADOptions.useSerialisedFunction
+    S.OpenSimADOptions.useSerialisedFunction = false;
+    warning("Setting 'S.OpenSimADOptions.useSerialisedFunction' is " + ...
+        "only supported on windows, so will not be used.")
+end
+
+if ~isfield(S.OpenSimADOptions,'always_generate')
+    S.OpenSimADOptions.always_generate = false;
+end
+
+end % end of function
