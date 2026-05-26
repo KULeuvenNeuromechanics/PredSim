@@ -75,31 +75,49 @@ function [] = completeModelScaling(osim_scaleTool, osim_generic, opts)
 %   - scale_factor_foot_right - Default: scale_factor_foot_left
 %   * Scale factor that was used to scale right foot in OpenSim scale tool.
 %
+%   - scale_contact_stiffness -  Default: false
+%   *  true: scale contact sphere stiffness to mass/height^2.
+%
+%   - scale_contact_dissipation -  Default: false
+%   * true: scale contact sphere dissipation to mass/height^2.
+%
 % Example:
 % completeModelScaling(osim_scaleTool, osim_generic,...
+%     osim_scaled = fullfile(pathRepo,'Subjects',S.subject.name,[S.subject.name '_scaled.osim']);
 %     height_subject=1.72, ...
 %     scale_factor_foot_left=0.5, ...
-%     scale_factor_foot_right=0.5)
+%     scale_factor_foot_right=0.5,...
+%       scale_contact_stiffness=true, ...
+%       scale_contact_dissipation=true)
 %
 %   The model name is updated with the following suffixes:
 %   - _AdaptedForPredSim     indicates the model has been adapted for PredSim
 %   - _sf                    indicates muscle forces have been scaled.
 %   A warning is shown if either suffix is already present.
-% 
+
+%   Optional:
+%   - scale_contact_stiffness -  Default: false
+%   *  true: scale contact sphere stiffness to mass/height^2.
+%
+%   - scale_contact_dissipation -  Default: false
+%   * true: scale contact sphere dissipation to mass/height^2.
+% ... 
 % Original author: Lars D'Hondt
 % Original date: 3 January 2025
 
 % Last edit by: Ellis Van Can
-%  Last edit date: 5 May 2026
+%  Last edit date: 26 May 2026
 % --------------------------------------------------------------------------
 arguments
-    osim_scaleTool (1,:) char
-    osim_generic   (1,:) char
-    opts.osim_scaled             (1,:) char   = '';
-    opts.height_subject          (1,1) double = 1.65;
-    opts.height_generic          (1,1) double = 1.65;
-    opts.scale_factor_foot_left  (1,1) double = 1;
-    opts.scale_factor_foot_right (1,1) double = nan;  
+    osim_scaleTool                  (1,:) char
+    osim_generic                    (1,:) char
+    opts.osim_scaled                (1,:) char    = '';
+    opts.height_subject             (1,1) double  = 1.65;
+    opts.height_generic             (1,1) double  = 1.65;
+    opts.scale_factor_foot_left     (1,1) double  = 1;
+    opts.scale_factor_foot_right    (1,1) double  = nan;
+    opts.scale_contact_stiffness    (1,1) logical = false;  % nieuw
+    opts.scale_contact_dissipation  (1,1) logical = false;  % nieuw
 end
 
 % handle defaults that depend on other arguments
@@ -122,46 +140,55 @@ scale_factor_foot_right = opts.scale_factor_foot_right;
 [pathRepo,~,~] = fileparts(pathHere);
 addpath(fullfile(pathRepo, 'VariousFunctions'))
 
-%%
+%% scale factors
 mass_generic = getModelMass(osim_generic);
 mass_subject = getModelMass(osim_scaleTool);
 
 sf_mass = mass_subject/mass_generic;
 sf_length = height_subject/height_generic;
 
-sf_moment = sf_mass * sf_length;
-sf_contact_stiffness = 1; %sf_mass/sf_length^2;
-sf_contact_dissipation = 1; %1/sf_length;
-
 scale_factors.mass = sf_mass;
 scale_factors.length = sf_length;
+
+sf_moment = sf_mass * sf_length;
 
 scale_factors.moment = sf_moment;
 
 scale_factors.weight_Emetab = 1/(sf_mass*sf_length^2);
 scale_factors.weight_pass_torq = 1/sf_moment^2;
 
-% save scale factors for later use i.e. to scale parameters and cost
-% function weights via PredSim Settings
-save(replace(osim_scaled,'.osim','_scaling.mat'), "scale_factors");
+if opts.scale_contact_stiffness
+    sf_contact_stiffness = sf_mass / sf_length^2; 
+else
+    sf_contact_stiffness = 1;
+end
 
-%%
+if opts.scale_contact_dissipation
+    sf_contact_dissipation = 1 / sf_length;
+else
+    sf_contact_dissipation = 1;
+end
 
-scaleMuscleForce(osim_scaled, mass_generic, osim_scaleTool)
-
-scaleLigaments(osim_scaled, mass_generic)
-
-%% coordinate actuators
-
-scaleActuators(osim_scaled, sf_moment)
-
-
-%% contact spheres
 sf_contact.stiffness = sf_contact_stiffness;
 sf_contact.dissipation = sf_contact_dissipation;
 sf_contact.foot_left = scale_factor_foot_left;
 sf_contact.foot_right = scale_factor_foot_right;
 
+scale_factors.sf_contact = sf_contact;
+
+% save scale factors for later use i.e. to scale parameters and cost
+% function weights via PredSim Settings
+save(replace(osim_scaled,'.osim','_scaling.mat'), "scale_factors");
+
+%% forces and ligaments
+scaleMuscleForce(osim_scaled, mass_generic, osim_scaleTool)
+
+scaleLigaments(osim_scaled, mass_generic)
+
+%% coordinate actuators
+scaleActuators(osim_scaled, sf_moment)
+
+%% contact spheres
 scaleContactSpheres(osim_scaled, osim_scaled, sf_contact)
 
 %% Check scaling history and update model name
