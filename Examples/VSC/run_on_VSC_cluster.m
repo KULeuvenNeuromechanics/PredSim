@@ -20,13 +20,15 @@ clc
 % to path in case Intel is *not* used
 blas_version = version('-blas')
 lapack_version = version('-lapack')
-if ~startsWith(lapack_version, 'Intel')
-    addpath(fullfile(getenv('PWD'), 'LinearAlgebra'))
-end
 
-[pathExDir,~,~] = fileparts(mfilename('fullpath'));
-[pathRepo,~,~] = fileparts(pathExDir);
-[pathRepoFolder,~,~] = fileparts(pathRepo);
+[pathExDir,~] = fileparts(mfilename('fullpath'));
+[pathExamplesDir,~] = fileparts(pathExDir);
+[pathRepo,~] = fileparts(pathExamplesDir);
+[pathRepoFolder,~] = fileparts(pathRepo);
+
+if ~startsWith(lapack_version, 'Intel')
+    addpath(fullfile(pathRepo, 'LinearAlgebra'))
+end
 
 addpath(fullfile(pathRepo,'DefaultSettings'))
 addpath(pathRepo)
