@@ -1,52 +1,36 @@
-function scaleContactSpheres(genericModelPath,modelpath_in,modelout_path,scale)
+function scaleContactSpheres(osim_path_in,osim_path_out,scale)
 % This code scales:
-% 1. the radius of the contact spheres based on the scaling factor of the
-% foot. 
+% 1. the radius and location of the contact spheres based on the scaling 
+% factor of the foot. 
 % 2. the stiffness of the contact sphere
 % 3. the dissipation of the contact sphere
 % 
 % INPUT:
-%   - genericModelPath: Path to the generic model.
 %
-%   - modelpath_in: Path to the model whose contact spheres you want to scale
+%   - osim_path_in -
+%   * Path to the model whose contact spheres you want to scale
 %
-%   - modelout_path: Path to where the model with scaled contact spheres
-%   will be written
+%   - osim_path_out -
+%   * Path to where the model with scaled contact spheres will be written.
 % 
-%   - scale: a struct with the fields 'stiffness' and 'dissipation'
-%   containing the scaling factors to apply
+%   - scale -
+%   * a struct with the fields 'stiffness', 'dissipation', 'foot_left',
+%       and 'foot_right' containing the scaling factors to apply.
 % 
 % OUTPUT:
 %   - a new model with the scaled contact spheres
 % 
 % Original author: Bram Van Den Bosch
 % Original date: 27/March/2023
-%
-% Last edit by: Bram Van Den Bosch
-% Last edit date: 31/January/2024
 % --------------------------------------------------------------------------
 
 %% 1. get contact spheres
 
-contact_spheres = get_contact_spheres(modelpath_in);
+contact_spheres = getContactSpheres(osim_path_in);
 
 %Get the position of toes origin with respect to calcaneus
 import org.opensim.modeling.*;
-model_1 = Model(genericModelPath);
-toesInCalcn_r_1 = model_1.getJointSet.get('mtp_r').get_frames(0).get_translation.getAsMat';
-toesInCalcn_l_1 = model_1.getJointSet.get('mtp_l').get_frames(0).get_translation.getAsMat';
 
-model_2 = Model(modelpath_in);
-toesInCalcn_r_2 = model_2.getJointSet.get('mtp_r').get_frames(0).get_translation.getAsMat';
-toesInCalcn_l_2 = model_2.getJointSet.get('mtp_l').get_frames(0).get_translation.getAsMat';
-
-if ~exist('factorR')
-    factorR = ones(1,3)*sqrt(sum(toesInCalcn_r_2.^2))/sqrt(sum(toesInCalcn_r_1.^2));
-    factorL = ones(1,3)*sqrt(sum(toesInCalcn_l_2.^2))/sqrt(sum(toesInCalcn_l_1.^2));
-else
-    factorR(isnan(factorR)) = sqrt(sum(toesInCalcn_r_2.^2))/sqrt(sum(toesInCalcn_r_1.^2));
-    factorL(isnan(factorL)) = sqrt(sum(toesInCalcn_l_2.^2))/sqrt(sum(toesInCalcn_l_1.^2));
-end
 
 %% 2. calculate new values
 
@@ -54,16 +38,20 @@ for i=1:length(contact_spheres)
     contact_spheres(i).stiffness = contact_spheres(i).stiffness(:,:)*scale.stiffness;
     contact_spheres(i).dissipation = contact_spheres(i).dissipation*scale.dissipation;
 
-    if contains(contact_spheres(i).body,'_r')
-        contact_spheres(i).radius = contact_spheres(i).radius*factorR(1,1);
+    name = contact_spheres(i).name;
+    [leftname,~] = mirrorName(name);
+    if strcmp(name,leftname)
+        contact_spheres(i).radius = contact_spheres(i).radius*scale.foot_left(1);
+        contact_spheres(i).location = contact_spheres(i).location.*scale.foot_left;
     else
-        contact_spheres(i).radius = contact_spheres(i).radius*factorL(1,1);
+        contact_spheres(i).radius = contact_spheres(i).radius*scale.foot_right(1);
+        contact_spheres(i).location = contact_spheres(i).location.*scale.foot_right;
     end
 end
 
 %% 3. write values to model
 
-model = Model(modelpath_in);
+model = Model(osim_path_in);
 model.finalizeConnections();
 
 forceSet = model.getForceSet();
@@ -88,12 +76,15 @@ for i=0:forceSet.getSize()-1
         force_i.set_dissipation(contact_spheres(idx).dissipation)
         % set radius
         geo1.setRadius(contact_spheres(idx).radius);
+        % set location
+        contactSphereLoc = Vec3.createFromMat(contact_spheres(idx).location);
+        geo1.setLocation(contactSphereLoc);
 
     end
 end
 
 model.finalizeConnections();
 model.initSystem();
-model.print(modelout_path);
+model.print(osim_path_out);
 
 end
