@@ -124,17 +124,19 @@ if ~isempty(S.bounds.Qs)
     if ~isnan(new_lb(i_pelvis_ty))
         bool_pelvis_ty_lb_input = true;
     end
-    % check if there is a user input uper bound on pelvis_ty
+    % check if there is a user input upper bound on pelvis_ty
     if ~isnan(new_ub(i_pelvis_ty))
         bool_pelvis_ty_ub_input = true;
     end
 end
 
+% update lower bound on pelvis_ty if this was not a user input
 if ~isempty(S.bounds.factor_IG_pelvis_ty.lower) && ...
         ~bool_pelvis_ty_lb_input
     bounds_nsc.Qs.lower(model_info.ExtFunIO.jointi.base_vertical) =...
         model_info.IG_pelvis_y *S.bounds.factor_IG_pelvis_ty.lower;
 end
+% update upper bound on pelvis_ty if this was not a user input
 if ~isempty(S.bounds.factor_IG_pelvis_ty.upper) && ...
         ~bool_pelvis_ty_ub_input
     bounds_nsc.Qs.upper(model_info.ExtFunIO.jointi.base_vertical) =...
