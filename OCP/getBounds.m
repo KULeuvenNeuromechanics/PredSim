@@ -110,11 +110,33 @@ end
 
 
 %% Vertical position of floating base
-if ~isempty(S.bounds.factor_IG_pelvis_ty.lower)
+
+% I think that we only want to treat this as a special case if
+% this was not a user input.
+bool_pelvis_ty_lb_input = false;
+bool_pelvis_ty_ub_input = false;
+
+if ~isempty(S.bounds.Qs)
+    % unpack bounds
+    [new_lb,new_ub] = unpack_name_value_combinations(S.bounds.Qs,coordinate_names,[1,1]);
+    % check if there is a user input lower bound on pelvis_ty
+    i_pelvis_ty = strcmp(coordinate_names,'pelvis_ty');
+    if ~isnan(new_lb(i_pelvis_ty))
+        bool_pelvis_ty_lb_input = true;
+    end
+    % check if there is a user input uper bound on pelvis_ty
+    if ~isnan(new_ub(i_pelvis_ty))
+        bool_pelvis_ty_ub_input = true;
+    end
+end
+
+if ~isempty(S.bounds.factor_IG_pelvis_ty.lower) && ...
+        ~bool_pelvis_ty_lb_input
     bounds_nsc.Qs.lower(model_info.ExtFunIO.jointi.base_vertical) =...
         model_info.IG_pelvis_y *S.bounds.factor_IG_pelvis_ty.lower;
 end
-if ~isempty(S.bounds.factor_IG_pelvis_ty.upper)
+if ~isempty(S.bounds.factor_IG_pelvis_ty.upper) && ...
+        ~bool_pelvis_ty_ub_input
     bounds_nsc.Qs.upper(model_info.ExtFunIO.jointi.base_vertical) =...
         model_info.IG_pelvis_y *S.bounds.factor_IG_pelvis_ty.upper;
 end
