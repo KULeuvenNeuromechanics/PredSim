@@ -129,12 +129,15 @@ git submodule update --recursive
 ```
 
 ### Troubleshooting
-If you encounter an error like "Please add CasADi to the matlab search path", make sure S.solver.CasADi_path is explicitly set in your settings file or in main.m. The module loading alone is not sufficient for MATLAB to find CasADi. You can find the correct path by running:
+If you encounter an error like "Please add CasADi to the matlab search path", 
+make sure you are using the latest version of run_on_VSC_cluster.m from the 
+repository, which handles CasADi and OpenSim paths automatically. If the issue 
+persists, you can find the correct CasADi path by running:
+
 ```
 module load CasADi/3.7.0-gfbf-2024a
 echo $EBROOTCASADI
 ```
-and then add it to main.m
-```S.solver.CasADi_path = '/apps/leuven/rocky9/icelake/2024a/software/CasADi/3.7.0-gfbf-2024a';```
+
 
 
