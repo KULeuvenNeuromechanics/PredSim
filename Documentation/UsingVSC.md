@@ -93,7 +93,7 @@ Replace the `<credit_account>` entry with your own.
 
 ### Step 2: run the job script
 On the cluster you operate from the ```run_on_VSC_cluster.m```, all simulation settings, paths, model selections, and parameter configurations must be defined inside this file.
-Navigate to your [OnDemand Dashboard](https://ondemand.hpc.kuleuven.be/) > Login Server Shell Access > start a simulation
+To start a simulation, navigate to your [OnDemand Dashboard](https://ondemand.hpc.kuleuven.be/) > Login Server Shell Access > start a simulation
 using the predefined settings:
 
 ```bash
