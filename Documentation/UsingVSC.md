@@ -97,8 +97,9 @@ using the predefined settings:
 
 ```bash
 cd $VSC_DATA/PredSim
-sbatch run_simulation.slurm
+sbatch Examples/VSC/run_simulation.slurm
 ```
+
 To see the status of your job, execute `squeue -M ALL`, terminal output will
 be written to the job output file (by default looking like `slurm-<jobid>.out`.
 
@@ -109,7 +110,7 @@ be written to the job output file (by default looking like `slurm-<jobid>.out`.
 >
 
 ### A few useful Git commands
-```squeue --clusters=_NAMECLUSTER_ --me``` Check queue (replace _Name Cluster_)
+```squeue --clusters=NAMECLUSTER --me``` Check queue (replace _Name Cluster_)
 
 ```git rev-parse --short HEAD``` Check current commit
 Update to new commit (stash and keep changes):
@@ -122,7 +123,7 @@ git stash pop
 ```
 Updating to new commit without restoring changes
 ```
-git restore main.m run_simulation.slurm
+git restore run_simulation.slurm 	run_on_VSC_cluster.m
 git checkout master
 git pull origin master
 git submodule update --recursive
