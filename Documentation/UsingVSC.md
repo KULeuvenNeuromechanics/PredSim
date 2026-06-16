@@ -85,6 +85,15 @@ matlab -nodisplay -nosplash -singleCompThread -r "addpath('Examples'); 	run_on_V
 
 Replace the `<credit_account>` entry with your own.
 
+The jar file is named org-opensim-modeling.jar, not opensim.jar, and needs to be added explicitly:
+```
+matlab -nodisplay -nosplash -singleCompThread -r "javaaddpath('$EBROOTOPENSIM/sdk/Java/org-opensim-modeling.jar'); addpath(genpath('.')); main"
+```
+> [!NOTE]
+> Genius is currently largely unavailable due to maintenance. Use --cluster=wice 
+> with --partition=batch_icelake instead. OpenSim and OpenSimAD modules are 
+> available on wice. 
+
 ### Step 2: run the job script
 Navigate to your [OnDemand Dashboard](https://ondemand.hpc.kuleuven.be/) > Login Server Shell Access > start a simulation
 using the predefined settings:
@@ -94,6 +103,11 @@ cd $VSC_DATA/PredSim
 sbatch run_simulation.slurm
 ```
 
+BUGFIX: The casadipath needs to be set specifically 
+```
+S.solver.CasADi_path = '/apps/leuven/rocky9/icelake/2024a/software/CasADi/3.7.0-gfbf-2024a';
+```
+
 To see the status of your job, execute `squeue -M ALL`, terminal output will
 be written to the job output file (by default looking like `slurm-<jobid>.out`.
 
@@ -101,3 +115,35 @@ be written to the job output file (by default looking like `slurm-<jobid>.out`.
 > If you upload files from a Windows machine to the Linux cluster, you might
 > receive errors saying your file contains DOS line breaks instead of UNIX
 > line breaks. You can rectify this by running `dos2unix <fn>` on the cluster.
+>
+
+### A few useful Git commands
+```squeue --clusters=_NAMECLUSTER_ --me``` Check queue (replace _Name Cluster_)
+
+```git rev-parse --short HEAD``` Check current commit
+Update to new commit (stash and keep changes):
+```
+git stash
+git checkout master
+git pull origin master
+git submodule update --recursive
+git stash pop
+```
+Updating to new commit without restoring changes
+```
+git restore main.m run_simulation.slurm
+git checkout master
+git pull origin master
+git submodule update --recursive
+```
+
+### Troubleshooting
+If you encounter an error like "Please add CasADi to the matlab search path", make sure S.solver.CasADi_path is explicitly set in your settings file or in main.m. The module loading alone is not sufficient for MATLAB to find CasADi. You can find the correct path by running:
+```
+module load CasADi/3.7.0-gfbf-2024a
+echo $EBROOTCASADI
+```
+and then add it to main.m
+```S.solver.CasADi_path = '/apps/leuven/rocky9/icelake/2024a/software/CasADi/3.7.0-gfbf-2024a';```
+
+
