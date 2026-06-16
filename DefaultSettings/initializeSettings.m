@@ -30,6 +30,7 @@ S.subject      = [];
 S.weights      = [];
 S.orthosis     = [];
 S.OpenSimADOptions  = [];
+S.flow_control = [];
 
 % bounds have an .upper and .lower field
 S.bounds.activation_all_muscles = [];
