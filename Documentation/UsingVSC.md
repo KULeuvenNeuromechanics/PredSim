@@ -80,15 +80,12 @@ export LAPACK_VERSION=${EBROOTOPENBLAS}/lib64/libopenblas.so
 
 # TODO Figure out if it useful to use more than a single thread
 export OMP_NUM_THREADS=1
-matlab -nodisplay -nosplash -singleCompThread -r "addpath('Examples'); 	run_on_VSC_cluster"
+matlab -nodisplay -nosplash -singleCompThread -r "addpath('Examples/VSC'); 	run_on_VSC_cluster"
 ```
 
 Replace the `<credit_account>` entry with your own.
 
-The jar file is named org-opensim-modeling.jar, not opensim.jar, and needs to be added explicitly:
-```
-matlab -nodisplay -nosplash -singleCompThread -r "javaaddpath('$EBROOTOPENSIM/sdk/Java/org-opensim-modeling.jar'); addpath(genpath('.')); main"
-```
+
 > [!NOTE]
 > Genius is currently largely unavailable due to maintenance. Use --cluster=wice 
 > with --partition=batch_icelake instead. OpenSim and OpenSimAD modules are 
@@ -102,12 +99,6 @@ using the predefined settings:
 cd $VSC_DATA/PredSim
 sbatch run_simulation.slurm
 ```
-
-BUGFIX: The casadipath needs to be set specifically 
-```
-S.solver.CasADi_path = '/apps/leuven/rocky9/icelake/2024a/software/CasADi/3.7.0-gfbf-2024a';
-```
-
 To see the status of your job, execute `squeue -M ALL`, terminal output will
 be written to the job output file (by default looking like `slurm-<jobid>.out`.
 
