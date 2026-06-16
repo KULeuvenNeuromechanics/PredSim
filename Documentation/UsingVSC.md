@@ -80,7 +80,7 @@ export LAPACK_VERSION=${EBROOTOPENBLAS}/lib64/libopenblas.so
 
 # TODO Figure out if it useful to use more than a single thread
 export OMP_NUM_THREADS=1
-matlab -nodisplay -nosplash -singleCompThread -r "addpath('Examples/VSC'); 	run_on_VSC_cluster"
+matlab -nodisplay -nosplash -singleCompThread -r "addpath('Examples/VSC'); 	run_on_VSC_cluster.m"
 ```
 
 Replace the `<credit_account>` entry with your own.
@@ -92,6 +92,7 @@ Replace the `<credit_account>` entry with your own.
 > available on wice. 
 
 ### Step 2: run the job script
+On the cluster you operate from the run_on_VSC_cluster.m, all simulation settings, paths, model selections, and parameter configurations must be defined inside this file.
 Navigate to your [OnDemand Dashboard](https://ondemand.hpc.kuleuven.be/) > Login Server Shell Access > start a simulation
 using the predefined settings:
 
