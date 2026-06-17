@@ -29,19 +29,16 @@ function [f_getCalcnOriginInWorldFrame,f_getStepLength] = createCasadi_StepLengt
 import casadi.*
 
 qs = MX.sym('qs',model_info.ExtFunIO.jointi.nq.all);
+qsqdots = MX.zeros(model_info.ExtFunIO.jointi.nq.all*2);
+qsqdots(1:2:end) = qs(:);
+qddots = MX.zeros(model_info.ExtFunIO.jointi.nq.all);
 
-% Create zero (sparse) input vector for external function
-F_ext_input = MX(model_info.ExtFunIO.input.nInputs,1);
-% Assign Qs
-F_ext_input(model_info.ExtFunIO.input.Qs.all,1) = qs;
+[F] = load_external_function(S);
 
-F = external('F',replace(fullfile(S.misc.subject_path,S.misc.external_function),'\','/'));
+F_out = F([qsqdots;qddots]);
 
-F_out = F(F_ext_input);
-
-calcn_or_r = F_out(model_info.ExtFunIO.position.calcn_r);
-calcn_or_l = F_out(model_info.ExtFunIO.position.calcn_l);
-
+calcn_or_r = F_out(model_info.ExtFunIO.origin.calcn_r);
+calcn_or_l = F_out(model_info.ExtFunIO.origin.calcn_l);
 
 f_getCalcnOriginInWorldFrame = Function('f_getCalcnOriginInWorldFrame',{qs},...
     {calcn_or_r,calcn_or_l},{'q'},{'calcn_or_r','calcn_or_l'});
@@ -60,4 +57,7 @@ f_getStepLength = Function('f_getStepLength',{qs_1,qs_end},{step_length_r,step_l
     {'qs_1','qs_end'},{'step_length_r','step_length_l'});
 
 
-end % end of function
+
+
+
+
