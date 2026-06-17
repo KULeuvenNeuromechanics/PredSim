@@ -47,6 +47,9 @@ Ncoords = length(model_info.ExtFunIO.coord_names.all);
 
 model_info.ExtFunIO.jointi.armsi = sort([model_info.ExtFunIO.jointi.arm_l model_info.ExtFunIO.jointi.arm_r]);
 model_info.ExtFunIO.jointi.noarmsi = setdiff(1:Ncoords,model_info.ExtFunIO.jointi.armsi);
+model_info.ExtFunIO.jointi.base_forward = model_info.ExtFunIO.symQs.base_forward;
+model_info.ExtFunIO.jointi.base_lateral = model_info.ExtFunIO.symQs.base_lateral;
+% model_info.ExtFunIO.jointi.base_forward = setdiff(model_info.ExtFunIO.symQs.QdotsInvA,model_info.ExtFunIO.symQs.QsInvA);
 
 model_info = addCoordNames(model_info,'muscleActuated');
 
@@ -61,8 +64,9 @@ model_info.ExtFunIO.jointi.nq.trnsl        = length(model_info.ExtFunIO.jointi.t
 
 %% Model symmetry 
 % for half gait cycle simulations
-ActOpp = find(ismember(model_info.ExtFunIO.jointi.torqueActuated, model_info.ExtFunIO.symQs.QsOpp(:)) );
+ActOpp = find(ismember(model_info.ExtFunIO.symQs.QsOpp(:),model_info.ExtFunIO.jointi.torqueActuated));
 ActInvA = setdiff(1:model_info.ExtFunIO.jointi.nq.torqAct,ActOpp);
+
 ActInvB = zeros(size(ActInvA));
 
 for i=1:length(ActInvB)
@@ -79,7 +83,8 @@ model_info.ExtFunIO.symQs.QsFullGC = setdiff(1:Ncoords,model_info.ExtFunIO.joint
 %% Pelvis height used for initial guess
 model_info = get_IG_pelvis_y(S,osim_path,model_info);
 
-
+% add osim_path so it will be included in saved results
+model_info.osim_path = osim_path;
 
 
 

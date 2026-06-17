@@ -49,11 +49,7 @@ else
     end
 
     for i=1:N
-        array_i = double_array(i,:);
-        if iscell(array_i) && numel(array_i)==1
-            array_i = array_i{1};
-        end
-        struct_array(i).(fieldname) = array_i;
+        struct_array(i).(fieldname) = double_array(i,:);
     end
 
 end

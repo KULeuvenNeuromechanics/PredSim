@@ -20,11 +20,8 @@ function [model_info] = get_model_info(S,osim_path)
 % Original author: Lars D'Hondt
 % Original date: 11/April/2022
 %
-% update:
-%   read out ligament names
-%
-% Last edit by: Lars D'Hondt
-% Last edit date: 5/April/2023
+% Last edit by: 
+% Last edit date: 
 % --------------------------------------------------------------------------
 
 
@@ -45,6 +42,20 @@ end
 IEAIAIO = load(fullfile(S.misc.subject_path,['F_' osim_file_name '_IO.mat']),'IO');
 ExtFunIO = IEAIAIO.IO;
 
+% Remove fields that were only used to generate the .dll
+if isfield(ExtFunIO,"coordinatesOrder")
+    ExtFunIO = rmfield(ExtFunIO,"coordinatesOrder");
+end
+if isfield(ExtFunIO,"nCoordinates")
+    ExtFunIO = rmfield(ExtFunIO,"nCoordinates");
+end
+
+% convert indices int32 to doubles
+IOfields = fields(ExtFunIO);
+for i=1:length(IOfields)
+    ExtFunIO.(IOfields{i}) = convert2double(ExtFunIO.(IOfields{i}));
+end
+
 % create model_info with IO inside
 model_info.ExtFunIO = ExtFunIO;
 
@@ -54,17 +65,10 @@ model_info.ExtFunIO.coord_names.all = fieldnames(model_info.ExtFunIO.coordi);
 % number of coordinates
 model_info.ExtFunIO.jointi.nq.all = length(model_info.ExtFunIO.coord_names.all);
 
-% all inputs
-fields = ["Qs", "Qdots", "Qdotdots"];
-for i=fields
-    for j=1:length(model_info.ExtFunIO.coord_names.all)
-        model_info.ExtFunIO.input.(i).all(j) =...
-            model_info.ExtFunIO.input.(i).(model_info.ExtFunIO.coord_names.all{j});
-    end
-end
-
 %% OpenSim model file
 % read muscle names from .osim file
+osimdir = 'C:\OpenSim 4.4\bin\'; % BAK Added
+setenv('PATH', [osimdir ';' getenv('PATH')]); % BAK Added 
 import org.opensim.modeling.*;
 model = Model(osim_path);
 
@@ -72,35 +76,38 @@ muscle_names = cell(1,model.getMuscles().getSize());
 for i=1:model.getMuscles().getSize()
     muscle_names{i} = char(model.getMuscles().get(i-1).getName());
 end
+
 model_info.muscle_info.muscle_names = muscle_names;
+
 model_info.muscle_info.NMuscle = length(muscle_names);
 
+% ADDED FOR LIGAMENT IMPLEMENTATION  
 ligament_names = {};
 for i=1:model.getForceSet().getSize()
     force_i = model.getForceSet().get(i-1).getConcreteClassName();
-    if strcmp(force_i,'Ligament')
+    if strcmp(force_i,'Blankevoort1991Ligament')
         ligament_names{1,end+1} = char(model.getForceSet().get(i-1).getName());
     end
 end
 model_info.ligament_info.ligament_names = ligament_names;
 model_info.ligament_info.NLigament = length(ligament_names);
 
+%% OpenSim API
+% indices of coordinates in the OpenSim API state vector
+model_info = getCoordinateIndexForStateVectorOpenSimAPI(S,osim_path,model_info);
+
 %% Symmetry
-[symQs, model_info.ExtFunIO.jointi] = identify_kinematic_chains(S,osim_path,model_info);
+symQs = getCoordinateSymmetry(S,osim_path,model_info);
 
 orderMus = 1:length(model_info.muscle_info.muscle_names);
-orderMusInv = orderMus;
+orderMusInv = zeros(1,length(model_info.muscle_info.muscle_names));
 for i=1:length(model_info.muscle_info.muscle_names)
-
-    idx_mus_inv_i = find(strcmp(model_info.muscle_info.muscle_names,...
-        mirrorName(model_info.muscle_info.muscle_names{i})));
-    if ~isempty(idx_mus_inv_i)
-        orderMusInv(i) = idx_mus_inv_i;
-    else
-        if strcmpi(S.misc.gaitmotion_type,'HalfGaitCycle')
-            error("Model asymmetry detected while S.misc.gaitmotion_type = " + ...
-                "'HalfGaitCycle'")
-        end
+    if strcmp(model_info.muscle_info.muscle_names{i}(end-1:end),'_r')
+        orderMusInv(i) = find(strcmp(model_info.muscle_info.muscle_names,...
+            [model_info.muscle_info.muscle_names{i}(1:end-2) '_l']));
+    elseif strcmp(model_info.muscle_info.muscle_names{i}(end-1:end),'_l')
+        orderMusInv(i) = find(strcmp(model_info.muscle_info.muscle_names,...
+            [model_info.muscle_info.muscle_names{i}(1:end-2) '_r']));
     end
 end
 symQs.MusInvA = orderMus;
@@ -108,39 +115,6 @@ symQs.MusInvB = orderMusInv;
 
 model_info.ExtFunIO.symQs = symQs;
 
-%% indices for left and right side muscles
-idx_mus_l = [];
-idx_mus_r = [];
-
-for i=1:length(model_info.muscle_info.muscle_names)
-
-    mus_i = model_info.muscle_info.muscle_names{i};
-    [mus_i_l, mus_i_r] = mirrorName(mus_i);
-    if strcmp(mus_i, mus_i_r)
-        idx_mus_r(end+1) = i;
-
-        % For half GC, set idx of left muscles to be symmetric to idx of
-        % right muscles.
-        if strcmp(S.misc.gaitmotion_type,'HalfGaitCycle')
-            idx_mus_l(end+1) = find(strcmp(model_info.muscle_info.muscle_names, mus_i_l));
-
-        end
-
-        % For full GC, we do not need the idx to be symmetric. Additionally,
-        % some muscle might only exist left or right.
-    elseif ~strcmp(S.misc.gaitmotion_type,'HalfGaitCycle') && strcmp(mus_i, mus_i_l)
-        idx_mus_l(end+1) = i;
-
-    end
-end
-
-model_info.muscle_info.idx_left = idx_mus_l;
-model_info.muscle_info.idx_right = idx_mus_r;
-
-
-%% add osim_path so it will be included in saved results
-model_info.osim_path = osim_path;
 
 
 
-end % end of function
