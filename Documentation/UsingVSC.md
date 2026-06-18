@@ -80,7 +80,7 @@ export LAPACK_VERSION=${EBROOTOPENBLAS}/lib64/libopenblas.so
 
 # TODO Figure out if it useful to use more than a single thread
 export OMP_NUM_THREADS=1
-matlab -nodisplay -nosplash -singleCompThread -r "addpath('Examples/VSC'); 	run_on_VSC_cluster.m"
+matlab -nodisplay -nosplash -singleCompThread -r "addpath('Examples/VSC'); 	run_on_VSC_cluster"
 ```
 
 Replace the `<credit_account>` entry with your own.
