@@ -9,11 +9,27 @@ function [] = SimmSpline_joint_to_polynomial(osim_path)
 %   * path to the OpenSim model file (.osim)
 % 
 % 
-% Original author: Lars D'Hondt
+% Original author: Lars D'Hondt and Dhruv Gupta
 % Original date: 25/Nov/2022
 %
-% Last edit by: Dhruv Gupta
-% Last edit date: 15/02/2023
+% --------------------------------------------------------------------------
+% This file is part of PredSim.
+% 
+% PredSim: A Framework for Rapid Predictive Simulations of Locomotion
+% Copyright (c) 2026 KU Leuven
+% 
+% PredSim is free software: you can redistribute it and/or modify it under 
+% the terms of the GNU Affero General Public License as published by the 
+% Free Software Foundation, either version 3 of the License, or (at your 
+% option) any later version.
+% 
+% PredSim is distributed in the hope that it will be useful, but WITHOUT 
+% ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or 
+% FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public 
+% License for more details.
+% 
+% You should have received a copy of the GNU Affero General Public License 
+% along with PredSim. If not, see <https://www.gnu.org/licenses/>.
 % --------------------------------------------------------------------------
 
 %% load model
