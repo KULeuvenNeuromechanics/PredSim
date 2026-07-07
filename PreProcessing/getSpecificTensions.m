@@ -14,11 +14,27 @@ function specific_tension = getSpecificTensions(S, muscleNames)
 %   - specific_tension -
 %   * Array with specific tension of each muscle. Default is 0.70
 % 
-% Original author: Lars D'Hondt
+% Original author: Lars D'Hondt and Tim van der Zee
 % Original date: 16 September 2025
 %
-% Last edit by: Tim van der Zee
-% Last edit date: 15 January 2026
+% --------------------------------------------------------------------------
+% This file is part of PredSim.
+% 
+% PredSim: A Framework for Rapid Predictive Simulations of Locomotion
+% Copyright (c) 2026 KU Leuven
+% 
+% PredSim is free software: you can redistribute it and/or modify it under 
+% the terms of the GNU Affero General Public License as published by the 
+% Free Software Foundation, either version 3 of the License, or (at your 
+% option) any later version.
+% 
+% PredSim is distributed in the hope that it will be useful, but WITHOUT 
+% ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or 
+% FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public 
+% License for more details.
+% 
+% You should have received a copy of the GNU Affero General Public License 
+% along with PredSim. If not, see <https://www.gnu.org/licenses/>.
 % --------------------------------------------------------------------------
 
 specific_tension = 0.25*ones(length(muscleNames),1);
