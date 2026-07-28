@@ -95,6 +95,37 @@ end
 E_sum_GC = trapz(R.time.mesh_GC(1:end-1),R.metabolics.Uchida2016.Edot_incl_basal);
 R.metabolics.Uchida2016.COT = E_sum_GC/R.misc.body_mass/R.spatiotemp.dist_trav;
 
+%% Margaria
+% Get metabolic energy rate 
+pctsts = struct_array_to_double_array(model_info.muscle_info.parameters,'slow_twitch_fiber_ratio');
+MuscleMass = struct_array_to_double_array(model_info.muscle_info.parameters,'muscle_mass');
+
+R.metabolics.Margaria.Edot_gait = zeros(N,NMuscle);
+R.metabolics.Margaria.Adot = zeros(N,NMuscle);
+R.metabolics.Margaria.Mdot = zeros(N,NMuscle);
+R.metabolics.Margaria.Sdot = zeros(N,NMuscle);
+R.metabolics.Margaria.Wdot = zeros(N,NMuscle);
+R.metabolics.Margaria.Edot_incl_basal = zeros(N,1);
+
+for i=1:N
+    [Edot_tot_i,Adot_i,Mdot_i,Sdot_i,Wdot_i,Edot_b_i] = f_casadi.getMetabolicEnergyMargaria(...
+            R.muscles.a(i,:)',R.muscles.a(i,:)',R.muscles.lMtilde(i,:)',R.muscles.vM(i,:)',...
+            R.muscles.Fce(i,:)',R.muscles.Fpass(i,:)',MuscleMass',pctsts,R.muscles.Fiso(i,:)',...
+            R.misc.body_mass,R.S.metabolicE.tanh_b);
+
+    R.metabolics.Margaria.Edot_gait(i,:) = full(Edot_tot_i)';
+    R.metabolics.Margaria.Adot(i,:) = full(Adot_i)';
+    R.metabolics.Margaria.Mdot(i,:) = full(Mdot_i)';
+    R.metabolics.Margaria.Sdot(i,:) = full(Sdot_i)';
+    R.metabolics.Margaria.Wdot(i,:) = full(Wdot_i)';
+    R.metabolics.Margaria.Edot_incl_basal(i) = full(Edot_b_i)';
+
+end
+
+% cost of transport
+E_sum_GC = trapz(R.time.mesh_GC(1:end-1),R.metabolics.Margaria.Edot_incl_basal);
+R.metabolics.Margaria.COT = E_sum_GC/R.misc.body_mass/R.spatiotemp.dist_trav;
+
 %% ...
 % Please add other energy models below. 
 % Add the different terms to the struct with results R under the field
