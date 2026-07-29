@@ -36,7 +36,8 @@ function [energy_total,energy_a, energy_am,energy_sl,energy_mech,energy_model] =
     getMetabolicEnergyMargaria(exc,act,lMtilde,vM,lmo,Fce,Fpe, ...
         musclemass,pctst,vcemax,Fiso,modelmass,b,strength)
             
-    
+    vMtilde = vM./lmo;
+        
     % following getMetabolicEnergySmooth2004all
     musclemass=musclemass.*strength;
     
@@ -47,8 +48,13 @@ function [energy_total,energy_a, energy_am,energy_sl,energy_mech,energy_model] =
     energy_am = zeros(size(energy_mech));
     energy_sl = zeros(size(energy_mech));
     
+    % vM is negative (muscle shortening)
+    vMtilde_pos = 0.5 + 0.5*tanh(b*(vMtilde));
+    vMtilde_neg = 1-vMtilde_pos;
+    
     % based on 25% and -120% efficiency
-    totalHeatRate = energy_mech(energy_mech > 0) * 3 + energy_mech(energy_mech < 0) * -1;
+    totalHeatRate = energy_mech * 3 .* vMtilde_neg ...
+                  - energy_mech / 6 .* vMtilde_pos; 
     
     %% Account for muscle mass
     energy_am = energy_am.*musclemass;

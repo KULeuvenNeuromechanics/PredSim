@@ -37,7 +37,7 @@ osim_path = fullfile(pathRepo,'Subjects',S.subject.name,[S.subject.name '.osim']
 
 
 %% Run predictive simulations
-S.metabolicE.model = 'Uchida2016'; 
+S.metabolicE.model = 'Margaria'; 
 
 [savename] = runPredSim(S, osim_path);
 
