@@ -4,7 +4,7 @@
 #SBATCH --partition=batch_icelake
 #SBATCH --ntasks-per-node=1
 #SBATCH --nodes=1
-#SBATCH --account=<credit_account>
+#SBATCH --account=lp_neuromechanics
 #SBATCH --time=04:00:00
 #SBATCH --mem-per-cpu=6000M
 #SBATCH --output=../PredSimResults/slurm-%j.out

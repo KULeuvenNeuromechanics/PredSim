@@ -45,12 +45,12 @@ end
 
 %% Initialize S
 
-[S] = initializeSettings('Falisse_et_al_2022');
+[S] = initializeSettings('DHondt_et_al_2024_3seg');
 
 %% Settings
 
 % name of the subject
-S.subject.name = 'Falisse_et_al_2022';
+S.subject.name = 'DHondt_et_al_2024_3seg';
 
 % path to folder where you want to store the results of the OCP
 S.misc.save_folder  = fullfile(pathRepoFolder,'PredSimResults',S.subject.name); 
@@ -59,6 +59,8 @@ S.misc.save_folder  = fullfile(pathRepoFolder,'PredSimResults',S.subject.name);
 S.solver.IG_selection = fullfile(S.misc.main_path,'OCP','IK_Guess_Full_GC.mot');
 S.solver.IG_selection_gaitCyclePercent = 100;
 % S.solver.IG_selection = 'quasi-random';
+
+S.metabolicE.model = 'Margaria'; 
 
 % give the path to the osim model of your subject
 osim_path = fullfile(pathRepo,'Subjects',S.subject.name,[S.subject.name '.osim']);
