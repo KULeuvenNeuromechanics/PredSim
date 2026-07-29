@@ -1,9 +1,11 @@
-## Running PredSim on a VSC cluster
+# Running PredSim on a VSC cluster
 
-KU Leuven provides compute resources to researchers in the [High Performance Computing](https://icts.kuleuven.be/sc/onderzoeksgegevens/hpc)
-service. The HPC clusters of KU Leuven are part of the [Vlaams Supercomputer Centrum](https://www.vscentrum.be/) (VSC).
 If your local machine has insufficient memory or if you need to run many
 simulations, you can consider moving your workload to the HPC clusters.
+KU Leuven provides compute resources to researchers in the [High Performance Computing](https://icts.kuleuven.be/sc/onderzoeksgegevens/hpc)
+service. The HPC clusters of KU Leuven are part of the [Vlaams Supercomputer Centrum](https://www.vscentrum.be/) (VSC).
+
+## Getting started on KU Leuven's HPC
 In order to get started on the HPC, it is highly recommended to follow the
 [HPC Introduction](https://hpcleuven.github.io/HPC-intro/) and/or
 [Linux Introduction](https://hpcleuven.github.io/Linux-intro/) courses. To get
@@ -17,6 +19,9 @@ creating your VSC account, you can request membership of this group by visiting
 https://account.vscentrum.be/django/group/new and typing `lli_matlab` in the
 text box of the "Join group" paragraph.
 
+To interact with the cluster, go to https://ondemand.hpc.kuleuven.be/ and click on Login Server Shell Access. 
+Check to which credit accounts you have access by running the `sam-balance` command.
+
 In order to get a copy of the PredSim repository on the cluster, the following
 commands can be used:
 
@@ -28,14 +33,19 @@ git submodule init
 git submodule update
 ```
 
+If this ran succesfully, you should now see PredSim in the Data directory. To check the Data directory, click on Files -> Data directory. 
+<img width="920" height="56" alt="image" src="https://github.com/user-attachments/assets/7353381d-c5a6-4f2b-a3c4-d75f5d34879f" />
+
 Make sure to checkout a branch that is suited to run on the Linux environment
 of the cluster, for instance check that the `opensimAD_linux` submodule is
 present.
 
+## Running simulations on the HPC
+### Step 1: edit the job script
 Typically simulations are run in batch mode on the cluster, meaning you prepare
 a so-called job script including all commands that need to be executed to run
 a simulation. Below is an example of such a job script, which is also included
-as the `run_simulation.slurm` file in the repository. For debugging or test
+as the [run_simulation.slurm](https://github.com/KULeuvenNeuromechanics/PredSim/blob/master/Examples/VSC/run_simulation.slurm) file in the repository. For debugging or test
 runs you can also execute the commands from the job script in a terminal on
 the cluster.
 
@@ -47,7 +57,7 @@ the cluster.
 #SBATCH --ntasks-per-node=1
 #SBATCH --nodes=1
 #SBATCH --account=<credit_account>
-#SBATCH --time=04:00:00
+#SBATCH --time=10:00:00
 #SBATCH --mem-per-cpu=6000M
 
 # Instead of installing dependencies yourself, you can simply load modules on
@@ -70,12 +80,26 @@ export LAPACK_VERSION=${EBROOTOPENBLAS}/lib64/libopenblas.so
 
 # TODO Figure out if it useful to use more than a single thread
 export OMP_NUM_THREADS=1
-matlab -nodisplay -nosplash -singleCompThread -r "addpath('Examples'); 	run_on_VSC_cluster"
+matlab -nodisplay -nosplash -singleCompThread -r "addpath('Examples/VSC'); 	run_on_VSC_cluster"
 ```
 
-Replace the `<credit_account>` entry with your own (you can check to which
-credit accounts you have access by running the `sam-balance` command) and
-submit the job script from your PredSim directory with `sbatch run_simulation.slurm`.
+Replace the `<credit_account>` entry with your own.
+
+
+> [!NOTE]
+> Genius is currently largely unavailable due to maintenance. Use --cluster=wice 
+> with --partition=batch_icelake instead. OpenSim and OpenSimAD modules are 
+> available on wice. 
+
+### Step 2: run the job script
+On the cluster you operate from the ```run_on_VSC_cluster.m```, all simulation settings, paths, model selections, and parameter configurations must be defined inside this file.
+To start a simulation, navigate to your [OnDemand Dashboard](https://ondemand.hpc.kuleuven.be/) > Login Server Shell Access:
+
+```bash
+cd $VSC_DATA/PredSim
+sbatch Examples/VSC/run_simulation.slurm
+```
+
 To see the status of your job, execute `squeue -M ALL`, terminal output will
 be written to the job output file (by default looking like `slurm-<jobid>.out`.
 
@@ -83,11 +107,38 @@ be written to the job output file (by default looking like `slurm-<jobid>.out`.
 > If you upload files from a Windows machine to the Linux cluster, you might
 > receive errors saying your file contains DOS line breaks instead of UNIX
 > line breaks. You can rectify this by running `dos2unix <fn>` on the cluster.
+>
 
-If you have already completed these setup steps, you can simply navigate to 
-your [OnDemand Dashboard](https://ondemand.hpc.kuleuven.be/) > Login Server Shell Access > start a simulation
-using the predefined settings:
-```bash
-cd $VSC_DATA/PredSim
-sbatch run_simulation.slurm
+### A few useful Git commands
+```squeue --clusters=NAMECLUSTER --me``` Check queue (replace _Name Cluster_)
+
+```git rev-parse --short HEAD``` Check current commit
+Update to new commit (stash and keep changes):
 ```
+git stash
+git checkout master
+git pull origin master
+git submodule update --recursive
+git stash pop
+```
+Updating to new commit without restoring changes
+```
+git restore run_simulation.slurm 	run_on_VSC_cluster.m
+git checkout master
+git pull origin master
+git submodule update --recursive
+```
+
+### Troubleshooting
+If you encounter an error like "Please add CasADi to the matlab search path", 
+make sure you are using the latest version of run_on_VSC_cluster.m from the 
+repository, which handles CasADi and OpenSim paths automatically. If the issue 
+persists, you can find the correct CasADi path by running:
+
+```
+module load CasADi/3.7.0-gfbf-2024a
+echo $EBROOTCASADI
+```
+
+
+

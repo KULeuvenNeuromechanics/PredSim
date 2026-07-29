@@ -17,8 +17,24 @@ function [f_casadi] = createCasadi_GenHelper(S,model_info)
 % Original authors: Dhruv Gupta, Lars D'Hondt, Tom Buurke
 % Original date: 01/12/2021
 %
-% Last edit by: 
-% Last edit date: 
+% --------------------------------------------------------------------------
+% This file is part of PredSim.
+% 
+% PredSim: A Framework for Rapid Predictive Simulations of Locomotion
+% Copyright (c) 2026 KU Leuven
+% 
+% PredSim is free software: you can redistribute it and/or modify it under 
+% the terms of the GNU Affero General Public License as published by the 
+% Free Software Foundation, either version 3 of the License, or (at your 
+% option) any later version.
+% 
+% PredSim is distributed in the hope that it will be useful, but WITHOUT 
+% ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or 
+% FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public 
+% License for more details.
+% 
+% You should have received a copy of the GNU Affero General Public License 
+% along with PredSim. If not, see <https://www.gnu.org/licenses/>.
 % --------------------------------------------------------------------------
 
 import casadi.*

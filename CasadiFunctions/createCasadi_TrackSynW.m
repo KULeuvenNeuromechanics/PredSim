@@ -16,9 +16,25 @@ function [f_TrackSynW] = createCasadi_TrackSynW(S,model_info)
 %   - f_TrackSynW -
 %   * CasADi function for the term in the cost function
 %   that tracks selected synergy weights
+%
+% --------------------------------------------------------------------------
+% This file is part of PredSim.
 % 
-% Original author: Lars D'Hondt
-% Original date: July 2024
+% PredSim: A Framework for Rapid Predictive Simulations of Locomotion
+% Copyright (c) 2026 KU Leuven
+% 
+% PredSim is free software: you can redistribute it and/or modify it under 
+% the terms of the GNU Affero General Public License as published by the 
+% Free Software Foundation, either version 3 of the License, or (at your 
+% option) any later version.
+% 
+% PredSim is distributed in the hope that it will be useful, but WITHOUT 
+% ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or 
+% FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public 
+% License for more details.
+% 
+% You should have received a copy of the GNU Affero General Public License 
+% along with PredSim. If not, see <https://www.gnu.org/licenses/>.
 % --------------------------------------------------------------------------
 
 import casadi.*

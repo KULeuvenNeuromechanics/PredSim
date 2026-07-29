@@ -16,11 +16,27 @@ function [] = OCP_formulation(S,model_info,f_casadi)
 % OUTPUT:
 %   - This function returns no outputs -
 % 
-% Original author: Dhruv Gupta and Lars D'Hondt
+% Original author: Dhruv Gupta, Lars D'Hondt, and Bram Van Den Bosch
 % Original date: January-May/2022
 %
-% Last edit by: Bram Van Den Bosch
-% Last edit date: 23/Sept/2024
+% --------------------------------------------------------------------------
+% This file is part of PredSim.
+% 
+% PredSim: A Framework for Rapid Predictive Simulations of Locomotion
+% Copyright (c) 2026 KU Leuven
+% 
+% PredSim is free software: you can redistribute it and/or modify it under 
+% the terms of the GNU Affero General Public License as published by the 
+% Free Software Foundation, either version 3 of the License, or (at your 
+% option) any later version.
+% 
+% PredSim is distributed in the hope that it will be useful, but WITHOUT 
+% ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or 
+% FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public 
+% License for more details.
+% 
+% You should have received a copy of the GNU Affero General Public License 
+% along with PredSim. If not, see <https://www.gnu.org/licenses/>.
 % --------------------------------------------------------------------------
 
 disp('Start formulating OCP...')

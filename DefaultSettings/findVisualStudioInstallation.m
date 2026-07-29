@@ -15,8 +15,24 @@ function [MSVS_compiler] = findVisualStudioInstallation()
 % Original author: Lars D'Hondt
 % Original date: 28/November/2022
 %
-% Last edit by: 
-% Last edit date: 
+% --------------------------------------------------------------------------
+% This file is part of PredSim.
+% 
+% PredSim: A Framework for Rapid Predictive Simulations of Locomotion
+% Copyright (c) 2026 KU Leuven
+% 
+% PredSim is free software: you can redistribute it and/or modify it under 
+% the terms of the GNU Affero General Public License as published by the 
+% Free Software Foundation, either version 3 of the License, or (at your 
+% option) any later version.
+% 
+% PredSim is distributed in the hope that it will be useful, but WITHOUT 
+% ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or 
+% FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public 
+% License for more details.
+% 
+% You should have received a copy of the GNU Affero General Public License 
+% along with PredSim. If not, see <https://www.gnu.org/licenses/>.
 % --------------------------------------------------------------------------
 
 MSVS_years = {'2026','2022','2019','2017','2015'};
@@ -43,4 +59,6 @@ if isempty(MSVS_compiler)
     error(['Could not detect Visual Studio in c:/Program Files or c:/Program Files (x86). ',...
         'Please set S.OpenSimADOptions.compiler to Visual Studio 14 2015 Win64, Visual Studio 15 2017 Win64,',...
         'Visual Studio 16 2019, Visual Studio 17 2022, or Visual Studio 18 2026 based on your installed version']);
+end
+
 end

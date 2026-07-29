@@ -14,11 +14,24 @@ function [err, FT, Fce, Fpass, Fiso, vMmax, massM] = ...
 % Original author: Antoine Falisse
 % Original date: 12/19/2018
 %
-%   Adapted to allow assumption of constant pennation angle, by Lars D'Hondt.
-%   Adapted to take parameters for muscle stiffness and strength as input, 
-%   by Lars D'Hondt.
-% Last edit by: Lars D'Hondt
-% Last edit date: 30/May/2022
+% --------------------------------------------------------------------------
+% This file is part of PredSim.
+% 
+% PredSim: A Framework for Rapid Predictive Simulations of Locomotion
+% Copyright (c) 2026 KU Leuven
+% 
+% PredSim is free software: you can redistribute it and/or modify it under 
+% the terms of the GNU Affero General Public License as published by the 
+% Free Software Foundation, either version 3 of the License, or (at your 
+% option) any later version.
+% 
+% PredSim is distributed in the hope that it will be useful, but WITHOUT 
+% ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or 
+% FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public 
+% License for more details.
+% 
+% You should have received a copy of the GNU Affero General Public License 
+% along with PredSim. If not, see <https://www.gnu.org/licenses/>.
 % --------------------------------------------------------------------------
 
 FMo = ones(size(a,1),1)*FMo_in;
