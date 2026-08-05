@@ -15,49 +15,61 @@ clc
 
 addpath(fullfile(pathRepo,'DefaultSettings'))
 
-%% Initialize S
-
+% %% Initialize S
+% 
 [S] = initializeSettings('gait1018');
-
-%% Settings
-
-% name of the subject
+% 
+% %% Settings
+% 
+% % name of the subject
 S.subject.name = 'gait1018';
-
-% path to folder where you want to store the results of the OCP
+% 
+% % path to folder where you want to store the results of the OCP
 S.misc.save_folder  = fullfile(pathRepoFolder,'PredSimResults',S.subject.name); 
-
-% either choose "quasi-random" or give the path to a .mot file you want to use as initial guess
+% 
+% % either choose "quasi-random" or give the path to a .mot file you want to use as initial guess
 S.solver.IG_selection = fullfile(S.misc.main_path,'OCP','IK_Guess_Full_GC.mot');
 S.solver.IG_selection_gaitCyclePercent = 100;
-% S.solver.IG_selection = 'quasi-random';
-
-% give the path to the osim model of your subject
+% % S.solver.IG_selection = 'quasi-random';
+% 
+% % give the path to the osim model of your subject
 osim_path = fullfile(pathRepo,'Subjects',S.subject.name,[S.subject.name '.osim']);
+% 
+% 
+% %% Run predictive simulations
+% S.metabolicE.model = 'Margaria'; 
+% 
+
+S = update_settings(S);
 
 
-%% Run predictive simulations
-S.metabolicE.model = 'Margaria'; 
-
-[savename] = runPredSim(S, osim_path);
+% [savename] = runPredSim(S, osim_path);
 
 
 %% Plot results
+return
 % see .\PlotFigures\run_this_file_to_plot_figures.m for more
 
-if (~S.solver.run_as_batch_job)
+if contains(S.subject.name, '3seg')
+    names = {'DHondt_et_al_2024_3seg_61584936.mat', 'DHondt_et_al_2024_3seg_61585271.mat', 'DHondt_et_al_2024_3seg_61592003.mat'};
+elseif contains(S.subject.name, '4seg')
+    names = {'DHondt_et_al_2024_4seg_61584949.mat', 'DHondt_et_al_2024_4seg_61585151.mat'};
+end
+
+names = {'DHondt_et_al_2024_4seg_61584949.mat', 'DHondt_et_al_2024_4seg_61585151.mat'};
+% if (~S.solver.run_as_batch_job)
 
 %     % set path to reference result
 %     result_paths{1} = fullfile(pathRepo,'Tests','ReferenceResults',...
 %         'Falisse_et_al_2022','Falisse_et_al_2022_paper.mat');
     
-    result_paths{1} = fullfile(S.misc.save_folder,[ 'gait1018_v6.mat']);
+    result_paths{1} = fullfile(S.misc.save_folder,names{1});
     
     % set path to saved result
-    result_paths{2} = fullfile(S.misc.save_folder,[savename '.mat']);
+    result_paths{2} = fullfile(S.misc.save_folder,names{2});
     
     % Cell array with legend name for each result
-    legend_names = {'Reference result', 'Your first simulation'};
+    legend_names = {'Uchida', 'Bhargava'};
     
     % add path to subfolder with plotting functions
     addpath(fullfile(pathRepo,'PlotFigures'))
@@ -71,4 +83,4 @@ if (~S.solver.run_as_batch_job)
     % call plotting function
     plot_figures(result_paths, legend_names, figure_settings);
 
-end
+% end
