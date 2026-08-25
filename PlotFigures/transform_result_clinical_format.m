@@ -91,7 +91,16 @@ function R = transform_result_clinical_format(result_path, side)
 
    %% Save to new file with '_transf' suffix
     [path, name, ext] = fileparts(result_path);
-    new_path = fullfile(path, [name '_transf' ext]);
+
+    if strcmpi(side, 'right')
+        suffix = '_transf_right';
+    elseif strcmpi(side, 'left')
+        suffix = '_transf_left';
+    else
+        error('side must be either ''right'' or ''left''.');
+    end
+
+    new_path = fullfile(path, [name suffix ext]);
     save(new_path, '-struct', 'data');
     
 end
