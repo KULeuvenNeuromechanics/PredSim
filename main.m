@@ -17,12 +17,12 @@ addpath(fullfile(pathRepo,'DefaultSettings'))
 
 % %% Initialize S
 % 
-[S] = initializeSettings('DHondt_et_al_2024_3seg');
+[S] = initializeSettings('gait1018');
 % 
 % %% Settings
 % 
 % % name of the subject
-S.subject.name = 'DHondt_et_al_2024_3seg';
+S.subject.name = 'gait1018';
 % 
 % % path to folder where you want to store the results of the OCP
 S.misc.save_folder  = fullfile(pathRepoFolder,'PredSimResults',S.subject.name); 
@@ -37,15 +37,16 @@ osim_path = fullfile(pathRepo,'Subjects',S.subject.name,[S.subject.name '.osim']
 % 
 % 
 % %% Run predictive simulations
-% S.metabolicE.model = 'Margaria'; 
+S.metabolicE.model = 'Bhargava2004-simple'; 
 % 
 
 S = update_settings(S);
+S.OpenSimADOptions.useSerialisedFunction = true;
+S.solver.nlpsol_options.expand = true;
 
+[savename] = runPredSim(S, osim_path);
 
-% [savename] = runPredSim(S, osim_path);
-
-
+return
 %% Plot results
 
 % see .\PlotFigures\run_this_file_to_plot_figures.m for more
@@ -56,6 +57,9 @@ elseif contains(S.subject.name, '4seg')
     names = {'DHondt_et_al_2024_4seg_61584949.mat', 'DHondt_et_al_2024_4seg_61585151.mat'};
 end
 
+names = {'gait1018_v41.mat', 'gait1018_v47.mat'};
+
+legend_names = names;
 % names = {'DHondt_et_al_2024_4seg_61584949.mat', 'DHondt_et_al_2024_4seg_61585151.mat'};
 % if (~S.solver.run_as_batch_job)
 
@@ -63,14 +67,14 @@ end
 %     result_paths{1} = fullfile(pathRepo,'Tests','ReferenceResults',...
 %         'Falisse_et_al_2022','Falisse_et_al_2022_paper.mat');
     
-for i = 1:3
+for i = 1:length(names)
     result_paths{i} = fullfile(S.misc.save_folder,names{i});
 end
     % set path to saved result
 %     result_paths{2} = fullfile(S.misc.save_folder,names{2});
     
     % Cell array with legend name for each result
-    legend_names = {'Uchida', 'Bhargava', 'Margaria'};
+%     legend_names = {'Uchida', 'Bhargava', 'Margaria'};
     
     % add path to subfolder with plotting functions
     addpath(fullfile(pathRepo,'PlotFigures'))

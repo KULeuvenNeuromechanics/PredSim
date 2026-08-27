@@ -68,7 +68,8 @@ if model_info.ExtFunIO.jointi.nq.torqAct > 0
 end
 
 %% Create Casadi functions for metabolic energy.
-[f_casadi.getMetabolicEnergySmooth2004all, f_casadi.getMetabolicEnergySmooth2016all, f_casadi.getMetabolicEnergyMargaria] = createCasadi_E_Metab(S,model_info);
+[f_casadi.getMetabolicEnergySmooth2004all, f_casadi.getMetabolicEnergySmooth2004all_simple, ...
+    f_casadi.getMetabolicEnergySmooth2016all, f_casadi.getMetabolicEnergyMargaria] = createCasadi_E_Metab(S,model_info);
 
 %% Create Casadi function to get step length
 if ~isempty(S.bounds.SLL.upper) || ~isempty(S.bounds.SLR.upper)
