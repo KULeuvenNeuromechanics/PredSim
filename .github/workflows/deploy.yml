@@ -2,8 +2,8 @@ name: Deploy Sphinx to GitHub Pages
 # Builds the website and deploys the updates online when the master branch is updated.
 
 on:
-  push:
-    branches: ["master"]
+  # push:
+  #   branches: ["master"]
   #release:
   #  types: [published]
 
