@@ -16,7 +16,7 @@ function R_left = get_left_gait_cycle(R_right, model_info)
 % Original date: June 16, 2026
 
 % Last edit by: Ellis Van Can
-% Last edit date: August 4, 2026
+% Last edit date: September 3, 2026
 %% Extract information
 dist_trav_opt = R_right.spatiotemp.dist_trav;
 
@@ -43,6 +43,9 @@ R_left.kinematics.Qddots = R_right.kinematics.Qddots(idx_GC,:);
 R_left.kinematics.Qs_rad = R_right.kinematics.Qs_rad(idx_GC,:);
 R_left.kinematics.Qdots_rad = R_right.kinematics.Qdots_rad(idx_GC,:);
 R_left.kinematics.Qddots_rad = R_right.kinematics.Qddots_rad(idx_GC,:);
+
+%% Copy kinetics
+R_left.kinetics.T_ID = R_right.kinetics.T_ID(idx_GC,:);
 
 
 %% Correct forward position
