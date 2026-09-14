@@ -3,8 +3,11 @@ clc
 close all
 
 %% Test Joint Stiffness
-% Script to plot the results of the joint stiffness computation. Plots are 
-% designed for the gait1018 model (i.e. 10 joints, 18 muscles). 
+% Script to plot the results of the joint stiffness computation. Plots are
+% designed for the gait1018 model (i.e. 10 joints, 18 muscles). Results for
+% other models (e.g. D'Hondt 2024 4 segments) can also be loaded, but (by
+% default) plotted muscles will be limited to those from the gait1018
+% model.
 %
 % Plots include:
 %   o normalized derivatives of muscle-tendon-force curves
@@ -21,12 +24,8 @@ close all
 % https://doi.org/10.1186/s12984-026-02106-3
 
 %% Add Paths
-% path to the repository folder
-[pathTests,~,~] = fileparts(mfilename('fullpath'));
-% path to the repository folder
-[pathRepo,~,~] = fileparts(pathTests);
-% path to the folder that contains the repository folder
-[pathRepoFolder,~,~] = fileparts(pathRepo);
+[pathTests,~,~] = fileparts(mfilename('fullpath'));                         % path to the tests folder
+[pathRepo,~,~] = fileparts(pathTests);                                      % path to the repository folder
 
 addpath(fullfile(pathRepo,"CasadiFunctions/"))
 addpath(fullfile(pathRepo,"PreProcessing/"))
@@ -38,14 +37,18 @@ load(fullfile(pathRepo,"CasadiFunctions/","Faparam.mat"))
 load(fullfile(pathRepo,"CasadiFunctions/","Fvparam.mat"))
 
 %% Define Plot Variables
-fig_height = 8.89;  % cm
-fig_width = 8.89;   % cm
+fig_height = 8.89;                                                          % cm
+fig_width = 8.89;                                                           % cm
 lineWidth = 1.5;
-export = false;
 colors = makeGroupColors(0.5, 10, 0.8, 0.3, 0.9);                           % plot colors
 
+%% Choose Muscles
+% Muscles from the gait1018 model, can be adapted to other muscles, but
+% this might cause some plots to become less clear.
+subMuscles = ["hamstrings", "bifemsh", "glut_max", "iliopsoas", ...
+    "rect_fem", "vasti", "gastroc", "soleus", "tib_ant"];
+
 %% Choose Results File
-% Should be gait1018 model (i.e. 10 joints, 18 muscles)
 [res_file_name, res_file_dir] = uigetfile(".mat","Choose PredSim results file");
 
 %% Load Data
@@ -55,11 +58,6 @@ res = load(fullfile(res_file_dir, res_file_name));
 % headers
 muscleNames = string(res.R.colheaders.muscles);
 jointNames = string(res.R.colheaders.coordinates);
-
-% sizes
-Njoints = length(jointNames);
-Nmuscles = length(muscleNames);
-Ndata = size(res.R.time.mesh_GC, 1);
 
 % muscle properties
 tendon_stiff_scale = [res.model_info.muscle_info.parameters.tendon_stiff];
@@ -76,7 +74,8 @@ vMmax = [res.model_info.muscle_info.parameters.vMmax];
 % =========================================================================
 %   These curves show the normalized muscle-tendon force curves and their
 %   partial derivatives to the muscle fiber and tendon lengths, for
-%   different activations and muscle contractile velocities.
+%   different activations and muscle contractile velocities, computed using
+%   the function "ForceEquilibrium_dFtildeState_all_tendon" in PredSim.
 % =========================================================================
 
 % Define mesh   
@@ -102,12 +101,14 @@ FMtilde_da = NaN(Npoints,Npoints);                                          % no
 % get MTU forces & partial derivatives
 for v = 1:Niter
     for t = 1:Npoints
+        % MTU forces (using function defined at the end of this code)
         [FTtilde(t,v), FMtilde_dv(t,v)] = f_muscle_mechanics(Fvparam, Fpparam, Faparam, Ftparam, lTtilde_dx(t), lMtilde_dx(t), vMtilde_dx(v), 1, 1,...
                 1, 1, 1, res.R.S.misc.dampingCoefficient);
 
         [~, FMtilde_da(t,v)] = f_muscle_mechanics(Fvparam, Fpparam, Faparam, Ftparam, lTtilde_dx(t), lMtilde_dx(t), 0, a_dx(v), 1,...
             1, 1, 1, res.R.S.misc.dampingCoefficient);
 
+        % Partial derivatives (using function implemented in PredSim)
         [dFT(t,v), dFM_dv(t,v)] = ...
             ForceEquilibrium_dFtildeState_all_tendon(1,lMtilde_dx(t),vM_dx(v),lT_dx(t),FMmax(1),lMopt(1),...
             lTs(1),vMmax(1),Ftparam,Fvparam,Fpparam,Faparam,1,1,1,35);
@@ -229,30 +230,36 @@ set(0,"DefaultAxesFontName","Helvetica")                                    % ti
 %   to the relevant joint angles.
 % =========================================================================
 
-dM = res.R.muscles.dM;                                                      % muscle moment arm
-dMdq = res.R.joint_stiffness.drdtheta;                                      % muscle moment arm partial derivative
-isSpanning = res.model_info.muscle_info.muscle_spanning_joint_info > 0;     % muscles spanning joints info
-Ntiles = sum(res.model_info.muscle_info.muscle_spanning_joint_info,'all');
+isMuscle = contains(muscleNames, subMuscles);
+muscleNamesLim = muscleNames(isMuscle);
+
+dM = res.R.muscles.dM(:,isMuscle,:);                                        % muscle moment arm
+dMdq = res.R.joint_stiffness.drdtheta(:,isMuscle,:);                        % muscle moment arm partial derivative
+MJmap = res.model_info.muscle_info.muscle_spanning_joint_info(isMuscle,:);  % muscles spanning joints info
+isSpanning = MJmap > 0;                                                     % muscles spanning joints info
+Ntiles = sum(MJmap,'all');                                                  % number of tiles in tiledlayout
 
 % create figure
 fig = figure("Color","white");
 set(gcf,"Units","centimeters")                                              % cm units for position
-set(gcf,"Position",[0 0 fig_width*2 fig_height*1.5])                         
-t = tiledlayout(Ntiles/4,4,"TileSpacing","tight");
-t.InnerPosition = [0.05 0.06 0.93 0.85];
+set(gcf,"Position",[0 0 fig_width*3 fig_height*2])                         
+t = tiledlayout(round(Ntiles/4),4,"TileSpacing","tight");
+t.InnerPosition = [0.04 0.04 0.93 0.88];
 
-for i = 1:Nmuscles
+% loop over muscles
+for i = 1:length(muscleNamesLim)
     dMi = dM(:,i,isSpanning(i,:));
     dMdqi = dMdq(:,i,isSpanning(i,:));
     Nspanning = size(dMi,3);
     jointNamesi = jointNames(isSpanning(i,:));
 
+    % loop over relevant joints
     for j = 1:Nspanning
         nexttile
         hold on
         plot(res.R.time.mesh_GC(1:end-1)/res.R.time.mesh_GC(end-1)*100, dMi(:,j),"black","LineWidth",1.5);
         plot(res.R.time.mesh_GC(1:end-1)/res.R.time.mesh_GC(end-1)*100, dMdqi(:,j),"red","LineWidth",1.5);
-        title(strrep(muscleNames(i),"_"," ") + "(" + strrep(jointNamesi(j),"_"," ") + ")")
+        title(strrep(muscleNamesLim(i),"_"," ") + "(" + strrep(jointNamesi(j),"_"," ") + ")")
         hold off
     end
 
@@ -282,30 +289,35 @@ set(0,"DefaultAxesFontName","Helvetica")                                    % ti
 %   muscle force and their partial derivatives.
 % =========================================================================
 
-Fce  = res.R.muscles.Fce;                                                   % muscle contractile force
-Fpass = res.R.muscles.Fpass;                                                % muscle passive force
-KM   = res.R.joint_stiffness.KM;                                            % computed muscle stiffness
-a    = res.R.muscles.a;                                                     % muscle activations
-lM   = res.R.muscles.lM;                                                    % muscle fibre lengths
-vM   = res.R.muscles.vM;                                                    % muscle fibre velocities
-F = Fce + Fpass;                                                            % total muscle fibre force
+% define variables
+Fce  = res.R.muscles.Fce(:,isMuscle);                                       % muscle contractile force
+Fpass = res.R.muscles.Fpass(:,isMuscle);                                    % muscle passive force
+KM   = res.R.joint_stiffness.KM(:,isMuscle);                                % computed muscle stiffness
+a    = res.R.muscles.a(:,isMuscle);                                         % muscle activations
+lM   = res.R.muscles.lM(:,isMuscle);                                        % muscle fibre lengths
+vM   = res.R.muscles.vM(:,isMuscle);                                        % muscle fibre velocities
+FMtot = Fce + Fpass;                                                        % total muscle fibre force
+
+FMmaxLim = FMmax(:,isMuscle);                                               % maximal isometric force for desired muscles
+lMoptLim = lMopt(:,isMuscle);                                               % optimal fibre length for desired muscles
+vMmaxLim = vMmax(:,isMuscle);                                               % maximal contractile velocity for desired muscles
 
 % figure
 figure("Color","white");
 set(gcf,"Units","centimeters")                                              % cm units for position
 set(gcf,"Position",[0 0 fig_width*3 fig_height*2])                          
-t = tiledlayout(Nmuscles/2,5,"TileSpacing","tight");
+t = tiledlayout(length(muscleNamesLim)/2,5,"TileSpacing","tight");
 t.InnerPosition = [0.04 0.05 0.94 0.92];
 
 % plot for right side muscles
-for m = 1:Nmuscles/2
+for m = 1:length(muscleNamesLim)/2
     % muscle stiffness
     nexttile
     hold on
-    plot(res.R.time.mesh_GC(1:end-1)/res.R.time.mesh_GC(end-1)*100,KM(:,m)/FMmax(m)*lMopt(m),'LineWidth',1.5,"Color",colors(1,:));
+    plot(res.R.time.mesh_GC(1:end-1)/res.R.time.mesh_GC(end-1)*100,KM(:,m)/FMmaxLim(m)*lMoptLim(m),'LineWidth',1.5,"Color",colors(1,:));
     xlim([0 100])
-    ylim([0 1])
-    ylabel(strrep(muscleNames(m),"_"," "), 'FontWeight','bold');
+    ylim([0 1.5])
+    ylabel(strrep(muscleNamesLim(m),"_"," "), 'FontWeight','bold');
     hold off
 
     if m == 1
@@ -315,7 +327,7 @@ for m = 1:Nmuscles/2
     % force
     nexttile
     hold on
-    plot(res.R.time.mesh_GC(1:end-1)/res.R.time.mesh_GC(end-1)*100,F(:,m)/FMmax(m),'LineWidth',1.5,"Color",colors(end,:));
+    plot(res.R.time.mesh_GC(1:end-1)/res.R.time.mesh_GC(end-1)*100,FMtot(:,m)/FMmaxLim(m),'LineWidth',1.5,"Color",colors(end,:));
     xlim([0 100])
     ylim([0 1])
     hold off
@@ -339,9 +351,9 @@ for m = 1:Nmuscles/2
     % length
     nexttile
     hold on
-    plot(res.R.time.mesh_GC(1:end-1)/res.R.time.mesh_GC(end-1)*100,lM(:,m)/lMopt(m),'LineWidth',1.5,"Color",colors(end,:));
+    plot(res.R.time.mesh_GC(1:end-1)/res.R.time.mesh_GC(end-1)*100,lM(:,m)/lMoptLim(m),'LineWidth',1.5,"Color",colors(end,:));
     xlim([0 100])
-    ylim([0.55 1.1])
+    ylim([0.45 1.1])
     hold off
 
     if m == 1
@@ -352,7 +364,7 @@ for m = 1:Nmuscles/2
     nexttile
     hold on
     yline(0,"LineWidth",0.5,"Color","black")
-    plot(res.R.time.mesh_GC(1:end-1)/res.R.time.mesh_GC(end-1)*100,vM(:,m)/vMmax(m),'LineWidth',1.5,"Color",colors(end,:));
+    plot(res.R.time.mesh_GC(1:end-1)/res.R.time.mesh_GC(end-1)*100,vM(:,m)/vMmaxLim(m),'LineWidth',1.5,"Color",colors(end,:));
     xlim([0 100])
     ylim([-0.3 0.3])
     hold off
@@ -364,11 +376,11 @@ for m = 1:Nmuscles/2
 end
 
 % X-axis labels only on bottom row
-xlabel(nexttile(5*Nmuscles/2-4),'Gait cycle [%]', 'FontWeight', 'bold');
-xlabel(nexttile(5*Nmuscles/2-3),'Gait cycle [%]', 'FontWeight', 'bold');
-xlabel(nexttile(5*Nmuscles/2-2),'Gait cycle [%]', 'FontWeight', 'bold');
-xlabel(nexttile(5*Nmuscles/2-1),'Gait cycle [%]', 'FontWeight', 'bold');
-xlabel(nexttile(5*Nmuscles/2),  'Gait cycle [%]', 'FontWeight', 'bold');
+xlabel(nexttile(5*length(muscleNamesLim)/2-4),'Gait cycle [%]', 'FontWeight', 'bold');
+xlabel(nexttile(5*length(muscleNamesLim)/2-3),'Gait cycle [%]', 'FontWeight', 'bold');
+xlabel(nexttile(5*length(muscleNamesLim)/2-2),'Gait cycle [%]', 'FontWeight', 'bold');
+xlabel(nexttile(5*length(muscleNamesLim)/2-1),'Gait cycle [%]', 'FontWeight', 'bold');
+xlabel(nexttile(5*length(muscleNamesLim)/2),  'Gait cycle [%]', 'FontWeight', 'bold');
 
 % figure settings
 set(findall(fig,'-property','FontSize'),'FontSize',8)                       % font size
@@ -385,26 +397,27 @@ set(0,"DefaultAxesFontName","Helvetica")                                    % ti
 %   tendon force and their partial derivatives.
 % =========================================================================
 
-FTtilde     = res.R.muscles.FTtilde;                                        % tendon force
-lTtilde     = res.R.muscles.lT./lTs;                                        % normalized tendon length
-KT          = res.R.joint_stiffness.KT./FMmax.*lTs;                         % tendon stiffness
+lTsLim      = lTs(:,isMuscle);                                              % tendon slack length for desired muscles
+FTtilde     = res.R.muscles.FTtilde(:,isMuscle);                            % tendon force
+lTtilde     = res.R.muscles.lT(:,isMuscle)./lTsLim;                         % normalized tendon length
+KT          = res.R.joint_stiffness.KT(:,isMuscle)./FMmaxLim.*lTsLim;       % tendon stiffness
 
 % figure
 figure("Color","white");
 set(gcf,"Units","centimeters")                                              % cm units for position
 set(gcf,"Position",[0 0 fig_width*3 fig_height*2])                          
-t = tiledlayout(Nmuscles/2,4,"TileSpacing","tight");
+t = tiledlayout(length(muscleNamesLim)/2,4,"TileSpacing","tight");
 t.InnerPosition = [0.04 0.05 0.94 0.92];
 
 % plot for right side muscles
-for m = 1:Nmuscles/2
+for m = 1:length(muscleNamesLim)/2
     % tendon stiffness
     nexttile
     hold on
     plot(res.R.time.mesh_GC(1:end-1)/res.R.time.mesh_GC(end-1)*100,KT(:,m),'LineWidth',1.5,"Color",colors(1,:));
     xlim([0 100])
     ylim([0 50])
-    ylabel(strrep(muscleNames(m),"_"," "), 'FontWeight','bold');
+    ylabel(strrep(muscleNamesLim(m),"_"," "), 'FontWeight','bold');
     hold off
 
     if m == 1
@@ -459,10 +472,10 @@ for m = 1:Nmuscles/2
 end
 
 % X-axis labels only on bottom row
-xlabel(nexttile(4*Nmuscles/2-3),'Gait cycle [%]', 'FontWeight', 'bold');
-xlabel(nexttile(4*Nmuscles/2-2),'Gait cycle [%]', 'FontWeight', 'bold');
-xlabel(nexttile(4*Nmuscles/2-1),'Gait cycle [%]', 'FontWeight', 'bold');
-xlabel(nexttile(4*Nmuscles/2),  'Normalized Tendon Length', 'FontWeight', 'bold');
+xlabel(nexttile(4*length(muscleNamesLim)/2-3),'Gait cycle [%]', 'FontWeight', 'bold');
+xlabel(nexttile(4*length(muscleNamesLim)/2-2),'Gait cycle [%]', 'FontWeight', 'bold');
+xlabel(nexttile(4*length(muscleNamesLim)/2-1),'Gait cycle [%]', 'FontWeight', 'bold');
+xlabel(nexttile(4*length(muscleNamesLim)/2),  'Normalized Tendon Length', 'FontWeight', 'bold');
 
 % figure settings
 set(findall(fig,'-property','FontSize'),'FontSize',8)                       % font size
@@ -476,26 +489,36 @@ set(0,"DefaultAxesFontName","Helvetica")                                    % ti
 %   These curves show the computed joint stiffness over the gait cycle.
 % =========================================================================
 
+% choose joints for plotting joint stiffness
+subJoints = ["hip_flexion_r", "knee_angle_r", "ankle_angle_r", "hip_flexion_l", "knee_angle_l", "ankle_angle_l"];
+[~,isJoint] = ismember(subJoints,jointNames); isJoint = isJoint(isJoint > 0);
+
+K_J = res.R.joint_stiffness.KJ;                                             % joint stiffness
+K_J_lim = K_J(:,isJoint);                                                   % limited to desired joints
+Nsubjoints = length(subJoints);
+
 % figure
 fig = figure("Color","white");
 set(gcf,"Units","centimeters")                                              % cm units for position
 set(gcf,"Position",[0 0 fig_width*2 fig_height])                            
-t = tiledlayout(2,5,"TileSpacing","tight");
+t = tiledlayout(2,3,"TileSpacing","tight");
 t.InnerPosition = [0.06 0.09 0.92 0.85];
 
-for j = 1:Njoints
+for j = 1:Nsubjoints
     nexttile
     hold on
-    plot(res.R.time.mesh_GC(1:end-1)/res.R.time.mesh_GC(end-1)*100, res.R.joint_stiffness.KJ(:,j)*pi/180,"black", "LineWidth", 1.5)
-    title(strrep(res.R.colheaders.coordinates(j),"_", " "))
+    plot(res.R.time.mesh_GC(1:end-1)/res.R.time.mesh_GC(end-1)*100, K_J_lim(:,j)*pi/180,"black", "LineWidth", 1.5)
+    title(strrep(subJoints(j),"_", " "))
     
-    if(any(j == [1,6]))
+    if(any(j == [1,4]))
         ylabel("Joint Stiffness [Nm/deg]", "FontWeight", "bold")
     end
     
-    if(j > 5)
+    if(j > 3)
         xlabel("Gait Cycle [%]", "FontWeight", "bold")
     end
+    xlim([0 100])
+    ylim([0 2.5])
     hold off
 end
 
@@ -513,6 +536,9 @@ set(0,"DefaultAxesFontName","Helvetica")                                    % ti
 %   to the total joint stiffness are denoted as "other".
 % =========================================================================
 
+threshold = 10;                                                             % threshold for joint stiffness contribution (default 10)
+
+% choose joints for plotting joint stiffness
 subJoints = ["hip_flexion_r", "knee_angle_r", "ankle_angle_r", "hip_flexion_l", "knee_angle_l", "ankle_angle_l"];
 [~,isJoint] = ismember(subJoints,jointNames); isJoint = isJoint(isJoint > 0);
 
@@ -529,7 +555,6 @@ set(gcf,"Position",[0 0 fig_width*3 fig_height])
 t = tiledlayout(2,Nsubjoints,"TileSpacing","tight");
 t.InnerPosition = [0.04 0.13 0.95 0.80];
 
-
 for j = 1:Nsubjoints
     isNonZero = ~all(K_M_J_lim(:,:,j) == 0, 1);                             % muscles contributing to joint stiffness
     nonZeroIdxs = find(isNonZero);                                          % indexes of relevant muscles
@@ -544,9 +569,9 @@ for j = 1:Nsubjoints
 
         % muscle contributions
         contributions = areaList/totalArea*100;
-        nonZeroIdxsLim = nonZeroIdxs(contributions > 10);                   % save muscles that contribution > 10%
-        contributionsLim = contributions(contributions > 10);
-        contributionsOther = sum(contributions(contributions <= 10));       % classify contributions < 10% as other
+        nonZeroIdxsLim = nonZeroIdxs(contributions > threshold);                % save muscles that contribution > 10%
+        contributionsLim = contributions(contributions > threshold);
+        contributionsOther = sum(contributions(contributions <= threshold));    % classify contributions < 10% as other
     
         % sort to plot largest to smallest area
         [a,b] = sort(contributionsLim, 1, "descend");
@@ -559,7 +584,7 @@ for j = 1:Nsubjoints
         for i = 1:length(nonZeroIdxsLim)
             Y = [Y K_M_J_right_sorted(:,i)];
         end
-        Y = [Y sum(K_M_J_lim(:, nonZeroIdxs(contributions<=10), j),2)*pi/180];
+        Y = [Y sum(K_M_J_lim(:, nonZeroIdxs(contributions<=threshold), j),2)*pi/180];
 
         % % plot stacked area curve
         nexttile
