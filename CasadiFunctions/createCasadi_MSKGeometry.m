@@ -73,7 +73,7 @@ elseif strcmpi(S.misc.msk_geom_eq,'polynomials')
     % Define casadi function
     if(S.misc.compute_joint_stiffness)
         dMdr = jacobian(dM, qin);                                               % Added by Menthy, to compute the partial derivative of the moment arm to the joint angles, size: (NMuscle*nq) x nq
-        f_lMT_vMT_dM = Function('f_lMT_vMT_dM',{qin,qdotin},{lMT,vMT,dM,dMdr}); % Changed by Menthy, added "dMdr" as output for the function, TO CHECK: dimensions
+        f_lMT_vMT_dM = Function('f_lMT_vMT_dM',{qin,qdotin},{lMT,vMT,dM,dMdr}); % Changed by Menthy, added "dMdr" as output for the function, size: (NMuscle*nq) x nq
     else
         f_lMT_vMT_dM = Function('f_lMT_vMT_dM',{qin,qdotin},{lMT,vMT,dM});
     end
