@@ -76,8 +76,8 @@ for i=1:length(muscle_strength_vec)
     lg1(end+1) = p1;
 end
 
-xlabel('Fiber length  ($l_M/l_M^o$)','Interpreter','latex','FontSize',label_fontsize)
-ylabel('Isometric fiber force ($F_M/F_M^o$)','Interpreter','latex','FontSize',label_fontsize)
+xlabel('Muscle length  ($l_M/l_M^o$)','Interpreter','latex','FontSize',label_fontsize)
+ylabel('Isometric muscle force ($F_M/F_M^o$)','Interpreter','latex','FontSize',label_fontsize)
 title('Scaling muscle strength','FontSize',title_fontsize)
 legend(lg1,'Location','southoutside','Interpreter','none','FontSize',legend_fontsize)
 xlim([min(lMtilde),max(lMtilde)])
@@ -110,8 +110,8 @@ for i=1:length(muscle_pass_stiff_shift_vec)
     lg1(end+1) = p1;
 end
 
-xlabel('Fiber length  ($l_M/l_M^o$)','Interpreter','latex','FontSize',label_fontsize)
-ylabel('Isometric fiber force ($F_M/F_M^o$)','Interpreter','latex','FontSize',label_fontsize)
+xlabel('Muscle length  ($l_M/l_M^o$)','Interpreter','latex','FontSize',label_fontsize)
+ylabel('Isometric muscle force ($F_M/F_M^o$)','Interpreter','latex','FontSize',label_fontsize)
 title('Scaling passive muscle stiffness','FontSize',title_fontsize)
 legend(lg1,'Location','southoutside','Interpreter','none','FontSize',legend_fontsize)
 xlim([min(lMtilde),max(lMtilde)])
@@ -142,8 +142,8 @@ for i=1:length(muscle_pass_stiff_shift_vec)
     lg1(end+1) = p1;
 end
 
-xlabel('Fiber length  ($l_M/l_M^o$)','Interpreter','latex','FontSize',label_fontsize)
-ylabel('Isometric fiber force ($F_M/F_M^o$)','Interpreter','latex','FontSize',label_fontsize)
+xlabel('Muscle length  ($l_M/l_M^o$)','Interpreter','latex','FontSize',label_fontsize)
+ylabel('Isometric muscle force ($F_M/F_M^o$)','Interpreter','latex','FontSize',label_fontsize)
 title('Shifting passive muscle stiffness','FontSize',title_fontsize)
 legend(lg1,'Location','southoutside','Interpreter','none','FontSize',legend_fontsize)
 xlim([min(lMtilde),max(lMtilde)])
