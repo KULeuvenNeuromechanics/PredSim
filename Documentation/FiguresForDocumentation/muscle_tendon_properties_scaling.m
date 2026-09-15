@@ -70,8 +70,8 @@ for i=1:length(muscle_strength_vec)
     lg1(end+1) = p1;
 end
 
-xlabel('Fiber length (1/lMo)')
-ylabel('Isometric fiber force (1/FMo)')
+xlabel('Muscle length (1/lMo)')
+ylabel('Isometric muscle force (1/FMo)')
 title('Scaling muscle strength')
 legend(lg1,'Location','southoutside','Interpreter','none')
 xlim([min(lMtilde),max(lMtilde)])
@@ -104,8 +104,8 @@ for i=1:length(muscle_pass_stiff_shift_vec)
     lg1(end+1) = p1;
 end
 
-xlabel('Fiber length (1/lMo)')
-ylabel('Isometric fiber force (1/FMo)')
+xlabel('Muscle length (1/lMo)')
+ylabel('Isometric muscle force (1/FMo)')
 title('Scaling passive muscle stiffness')
 legend(lg1,'Location','southoutside','Interpreter','none')
 xlim([min(lMtilde),max(lMtilde)])
@@ -136,8 +136,8 @@ for i=1:length(muscle_pass_stiff_shift_vec)
     lg1(end+1) = p1;
 end
 
-xlabel('Fiber length (1/lMo)')
-ylabel('Isometric fiber force (1/FMo)')
+xlabel('Muscle length (1/lMo)')
+ylabel('Isometric muscle force (1/FMo)')
 title('Shifting passive muscle stiffness')
 legend(lg1,'Location','southoutside','Interpreter','none')
 xlim([min(lMtilde),max(lMtilde)])
@@ -146,7 +146,7 @@ grid on
 
 
 %%
-exportgraphics(f1,[pwd '/fig_muscle_tendon_properties_scaling.png']);
+exportgraphics(f1,[pwd '\fig_muscle_tendon_properties_scaling.png']);
 
 %%
 function [Fl_T, Fla_M, Flp_M] = f_get_forces_l(lTtilde,lMtilde, tendon_stiff,...
