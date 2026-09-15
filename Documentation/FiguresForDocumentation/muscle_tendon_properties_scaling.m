@@ -4,8 +4,7 @@ close all
 clc
 
 [pathHere,~,~] = fileparts(mfilename('fullpath'));
-[pathDoc,~,~] = fileparts(pathHere);
-[pathRepo,~,~] = fileparts(pathDoc);
+[pathRepo,~,~] = fileparts(pathHere);
 addpath([pathRepo '\CasadiFunctions']);
 addpath([pathRepo '\PreProcessing']);
 
@@ -27,12 +26,7 @@ muscle_pass_stiff_scale_vec = [0.7,1,1.2];
 ylm = [0,max([1.5, muscle_strength_vec+0.2])];
 
 f1=figure('Position',[400 500 1400 420]);
-sgtitle('Effects of scale factors on normalized muscle-tendon properties','FontSize',14)
-
-label_fontsize = 12; % labels use font from latex, which needs large size
-legend_fontsize = 11;
-title_fontsize = 11;
-
+sgtitle('Effects of scale factors on normalized muscle-tendon properties')
 
 %% plot tendon stiffness
 
@@ -45,10 +39,10 @@ for i=1:length(tendon_stiff_vec)
     plot(lTtilde,F_tendon,'DisplayName',['tendon_stiff = ' num2str(tendon_stiff_vec(i))])
 end
 
-xlabel('Tendon length ($l_T/l_T^s$)','Interpreter','latex','FontSize',label_fontsize)
-ylabel('Tendon force ($F_T/F_M^o$)','Interpreter','latex','FontSize',label_fontsize)
-title('Scaling tendon stiffness','FontSize',title_fontsize)
-legend('Location','southoutside','Interpreter','none','FontSize',legend_fontsize)
+xlabel('Tendon length (1/lTs)')
+ylabel('Tendon force (1/FMo)')
+title('Scaling tendon stiffness')
+legend('Location','southoutside','Interpreter','none')
 xlim([min(lTtilde),max(lTtilde)])
 grid on
 
@@ -76,10 +70,10 @@ for i=1:length(muscle_strength_vec)
     lg1(end+1) = p1;
 end
 
-xlabel('Fiber length  ($l_M/l_M^o$)','Interpreter','latex','FontSize',label_fontsize)
-ylabel('Isometric fiber force ($F_M/F_M^o$)','Interpreter','latex','FontSize',label_fontsize)
-title('Scaling muscle strength','FontSize',title_fontsize)
-legend(lg1,'Location','southoutside','Interpreter','none','FontSize',legend_fontsize)
+xlabel('Fiber length (1/lMo)')
+ylabel('Isometric fiber force (1/FMo)')
+title('Scaling muscle strength')
+legend(lg1,'Location','southoutside','Interpreter','none')
 xlim([min(lMtilde),max(lMtilde)])
 ylim(ylm);
 set(gca,'YTick',sort([muscle_strength_vec,ylm,0.5]))
@@ -110,10 +104,10 @@ for i=1:length(muscle_pass_stiff_shift_vec)
     lg1(end+1) = p1;
 end
 
-xlabel('Fiber length  ($l_M/l_M^o$)','Interpreter','latex','FontSize',label_fontsize)
-ylabel('Isometric fiber force ($F_M/F_M^o$)','Interpreter','latex','FontSize',label_fontsize)
-title('Scaling passive muscle stiffness','FontSize',title_fontsize)
-legend(lg1,'Location','southoutside','Interpreter','none','FontSize',legend_fontsize)
+xlabel('Fiber length (1/lMo)')
+ylabel('Isometric fiber force (1/FMo)')
+title('Scaling passive muscle stiffness')
+legend(lg1,'Location','southoutside','Interpreter','none')
 xlim([min(lMtilde),max(lMtilde)])
 ylim(ylm);
 grid on
@@ -142,10 +136,10 @@ for i=1:length(muscle_pass_stiff_shift_vec)
     lg1(end+1) = p1;
 end
 
-xlabel('Fiber length  ($l_M/l_M^o$)','Interpreter','latex','FontSize',label_fontsize)
-ylabel('Isometric fiber force ($F_M/F_M^o$)','Interpreter','latex','FontSize',label_fontsize)
-title('Shifting passive muscle stiffness','FontSize',title_fontsize)
-legend(lg1,'Location','southoutside','Interpreter','none','FontSize',legend_fontsize)
+xlabel('Fiber length (1/lMo)')
+ylabel('Isometric fiber force (1/FMo)')
+title('Shifting passive muscle stiffness')
+legend(lg1,'Location','southoutside','Interpreter','none')
 xlim([min(lMtilde),max(lMtilde)])
 ylim(ylm);
 grid on
