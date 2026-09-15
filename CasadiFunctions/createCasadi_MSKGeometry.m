@@ -16,6 +16,9 @@ function [f_lMT_vMT_dM] = createCasadi_MSKGeometry(S,model_info)
 % 
 % Original authors: Lars D'Hondt, Dhruv Gupta, Tom Buurke
 % Original date: 01/12/2021
+% 
+% Last edit by: Menthy Denayer
+% Last edit date: 01/September/2026 : Added partial derivative of moment arms to joint angles to f_lMT_vMT_dM function
 %
 % --------------------------------------------------------------------------
 % This file is part of PredSim.
@@ -68,7 +71,12 @@ elseif strcmpi(S.misc.msk_geom_eq,'polynomials')
     dM = - jacobian(lMT, qin);
 
     % Define casadi function
-    f_lMT_vMT_dM = Function('f_lMT_vMT_dM',{qin,qdotin},{lMT,vMT,dM});
+    if(S.misc.compute_joint_stiffness)
+        dMdr = jacobian(dM, qin);                                               % Added by Menthy, to compute the partial derivative of the moment arm to the joint angles, size: (NMuscle*nq) x nq
+        f_lMT_vMT_dM = Function('f_lMT_vMT_dM',{qin,qdotin},{lMT,vMT,dM,dMdr}); % Changed by Menthy, added "dMdr" as output for the function, size: (NMuscle*nq) x nq
+    else
+        f_lMT_vMT_dM = Function('f_lMT_vMT_dM',{qin,qdotin},{lMT,vMT,dM});
+    end
     
     % Save function for later use
     f_lMT_vMT_dM.save(msk_geom_path);

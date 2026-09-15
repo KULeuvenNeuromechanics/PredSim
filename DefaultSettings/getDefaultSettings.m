@@ -19,6 +19,9 @@ function [S] = getDefaultSettings(S,osim_path)
 % Original author: Bram Van Den Bosch
 % Original date: 30/11/2021
 %
+% Last edit by: Menthy Denayer
+% Last edit date: 01/September/2026 : Added option to compute the joint stiffness 
+%
 % --------------------------------------------------------------------------
 % This file is part of PredSim.
 % 
@@ -276,6 +279,11 @@ if ~isfield(S.misc,'scaling_Qdotdots')
 end
 if ~isfield(S.misc,'scaling_Moments')
     S.misc.scaling_Moments = [];
+end
+
+% Added by Menthy, by default the joint stiffness is not computed
+if ~isfield(S.misc,'compute_joint_stiffness')
+    S.misc.compute_joint_stiffness = false;
 end
 
 % folder path to store the subject specific results
