@@ -17,12 +17,12 @@ addpath(fullfile(pathRepo,'DefaultSettings'))
 
 %% Initialize S
 
-[S] = initializeSettings('Falisse_et_al_2022');
+[S] = initializeSettings('gait1018');
 
 %% Settings
 
 % name of the subject
-S.subject.name = 'Falisse_et_al_2022';
+S.subject.name = 'gait1018';
 
 % path to folder where you want to store the results of the OCP
 S.misc.save_folder  = fullfile(pathRepoFolder,'PredSimResults',S.subject.name); 
