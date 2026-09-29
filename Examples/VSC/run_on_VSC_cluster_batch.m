@@ -18,18 +18,18 @@ clc
 
 % Check BLAS/LAPACK version; add functions from LinearAlgebra subdirectory
 % to path in case Intel is *not* used
-blas_version = version('-blas')
-lapack_version = version('-lapack')
+blas_version = version('-blas');
+lapack_version = version('-lapack');
 if ~startsWith(lapack_version, 'Intel')
     addpath(fullfile(getenv('PWD'), 'LinearAlgebra'))
 end
 
-[pathExDir,~,~] = fileparts(mfilename('fullpath'));
-[pathRepo,~,~] = fileparts(pathExDir);
-[pathRepoFolder,~,~] = fileparts(pathRepo);
+[pathVSCDir,~] = fileparts(mfilename('fullpath'));
+[pathExamplesDir,~] = fileparts(pathVSCDir);
+[pathRepo,~] = fileparts(pathExamplesDir);
+[pathRepoFolder,~] = fileparts(pathRepo);
 
-addpath(fullfile(pathRepo,'DefaultSettings'))
-addpath(pathRepo)
+addpath(genpath(pathRepo))
 
 % if the OpenSim module is loaded, make its Java library available
 if isenv('EBROOTOPENSIM')
