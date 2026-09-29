@@ -17,6 +17,9 @@ function [] = PostProcessing(S,model_info,f_casadi)
 % Original author: Lars D'Hondt
 % Original date: May/2022
 %
+% Last edit by: Menthy Denayer
+% Last edit date: 01/September/2026 : Added post-processing function for joint stiffness
+%
 % --------------------------------------------------------------------------
 % This file is part of PredSim.
 % 
@@ -97,6 +100,11 @@ R.misc.body_weight = model_info.mass*9.81;
 
 % Calculate orthosis forces
 [R] = PostProcess_orthosis(model_info,f_casadi,R);
+
+% Calculate joint stiffness (added by Menthy)
+if(S.misc.compute_joint_stiffness)
+    [R] = PostProcess_joint_stiffness(model_info,f_casadi,R);
+end
 
 % Please implement additional post-processing steps as functions following
 % the template, and call them from here.
