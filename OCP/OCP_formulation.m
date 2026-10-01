@@ -332,7 +332,7 @@ if(S.subject.TrackKin)
                     if(strcmp(key,'all'))                                       % if key is 'all', set all weight values to the value following 'all'
                         WkinTrack(:) = W.kinematicsTracking{c*2};
                     else
-                        [~,idx] = find(contains(desir_coo_names,key));          % if key is another char, find it inside the list of coordinates to get the right position
+                        idx = find(contains(desir_coo_names,key));          % if key is another char, find it inside the list of coordinates to get the right position
                         if(~isempty(idx))
                             WkinTrack(idx) = W.kinematicsTracking{c*2};         % assign the weight value
                         else
