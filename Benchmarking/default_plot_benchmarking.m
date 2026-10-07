@@ -9,15 +9,25 @@ function [] = default_plot_benchmarking(Dat, dofs_plot, study_name, ...
 
 nsim = length(Dat);
 nsubplot_dofs = length(dofs_plot);
-Colours = linspecer(nsim);
+if nsim == 0
+    return
+end
+Colours = lines(nsim);
 g = 9.81;
+for isim = 1:nsim
+    for field = {'ik','id','grf_r','stride_frequency','Pmetab_mean'}
+        if ~isfield(Dat(isim).benchmark,field{1})
+            Dat(isim).benchmark.(field{1}) = [];
+        end
+    end
+end
 
 for isim = 1:nsim
     [~, folder_file, ~] = fileparts(Dat(isim).R.S.misc.save_folder);
     headers{isim} = folder_file;
 end
 
-if ~isempty(Dat(1).benchmark.ik)
+if any(arrayfun(@(d) ~isempty(d.benchmark.ik),Dat))
     figure('Name',[study_name ': kinematics'],'Color',[1 1 1]);
     t = tiledlayout(2,nsubplot_dofs,'TileSpacing','compact','Padding','compact');
 
@@ -27,16 +37,21 @@ if ~isempty(Dat(1).benchmark.ik)
             Cs = Colours(isim,:);
 
             % plot experimental data
-            tile_number = tilenum(t, 1, idof);
+            tile_number = idof;
             nexttile(tile_number);
-            plot(Dat(isim).benchmark.ik.(dofs_plot{idof}(1:end-2)),...
+            angles = benchmark_coordinate(Dat(isim).benchmark.ik,dofs_plot{idof});
+            if isfield(Dat(isim).benchmark,'study') && ...
+                    strcmp(Dat(isim).benchmark.study,'vanderzee2022') && ...
+                    ~ismember(dofs_plot{idof},{'pelvis_tx','pelvis_ty','pelvis_tz'})
+                angles = rad2deg(angles);
+            end
+            plot(angles,...
                 'Color',Cs); hold on;
             % plot simulation data
-            tile_number = tilenum(t, 2, idof);
+            tile_number = nsubplot_dofs + idof;
             nexttile(tile_number);
-            icol = strcmp(dofs_plot{idof},Dat(isim).R.colheaders.coordinates);
-            dsel = Dat(isim).R.kinematics.Qs(:,icol);
-            dsel_int = interp1(1:length(dsel),dsel,linspace(1,length(dsel),100));
+            dsel_int = simulation_coordinate(Dat(isim).R.kinematics.Qs,...
+                Dat(isim).R.colheaders.coordinates,dofs_plot{idof});
             legs(isim) = plot(dsel_int,'Color',Cs); hold on;
         end
     end
@@ -66,7 +81,7 @@ if ~isempty(Dat(1).benchmark.ik)
 end
 
 % Plot joint moments
-if ~isempty(Dat(1).benchmark.id)
+if any(arrayfun(@(d) ~isempty(d.benchmark.id),Dat))
     figure('Name',[study_name ': kinetics'],'Color',[1 1 1]);
     t = tiledlayout(2,nsubplot_dofs,'TileSpacing','compact','Padding','compact');
     for idof = 1:length(dofs_plot)
@@ -76,16 +91,15 @@ if ~isempty(Dat(1).benchmark.id)
 
             % plot experimental data
             nexttile(idof);
-            id_exp = Dat(isim).benchmark.id.(dofs_plot{idof}(1:end-2));
+            id_exp = benchmark_coordinate(Dat(isim).benchmark.id,dofs_plot{idof});
             id_exp = id_exp.*(msim*g*Lsim); % scale to subject
             plot(id_exp,'Color',Cs); hold on;
 
 
             % plot simulation data
             nexttile(idof+nsubplot_dofs);
-            icol = strcmp(dofs_plot{idof},Dat(isim).R.colheaders.coordinates);
-            dsel = Dat(isim).R.kinetics.T_ID(:,icol);
-            dsel_int = interp1(1:length(dsel),dsel,linspace(1,length(dsel),100));
+            dsel_int = simulation_coordinate(Dat(isim).R.kinetics.T_ID,...
+                Dat(isim).R.colheaders.coordinates,dofs_plot{idof});
             legs(isim) = plot(dsel_int,'Color',Cs); hold on;
         end
     end
@@ -106,15 +120,15 @@ if ~isempty(Dat(1).benchmark.id)
         if isubpl == 1
             ylabel({'experiment','joint moment [Nm]'});
         elseif isubpl == (length(dofs_plot)+1)
-            ylabel({'simulation','joint angle [Nm]'});
+            ylabel({'simulation','joint moment [Nm]'});
         end
     end
 end
 
 % Plot ground reaction forces
-if ~isempty(Dat(1).benchmark.grf_r)
+if any(arrayfun(@(d) ~isempty(d.benchmark.grf_r),Dat))
     figure('Name',[study_name ': grf'],'Color',[1 1 1]);
-    t = tiledlayout(2,nsubplot_dofs,'TileSpacing','compact','Padding','compact');
+    t = tiledlayout(2,3,'TileSpacing','compact','Padding','compact');
     grf_headers = {'Fx','Fy','Fz'};
     for coord = 1:3
         for isim = 1:nsim
@@ -122,25 +136,29 @@ if ~isempty(Dat(1).benchmark.grf_r)
             Cs = Colours(isim,:);
             nexttile(coord);
             % experimental grf
-            Fsel = Dat(isim).benchmark.grf_r.(grf_headers{coord});
+            if isempty(Dat(isim).benchmark.grf_r)
+                Fsel = NaN;
+            elseif isnumeric(Dat(isim).benchmark.grf_r)
+                Fsel = Dat(isim).benchmark.grf_r(:,coord);
+            else
+                Fsel = Dat(isim).benchmark.grf_r.(grf_headers{coord});
+            end
             Fsel = Fsel*msim*g;
             plot(Fsel,'Color',Cs);hold on;
 
             % simulated grf
             nexttile(coord+3);
+            forces = Dat(isim).R.ground_reaction.GRF_r;
             if bool_rot_grf
-                dsel = Dat(isim).R.ground_reaction.GRF_r(:,coord);
-                if isfield(model_info,'slope')
-                    dsel = Dat(isim).R.ground_reaction.GRF_r(:,coord);
-                    fi = tan(model_info.slope);
-                    Rotm = rotz(fi);
-                    dsel = dsel*Rotm(1:3,1:3)';
+                if isfield(Dat(isim).model_info,'slope')
+                    fi = atan(Dat(isim).model_info.slope);
+                    Rotm = benchmark_rotation_z(fi);
+                    forces = forces*Rotm(1:3,1:3)';
                 else
                     disp(['warning could not rotate forces for slope walking']);
                 end
-            else
-                dsel = Dat(isim).R.ground_reaction.GRF_r(:,coord);
             end
+            dsel = forces(:,coord);
             dsel_int = interp1(1:length(dsel),dsel,linspace(1,length(dsel),100));
             legs(isim) =plot(dsel_int,'Color',Cs);hold on;
         end
@@ -168,7 +186,7 @@ if ~isempty(Dat(1).benchmark.grf_r)
 end
 
 % plot stride frequency
-if ~isempty(Dat(1).benchmark.stride_frequency)
+if any(arrayfun(@(d) ~isempty(d.benchmark.stride_frequency),Dat))
     figure('Name',[study_name ': stride frequency'],'Color',[1 1 1]);
 
     % experimental stride frequency
@@ -208,12 +226,7 @@ for isim = 1:nsim
     end
 
     % simulated metabolic power
-    t = Dat(isim).R.time.mesh_GC;
-    dt = t(end)-t(1);
-    Pmetab = Dat(isim).R.metabolics.Bhargava2004.Edot_gait;
-    metab_work  = trapz(t(1:end-1)',Pmetab);
-    P_mean = sum(metab_work)./dt;
-    sim_metab(isim) = P_mean;
+    sim_metab(isim) = benchmark_mean_metabolic_power(Dat(isim).R);
 end
 Cs = [0 0 0];
 mk = 4;
@@ -231,4 +244,37 @@ ylabel('simulated metab. power');
 
 
 
+end
+
+
+function values = simulation_coordinate(data,names,name)
+% Keep a missing model coordinate blank without aborting the other figures.
+column = strcmp(name,names);
+if ~any(column)
+    warning('PredSim:MissingPlotCoordinate','No simulated coordinate %s; leaving its curve blank.',name);
+    values = nan(1,100);
+    return
+end
+values = interp1(1:size(data,1),data(:,column),linspace(1,size(data,1),100));
+end
+
+function values = benchmark_coordinate(data,name)
+% Some studies store bilateral names, others omit the side suffix.
+if isempty(data)
+    values = NaN;
+    return
+end
+if istable(data)
+    names = data.Properties.VariableNames;
+else
+    names = fieldnames(data);
+end
+if ~ismember(name,names)
+    name = regexprep(name,'_[rl]$','');
+end
+if ismember(name,names)
+    values = data.(name);
+else
+    values = NaN;
+end
 end

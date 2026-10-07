@@ -29,7 +29,7 @@ for imodels = 1:length(ModelOut)
     g = modSel.getGravity();
     gv = [g.get(0) g.get(1) g.get(2)];
     fi = atan(slope);
-    R = rotz(fi);
+    R = benchmark_rotation_z(fi);
     R = R(1:3, 1:3);
     grav_tilt = gv*R;
     gravSlope = Vec3(grav_tilt(1), grav_tilt(2), grav_tilt(3));
@@ -49,14 +49,12 @@ for imodels = 1:length(ModelOut)
     model_name = [S.subject.name ModelOut{imodels}];
     out_folder =  fullfile(S.misc.main_path,'Subjects',model_name);
     out_modelname = fullfile(out_folder,[model_name '.osim']);
-    if ~isfolder(out_folder)
-        mkdir(out_folder)
-    end
-    modSel.print(out_modelname);
+    changed = save_benchmark_model(modSel,out_modelname);
 
     % update output structure
     gomenuka2014.modelnames{ct} = model_name;
     gomenuka2014.osim_path{ct} = out_modelname;
+    gomenuka2014.model_changed{ct} = changed;
     ct = ct+1;
 
     % save 

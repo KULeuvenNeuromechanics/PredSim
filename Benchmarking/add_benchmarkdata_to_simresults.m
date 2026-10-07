@@ -8,6 +8,8 @@ function [] = add_benchmarkdata_to_simresults(benchmarking_folder,varargin)
 %           - 'dofs', {'ankle_angle_r','knee_angle_r','hip_flexion_r'}:
 %           plots these dofs
 %           - studies: studies you want to include in plotting
+%           - SubjectMass: unloaded model mass in kg (default: model/settings)
+%           - LegLength: normalization length in m (default: 0.85 for Falisse)
 
 
 %% load benchmarking settings
@@ -20,6 +22,10 @@ p = inputParser;
 addParameter(p, 'BoolPlot', false, @(x) islogical(x) || isnumeric(x));
 addParameter(p, 'dofs', {}, @(x) iscellstr(x) || isstring(x));
 addParameter(p, 'studies', {}, @(x) iscellstr(x) || isstring(x));
+addParameter(p, 'OverwriteData', false, @(x) islogical(x) && isscalar(x));
+positive_scalar = @(x) isnumeric(x) && isscalar(x) && isfinite(x) && x > 0;
+addParameter(p, 'SubjectMass', [], @(x) isempty(x) || positive_scalar(x));
+addParameter(p, 'LegLength', 0.85, positive_scalar);
 parse(p, varargin{:});
 BoolPlot = logical(p.Results.BoolPlot);
 dofs_plot = cellstr(p.Results.dofs);
@@ -29,16 +35,34 @@ studies_plot = cellstr(p.Results.studies);
 if isempty(dofs_plot)
     dofs_plot = {'ankle_angle_r','knee_angle_r','hip_flexion_r'};
 end
-nsubplot_dofs = length(dofs_plot);
 
 if isempty(studies_plot)
     studies_plot = S_benchmark.studies;
 end
 
+if BoolPlot
+    msim = p.Results.SubjectMass;
+    if isempty(msim)
+        if isfield(S,'subject') && isfield(S.subject,'mass') && ~isempty(S.subject.mass)
+            msim = S.subject.mass;
+        elseif isfile(osim_path)
+            repo = fileparts(fileparts(mfilename('fullpath')));
+            addpath(fullfile(repo,'VariousFunctions'));
+            msim = getModelMass(osim_path);
+        else
+            error('PredSim:MissingBenchmarkMass',...
+                'The original model is unavailable. Supply SubjectMass (unloaded mass in kg) for plotting.');
+        end
+    end
+    assert(positive_scalar(msim),'PredSim:InvalidBenchmarkMass',...
+        'SubjectMass must be a positive finite scalar in kg.');
+    Lsim = p.Results.LegLength;
+end
+
 
 %% Download benchmarking data if desired
 
-bool_overwrite = true; % overwrite existing data (if true it downloads it every time)
+bool_overwrite = p.Results.OverwriteData;
 [datafolder] = download_benchmarkdata(bool_overwrite);
 
 % add data processing functions to matlab path
@@ -60,23 +84,25 @@ for i =1:length(mat_files)
     vars = who('-file', filename);
     if ismember('R', vars)
         % load the .mat file
-        load(filename,'R');
+        loaded = load(filename,'R');
+        R = loaded.R;
+        benchmark = [];
         % find data with same ID
         if isfield(R.S.misc,'benchmark_id') && ~isempty(R.S.misc.benchmark_id)
             % find id in exp datalist
-            try
-                id_exp = strcmp(R.S.misc.benchmark_id,identifierList);
-            catch
-                disp('error'); % stupid bug we have to solve in inputs
-            end
-            if ~isempty(id_exp) && sum(id_exp) == 1
+            id_exp = match_benchmark_id(R.S.misc.benchmark_id,identifierList);
+            if numel(id_exp) == 1
                 benchmark = data{id_exp};
-                save(filename, 'benchmark', "-append");
-            elseif sum(id_exp)>1
+            elseif numel(id_exp)>1
                 disp(['import warning ! I found the id ' R.S.misc.benchmark_id,...
-                    ' ' num2str(sum(id_exp)) ' times in the experimental dataset' ]);
+                    ' ' num2str(numel(id_exp)) ' times in the experimental dataset' ]);
+            elseif ~startsWith(R.S.misc.benchmark_id,'gait_speeds_')
+                warning('PredSim:MissingBenchmark','No experimental match for %s in %s.',...
+                    R.S.misc.benchmark_id,filename);
             end
         end
+        % Clear stale attachments if the current ID has no unique match.
+        save(filename, 'benchmark', '-append');
     end
 end
 
@@ -86,20 +112,7 @@ end
 %% Default plots
 if BoolPlot
     
-    % hard coded model properties for now
-    msim = 62; % should read this from the model in the future
-    Height_Sim = 1.70; % I should read this from the model in the future
-    prop_leg_length = 0.5;
-    Lsim = Height_Sim.*prop_leg_length;
-    g = 9.81;
 
-    % allowed to adapt figure defaults ?
-    set(0,'defaultLineLineWidth',1.6);
-    set(0,'defaultAxesLineWidth',1.2);
-    set(0,'defaultAxesFontSize',12);
-    set(0,'defaultFigureColor',[1 1 1]);
-    set(0,'defaultLineMarkerSize',4);
-    set(0,'defaultAxesBox','off');
 
     % the idea is here to make a function that works for all studies
     % to do so I need to provide some input arguments such as
@@ -132,7 +145,7 @@ if BoolPlot
             % check if this is a simultion results file
             vars = who('-file', filename);
             if ismember('R', vars)
-                sim_res_folder = mat_files(ifile).folder;
+                sim_res_folder = filename;
                 id_study = istudy;
                 [data_table, ct_sim] = add_benchmark_to_table(ct_sim,...
                     sim_res_folder, headers_table, data_table, id_study,...
@@ -144,6 +157,10 @@ if BoolPlot
     data_table(ct_sim:end,:) = [];
     table_all = array2table(data_table,...
         'VariableNames',headers_table);
+    if isempty(table_all)
+        warning('PredSim:NoBenchmarkResults','No completed results to plot in %s.',benchmarking_folder);
+        return
+    end
 
     % plot all data on one graph
     h_figallp = figure('Name','All data','Color',[1 1 1]);
@@ -152,7 +169,7 @@ if BoolPlot
     % get study ids and assign colors
     study_ids = unique(table_all.id_study);
     n_studies = length(study_ids);
-    cols_sel = linspecer(n_studies);
+    cols_sel = lines(n_studies);
     mk = 4;
 
     % plot stride frequency
@@ -195,305 +212,28 @@ if BoolPlot
         'FontSize',10,'Interpreter','none');
     hL.Layout.Tile = 'North';
 
-    %% Van Der Zee 2022: custom function here
-    % mainly useful as an example on how to compare experiments and
-    % simulations using custom code
-    ct_sim = 1;
-    if any(strcmp(studies_plot,'vanderzee2022'))
-        % default function to plot van der zee results
-        % to do: add this to a function
-        %
-        speeds = S_benchmark.vanderzee.gait_speeds;
-        [speeds_sort,isort] = sort(speeds);
-        for i= 1:length(speeds_sort)
-            WalkSpeed_legend{i} = [num2str(speeds_sort(i)) 'ms^{-1}'];
+    % Use one result-loading and plotting path for all selected studies.
+    for istudy = 1:numel(studies_plot)
+        study = studies_plot{istudy};
+        files = dir(fullfile(benchmarking_folder,study,'**','*.mat'));
+        Dat = struct('R',{},'benchmark',{},'model_info',{});
+        for k = 1:numel(files)
+            filename = fullfile(files(k).folder,files(k).name);
+            [R,benchmark,model_info] = load_sim_file(filename);
+            if isempty(R) || isempty(benchmark)
+                continue
+            end
+            if ~all(isfield(R,{'kinematics','kinetics','ground_reaction','spatiotemp','metabolics','time'}))
+                warning('PredSim:IncompleteBenchmarkResult','Skipping incomplete result %s.',filename);
+                continue
+            end
+            Dat(end+1) = struct('R',R,'benchmark',benchmark,'model_info',model_info);
         end
-        % Colors_Speeds = [146,133,101;... % 0.7
-        %     126,108,62;... % 0.9
-        %     238,202,102;...% 1.1
-        %     125,162,197;...% 1.6
-        %     238,202,102;...% 1.8
-        %     125,162,197;...% 2.0
-        %     238,202,102]./255 % 1.4; % these colors are pretty bad, also in paper ?
-        % Colors_Speeds = flipud(Colors_Speeds);
-        Colors_Speeds = copper(length(speeds)+2);
-        % load data of all simulation conditions first
-        clear Dat
-        for ispeed_sort = 1:length(speeds_sort)
-            ispeed = isort(ispeed_sort);
-            sim_res_folder = fullfile(benchmarking_folder,'vanderzee2022',...
-                S_benchmark.vanderzee.names{ispeed});
-            mat_files = dir(fullfile(sim_res_folder,'*.mat'));
-            if length(mat_files) ~= 1
-                disp('warning mutiple mat files in folder')
-                disp(sim_res_folder);
-                disp([' assumes that file ' mat_files(1).name, ...
-                    'contains the simulation results'])
-            end
-            sim_res_file = fullfile(mat_files(1).folder, mat_files(1).name);
-            load(sim_res_file,'R','benchmark','model_info');
-            try
-                Dat(ispeed_sort).benchmark = benchmark;
-            catch
-                disp('error');
-            end
-            Dat(ispeed_sort).R = R;
-            Dat(ispeed_sort).model_info = model_info;
-        end
-
-        % plot kinematics
-        if ~isempty(Dat(1).benchmark.ik)
-            figure('Name','vanderzee: kinematics','Color',[1 1 1]);
-
-            for ispeed = 1: length(speeds_sort)
-                for idof = 1:length(dofs_plot)
-                    % plot experimental data
-                    subplot(2, nsubplot_dofs, idof)
-                    plot(Dat(ispeed).benchmark.ik.(dofs_plot{idof})*180/pi,...
-                        'Color',Colors_Speeds(ispeed,:)); hold on;
-                    % plot simulation data
-                    subplot(2, nsubplot_dofs, idof+nsubplot_dofs)
-                    icol = strcmp(dofs_plot{idof},Dat(ispeed).R.colheaders.coordinates);
-                    dsel = Dat(ispeed).R.kinematics.Qs(:,icol);
-                    dsel_int = interp1(1:length(dsel),dsel,linspace(1,length(dsel),100));
-                    l(ispeed) = plot(dsel_int,'Color',Colors_Speeds(ispeed,:)); hold on;
-                end
-            end
-            legend(l,WalkSpeed_legend,'Interpreter','tex');
-            legend boxoff;
-            for isubpl =1:length(dofs_plot)*2
-                subplot(2, nsubplot_dofs,isubpl)
-                set(gca,'box','off');
-                set(gca,'FontSize',10);
-                if isubpl<=length(dofs_plot)
-                    title(dofs_plot{isubpl},'interpreter','none');
-                else
-                    xlabel('% gait cycle');
-                end
-                if isubpl == 1
-                    ylabel({'experiment','joint angle [deg]'});
-                elseif isubpl == (length(dofs_plot)+1)
-                    ylabel({'simulation','joint angle [deg]'});
-                end
-            end
-        end
-
-        % plot joint moments
-        if ~isempty(Dat(1).benchmark.id)
-            figure('Name','vanderzee: kinetics','Color',[1 1 1]);
-
-            for ispeed = 1: length(speeds_sort)
-                for idof = 1:length(dofs_plot)
-                    % plot experimental data
-                    subplot(2, nsubplot_dofs, idof)
-                    id_exp = Dat(ispeed).benchmark.id.(dofs_plot{idof});
-                    id_exp = id_exp.*(msim*g*Lsim); % scale to subject
-                    plot(id_exp,'Color',Colors_Speeds(ispeed,:)); hold on;
-
-
-                    % plot simulation data
-                    subplot(2, nsubplot_dofs, idof+nsubplot_dofs)
-                    icol = strcmp(dofs_plot{idof},Dat(ispeed).R.colheaders.coordinates);
-                    dsel = Dat(ispeed).R.kinetics.T_ID(:,icol);
-                    dsel_int = interp1(1:length(dsel),dsel,linspace(1,length(dsel),100));
-                    l(ispeed) = plot(dsel_int,'Color',Colors_Speeds(ispeed,:)); hold on;
-                end
-            end
-            legend(l,WalkSpeed_legend,'Interpreter','tex');
-            legend boxoff;
-            for isubpl =1:length(dofs_plot)*2
-                subplot(2, nsubplot_dofs,isubpl)
-                set(gca,'box','off');
-                set(gca,'FontSize',10);
-                if isubpl<=length(dofs_plot)
-                    title(dofs_plot{isubpl},'interpreter','none');
-                else
-                    xlabel('% gait cycle');
-                end
-                if isubpl == 1
-                    ylabel({'experiment','joint moment [Nm]'});
-                elseif isubpl == (length(dofs_plot)+1)
-                    ylabel({'simulation','joint moment [Nm]'});
-                end
-            end
-        end
-
-
-        % plot ground reaction forces
-        if ~isempty(Dat(1).benchmark.grf_r)
-            figure('Name','vanderzee: grf','Color',[1 1 1]);
-            for ispeed = 1: length(speeds_sort)
-                for coord = 1:3
-                    subplot(2,3,coord)
-                    % experimental grf
-                    Fsel = Dat(ispeed).benchmark.grf_r(:,coord);
-                    Fsel = Fsel.*msim*g;
-                    plot(Fsel,'Color',Colors_Speeds(ispeed,:));hold on;
-
-                    % simulated grf
-                    subplot(2,3,coord+3)
-                    dsel = Dat(ispeed).R.ground_reaction.GRF_r(:,coord);
-                    dsel_int = interp1(1:length(dsel),dsel,linspace(1,length(dsel),100));
-                    l(ispeed) =plot(dsel_int,'Color',Colors_Speeds(ispeed,:));hold on;
-
-
-                end
-            end
-            legend(l,WalkSpeed_legend,'Interpreter','tex');
-            legend boxoff;
-            title_grf = {'grfx','grfy','grfz'};
-            for isubpl =1:6
-                subplot(2, 3,isubpl)
-                set(gca,'box','off');
-                set(gca,'FontSize',10);
-                if isubpl<=3
-                    title(title_grf{isubpl},'interpreter','none');
-                else
-                    xlabel('% gait cycle');
-                end
-                if isubpl == 1
-                    ylabel({'experiment','force [N]'});
-                elseif isubpl == 4
-                    ylabel({'simulation','force [N]'});
-                end
-            end
-        end
-
-        % plot stride frequency
-        if ~isempty(Dat(1).benchmark.stride_frequency)
-            figure('Name','vanderzee: stride frequency','Color',[1 1 1]);
-
-            % experimental stride frequency
-            exp_freq = nan(length(speeds),1);
-            sim_freq = nan(length(speeds),1);
-            for ispeed = 1:length(speeds)
-                exp_freq(ispeed) = Dat(ispeed).benchmark.stride_frequency .* (sqrt(g/Lsim));
-                sim_freq(ispeed) = Dat(ispeed).R.spatiotemp.stride_freq;
-            end
-            Cs = [0 0 0];
-            mk = 4;
-            plot([min(exp_freq) max(exp_freq)], [min(exp_freq) max(exp_freq)],'--','Color',[0 0 0],'LineWidth',1.3); hold on;
-            plot(exp_freq,sim_freq,'ok','Color',Cs,'MarkerFaceColor',Cs,...
-                'MarkerSize',mk);
-            set(gca,'box','off');
-            set(gca,'FontSize',10);
-            xlabel('measured stride frequency');
-            ylabel('simulated stride frequency');
-        end
-
-
-
-        % plot metabolic power
-        if ~isempty(Dat(1).benchmark.Pmetab_mean)
-            figure('Name','vanderzee: metabolic power','Color',[1 1 1]);
-
-            % experimental stride frequency
-            exp_metab = nan(length(speeds),1);
-            sim_metab = nan(length(speeds),1);
-            for ispeed = 1:length(speeds)
-                % measured metabolic power
-                exp_metab(ispeed) = Dat(ispeed).benchmark.Pmetab_mean ...
-                    .* (m*sqrt(Lsim)*g^1.5);
-
-                % simulated metabolic power
-                t = Dat(ispeed).R.time.mesh_GC;
-                dt = t(end)-t(1);
-                Pmetab = Dat(ispeed).R.metabolics.Bhargava2004.Edot_gait;
-                metab_work  = trapz(t(1:end-1)',Pmetab);
-                P_mean = sum(metab_work)./dt;
-                sim_metab(ispeed) = P_mean;
-            end
-            Cs = [0 0 0];
-            mk = 4;
-            plot([min(exp_metab) max(exp_metab)], [min(exp_metab) max(exp_metab)],'--','Color',[0 0 0],'LineWidth',1.3); hold on;
-            plot(exp_metab,sim_metab,'ok','Color',Cs,'MarkerFaceColor',Cs,...
-                'MarkerSize',mk);
-            set(gca,'box','off');
-            set(gca,'FontSize',10);
-            xlabel('measured metab. power');
-            ylabel('simulated metab. power');
-        end
-        clear Dat
-    end
-
-    %% Koelewijn2019: default functions
-    % example how to compare experiments and simulations using a
-    % generic/default function (this saves you quite a bit of coding, but ugly)
-    if any(strcmp(studies_plot,'koelewijn2019'))
-        % read all the data
-        Dat = [];
-        for isim =1:6%length(S_benchmark.koelewijn.names)
-            for idof = 1:length(dofs_plot)
-                % load sim file
-                sim_res_folder = fullfile(benchmarking_folder,'koelewijn2019',...
-                    S_benchmark.koelewijn.names{isim});
-                mat_files = dir(fullfile(sim_res_folder,'*.mat'));
-                if ~isempty(mat_files)
-                    if length(mat_files) > 1
-                        disp('warning mutiple mat files in folder')
-                        disp(sim_res_folder);
-                        disp([' assumes that file ' mat_files(1).name, ...
-                            'contains the simulation results'])
-                    end
-                    sim_res_file = fullfile(mat_files(1).folder, mat_files(1).name);
-                    load(sim_res_file,'R','benchmark','model_info');
-                    Dat(isim).benchmark = benchmark;
-                    Dat(isim).R = R;
-                    Dat(isim).model_info = model_info;
-                end
-            end
-        end
-
-        % default plot function for koelewijn
         if ~isempty(Dat)
-            bool_rot_grf = true;
-            default_plot_benchmarking(Dat, dofs_plot, 'Koelewijn',msim,Lsim,bool_rot_grf);            
+            speeds = arrayfun(@(d) d.R.S.misc.forward_velocity,Dat);
+            [~,order] = sort(speeds);
+            default_plot_benchmarking(Dat(order),dofs_plot,study,msim,Lsim,true);
         end
-        clear Dat
-    end
-
-    %% Browning2008: default functions
-    % example how to compare experiments and simulations using a
-    % generic/default function (this saves you quite a bit of coding, but ugly)
-    if any(strcmp(studies_plot,'browning2008'))
-        % read all the data
-        nsim = length(S_benchmark.browning.names);
-        for isim =1:nsim
-            for idof = 1:length(dofs_plot)
-                % load sim file
-                sim_res_folder = fullfile(benchmarking_folder,'browning2008',...
-                    S_benchmark.browning.names{isim});
-                mat_files = dir(fullfile(sim_res_folder,'*.mat'));
-                if length(mat_files) ~= 1
-                    disp('warning mutiple mat files in folder')
-                    disp(sim_res_folder);
-                    disp([' assumes that file ' mat_files(1).name, ...
-                        'contains the simulation results'])
-                end
-                sim_res_file = fullfile(mat_files(1).folder, mat_files(1).name);
-                load(sim_res_file,'R','benchmark','model_info');
-                Dat(isim).benchmark = benchmark;
-                Dat(isim).R = R;
-                Dat(isim).model_info = model_info;
-            end
-        end
-        % default plot for Koelewijn
-        bool_rot_grf = false;
-        default_plot_benchmarking(Dat, dofs_plot, 'Browning',msim,Lsim,bool_rot_grf);
-        clear Dat
     end
 end
-
 end
-
-
-
-
-
-
-
-
-
-
-
-

@@ -79,14 +79,12 @@ for i=1:length(Addedmass)
     model_name = [S.subject.name ModelOut{i}];
     out_folder =  fullfile(S.misc.main_path,'Subjects',model_name);
     out_modelname = fullfile(out_folder,[model_name '.osim']);
-    if ~isfolder(out_folder)
-        mkdir(out_folder)
-    end
-    mSel.print(out_modelname);
+    changed = save_benchmark_model(mSel,out_modelname);
 
     % update output structure
     browning2008.modelnames{ct} = model_name;
     browning2008.osim_path{ct} = out_modelname;
+    browning2008.model_changed{ct} = changed;
     ct = ct+1;
 
     % save 

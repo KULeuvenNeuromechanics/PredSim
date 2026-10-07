@@ -683,7 +683,7 @@ if ~isfield(S.OpenSimADOptions,'compiler')
             S.OpenSimADOptions.compiler = compiler_info.LatestCMakeGenerator;
         else
             error(['Could not detect Visual Studio in c:/Program Files or c:/Program Files (x86). ',...
-                'Please set S.Cpp2Dll.compiler to Visual Studio 14 2015 Win64, Visual Studio 15 2017 Win64,',...
+                'Please set S.OpenSimADOptions.compiler to Visual Studio 14 2015 Win64, Visual Studio 15 2017 Win64,',...
                 'Visual Studio 16 2019, or Visual Studio 17 2022 based on your installed version']);
         end
     elseif isunix
@@ -770,8 +770,13 @@ end
 
 %% Flow control
 
+if ~isfield(S,'flow_control')
+    S.flow_control = struct;
+end
 if ~isfield(S.flow_control,'pre_processing_only')
     S.flow_control.pre_processing_only = false;
+end
+
 if ~isfield(S.OpenSimADOptions,'useSerialisedFunction')
     S.OpenSimADOptions.useSerialisedFunction = false;
 end
