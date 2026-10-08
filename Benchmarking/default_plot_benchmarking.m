@@ -129,15 +129,15 @@ if ~isempty(Dat(1).benchmark.grf_r)
             % simulated grf
             nexttile(coord+3);
             if bool_rot_grf
-                dsel = Dat(isim).R.ground_reaction.GRF_r(:,coord);
-                if isfield(model_info,'slope')
-                    dsel = Dat(isim).R.ground_reaction.GRF_r(:,coord);
-                    fi = tan(model_info.slope);
+                grf_r = Dat(isim).R.ground_reaction.GRF_r;
+                if isfield(Dat(isim),'model_info') && isfield(Dat(isim).model_info,'slope')
+                    fi = tan(Dat(isim).model_info.slope);
                     Rotm = rotz(fi);
-                    dsel = dsel*Rotm(1:3,1:3)';
+                    grf_r = grf_r*Rotm(1:3,1:3)';
                 else
                     disp(['warning could not rotate forces for slope walking']);
                 end
+                dsel = grf_r(:,coord);
             else
                 dsel = Dat(isim).R.ground_reaction.GRF_r(:,coord);
             end
