@@ -1,7 +1,9 @@
-function [] = benchmark_predsim(S,osim_path,S_benchmark)
+function simulations = benchmark_predsim(S,osim_path,S_benchmark)
 %benchmark_predsim function to benchmark your predsim simulation workflow
 % as in afschrift 2025 (benchmarking the predictive capability of human gait
 % simulations)
+%   Set S_benchmark.dry_run = true to return planned simulation conditions
+%   without requiring OpenSim/CasADi or touching simulation files.
 %   Input arguments:
 %       (1) S: this is the matlab structure with settings that you use in
 %       your predsim simulation workfloz
@@ -21,27 +23,41 @@ if any(~ismember(S_benchmark.studies,supported_studies))
         strjoin(supported_studies,', '));
 end
 
-% also keep diary of this script ? does it work to have two diary function
-% inside each other ?
-if ~isfolder(S_benchmark.out_folder)
-    mkdir(S_benchmark.out_folder)
+% dry_run traces the production ID assignments without preprocessing, model
+% writes, solver calls, existing-result edits, diary or settings output.
+dry_run = false;
+if isfield(S_benchmark,'dry_run')
+    dry_run = S_benchmark.dry_run;
 end
-log_name = fullfile(S_benchmark.out_folder,'log_benchmark.txt');
-diary(log_name);
+assert(islogical(dry_run) && isscalar(dry_run), ...
+    'PredSim:InvalidDryRun','S_benchmark.dry_run must be a logical scalar.');
+simulations = struct('Study',{},'SimulationID',{},'Model',{},'ModelPath',{}, ...
+    'SaveFolder',{},'Speed',{},'Slope',{},'AddedMass',{},'MassFraction',{}, ...
+    'LoadLocation',{},'SettingsAddedMass',{});
 
-% get casadi path
-if ~isfield(S.solver,'CasADi_path')
-    try
-        S.solver.CasADi_path = casadi.GlobalOptions.getCasadiPath();
-    catch
-        error("Please add CasADi to the matlab search path, or pass the path " + ...
-            "to your CasADi installation (top folder) to S.solver.CasADi_path.")
+if ~dry_run
+    % also keep diary of this script ? does it work to have two diary function
+    % inside each other ?
+    if ~isfolder(S_benchmark.out_folder)
+        mkdir(S_benchmark.out_folder)
     end
-elseif ~isempty(S.solver.CasADi_path) && ~isfolder(S.solver.CasADi_path)
-    error("Unable to find the path assigned to S.solver.CasADi_path:" + ...
-        " \n\t%s",S.solver.CasADi_path)
-end
+    log_name = fullfile(S_benchmark.out_folder,'log_benchmark.txt');
+    diary(log_name);
 
+    % get casadi path
+    if ~isfield(S.solver,'CasADi_path')
+        try
+            S.solver.CasADi_path = casadi.GlobalOptions.getCasadiPath();
+        catch
+            error("Please add CasADi to the matlab search path, or pass the path " + ...
+                "to your CasADi installation (top folder) to S.solver.CasADi_path.")
+        end
+    elseif ~isempty(S.solver.CasADi_path) && ~isfolder(S.solver.CasADi_path)
+        error("Unable to find the path assigned to S.solver.CasADi_path:" + ...
+            " \n\t%s",S.solver.CasADi_path)
+    end
+
+end
 
 % The only input is S and osim_path, maybe additional input S_benchmark
 if ~isfield(S,'OpenSimADOptions')
@@ -56,10 +72,12 @@ S.misc.save_folder = S_benchmark.out_folder;
 %% 0. pre-processing default model
 %       I think the most clean way is to add additional settings to control
 %       the flow in the run_pred_sim script
-S.flow_control.pre_processing_only = true;
-S.solver.run_as_batch_job = false;
-run_pred_sim(S,osim_path_default);
-diary(log_name);
+if ~dry_run
+    S.flow_control.pre_processing_only = true;
+    S.solver.run_as_batch_job = false;
+    run_pred_sim(S,osim_path_default);
+    diary(log_name);
+end
 
 %
 %% 1. check if we have to make new .dll files
@@ -84,7 +102,11 @@ end
 if bool_convertmodels
     % message
     disp(' ')
-    disp('started converting models for benchmarking studies');
+    if dry_run
+        disp('planning model conditions for ID audit');
+    else
+        disp('started converting models for benchmarking studies');
+    end
     disp(' ')
 
     % store all subjects in benchmarking folder
@@ -105,103 +127,115 @@ if bool_convertmodels
             out_folder =  fullfile(S.misc.main_path,'Subjects',model_name);
             out_modelname = fullfile(out_folder,[model_name '.osim']);
             % Preprocess every model so osim2dll validates cached outputs/options.
-            changed = adapt_gravity_model(osim_path_default,slopes(islope),out_modelname);
+            S_benchmark.converted_models.koelewijn2019.slope{ct} = slopes(islope)/100;
+            if ~dry_run
+                changed = adapt_gravity_model(osim_path_default,slopes(islope),out_modelname);
+                % copy model geometry file and settingsfile
+                copy_musclegeom_information(osim_path_default,out_modelname,S_input);
+                copy_modelsettingsfile(osim_path_default,out_modelname)
+
+                % convert model
+                S_temp = S_input;
+                S_temp.OpenSimADOptions.always_generate = changed || force_generate;
+                S_temp.flow_control.pre_processing_only = true;
+                S_temp.solver.run_as_batch_job = false;
+                S_temp.subject.name = model_name;
+                S_temp.misc.save_folder = S_benchmark.out_folder;
+                run_pred_sim(S_temp,out_modelname);
+                diary(log_name);
+            end
             S_benchmark.converted_models.koelewijn2019.modelnames{ct} = model_name;
             S_benchmark.converted_models.koelewijn2019.osim_path{ct} = out_modelname;
-            % copy model geometry file and settingsfile
-            copy_musclegeom_information(osim_path_default,out_modelname,S_input);
-            copy_modelsettingsfile(osim_path_default,out_modelname)
-
-            % convert model
-            S_temp = S_input;
-            S_temp.OpenSimADOptions.always_generate = changed || force_generate;
-            S_temp.flow_control.pre_processing_only = true;
-            S_temp.solver.run_as_batch_job = false;
-            S_temp.subject.name = model_name;
-            S_temp.misc.save_folder = S_benchmark.out_folder;
-            run_pred_sim(S_temp,out_modelname);
-            diary(log_name);
             ct = ct + 1;
         end
         % add default model (level walking)
         S_benchmark.converted_models.koelewijn2019.modelnames{ct}= S_input.subject.name;
         S_benchmark.converted_models.koelewijn2019.osim_path{ct}= osim_path_default;
+        S_benchmark.converted_models.koelewijn2019.slope{ct} = 0;
     end
 
     % Browning 2008
     if any(strcmp(S_benchmark.studies,'browning2008'))
         % create osim model for browning study
-        [browning2008] = adapt_model_Browning(S,osim_path_default);
+        [browning2008] = adapt_model_Browning(S,osim_path_default,dry_run);
         S_benchmark.converted_models.browning2008 = browning2008;
         % add default model (walking without added mass)
         ct = length(S_benchmark.converted_models.browning2008.modelnames) +1;
         S_benchmark.converted_models.browning2008.modelnames{ct}= S_input.subject.name;
         S_benchmark.converted_models.browning2008.osim_path{ct}= osim_path_default;
+        S_benchmark.converted_models.browning2008.added_mass{ct} = 0;
+        S_benchmark.converted_models.browning2008.location_added_mass{ct} = '';
         % create dlls
-        for imodel  = 1:length(browning2008.osim_path)
-            changed = browning2008.model_changed{imodel};
+        if ~dry_run
+            for imodel  = 1:length(browning2008.osim_path)
+                changed = browning2008.model_changed{imodel};
 
-            % copy the muscle-tendon information
-            copy_musclegeom_information(osim_path_default,browning2008.osim_path{imodel},S_input);
-            copy_modelsettingsfile(osim_path_default,browning2008.osim_path{imodel})
+                % copy the muscle-tendon information
+                copy_musclegeom_information(osim_path_default,browning2008.osim_path{imodel},S_input);
+                copy_modelsettingsfile(osim_path_default,browning2008.osim_path{imodel})
 
-            % convert model
-            S_temp = S_input;
-            S_temp.OpenSimADOptions.always_generate = changed || force_generate;
-            S_temp.flow_control.pre_processing_only = true;
-            S_temp.solver.run_as_batch_job = false;
-            S_temp.subject.name = browning2008.modelnames{imodel};
-            S_temp.misc.save_folder = S_benchmark.out_folder;
-            run_pred_sim(S_temp,browning2008.osim_path{imodel});
-            diary(log_name);
+                % convert model
+                S_temp = S_input;
+                S_temp.OpenSimADOptions.always_generate = changed || force_generate;
+                S_temp.flow_control.pre_processing_only = true;
+                S_temp.solver.run_as_batch_job = false;
+                S_temp.subject.name = browning2008.modelnames{imodel};
+                S_temp.misc.save_folder = S_benchmark.out_folder;
+                run_pred_sim(S_temp,browning2008.osim_path{imodel});
+                diary(log_name);
+            end
         end
     end
 
     % Gomenuka 2014
     if any(strcmp(S_benchmark.studies,'gomenuka2014'))
         % create osim models for gomenuka2014
-        [gomenuka2014] = adapt_model_Gomenuka(S,osim_path_default);
+        [gomenuka2014] = adapt_model_Gomenuka(S,osim_path_default,dry_run);
         S_benchmark.converted_models.gomenuka2014 = gomenuka2014;
         % create dlls
-        for imodel  = 1:length(gomenuka2014.osim_path)
-            changed = gomenuka2014.model_changed{imodel};
-            % copy the muscle-tendon information
-            copy_musclegeom_information(osim_path_default,gomenuka2014.osim_path{imodel},S_input);
-            copy_modelsettingsfile(osim_path_default,gomenuka2014.osim_path{imodel})
+        if ~dry_run
+            for imodel  = 1:length(gomenuka2014.osim_path)
+                changed = gomenuka2014.model_changed{imodel};
+                % copy the muscle-tendon information
+                copy_musclegeom_information(osim_path_default,gomenuka2014.osim_path{imodel},S_input);
+                copy_modelsettingsfile(osim_path_default,gomenuka2014.osim_path{imodel})
 
-            % convert model
-            S_temp = S_input;
-            S_temp.OpenSimADOptions.always_generate = changed || force_generate;
-            S_temp.flow_control.pre_processing_only = true;
-            S_temp.solver.run_as_batch_job = false;
-            S_temp.subject.name = gomenuka2014.modelnames{imodel};
-            S_temp.misc.save_folder = S_benchmark.out_folder;
-            run_pred_sim(S_temp,gomenuka2014.osim_path{imodel});
-            diary(log_name);
+                % convert model
+                S_temp = S_input;
+                S_temp.OpenSimADOptions.always_generate = changed || force_generate;
+                S_temp.flow_control.pre_processing_only = true;
+                S_temp.solver.run_as_batch_job = false;
+                S_temp.subject.name = gomenuka2014.modelnames{imodel};
+                S_temp.misc.save_folder = S_benchmark.out_folder;
+                run_pred_sim(S_temp,gomenuka2014.osim_path{imodel});
+                diary(log_name);
+            end
         end
     end
 
     % Schertzer
     if any(strcmp(S_benchmark.studies,'schertzer2014'))
         % create osim models for gomenuka2014
-        [schertzer2014] = adapt_model_Schertzer(S,osim_path_default);
+        [schertzer2014] = adapt_model_Schertzer(S,osim_path_default,dry_run);
         S_benchmark.converted_models.schertzer2014 = schertzer2014;
         % create dlls
-        for imodel  = 1:length(schertzer2014.osim_path)
-            changed = schertzer2014.model_changed{imodel};
-            % copy the muscle-tendon information
-            copy_musclegeom_information(osim_path_default,schertzer2014.osim_path{imodel},S_input);
-            copy_modelsettingsfile(osim_path_default,schertzer2014.osim_path{imodel})
+        if ~dry_run
+            for imodel  = 1:length(schertzer2014.osim_path)
+                changed = schertzer2014.model_changed{imodel};
+                % copy the muscle-tendon information
+                copy_musclegeom_information(osim_path_default,schertzer2014.osim_path{imodel},S_input);
+                copy_modelsettingsfile(osim_path_default,schertzer2014.osim_path{imodel})
 
-            % convert model
-            S_temp = S_input;
-            S_temp.OpenSimADOptions.always_generate = changed || force_generate;
-            S_temp.flow_control.pre_processing_only = true;
-            S_temp.solver.run_as_batch_job = false;
-            S_temp.subject.name = schertzer2014.modelnames{imodel};
-            S_temp.misc.save_folder = S_benchmark.out_folder;
-            run_pred_sim(S_temp,schertzer2014.osim_path{imodel});
-            diary(log_name);
+                % convert model
+                S_temp = S_input;
+                S_temp.OpenSimADOptions.always_generate = changed || force_generate;
+                S_temp.flow_control.pre_processing_only = true;
+                S_temp.solver.run_as_batch_job = false;
+                S_temp.subject.name = schertzer2014.modelnames{imodel};
+                S_temp.misc.save_folder = S_benchmark.out_folder;
+                run_pred_sim(S_temp,schertzer2014.osim_path{imodel});
+                diary(log_name);
+            end
         end
     end
 
@@ -217,9 +251,13 @@ end
 % add check if simulation result already exists, if this is the case do not
 % run the simulation
 disp('')
-disp('preprocessing of all models finished')
-disp(' ')
-disp('start simulations');
+if dry_run
+    disp('model conditions planned; collecting simulation IDs');
+else
+    disp('preprocessing of all models finished')
+    disp(' ')
+    disp('start simulations');
+end
 disp(' ')
 
 
@@ -256,7 +294,9 @@ if isfield(S_benchmark,'studies') && ~isempty(S_benchmark.studies)
                 '_id_' num2str(id_trials(i_speed))]);
             % check if save_folder already exists and contains a matfile,
             % if this is the case do not run the simulation
-            if ~benchmark_result_exists(S.misc.save_folder)
+            if dry_run
+                simulations(end+1) = simulation_condition('vanderzee2022',S,osim_path_default,0,0,0,'');
+            elseif ~benchmark_result_exists(S.misc.save_folder)
                 % run predsim
                 runPredSim(S, osim_path_default);
                 disp(['added sim vanderzee number ' num2str(i_speed) ' to batch' ])
@@ -307,7 +347,13 @@ if isfield(S_benchmark,'studies') && ~isempty(S_benchmark.studies)
                 S.misc.benchmark_id = ids_Koelewijn{ct_sim};
                 % check if save_folder already exists and contains a matfile,
                 % if this is the case do not run the simulation
-                if ~benchmark_result_exists(S.misc.save_folder)
+                if dry_run
+                    simulations(end+1) = simulation_condition('koelewijn2019',S,osim_path_sel, ...
+                        S_benchmark.converted_models.koelewijn2019.slope{imodel}, ...
+                        0, ...
+                        0, ...
+                        '');
+                elseif ~benchmark_result_exists(S.misc.save_folder)
                     % run predsim
                     runPredSim(S, osim_path_sel);
                     disp(['added sim koelewijn number ' num2str(ct_sim) ' to batch' ])
@@ -355,7 +401,13 @@ if isfield(S_benchmark,'studies') && ~isempty(S_benchmark.studies)
             S.misc.benchmark_added_mass =  S_benchmark.browning.addedmass(ct_sim);
             % check if save_folder already exists and contains a matfile,
             % if this is the case do not run the simulation
-            if ~benchmark_result_exists(S.misc.save_folder)
+            if dry_run
+                simulations(end+1) = simulation_condition('browning2008',S,osim_path_sel, ...
+                    0, ...
+                    S_benchmark.converted_models.browning2008.added_mass{imodel}, ...
+                    NaN, ...
+                    S_benchmark.converted_models.browning2008.location_added_mass{imodel});
+            elseif ~benchmark_result_exists(S.misc.save_folder)
                 % run predsim
                 runPredSim(S, osim_path_sel);
                 disp(['added sim browning number ' num2str(ct_sim) ' to batch' ]);
@@ -404,11 +456,20 @@ if isfield(S_benchmark,'studies') && ~isempty(S_benchmark.studies)
                     % adapt subject
                     S.subject.name = model_name;
                     % add total added mass to settings
-                    modelmass = getModelMass(osim_path_default);
+                    modelmass = NaN;
+                    if ~dry_run
+                        modelmass = getModelMass(osim_path_default);
+                    end
                     S.misc.benchmark_added_mass =  modelmass * S_benchmark.gomenuka.addedmass(i_mass);
                     % check if save_folder already exists and contains a matfile,
                     % if this is the case do not run the simulation
-                    if ~benchmark_result_exists(S.misc.save_folder)
+                    if dry_run
+                        simulations(end+1) = simulation_condition('gomenuka2014',S,osim_path_sel, ...
+                            S_benchmark.converted_models.gomenuka2014.slope{imodel}, ...
+                            NaN, ...
+                            S_benchmark.converted_models.gomenuka2014.mass_fraction{imodel}, ...
+                            S_benchmark.converted_models.gomenuka2014.location_added_mass{imodel});
+                    elseif ~benchmark_result_exists(S.misc.save_folder)
                         % run predsim
                         runPredSim(S, osim_path_sel);
                         disp(['added sim gomenuka number ' num2str(ct_sim) ' to batch' ])
@@ -461,7 +522,13 @@ if isfield(S_benchmark,'studies') && ~isempty(S_benchmark.studies)
                 S.subject.name = model_name;
                 % check if save_folder already exists and contains a matfile,
                 % if this is the case do not run the simulation
-                if ~benchmark_result_exists(S.misc.save_folder)
+                if dry_run
+                    simulations(end+1) = simulation_condition('schertzer2014',S,osim_path_sel, ...
+                        0, ...
+                        S_benchmark.converted_models.schertzer2014.added_mass{imodel}, ...
+                        NaN, ...
+                        S_benchmark.converted_models.schertzer2014.location_added_mass{imodel});
+                elseif ~benchmark_result_exists(S.misc.save_folder)
                     % run predsim
                     runPredSim(S, osim_path_sel);
                     disp(['added sim schertzer number ' num2str(ct_sim) ' to batch' ])
@@ -475,6 +542,7 @@ if isfield(S_benchmark,'studies') && ~isempty(S_benchmark.studies)
                 S_benchmark.schertzer.ids{ct_sim} = id_sel;
                 ct_sim = ct_sim+1;
             end
+        end
     end
 end
 
@@ -516,7 +584,9 @@ if isfield(S_benchmark,'gait_speeds') && S_benchmark.gait_speeds
         S.misc.benchmark_id = ['gait_speeds_' str_speed{1}];
         % check if save_folder already exists and contains a matfile,
         % if this is the case do not run the simulation
-        if ~benchmark_result_exists(S.misc.save_folder)
+        if dry_run
+            simulations(end+1) = simulation_condition('gait_speeds',S,osim_path_default,0,0,0,'');
+        elseif ~benchmark_result_exists(S.misc.save_folder)
             % run predsim
             runPredSim(S, osim_path_default);
             disp(['added sim gaitspeeds number ' num2str(i_speed) ' to batch' ])
@@ -533,8 +603,21 @@ end
 % will use this settings once all simulations are finished to benchmark the
 % simulation results / compare it to experimental data
 S = S_input;
-save(fullfile(S_benchmark.out_folder,'benchmark_settings.mat'),'S',...
-    'S_benchmark','osim_path');
+if ~dry_run
+    save(fullfile(S_benchmark.out_folder,'benchmark_settings.mat'),'S',...
+        'S_benchmark','osim_path');
+end
 
 
+end
+
+function condition = simulation_condition(study,S,modelpath,slope,mass,fraction,location)
+settings_mass = 0;
+if isfield(S.misc,'benchmark_added_mass')
+    settings_mass = S.misc.benchmark_added_mass;
+end
+condition = struct('Study',study,'SimulationID',S.misc.benchmark_id, ...
+    'Model',S.subject.name,'ModelPath',modelpath,'SaveFolder',S.misc.save_folder, ...
+    'Speed',S.misc.forward_velocity,'Slope',slope,'AddedMass',mass, ...
+    'MassFraction',fraction,'LoadLocation',location,'SettingsAddedMass',settings_mass);
 end

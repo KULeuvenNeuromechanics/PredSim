@@ -1,14 +1,18 @@
-function [browning2008] = adapt_model_Browning(S,osim_path)
+function [browning2008] = adapt_model_Browning(S,osim_path,metadata_only)
 %adapt_model_Browning Adds mass to the opensim model based on the study of
 %Browning 2008 (addref)
 %   input arguments:
 %       (1) S: default settings structure
 %       (2) S: osim_path
+%   metadata_only (optional): true returns model names/conditions without
+%   loading OpenSim or writing models. Used by the ID debugging tool.
 %   output arguments:
 %       (1) output structure with path information about the exported
 %       models
 
-import org.opensim.modeling.*;
+if nargin < 3
+    metadata_only = false;
+end
 Addedmass = [2; 4; 8;...
     2; 4;...
     4; 8; 12; 16;...
@@ -40,8 +44,18 @@ ModelOut = {'_femur2kg'; '_femur4kg'; '_femur8kg';...
     'pelvis_12kg';'_pelvis_16kg';'_tibia_2kg';'_tibia_4kg'};
 ct = 1;
 for i=1:length(Addedmass)
+    browning2008.modelnames{ct} = [S.subject.name ModelOut{i}];
+    model_name = browning2008.modelnames{ct};
+    browning2008.osim_path{ct} = fullfile(S.misc.main_path,'Subjects',model_name,[model_name '.osim']);
+    browning2008.added_mass{ct} = Addedmass(i) * sum(~cellfun(@isempty,SegmentAdded(i,:)));
+    browning2008.location_added_mass{ct} = regexprep(SegmentAdded{i,1},'_l$','');
+    if metadata_only
+        ct = ct + 1;
+        continue
+    end
+
     % open model
-    mSel = Model(osim_path);
+    mSel = org.opensim.modeling.Model(osim_path);
     for j =1:2 % left and right leg
         segSel = SegmentAdded{i,j};
         if ~isempty(segSel)

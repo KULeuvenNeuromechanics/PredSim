@@ -1,14 +1,18 @@
-function [schertzer2014] = adapt_model_Schertzer(S,osim_path)
+function [schertzer2014] = adapt_model_Schertzer(S,osim_path,metadata_only)
 %adapt_model_Browning Adds mass to the opensim model based on the study of
 %Browning 2008 (addref)
 %   input arguments:
 %       (1) S: default settings structure
 %       (2) S: osim_path
+%   metadata_only (optional): true returns model names/conditions without
+%   loading OpenSim or writing models. Used by the ID debugging tool.
 %   output arguments:
 %       (1) output structure with path information about the exported
 %       models
 
-import org.opensim.modeling.*;
+if nargin < 3
+    metadata_only = false;
+end
 Addedmass = [0.5; 1; 2;...
     0.5; 1; 2;...
     2; 7; 10; 16; 22;...
@@ -52,8 +56,18 @@ COMlocation = {[0 -lTibia 0], [0 -lTibia 0]; ...
     
 ct = 1;
 for i=1:length(Addedmass)
+    schertzer2014.modelnames{ct} = [S.subject.name '_' ModelOut{i}];
+    model_name = schertzer2014.modelnames{ct};
+    schertzer2014.osim_path{ct} = fullfile(S.misc.main_path,'Subjects',model_name,[model_name '.osim']);
+    schertzer2014.added_mass{ct} = Addedmass(i) * sum(~cellfun(@isempty,SegmentAdded(i,:)));
+    schertzer2014.location_added_mass{ct} = location_addedmass_str{i};
+    if metadata_only
+        ct = ct + 1;
+        continue
+    end
+
     % open model
-    mSel = Model(osim_path);
+    mSel = org.opensim.modeling.Model(osim_path);
     for j =1:2 % left and right leg
         segSel = SegmentAdded{i,j};
         if ~isempty(segSel)
