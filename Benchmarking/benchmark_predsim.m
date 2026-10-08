@@ -429,53 +429,52 @@ if isfield(S_benchmark,'studies') && ~isempty(S_benchmark.studies)
 
     % run simulations as in schertzer2014
     if any(strcmp(S_benchmark.studies,'schertzer2014'))
-    S_benchmark.schertzer.gait_speeds = [4 5 6]./3.6;
-    nsim_schertzer = length(S_benchmark.converted_models.schertzer2014.modelnames) *...
-        length(S_benchmark.schertzer.gait_speeds);
-    S_benchmark.schertzer.names = cell(nsim_schertzer,1);
-    S_benchmark.schertzer.ids = cell(nsim_schertzer,1);
-    ct_sim = 1;
-    % create identifiers for gomenuka
-    for i_speed = 1:length(S_benchmark.schertzer.gait_speeds)
-        for imodel = 1 :length(S_benchmark.converted_models.schertzer2014.modelnames)
-            model_name = S_benchmark.converted_models.schertzer2014.modelnames{imodel};
-            osim_path_sel = S_benchmark.converted_models.schertzer2014.osim_path{imodel};
-            % start from default input settings
-            S = S_input;
-            % set forward velocity
-            S.misc.forward_velocity = S_benchmark.schertzer.gait_speeds(i_speed);
-            % adapt folder to save results
-            save_name  =[model_name, '_speed_' ,...
-                num2str(round(S_benchmark.schertzer.gait_speeds(i_speed)*100))];
-            S.misc.save_folder  = fullfile(S_benchmark.out_folder,...
-                'schertzer2014', save_name);
-            % create id for benchmaring
-            speed_str = velocityToString(S.misc.forward_velocity);
-            id_sel    = ['schertzer2014_' speed_str{1}, ...
-                '_' S_benchmark.converted_models.schertzer2014.location_added_mass{imodel} '_' ...
-                num2str(S_benchmark.converted_models.schertzer2014.added_mass{imodel}) 'kg'];
-            S.misc.benchmark_id = id_sel;
-            % added mass
-            S.misc.benchmark_added_mass = S_benchmark.converted_models.schertzer2014.added_mass{imodel};
-            % adapt subject
-            S.subject.name = model_name;
-            % check if save_folder already exists and contains a matfile,
-            % if this is the case do not run the simulation
-            if ~benchmark_result_exists(S.misc.save_folder)
-                % run predsim
-                runPredSim(S, osim_path_sel);
-                disp(['added sim schertzer number ' num2str(ct_sim) ' to batch' ])
-            else
-                % temporary fix to add id to old simulations if needed
-                add_id_to_simresults(S.misc.save_folder, S.misc.benchmark_id);
-                disp(['sim schertzer not added to batch because folder '  S.misc.save_folder ' contains a completed result'])
+        S_benchmark.schertzer.gait_speeds = [4 5 6]./3.6;
+        nsim_schertzer = length(S_benchmark.converted_models.schertzer2014.modelnames) *...
+            length(S_benchmark.schertzer.gait_speeds);
+        S_benchmark.schertzer.names = cell(nsim_schertzer,1);
+        S_benchmark.schertzer.ids = cell(nsim_schertzer,1);
+        ct_sim = 1;
+        % create identifiers for gomenuka
+        for i_speed = 1:length(S_benchmark.schertzer.gait_speeds)
+            for imodel = 1 :length(S_benchmark.converted_models.schertzer2014.modelnames)
+                model_name = S_benchmark.converted_models.schertzer2014.modelnames{imodel};
+                osim_path_sel = S_benchmark.converted_models.schertzer2014.osim_path{imodel};
+                % start from default input settings
+                S = S_input;
+                % set forward velocity
+                S.misc.forward_velocity = S_benchmark.schertzer.gait_speeds(i_speed);
+                % adapt folder to save results
+                save_name  =[model_name, '_speed_' ,...
+                    num2str(round(S_benchmark.schertzer.gait_speeds(i_speed)*100))];
+                S.misc.save_folder  = fullfile(S_benchmark.out_folder,...
+                    'schertzer2014', save_name);
+                % create id for benchmaring
+                speed_str = velocityToString(S.misc.forward_velocity);
+                id_sel    = ['schertzer2014_' speed_str{1}, ...
+                    '_' S_benchmark.converted_models.schertzer2014.location_added_mass{imodel} '_' ...
+                    num2str(S_benchmark.converted_models.schertzer2014.added_mass{imodel}) 'kg'];
+                S.misc.benchmark_id = id_sel;
+                % added mass
+                S.misc.benchmark_added_mass = S_benchmark.converted_models.schertzer2014.added_mass{imodel};
+                % adapt subject
+                S.subject.name = model_name;
+                % check if save_folder already exists and contains a matfile,
+                % if this is the case do not run the simulation
+                if ~benchmark_result_exists(S.misc.save_folder)
+                    % run predsim
+                    runPredSim(S, osim_path_sel);
+                    disp(['added sim schertzer number ' num2str(ct_sim) ' to batch' ])
+                else
+                    % temporary fix to add id to old simulations if needed
+                    add_id_to_simresults(S.misc.save_folder, S.misc.benchmark_id);
+                    disp(['sim schertzer not added to batch because folder '  S.misc.save_folder ' contains a completed result'])
+                end
+                % append name
+                S_benchmark.schertzer.names{ct_sim} = save_name;
+                S_benchmark.schertzer.ids{ct_sim} = id_sel;
+                ct_sim = ct_sim+1;
             end
-            % append name
-            S_benchmark.schertzer.names{ct_sim} = save_name;
-            S_benchmark.schertzer.ids{ct_sim} = id_sel;
-            ct_sim = ct_sim+1;
-        end
-    end
     end
 end
 

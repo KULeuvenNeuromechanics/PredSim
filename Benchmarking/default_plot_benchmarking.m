@@ -150,7 +150,7 @@ if any(arrayfun(@(d) ~isempty(d.benchmark.grf_r),Dat))
             nexttile(coord+3);
             forces = Dat(isim).R.ground_reaction.GRF_r;
             if bool_rot_grf
-                if isfield(Dat(isim).model_info,'slope')
+                if isfield(Dat(isim),'model_info') && isfield(Dat(isim).model_info,'slope')
                     fi = atan(Dat(isim).model_info.slope);
                     Rotm = benchmark_rotation_z(fi);
                     forces = forces*Rotm(1:3,1:3)';
