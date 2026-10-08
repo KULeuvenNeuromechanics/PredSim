@@ -134,7 +134,7 @@ disp(' ')
 if ~S.flow_control.pre_processing_only
 
     %% Formulating OCP
-    addpath([S.misc.main_path '\OCP'])
+    addpath(fullfile(S.misc.main_path, 'OCP'))
     if ~S.post_process.rerun
         OCP_formulation(S,model_info,f_casadi);
         disp(' ')
@@ -142,7 +142,7 @@ if ~S.flow_control.pre_processing_only
     end
 
     %% PostProcessing
-    addpath([S.misc.main_path '\PostProcessing'])
+    addpath(fullfile(S.misc.main_path, 'PostProcessing'))
     disp('Start PostProcessing...')
     disp(' ')
     t0 = tic;
