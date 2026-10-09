@@ -32,14 +32,20 @@ This repository is a work in progress.
 
 ### Required software
 
+PredSim runs on local machines with Microsoft Windows, but does not run on Apple macOS.
+
 To run this code you need to have the following softwares on your machine:
 
 - MATLAB. [Statistics and Machine Learning Toolbox](https://nl.mathworks.com/products/statistics.html) and [Signal Processing Toolbox](https://nl.mathworks.com/products/signal.html) are required. [Parallel Computing Toolbox](https://nl.mathworks.com/products/parallel-computing.html) is optional. The code has mainly been developed and tested on MATLAB 2021b, but is expected to run on any recent version.
 - [OpenSim](https://simtk.org/projects/opensim) 4.3 or later. Older versions do not work.
 - [CasADi](https://web.casadi.org/get/). The code has been tested on CasADi 3.5.5 and later.
-- [Microsoft Visual Studio](https://visualstudio.microsoft.com/). In Visual Studio Installer, [select to include Desktop development with C++](./Documentation/FiguresForDocumentation/fig_MSVS.png). The code has been tested on MSVS Community 2015, 2017, 2019, and 2022.
-- [CMake](https://cmake.org/download/). The code has been tested on CMake 3.22.0. Add CMake to your system Path.
+- [Microsoft Visual Studio](https://visualstudio.microsoft.com/). In Visual Studio Installer, [select to include Desktop development with C++](./Documentation/FiguresForDocumentation/fig_MSVS.png). The code has been tested on MSVS Community 2015 up to 2026. Specific versions of Visual Studio can be found at https://my.visualstudio.com/Downloads.
+- [CMake](https://cmake.org/download/). The code has been tested on CMake 3.22.0 and later. Add CMake to your system Path. Note that your CMake version need to be more recent then your MS Visual Studio version.
 - [Git](https://git-scm.com/download/win). The code has been tested on Git 2.40.0.windows.1. Add Git to your system Path.
+
+
+The following software is optional, but may improve the user experience:
+- [GitHub Desktop](https://github.com/apps/desktop). GitHub Desktop allows you to clone the repository to your machine through a GUI instead of command line. You will still require Git and need to add Git to your system Path when you run GitHub Desktop.
 
 
 ### How to setup the code
@@ -53,102 +59,7 @@ To run this code you need to have the following softwares on your machine:
 5. Make sure the opensimAD submodule is installed. If PredSim\opensimAD\ is empty, open git command prompt, go to ...\PredSim\ , and run `git submodule update --init`.
 
 
-After perfoming these steps, run the main script. (Expected run time is 40 minutes, depending on hardware.) If you don't receive any errors, your results should be the same as [the reference result](./Tests/ReferenceResults/Falisse_et_al_2022/Falisse_et_al_2022_paper.mat). If that is the case, you have succesfully intalled and set up the code. You are ready to do your own simulations.
-
-
-## Running PredSim on a VSC cluster
-
-KU Leuven provides compute resources to researchers in the [High Performance Computing](https://icts.kuleuven.be/sc/onderzoeksgegevens/hpc)
-service. The HPC clusters of KU Leuven are part of the [Vlaams Supercomputer Centrum](https://www.vscentrum.be/) (VSC).
-If your local machine has insufficient memory or if you need to run many
-simulations, you can consider moving your workload to the HPC clusters.
-In order to get started on the HPC, it is highly recommended to follow the
-[HPC Introduction](https://hpcleuven.github.io/HPC-intro/) and/or
-[Linux Introduction](https://hpcleuven.github.io/Linux-intro/) courses. To get
-an overview of upcoming runs of these courses, see the [VSC Training](https://www.vscentrum.be/vsctraining)
-calendar. Extensive documentation on how to use the HPC clusters in general is
-available at https://docs.vscentrum.be/
-
-> **_NOTE:_** In order to use MATLAB on the KU Leuven HPC clusters, you need
-to be a member of the `lli_matlab` group because it is licensed software. After
-creating your VSC account, you can request membership of this group by visiting
-https://account.vscentrum.be/django/group/new and typing `lli_matlab` in the
-text box of the "Join group" paragraph.
-
-In order to get a copy of the PredSim repository on the cluster, the following
-commands can be used:
-
-```bash
-cd $VSC_DATA
-git clone https://github.com/KULeuvenNeuromechanics/PredSim
-cd PredSim
-git submodule init
-git submodule update
-```
-
-Make sure to checkout a branch that is suited to run on the Linux environment
-of the cluster, for instance check that the `opensimAD_linux` submodule is
-present.
-
-Typically simulations are run in batch mode on the cluster, meaning you prepare
-a so-called job script including all commands that need to be executed to run
-a simulation. Below is an example of such a job script, which is also included
-as the `run_simulation.slurm` file in the repository. For debugging or test
-runs you can also execute the commands from the job script in a terminal on
-the cluster.
-
-```bash
-#!/bin/bash -l
-
-#SBATCH --cluster=genius
-#SBATCH --partition=batch
-#SBATCH --ntasks-per-node=1
-#SBATCH --nodes=1
-#SBATCH --account=<credit_account>
-#SBATCH --time=04:00:00
-#SBATCH --mem-per-cpu=6000M
-
-# Instead of installing dependencies yourself, you can simply load modules on
-# the cluster. The versions are just examples, you can check for available
-# modules with a command like "module spider OpenSim"
-module load OpenSim/4.3-foss-2024a
-module load OpenSimAD/20230213-foss-2024a
-module load CMake/3.29.3-GCCcore-13.3.0
-module load CasADi/3.7.0-gfbf-2024a
-
-# See https://simtk.org/plugins/phpBB/viewtopicPhpbb.php?f=91&t=7165&p=36596
-export LD_PRELOAD="${EBROOTGCCCORE}/lib64/libstdc++.so.6"
-
-# Update the Java library path in order enable using the OpenSim Java bindings
-export _JAVA_OPTIONS="${_JAVA_OPTIONS} -Djava.library.path=$EBROOTOPENSIM/sdk/lib"
-
-# Let MATLAB pick up OpenBLAS from a module
-export BLAS_VERSION=${EBROOTOPENBLAS}/lib64/libopenblas.so
-export LAPACK_VERSION=${EBROOTOPENBLAS}/lib64/libopenblas.so
-
-# TODO Figure out if it useful to use more than a single thread
-export OMP_NUM_THREADS=1
-matlab -nodisplay -nosplash -singleCompThread -r "addpath('Examples'); 	run_on_VSC_cluster"
-```
-
-Replace the `<credit_account>` entry with your own (you can check to which
-credit accounts you have access by running the `sam-balance` command) and
-submit the job script from your PredSim directory with `sbatch run_simulation.slurm`.
-To see the status of your job, execute `squeue -M ALL`, terminal output will
-be written to the job output file (by default looking like `slurm-<jobid>.out`.
-
-> [!NOTE]
-> If you upload files from a Windows machine to the Linux cluster, you might
-> receive errors saying your file contains DOS line breaks instead of UNIX
-> line breaks. You can rectify this by running `dos2unix <fn>` on the cluster.
-
-If you have already completed these setup steps, you can simply navigate to 
-your [OnDemand Dashboard](https://ondemand.hpc.kuleuven.be/) > Login Server Shell Access > start a simulation
-using the predefined settings:
-```bash
-cd $VSC_DATA/PredSim
-sbatch run_simulation.slurm
-```
+After perfoming these steps, run the main script (main.m) in Matlab. (Expected run time is 40 minutes, depending on hardware.) If you don't receive any errors, your results should be the same as [the reference result](./Tests/ReferenceResults/Falisse_et_al_2022/Falisse_et_al_2022_paper.mat). If that is the case, you have succesfully intalled and set up the code. You are ready to do your own simulations.
 
 
 ## How to use the code
@@ -162,6 +73,7 @@ The [examples folder](./Examples/) contains scripts illustrating how to use sett
 - Predict a gait pattern resulting from a limited number of muscle synergies.
 - Predict gait with assistance from an ankle exoskeleton.
 - Run a sensitivity analysis.
+- Run simulations in batch on the VSC cluster.
 
 
 ### Required Settings
@@ -173,7 +85,7 @@ The [examples folder](./Examples/) contains scripts illustrating how to use sett
 - **S.misc.save_folder**: 
 	- Path to the folder where you want to store the simulation results. If the folder does not exist yet on your machine, it will be created automatically.
 - **S.solver.IG_selection**: 
-	- Either choose 'quasi-random' or give the path to a .mot file you want to use as initial guess. In a quasi-random initial guess, the model is translated forward at the imposed velocity while all other coordinates are kept constant (vertical position of floating base is S.subject.IG_pelvis_y, others are 0). 
+	- Either choose 'quasi-random' or give the path to a .mot file you want to use as initial guess. In a quasi-random initial guess, the model is being translated forward at the imposed velocity while all other coordinates are kept constant in anatomical position (vertical position of floating base is S.subject.IG_pelvis_y, others are 0). A [walking gait initial guess](./OCP/IK_Guess_Full_GC.mot) is provided.
 - **S.solver.IG_selection_gaitCyclePercent**: 
 	- If S.solver.IG_selection is a .mot file, S.solver.IG_selection_gaitCyclePercent is required. Here, specify what percent of gait cycle does the .mot file contain. For example, if the .mot file has 2 gait cycles, S.solver.IG_selection_gaitCyclePercent is 200.
 

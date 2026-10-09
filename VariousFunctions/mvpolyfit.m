@@ -68,7 +68,27 @@ function [coeff, stats, mu] = mvpolyfit(X, Y, order, YdX, options)
 % 
 % Original author: Lars D'Hondt
 % Original date: September 2025
+%
 % --------------------------------------------------------------------------
+% This file is part of PredSim.
+% 
+% PredSim: A Framework for Rapid Predictive Simulations of Locomotion
+% Copyright (c) 2026 KU Leuven
+% 
+% PredSim is free software: you can redistribute it and/or modify it under 
+% the terms of the GNU Affero General Public License as published by the 
+% Free Software Foundation, either version 3 of the License, or (at your 
+% option) any later version.
+% 
+% PredSim is distributed in the hope that it will be useful, but WITHOUT 
+% ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or 
+% FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public 
+% License for more details.
+% 
+% You should have received a copy of the GNU Affero General Public License 
+% along with PredSim. If not, see <https://www.gnu.org/licenses/>.
+% --------------------------------------------------------------------------
+
 arguments
     X (:,:) double
     Y (:,1) double
@@ -146,7 +166,8 @@ for fit_order=min(order):max(order)
     
     % Fit coeff
     coeff = mldivide_impl(X_aug, Y_aug);
-    
+    coeff = coeff(1:size(X_aug, 2));
+      
     % Evaluate acceptance criteria
     Y_fit = mno*coeff;
     rmse_y = rms(Y - Y_fit);
@@ -231,7 +252,7 @@ if options.reduced_coeff
         % Coefficient values that best fit data using only the subset of 
         % selected coefficients
         coeff_aux = mldivide_impl(X_aug(:, selected_index), Y_aug);
-            
+        coeff_aux = coeff_aux(1:size(X_aug(:, selected_index),2));
 
         % Update the full coefficient vector with the selected ones
         coeff_2 = zeros(size(mno, 2), 1);

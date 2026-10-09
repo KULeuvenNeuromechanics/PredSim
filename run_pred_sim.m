@@ -19,8 +19,24 @@ function [varargout] = run_pred_sim(S,osim_path)
 % Original author: Lars D'Hondt
 % Original date: March-October/2022
 %
-% Last edit by: 
-% Last edit date: 
+% --------------------------------------------------------------------------
+% This file is part of PredSim.
+% 
+% PredSim: A Framework for Rapid Predictive Simulations of Locomotion
+% Copyright (c) 2026 KU Leuven
+% 
+% PredSim is free software: you can redistribute it and/or modify it under 
+% the terms of the GNU Affero General Public License as published by the 
+% Free Software Foundation, either version 3 of the License, or (at your 
+% option) any later version.
+% 
+% PredSim is distributed in the hope that it will be useful, but WITHOUT 
+% ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or 
+% FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public 
+% License for more details.
+% 
+% You should have received a copy of the GNU Affero General Public License 
+% along with PredSim. If not, see <https://www.gnu.org/licenses/>.
 % --------------------------------------------------------------------------
 
 addpath(fullfile(S.misc.main_path, 'VariousFunctions'))
@@ -62,10 +78,10 @@ elseif S.post_process.rerun
     R.S = S;
 
 elseif isempty(S.misc.result_filename)
-%     if isenv('SLURM_JOB_ID')
-%         % use job_id from slurm
-%         S.misc.result_filename = [S.subject.name '_' getenv('SLURM_JOB_ID')];
-    if strcmp(S.misc.savename,'structured')
+    if ~isempty(getenv('SLURM_JOB_ID'))
+        % use job_id from slurm
+        S.misc.result_filename = [S.subject.name '_' getenv('SLURM_JOB_ID')];
+    elseif strcmp(S.misc.savename,'structured')
         % use a structured savename
         if S.solver.run_as_batch_job
             result_filename = [S.subject.name '_job' num2str(S.solver.job_id)];

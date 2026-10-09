@@ -5,6 +5,7 @@
 *.log
 *.png
 *.jpg
+!/Documentation/FiguresForDocumentation/*.jpg
 *.eps
 
 !/Documentation/source/_static/*.png

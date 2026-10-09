@@ -27,8 +27,24 @@ function [Qs] = generate_dummy_motion(S,model_info,n_data_points)
 % Original author: Lars D'Hondt
 % Original date: 05/April/2022
 %
-% Last edit by: Lars D'Hondt (Provide multiple ways to set bounds)
-% Last edit date: 5/June/2023
+% --------------------------------------------------------------------------
+% This file is part of PredSim.
+% 
+% PredSim: A Framework for Rapid Predictive Simulations of Locomotion
+% Copyright (c) 2026 KU Leuven
+% 
+% PredSim is free software: you can redistribute it and/or modify it under 
+% the terms of the GNU Affero General Public License as published by the 
+% Free Software Foundation, either version 3 of the License, or (at your 
+% option) any later version.
+% 
+% PredSim is distributed in the hope that it will be useful, but WITHOUT 
+% ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or 
+% FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public 
+% License for more details.
+% 
+% You should have received a copy of the GNU Affero General Public License 
+% along with PredSim. If not, see <https://www.gnu.org/licenses/>.
 % --------------------------------------------------------------------------
 
 %% Set bounds for joint range of motion
