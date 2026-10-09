@@ -74,7 +74,7 @@ S_benchmark.out_folder = fullfile(pathRepo,'Results','Benchmark_Falisse2022');
 S.OpenSimADOptions.verbose_mode = true;
 
 % Short directory for intermediate builds; created if it does not exist.
-S.OpenSimADOptions.build_dir = 'C:\temp';
+S.OpenSimADOptions.build_dir = 'C:\GBW_MyPrograms';
 
 %% Run benchmarking procedure
 
