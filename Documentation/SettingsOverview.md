@@ -299,6 +299,8 @@ These settings are passed to OpenSimAD.
        - Visual studio 2017: 'Visual Studio 15 2017 Win64'
        - Visual studio 2019: 'Visual Studio 16 2019'
        - Visual studio 2022: 'Visual Studio 17 2022'
+- **S.OpenSimADOptions.build_dir**:
+    - directory for intermediate OpenSimAD builds (Windows only). Default is empty (`[]`), which uses the build folders inside opensimAD. Set a short directory, e.g. `S.OpenSimADOptions.build_dir = 'C:\temp';`, to avoid Windows build path length limits. PredSim prints a message and creates the directory if it does not exist. Generated output files are still saved in the subject folder. [char or string]
 - **S.OpenSimADOptions.verbose_mode**:
     - print outputs from windows command prompt to matlab command window (and log file). Default is *false* [bool].
 - **S.OpenSimADOptions.verify_ID**:
