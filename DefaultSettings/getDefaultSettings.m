@@ -693,6 +693,11 @@ if ~isfield(S,'OpenSimADOptions')
     S.OpenSimADOptions = [];
 end
 
+% Optional directory for intermediate OpenSimAD builds (Windows only).
+if ~isfield(S.OpenSimADOptions,'build_dir')
+    S.OpenSimADOptions.build_dir = [];
+end
+
 % select compiler for cpp projects
 %   Visual studio 2015: 'Visual Studio 14 2015 Win64'
 %   Visual studio 2017: 'Visual Studio 15 2017 Win64'

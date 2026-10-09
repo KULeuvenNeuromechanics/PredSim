@@ -73,6 +73,9 @@ S_benchmark.out_folder = fullfile(pathRepo,'Results','Benchmark_Falisse2022');
 % set verbose mode to true
 S.OpenSimADOptions.verbose_mode = true;
 
+% Short directory for intermediate builds; created if it does not exist.
+S.OpenSimADOptions.build_dir = 'C:\temp';
+
 %% Run benchmarking procedure
 
 % matlab function used to start all simulations
