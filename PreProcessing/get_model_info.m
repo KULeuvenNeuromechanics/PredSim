@@ -89,8 +89,7 @@ model_info.ligament_info.NLigament = length(ligament_names);
 % gravity vector and potential tilt of gravity vector
 gravity_osim = model.getGravity();
 model_info.gravity = [gravity_osim.get(0), gravity_osim.get(1), gravity_osim.get(2)];
-fi = atan2(model_info.gravity(2),model_info.gravity(1));
-model_info.slope = tan(3*pi/2-fi);
+model_info.slope = model_info.gravity(1)/model_info.gravity(2);
 
 % %% OpenSim API
 % % indices of coordinates in the OpenSim API state vector

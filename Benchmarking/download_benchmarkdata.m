@@ -5,7 +5,7 @@ function [outfolder] = download_benchmarkdata(varargin)
 if ~isempty(varargin)
     bool_overwrite = varargin{1};
 else
-    bool_overwrite = true;
+    bool_overwrite = false;
 end
 
 % get current path

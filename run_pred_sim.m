@@ -62,10 +62,10 @@ elseif S.post_process.rerun
     R.S = S;
 
 elseif isempty(S.misc.result_filename)
-    if isenv('SLURM_JOB_ID')
-        % use job_id from slurm
-        S.misc.result_filename = [S.subject.name '_' getenv('SLURM_JOB_ID')];
-    elseif strcmp(S.misc.savename,'structured')
+%     if isenv('SLURM_JOB_ID')
+%         % use job_id from slurm
+%         S.misc.result_filename = [S.subject.name '_' getenv('SLURM_JOB_ID')];
+    if strcmp(S.misc.savename,'structured')
         % use a structured savename
         if S.solver.run_as_batch_job
             result_filename = [S.subject.name '_job' num2str(S.solver.job_id)];
@@ -134,7 +134,7 @@ disp(' ')
 if ~S.flow_control.pre_processing_only
 
     %% Formulating OCP
-    addpath(fullfile(S.misc.main_path, 'OCP'))
+    addpath(fullfile(S.misc.main_path,'OCP'))
     if ~S.post_process.rerun
         OCP_formulation(S,model_info,f_casadi);
         disp(' ')
@@ -142,7 +142,7 @@ if ~S.flow_control.pre_processing_only
     end
 
     %% PostProcessing
-    addpath(fullfile(S.misc.main_path, 'PostProcessing'))
+    addpath(fullfile(S.misc.main_path,'PostProcessing'))
     disp('Start PostProcessing...')
     disp(' ')
     t0 = tic;

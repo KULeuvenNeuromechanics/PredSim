@@ -42,7 +42,7 @@ S.solver.N_meshes       = 50;
 %----------     Solver information ------------------
 S.solver.run_as_batch_job = true;
 S.solver.N_threads      = 2;
-S.solver.par_cluster_name = ['Cores3']; % use the default local MATLAB cluster
+S.solver.par_cluster_name = 'Cores4';
 
 %% Specific settings for benchmark function
 
@@ -51,9 +51,7 @@ S.solver.par_cluster_name = ['Cores3']; % use the default local MATLAB cluster
 % walking with added mass).
 
 % benchmark specific studies
-S_benchmark.studies = {'vanderzee2022','browning2008','koelewijn2019',...
-    'gomenuka2014','schertzer2014'};
-% S_benchmark.studies = {'koelewijn2019'};
+S_benchmark.studies = {'schertzer2014'};
 % options are:
 %   vanderzee2022: variations in gait speed
 %   koelewijn2019: variation in gait speed and slope
@@ -63,15 +61,13 @@ S_benchmark.studies = {'vanderzee2022','browning2008','koelewijn2019',...
 %   speeds
 
 % % benchmark gait speed simulations
-S_benchmark.gait_speeds = true;
-S_benchmark.gait_speed_range = [0.6 2];
-S_benchmark.gait_speeds_selection = 0.6:0.2:2;
+% S_benchmark.gait_speeds = false;
+% S_benchmark.gait_speed_range = [0.6 2];
+% S_benchmark.gait_speeds_selection = 0.6:0.2:2;
 
 % path information
-S_benchmark.out_folder = fullfile(pathRepo,'Results','Benchmark_Falisse2022');
+S_benchmark.out_folder = fullfile(pathRepo,'Results','Benchmark_Falisse2022_debugschertzer');
 
-% set verbose mode to true
-S.OpenSimADOptions.verbose_mode = true;
 
 %% Run benchmarking procedure
 

@@ -771,11 +771,12 @@ end
 %% Flow control
 
 if ~isfield(S,'flow_control')
-    S.flow_control = struct();
+    S.flow_control = struct;
 end
 if ~isfield(S.flow_control,'pre_processing_only')
     S.flow_control.pre_processing_only = false;
 end
+
 if ~isfield(S.OpenSimADOptions,'useSerialisedFunction')
     S.OpenSimADOptions.useSerialisedFunction = false;
 end
