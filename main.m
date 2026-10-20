@@ -43,7 +43,8 @@ S.metabolicE.model = 'Bhargava2004_revised';
 
 %% Run predictive simulations
 
-S.solver.max_iter = 2;
+% S.solver.max_iter = 2;
+% S.solver.run_as_batch_job = 1;
 
 [savename] = runPredSim(S, osim_path);
 
