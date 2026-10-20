@@ -771,8 +771,9 @@ if ~isfield(S.OpenSimADOptions,'verify_ID')
     S.OpenSimADOptions.verify_ID = false;
 end 
 
+% Use serialised function instead of compiling a library
 if ~isfield(S.OpenSimADOptions,'useSerialisedFunction')
-    S.OpenSimADOptions.useSerialisedFunction = false;
+    S.OpenSimADOptions.useSerialisedFunction = ispc; % yes on windows
 end
 if ~ispc && S.OpenSimADOptions.useSerialisedFunction
     S.OpenSimADOptions.useSerialisedFunction = false;
@@ -782,6 +783,19 @@ end
 
 if ~isfield(S.OpenSimADOptions,'always_generate')
     S.OpenSimADOptions.always_generate = false;
+end
+
+%% Combined settings
+
+if ~isfield(S.solver.nlpsol_options,'expand') ...
+        && S.OpenSimADOptions.useSerialisedFunction ...
+        && S.solver.max_iter > 100
+
+    S.solver.nlpsol_options.expand = true;
+    fprintf("Using S.solver.nlpsol_options.expand = true to reduce simulation time.\n" + ...
+        "\tThis may increase initialisation time and overall RAM usage.\n" + ...
+        "\tTo disable this, set S.solver.nlpsol_options.expand = false.\n")
+
 end
 
 end % end of function
