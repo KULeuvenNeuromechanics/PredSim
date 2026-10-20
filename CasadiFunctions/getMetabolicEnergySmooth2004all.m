@@ -1,6 +1,6 @@
 function [energy_total,Adot,Mdot,Sdot,Wdot,energy_model] = ...
     getMetabolicEnergySmooth2004all(exc,act,lMtilde,vM,Fce,Fpass,...
-        musclemass,pctst,Fiso,Fmax,modelmass,b,strength)
+        musclemass,pctst,Fiso,Fmax,modelmass,b,strength, lmo, vcemax)
 % --------------------------------------------------------------------------
 % getMetabolicEnergySmooth2004all
 %    This function computes the muscle energy expenditure based on the model

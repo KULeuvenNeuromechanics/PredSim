@@ -33,8 +33,8 @@
 %             components if the total heat rate was clamped to one.
 
 function [energy_total,energy_a, energy_am,energy_sl,energy_mech,energy_model] = ...
-    getMetabolicEnergyMargaria(exc,act,lMtilde,vM,lmo,Fce,Fpe, ...
-        musclemass,pctst,vcemax,Fiso,modelmass,b,strength)
+    getMetabolicEnergyMargaria(exc,act,lMtilde,vM,Fce,Fpe, ...
+        musclemass,pctst,Fiso,Fmax, modelmass,b,strength, lmo, vcemax)
             
     vMtilde = vM./lmo;
         

@@ -38,9 +38,9 @@
 %             components if the total heat rate was clamped to one.
 
 function [energy_total,energy_a, energy_am,energy_sl,energy_mech,energy_model] = ...
-    getMetabolicEnergySmooth2016all(exc,act,lMtilde,vM,lmo,Fce,Fpe, ...
-        musclemass,pctst,vcemax,Fiso,modelmass,b,strength)
-            
+    getMetabolicEnergySmooth2016all(exc,act,lMtilde,vM,Fce,Fpe, ...
+        musclemass,pctst,Fiso,Fmax, modelmass,b,strength, lmo, vcemax)
+        
     
     % following getMetabolicEnergySmooth2004all
     musclemass=musclemass.*strength;

@@ -17,12 +17,12 @@ addpath(fullfile(pathRepo,'DefaultSettings'))
 
 %% Initialize S
 
-[S] = initializeSettings('gait1018');
+[S] = initializeSettings('Falisse_et_al_2022');
 
 %% Settings
 
 % name of the subject
-S.subject.name = 'gait1018';
+S.subject.name = 'Falisse_et_al_2022';
 
 % path to folder where you want to store the results of the OCP
 S.misc.save_folder  = fullfile(pathRepoFolder,'PredSimResults',S.subject.name); 
@@ -35,8 +35,14 @@ S.solver.IG_selection_gaitCyclePercent = 100;
 % give the path to the osim model of your subject
 osim_path = fullfile(pathRepo,'Subjects',S.subject.name,[S.subject.name '.osim']);
 
+% S.metabolicE.model = 'Bhargava2004'; 
+% S.metabolicE.model = 'Bhargava2004_simple';
+% S.metabolicE.model = 'Uchida2016';
+S.metabolicE.model = 'Margaria';
 
 %% Run predictive simulations
+
+S.solver.max_iter = 2;
 
 [savename] = runPredSim(S, osim_path);
 
