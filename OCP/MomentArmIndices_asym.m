@@ -23,10 +23,24 @@ function [Indmusi,mai] = MomentArmIndices_asym(muscleNames,muscle_spanning_joint
 % Original author: Antoine Falisse
 % Original date: 12/19/2018
 %
-%   Modified by Friedl De Groote for asymmetric model
-%   Modified by Dhruv Gupta for efficiency
-% Last edit by: 
-% Last edit date: 
+% --------------------------------------------------------------------------
+% This file is part of PredSim.
+% 
+% PredSim: A Framework for Rapid Predictive Simulations of Locomotion
+% Copyright (c) 2026 KU Leuven
+% 
+% PredSim is free software: you can redistribute it and/or modify it under 
+% the terms of the GNU Affero General Public License as published by the 
+% Free Software Foundation, either version 3 of the License, or (at your 
+% option) any later version.
+% 
+% PredSim is distributed in the hope that it will be useful, but WITHOUT 
+% ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or 
+% FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public 
+% License for more details.
+% 
+% You should have received a copy of the GNU Affero General Public License 
+% along with PredSim. If not, see <https://www.gnu.org/licenses/>.
 % --------------------------------------------------------------------------
 
 for j = 1:size(muscle_spanning_joint_INFO,2)

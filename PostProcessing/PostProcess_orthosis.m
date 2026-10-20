@@ -19,6 +19,25 @@ function [R] = PostProcess_orthosis(model_info,f_casadi,R)
 % 
 % Original author: Lars D'Hondt
 % Original date: 22 January 2024
+%
+% --------------------------------------------------------------------------
+% This file is part of PredSim.
+% 
+% PredSim: A Framework for Rapid Predictive Simulations of Locomotion
+% Copyright (c) 2026 KU Leuven
+% 
+% PredSim is free software: you can redistribute it and/or modify it under 
+% the terms of the GNU Affero General Public License as published by the 
+% Free Software Foundation, either version 3 of the License, or (at your 
+% option) any later version.
+% 
+% PredSim is distributed in the hope that it will be useful, but WITHOUT 
+% ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or 
+% FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public 
+% License for more details.
+% 
+% You should have received a copy of the GNU Affero General Public License 
+% along with PredSim. If not, see <https://www.gnu.org/licenses/>.
 % --------------------------------------------------------------------------
 
 
@@ -42,8 +61,11 @@ acts = acts(1:N,:);
 [Mcoord2, toExtFun2] = f_casadi.f_orthosis_mesh_all(qs',qdots',qddots',acts');
 
 
-F  = external('F',replace(fullfile(R.S.misc.subject_path,R.S.misc.external_function),'\','/'));
-
+if R.S.OpenSimADOptions.useSerialisedFunction
+    F = Function.load(replace(fullfile(R.S.misc.subject_path,R.S.misc.external_function),'\','/'));
+else
+    F = external('F',replace(fullfile(R.S.misc.subject_path,R.S.misc.external_function),'\','/'));
+end
 
 % Create zero input vector for external function
 F_ext_input = zeros(model_info.ExtFunIO.input.nInputs,N);

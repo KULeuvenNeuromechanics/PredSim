@@ -29,8 +29,24 @@ function guess = getGuess_QR_opti(S,model_info,scaling,d)
 % Original author: Antoine Falisse
 % Original date: 19/Dec/2018
 %
-% Last edit by: Lars D'Hondt (use dafault pose instead of 0)
-% Last edit date: 7/June/2023
+% --------------------------------------------------------------------------
+% This file is part of PredSim.
+% 
+% PredSim: A Framework for Rapid Predictive Simulations of Locomotion
+% Copyright (c) 2026 KU Leuven
+% 
+% PredSim is free software: you can redistribute it and/or modify it under 
+% the terms of the GNU Affero General Public License as published by the 
+% Free Software Foundation, either version 3 of the License, or (at your 
+% option) any later version.
+% 
+% PredSim is distributed in the hope that it will be useful, but WITHOUT 
+% ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or 
+% FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public 
+% License for more details.
+% 
+% You should have received a copy of the GNU Affero General Public License 
+% along with PredSim. If not, see <https://www.gnu.org/licenses/>.
 % --------------------------------------------------------------------------
 
 N = S.solver.N_meshes; % number of mesh intervals
@@ -90,6 +106,8 @@ guess.a = 0.1*ones(N,NMuscle);
 guess.vA = 0.01*ones(N,NMuscle);
 guess.FTtilde = 0.1*ones(N,NMuscle);
 guess.dFTtilde = 0.01*ones(N,NMuscle);
+guess.SynH = 0.1*ones(N,NMuscle);
+guess.SynW = 0.2;
 
 %% Torque actuator activations
 guess.a_a = 0.1*ones(N,nq.torqAct);

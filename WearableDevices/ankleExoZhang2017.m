@@ -23,8 +23,8 @@ function [exo] = ankleExoZhang2017(init, settings_orthosis)
 %       - dependencies_path path to dependencies
 %       - isFullGaitCycle   assistance profile for full stride when true,
 %       half stride when false. Default is false.
-%       - peak_torque:      peak torque in Nm/rad
-%       - peak_time:      timing of peak as % of stride
+%       - peak_torque:      peak torque in Nm
+%       - peak_time:        timing of peak as % of stride
 %       - rise_time:        rise time as % of stride
 %       - fall_time:        fall time as % of stride
 %   Values are set via S.orthosis.settings{i} in main.m, with i the index
@@ -37,6 +37,25 @@ function [exo] = ankleExoZhang2017(init, settings_orthosis)
 % 
 % Original author: Lars D'Hondt
 % Original date: 8/January/2024
+%
+% --------------------------------------------------------------------------
+% This file is part of PredSim.
+% 
+% PredSim: A Framework for Rapid Predictive Simulations of Locomotion
+% Copyright (c) 2026 KU Leuven
+% 
+% PredSim is free software: you can redistribute it and/or modify it under 
+% the terms of the GNU Affero General Public License as published by the 
+% Free Software Foundation, either version 3 of the License, or (at your 
+% option) any later version.
+% 
+% PredSim is distributed in the hope that it will be useful, but WITHOUT 
+% ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or 
+% FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public 
+% License for more details.
+% 
+% You should have received a copy of the GNU Affero General Public License 
+% along with PredSim. If not, see <https://www.gnu.org/licenses/>.
 % --------------------------------------------------------------------------
 
 % create Orthosis object
@@ -111,7 +130,7 @@ if isfield(settings_orthosis,'plotAssistanceProfile')
             legName = 'right';
         end
         hold on
-        plot(mesh_control/N_stride*100,T_ankle(3,:),'DisplayName',legName)
+        plot((1:N_control)/N_stride*100,T_ankle(3,:),'DisplayName',legName)
         xlabel('Stride [%]')
         ylabel('Assistance [Nm]')
         title('ankleExoZhang2017')

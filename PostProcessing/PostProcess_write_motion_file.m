@@ -20,8 +20,24 @@ function [R] = PostProcess_write_motion_file(model_info,f_casadi,R)
 % Original author: Lars D'Hondt
 % Original date: 12/May/2022
 %
-% Last edit by: 
-% Last edit date: 
+% --------------------------------------------------------------------------
+% This file is part of PredSim.
+% 
+% PredSim: A Framework for Rapid Predictive Simulations of Locomotion
+% Copyright (c) 2026 KU Leuven
+% 
+% PredSim is free software: you can redistribute it and/or modify it under 
+% the terms of the GNU Affero General Public License as published by the 
+% Free Software Foundation, either version 3 of the License, or (at your 
+% option) any later version.
+% 
+% PredSim is distributed in the hope that it will be useful, but WITHOUT 
+% ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or 
+% FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public 
+% License for more details.
+% 
+% You should have received a copy of the GNU Affero General Public License 
+% along with PredSim. If not, see <https://www.gnu.org/licenses/>.
 % --------------------------------------------------------------------------
 
 % Two gait cycles
@@ -31,7 +47,7 @@ q_opt_GUI_GC_1 = [R.kinematics.Qs];
 q_opt_GUI_GC_2 = q_opt_GUI_GC_1;
 q_opt_GUI_GC_2(:,model_info.ExtFunIO.jointi.base_forward) =...
     q_opt_GUI_GC_2(:,model_info.ExtFunIO.jointi.base_forward) +...
-    q_opt_GUI_GC_1(end,model_info.ExtFunIO.jointi.base_forward);
+    R.spatiotemp.dist_trav;
 JointAngle.labels = [{'time'},model_info.ExtFunIO.coord_names.all(:)'];
 
 q_opt_GUI_GC = [t_mesh',[q_opt_GUI_GC_1;q_opt_GUI_GC_2]];

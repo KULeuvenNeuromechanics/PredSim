@@ -1,4 +1,5 @@
-function [varargout] = unpack_name_value_combinations(name_values_cell, valid_names, value_sizes)
+function [varargout] = unpack_name_value_combinations(name_values_cell,...
+    valid_names, value_sizes, default_values)
 % --------------------------------------------------------------------------
 % unpack_name_value_combinations
 %   Helper function to unpack a cell array of name-value pairs,
@@ -18,6 +19,9 @@ function [varargout] = unpack_name_value_combinations(name_values_cell, valid_na
 %   * array with the number of elements that each vector of values should
 %   have
 %
+%   - default_values -
+%   * cell array with default values (array or scalar) for each output.
+%
 % OUTPUT:
 %   - values_array -
 %   * Each set of values is returned as an array with a row for each name.
@@ -25,23 +29,61 @@ function [varargout] = unpack_name_value_combinations(name_values_cell, valid_na
 % Original author: Lars D'Hondt
 % Original date: 15/April/2022
 %
-% Last edit by: 
-% Last edit date: 
+% --------------------------------------------------------------------------
+% This file is part of PredSim.
+% 
+% PredSim: A Framework for Rapid Predictive Simulations of Locomotion
+% Copyright (c) 2026 KU Leuven
+% 
+% PredSim is free software: you can redistribute it and/or modify it under 
+% the terms of the GNU Affero General Public License as published by the 
+% Free Software Foundation, either version 3 of the License, or (at your 
+% option) any later version.
+% 
+% PredSim is distributed in the hope that it will be useful, but WITHOUT 
+% ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or 
+% FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public 
+% License for more details.
+% 
+% You should have received a copy of the GNU Affero General Public License 
+% along with PredSim. If not, see <https://www.gnu.org/licenses/>.
 % --------------------------------------------------------------------------
 
 Nfields = length(name_values_cell);
 Ncoords = length(valid_names);
 Nvalues = length(value_sizes);
 
-% check input size
-if mod(Nfields,Nvalues+1)~=0
-    error(['Cell array has ' num2str(Nfields) ' inputs, which is not a multiple of ' num2str(Nvalues+1) '.'])
+if nargin < 4
+    default_values = cell(1,Nvalues);
 end
 
-% create output
+% check input size
+if mod(Nfields,Nvalues+1)~=0
+    error(['Cell array has ' num2str(Nfields) ' inputs, ' ...
+        'which is not a multiple of ' num2str(Nvalues+1) '.'])
+end
+
+% create output and initialise with defaults
 values_array = cell(1,Nvalues);
+if Nvalues == 1 && ~iscell(default_values)
+    default_values = {default_values};
+end
+
 for k=1:Nvalues
-    values_array{k} = nan(value_sizes(k),Ncoords);
+    if length(default_values)>=k && ~isempty(default_values{k})
+        if size(default_values{k},1)==value_sizes(k) ...
+          && size(default_values{k},2)==Ncoords
+            values_array{k} = default_values{k};
+        elseif size(default_values{k},2)==value_sizes(k) ...
+          && size(default_values{k},1)==Ncoords
+            values_array{k} = default_values{k}';
+        elseif numel(default_values{k})==1
+            values_array{k} = default_values{k} * ones(value_sizes(k),Ncoords);
+        end
+
+    else
+        values_array{k} = nan(value_sizes(k),Ncoords);
+    end
 end
 
 % loop over inputs
@@ -49,6 +91,9 @@ for ii=1:Nfields/(Nvalues+1)
     names_i = name_values_cell{(Nvalues+1)*(ii-1)+1};
     if ~iscell(names_i)
         names_i = {names_i};
+    end
+    if strcmp(names_i{1},'all')
+        names_i = valid_names;
     end
     for jj=1:length(names_i)
         % test that the 1st input is a name

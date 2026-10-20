@@ -18,8 +18,24 @@ function [bounds_nsc] = getBounds(S,model_info)
 % Original author: Lars D'Hondt
 % Original date: 5/April/2023
 %
-% Last edit by:
-% Last edit date:
+% --------------------------------------------------------------------------
+% This file is part of PredSim.
+% 
+% PredSim: A Framework for Rapid Predictive Simulations of Locomotion
+% Copyright (c) 2026 KU Leuven
+% 
+% PredSim is free software: you can redistribute it and/or modify it under 
+% the terms of the GNU Affero General Public License as published by the 
+% Free Software Foundation, either version 3 of the License, or (at your 
+% option) any later version.
+% 
+% PredSim is distributed in the hope that it will be useful, but WITHOUT 
+% ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or 
+% FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public 
+% License for more details.
+% 
+% You should have received a copy of the GNU Affero General Public License 
+% along with PredSim. If not, see <https://www.gnu.org/licenses/>.
 % --------------------------------------------------------------------------
 
 
@@ -152,6 +168,17 @@ if ~isempty(S.bounds.activation_selected_muscles)
         end
     end 
 end
+
+%% Muscle synergy activations
+% Number of synergies will depend on the simulation.
+% We can just have a number "large" enough (= NMuscle), and we read the
+% number of synergies per leg in OCP_formulation.m
+bounds_nsc.SynH.lower = zeros(1,NMuscle);
+bounds_nsc.SynH.upper = ones(1,NMuscle);
+
+%% Muscle synergy weights
+bounds_nsc.SynW.lower = 0;
+bounds_nsc.SynW.upper = 1;
 
 %% Final time
 bounds_nsc.tf.lower = S.bounds.t_final.lower;

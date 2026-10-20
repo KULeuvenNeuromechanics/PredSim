@@ -18,6 +18,25 @@ function [S] = getDefaultSettings(S,osim_path)
 % 
 % Original author: Bram Van Den Bosch
 % Original date: 30/11/2021
+%
+% --------------------------------------------------------------------------
+% This file is part of PredSim.
+% 
+% PredSim: A Framework for Rapid Predictive Simulations of Locomotion
+% Copyright (c) 2026 KU Leuven
+% 
+% PredSim is free software: you can redistribute it and/or modify it under 
+% the terms of the GNU Affero General Public License as published by the 
+% Free Software Foundation, either version 3 of the License, or (at your 
+% option) any later version.
+% 
+% PredSim is distributed in the hope that it will be useful, but WITHOUT 
+% ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or 
+% FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public 
+% License for more details.
+% 
+% You should have received a copy of the GNU Affero General Public License 
+% along with PredSim. If not, see <https://www.gnu.org/licenses/>.
 % --------------------------------------------------------------------------
 
 %% bounds
@@ -120,6 +139,12 @@ if ~isfield(S.bounds,'distanceConstraints')
     S.bounds.distanceConstraints = [];
 end
 
+% bounds on synergy constraints, (a-WH)^2
+if ~isfield(S.bounds,'SynConstr')
+    S.bounds.SynConstr.lower = -0.001;
+    S.bounds.SynConstr.upper = 0.001;
+end
+
 %% metabolicE
 if ~isfield(S,'metabolicE')
     S.metabolicE = [];
@@ -198,6 +223,11 @@ if ~isfield(S.misc,'msk_geom_n_samples')
     S.misc.msk_geom_n_samples = 5000;
 end
 
+% always perform a new fit of msk geometry
+if ~isfield(S.misc,'msk_geom_always_new_fit')
+    S.misc.msk_geom_always_new_fit = false;
+end
+
 % rmse threshold for muscle-tendon length approximation
 if ~isfield(S.misc,'threshold_lMT_fit')
     S.misc.threshold_lMT_fit = 0.003;
@@ -206,6 +236,12 @@ end
 % rmse threshold for muscle-tendon momentarm approximation
 if ~isfield(S.misc,'threshold_dM_fit')
     S.misc.threshold_dM_fit = 0.003;
+end
+
+% reduce the number of coefficients in the fit, based on statistical
+% significance
+if ~isfield(S.misc,'reduce_coeff_fit')
+    S.misc.reduce_coeff_fit = true;
 end
 
 % visualize IG and bounds
@@ -340,8 +376,6 @@ if ~isfield(S.solver,'N_meshes')
         S.solver.N_meshes = S.solver.N_meshes*2;
     end
 end
-
-
 
 % initial guess inputs
 % input should be a string: "quasi-random" or the path to a .mot file
@@ -485,6 +519,11 @@ if ~isfield(S.subject,'set_stiffness_selected_ligaments')
         {'PlantarFascia','plantarFasciaNatali2010'};
 end
 
+% default values for specific tension
+if ~isfield(S.subject,'default_specific_tension')
+    S.subject.default_specific_tension = 'default_specific_tensions.csv';
+end
+
 % joints that are considered base of a leg
 if ~isfield(S.subject,'base_joints_legs')
     S.subject.base_joints_legs = 'hip';
@@ -494,6 +533,82 @@ end
 if ~isfield(S.subject,'base_joints_arms')
     S.subject.base_joints_arms = 'acromial';
 end
+
+% If synergies are implemented in the simulation
+if ~isfield(S.subject,'synergies')
+    S.subject.synergies = 0;
+end
+
+% If synergy weights are tracked in the simulation
+if ~isfield(S.subject,'TrackSynW')
+    S.subject.TrackSynW = 0;
+end
+
+% initial guess for synergy variables
+if ~isfield(S.subject,'SynH_guess')
+    S.subject.SynH_guess = 0.1;
+end
+if ~isfield(S.subject,'SynW_guess')
+    S.subject.SynW_guess = 0.2;
+end
+
+% Settings to configure synergies
+if S.subject.synergies
+
+    % number of synergies for right side
+    if ~isfield(S.subject,'NSyn_r')
+        error(['Synergies are enabled (S.subject.synergies = true),',...
+            ' but number of right side synergies (S.subject.NSyn_r) is not given.'])
+    end
+
+    % number of synergies for left side
+    if ~isfield(S.subject,'NSyn_l')
+        S.subject.NSyn_l = S.subject.NSyn_r;
+    end
+
+    % for half gait cycle simulations, synergies are also symmetric
+    if strcmp(S.misc.gaitmotion_type,'HalfGaitCycle') ...
+            && S.subject.NSyn_l ~= S.subject.NSyn_r
+        sprintf("Selected S.misc.gaitmotion_type = 'HalfGaitCycle', " + ...
+            "but S.subject.NSyn_r and S.subject.NSyn_l have different values. " + ...
+            "NSyn_l will be set equal to NSyn_r (%i)", S.subject.NSyn_r);
+
+        S.subject.NSyn_l = S.subject.NSyn_r;
+    end
+    
+    % Settings to configure synergy weights tracking
+    if S.subject.TrackSynW
+
+        % track weights for one or both sides
+        if isfield(S.subject,'TrackSynW_side')
+            if ~any(strcmp({'onlyLeft', 'onlyRight', 'RightLeft'}, S.subject.TrackSynW_side))
+                error("Possible options for S.subject.TrackSynW_side are " + ...
+                    "'onlyLeft', 'onlyRight', 'RightLeft'. Current option '%s' is invalid",...
+                    S.subject.TrackSynW_side)
+            end
+        else
+            S.subject.TrackSynW_side = 'RightLeft';
+        end
+
+        % synergy weights to be tracked
+        if ~isfield(S.subject,'knownSynW_r')
+            S.subject.knownSynW_r = [];
+        end
+        if ~isfield(S.subject,'knownSynW_l')
+            S.subject.knownSynW_l = [];
+        end
+
+        % number of synergies that are tracked
+        if ~isfield(S.subject,'TrackSynW_NSyn_r')
+            S.subject.TrackSynW_NSyn_r = 0;
+        end
+        if ~isfield(S.subject,'TrackSynW_NSyn_l')
+            S.subject.TrackSynW_NSyn_l = 0;
+        end
+
+    end % end of synergy weight tracking defaults
+
+end % end of synergy defaults
 
 %% weights
 if ~isfield(S,'weights')
@@ -541,6 +656,16 @@ if ~isfield(S.weights,'a_exp')
     S.weights.a_exp = 2; 
 end
 
+% weight on synergy constraint, (a-WH)^2
+if ~isfield(S.weights,'SynConstr')
+    S.weights.SynConstr = 1e4; 
+end
+
+% weight on synergy weights tracking
+if ~isfield(S.weights,'TrackSynW')
+    S.weights.TrackSynW = 1e2; 
+end
+
 % weight on slack controls
 if ~isfield(S.weights,'slack_ctrl')
     S.weights.slack_ctrl = 0.001; 
@@ -560,8 +685,13 @@ end
 %   Visual studio 2017: 'Visual Studio 15 2017 Win64'
 %   Visual studio 2017: 'Visual Studio 16 2019'
 %   Visual studio 2017: 'Visual Studio 17 2022'
+%   Unix Makefiles: on Linux and similar systems
 if ~isfield(S.OpenSimADOptions,'compiler')
-    S.OpenSimADOptions.compiler = findVisualStudioInstallation;
+    if ispc
+        S.OpenSimADOptions.compiler = findVisualStudioInstallation;
+    elseif isunix
+        S.OpenSimADOptions.compiler = 'Unix Makefiles';
+    end
 end
 
 % Input forces acting on bodies
@@ -579,9 +709,28 @@ if ~isfield(S.OpenSimADOptions,'export3DPositions')
     S.OpenSimADOptions.export3DPositions = [];
 end
 
+% Export orientation of body
+if ~isfield(S.OpenSimADOptions,'export3DOrientations')
+    S.OpenSimADOptions.export3DOrientations = [];
+end
+if ~ispc && ~isempty(S.OpenSimADOptions.export3DOrientations)
+    S.OpenSimADOptions.export3DOrientations = [];
+    warning("Setting 'S.OpenSimADOptions.export3DOrientations' is " + ...
+        "only supported on windows, so will not be used.")
+end
+
 % Export velocities of points w.r.t. ground frame
 if ~isfield(S.OpenSimADOptions,'export3DVelocities')
     S.OpenSimADOptions.export3DVelocities = [];
+end
+
+if ~isfield(S.OpenSimADOptions,'export3DVelocitiesProjGround')
+    S.OpenSimADOptions.export3DVelocitiesProjGround = [];
+end
+if ~ispc && ~isempty(S.OpenSimADOptions.export3DVelocitiesProjGround)
+    S.OpenSimADOptions.export3DVelocitiesProjGround = [];
+    warning("Setting 'S.OpenSimADOptions.export3DVelocitiesProjGround' is " + ...
+        "only supported on windows, so will not be used.")
 end
 
 % If you want to choose the order of the joints and coordinate outputs
@@ -622,5 +771,17 @@ if ~isfield(S.OpenSimADOptions,'verify_ID')
     S.OpenSimADOptions.verify_ID = false;
 end 
 
-
+if ~isfield(S.OpenSimADOptions,'useSerialisedFunction')
+    S.OpenSimADOptions.useSerialisedFunction = false;
 end
+if ~ispc && S.OpenSimADOptions.useSerialisedFunction
+    S.OpenSimADOptions.useSerialisedFunction = false;
+    warning("Setting 'S.OpenSimADOptions.useSerialisedFunction' is " + ...
+        "only supported on windows, so will not be used.")
+end
+
+if ~isfield(S.OpenSimADOptions,'always_generate')
+    S.OpenSimADOptions.always_generate = false;
+end
+
+end % end of function

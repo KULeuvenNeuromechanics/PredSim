@@ -8,10 +8,11 @@ function [force] = ligamentGefen2002(cross_section_area,slack_length,lig_length,
 % 
 %   We approximated the polynomial stress-strain curve with an exponential
 %   expression, to prevent a drop in force when extrapolating. See
-%   supplementary material of L. D’Hondt, F. D. Groote, and M. Afschrift, 
-%   “A dynamic foot model for predictive simulations of gait reveals causal 
-%   relations between foot structure and whole body mechanics.” bioRxiv, 
-%   p. 2023.03.22.533790, Mar. 24, 2023. doi: 10.1101/2023.03.22.533790.
+%   supplementary material of D’Hondt, L., De Groote, F., & Afschrift, M. 
+%   2024 A dynamic foot model for predictive simulations of human gait 
+%   reveals causal relations between foot structure and whole-body mechanics. 
+%   PLOS Computational Biology, 20(6), e1012219. 
+%   https://doi.org/10.1371/journal.pcbi.1012219.
 %
 % 
 % INPUT:
@@ -39,8 +40,24 @@ function [force] = ligamentGefen2002(cross_section_area,slack_length,lig_length,
 % Original author: Lars D'Hondt
 % Original date: 4/April/2023
 %
-% Last edit by: 
-% Last edit date: 
+% --------------------------------------------------------------------------
+% This file is part of PredSim.
+% 
+% PredSim: A Framework for Rapid Predictive Simulations of Locomotion
+% Copyright (c) 2026 KU Leuven
+% 
+% PredSim is free software: you can redistribute it and/or modify it under 
+% the terms of the GNU Affero General Public License as published by the 
+% Free Software Foundation, either version 3 of the License, or (at your 
+% option) any later version.
+% 
+% PredSim is distributed in the hope that it will be useful, but WITHOUT 
+% ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or 
+% FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public 
+% License for more details.
+% 
+% You should have received a copy of the GNU Affero General Public License 
+% along with PredSim. If not, see <https://www.gnu.org/licenses/>.
 % --------------------------------------------------------------------------
 
 %% Calculate force

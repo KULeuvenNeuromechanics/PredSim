@@ -21,8 +21,24 @@ function [R] = PostProcess_spatio_temporal(model_info,f_casadi,R)
 % Original author: Lars D'Hondt
 % Original date: 19/May/2022
 %
-% Last edit by: 
-% Last edit date: 
+% --------------------------------------------------------------------------
+% This file is part of PredSim.
+% 
+% PredSim: A Framework for Rapid Predictive Simulations of Locomotion
+% Copyright (c) 2026 KU Leuven
+% 
+% PredSim is free software: you can redistribute it and/or modify it under 
+% the terms of the GNU Affero General Public License as published by the 
+% Free Software Foundation, either version 3 of the License, or (at your 
+% option) any later version.
+% 
+% PredSim is distributed in the hope that it will be useful, but WITHOUT 
+% ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or 
+% FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public 
+% License for more details.
+% 
+% You should have received a copy of the GNU Affero General Public License 
+% along with PredSim. If not, see <https://www.gnu.org/licenses/>.
 % --------------------------------------------------------------------------
 
 
@@ -51,9 +67,6 @@ R.spatiotemp.stride_freq = 1/R.time.mesh_GC(end);
 R.spatiotemp.step_width_COP = abs(mean(R.ground_reaction.COP_r(R.ground_reaction.idx_stance_r,3)) ...
     - mean(R.ground_reaction.COP_l(R.ground_reaction.idx_stance_l,3)));
 
-% distance traveled
-R.spatiotemp.dist_trav = R.kinematics.Qs(end,model_info.ExtFunIO.jointi.base_forward) ...
-    - R.kinematics.Qs(1,model_info.ExtFunIO.jointi.base_forward);
 
 
 

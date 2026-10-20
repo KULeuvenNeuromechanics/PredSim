@@ -20,6 +20,25 @@ function [S] = updateExport3DPositionsVelocities(S,osim_path)
 % 
 % Original author: Lars D'Hondt
 % Original date: 9/May/2023
+%
+% --------------------------------------------------------------------------
+% This file is part of PredSim.
+% 
+% PredSim: A Framework for Rapid Predictive Simulations of Locomotion
+% Copyright (c) 2026 KU Leuven
+% 
+% PredSim is free software: you can redistribute it and/or modify it under 
+% the terms of the GNU Affero General Public License as published by the 
+% Free Software Foundation, either version 3 of the License, or (at your 
+% option) any later version.
+% 
+% PredSim is distributed in the hope that it will be useful, but WITHOUT 
+% ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or 
+% FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public 
+% License for more details.
+% 
+% You should have received a copy of the GNU Affero General Public License 
+% along with PredSim. If not, see <https://www.gnu.org/licenses/>.
 % --------------------------------------------------------------------------
 
 import org.opensim.modeling.*
@@ -54,6 +73,12 @@ for i=1:length(S.bounds.points)
         S.bounds.points(i).name = S.bounds.points(i).body;
     end
 
+    % default reference frame is ground
+    if ~isfield(S.bounds.points(i),'reference_frame') ||...
+            isempty(S.bounds.points(i).reference_frame)
+        S.bounds.points(i).reference_frame = 'ground';
+    end
+
     pointNames{i} = S.bounds.points(i).name;
 end
 
@@ -78,11 +103,13 @@ for i=1:length(S.bounds.distanceConstraints)
         S.bounds.points(end+1).body = S.bounds.distanceConstraints(i).point1;
         S.bounds.points(end).point_in_body = [0,0,0];
         S.bounds.points(end).name = S.bounds.distanceConstraints(i).point1;
+        S.bounds.points(end).reference_frame = 'ground';
     end
     if ~any(strcmp(pointNames,S.bounds.distanceConstraints(i).point2))
         S.bounds.points(end+1).body = S.bounds.distanceConstraints(i).point2;
         S.bounds.points(end).point_in_body = [0,0,0];
         S.bounds.points(end).name = S.bounds.distanceConstraints(i).point2;
+        S.bounds.points(end).reference_frame = 'ground';
     end
 
     % by default, take 3D distance

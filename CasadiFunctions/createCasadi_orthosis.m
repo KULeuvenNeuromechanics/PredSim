@@ -29,6 +29,25 @@ function [f_orthosis_mesh_k, f_orthosis_mesh_all, separate_orthoses] = createCas
 %
 % Original author: Lars D'Hondt
 % Original date: 5/January/2024
+%
+% --------------------------------------------------------------------------
+% This file is part of PredSim.
+% 
+% PredSim: A Framework for Rapid Predictive Simulations of Locomotion
+% Copyright (c) 2026 KU Leuven
+% 
+% PredSim is free software: you can redistribute it and/or modify it under 
+% the terms of the GNU Affero General Public License as published by the 
+% Free Software Foundation, either version 3 of the License, or (at your 
+% option) any later version.
+% 
+% PredSim is distributed in the hope that it will be useful, but WITHOUT 
+% ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or 
+% FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public 
+% License for more details.
+% 
+% You should have received a copy of the GNU Affero General Public License 
+% along with PredSim. If not, see <https://www.gnu.org/licenses/>.
 % --------------------------------------------------------------------------
 
 import casadi.*
@@ -38,7 +57,11 @@ n_coord = model_info.ExtFunIO.jointi.nq.all;
 separate_orthoses = {};
 
 % external function
-F = external('F',fullfile(S.misc.subject_path, S.misc.external_function));
+if S.OpenSimADOptions.useSerialisedFunction
+    F = Function.load(fullfile(S.misc.subject_path, S.misc.external_function));
+else
+    F = external('F',fullfile(S.misc.subject_path, S.misc.external_function));
+end
 F_k = F;
 F_all = F.map(S.solver.N_meshes,S.solver.parallel_mode,S.solver.N_threads);
 

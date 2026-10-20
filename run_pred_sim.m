@@ -19,12 +19,28 @@ function [varargout] = run_pred_sim(S,osim_path)
 % Original author: Lars D'Hondt
 % Original date: March-October/2022
 %
-% Last edit by: 
-% Last edit date: 
+% --------------------------------------------------------------------------
+% This file is part of PredSim.
+% 
+% PredSim: A Framework for Rapid Predictive Simulations of Locomotion
+% Copyright (c) 2026 KU Leuven
+% 
+% PredSim is free software: you can redistribute it and/or modify it under 
+% the terms of the GNU Affero General Public License as published by the 
+% Free Software Foundation, either version 3 of the License, or (at your 
+% option) any later version.
+% 
+% PredSim is distributed in the hope that it will be useful, but WITHOUT 
+% ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or 
+% FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public 
+% License for more details.
+% 
+% You should have received a copy of the GNU Affero General Public License 
+% along with PredSim. If not, see <https://www.gnu.org/licenses/>.
 % --------------------------------------------------------------------------
 
-addpath([S.misc.main_path '\VariousFunctions'])
-addpath([S.misc.main_path '\WearableDevices'])
+addpath(fullfile(S.misc.main_path, 'VariousFunctions'))
+addpath(fullfile(S.misc.main_path, 'WearableDevices'))
 
 % Settings that are not specified get their default value
 S = getDefaultSettings(S,osim_path);
@@ -62,7 +78,10 @@ elseif S.post_process.rerun
     R.S = S;
 
 elseif isempty(S.misc.result_filename)
-    if strcmp(S.misc.savename,'structured')
+    if ~isempty(getenv('SLURM_JOB_ID'))
+        % use job_id from slurm
+        S.misc.result_filename = [S.subject.name '_' getenv('SLURM_JOB_ID')];
+    elseif strcmp(S.misc.savename,'structured')
         % use a structured savename
         if S.solver.run_as_batch_job
             result_filename = [S.subject.name '_job' num2str(S.solver.job_id)];
@@ -82,6 +101,10 @@ elseif isempty(S.misc.result_filename)
     elseif strcmp(S.misc.savename,'datetime')
         % use system date and time
         S.misc.result_filename = [S.subject.name '_' datestr(datetime,30)];
+    
+    elseif strcmp(S.misc.savename,'datetime_job')
+        % use system date and time + job number to prevent creation of duplicates
+        S.misc.result_filename = [S.subject.name '_' datestr(datetime,30),'_job', num2str(S.solver.job_id)];
         
     end   
 end
@@ -101,7 +124,7 @@ disp(' ')
 disp(' ')
 
 %% PreProcessing
-addpath([S.misc.main_path '\PreProcessing'])
+addpath(fullfile(S.misc.main_path, 'PreProcessing'))
 disp('Start PreProcessing...')
 disp(' ')
 t0 = tic;
@@ -112,8 +135,8 @@ disp(' ')
 disp(' ')
 
 %% Creating casadi functions
-addpath([S.misc.main_path '\CasadiFunctions'])
-addpath([S.misc.main_path '\ModelComponents'])
+addpath(fullfile(S.misc.main_path, 'CasadiFunctions'))
+addpath(fullfile(S.misc.main_path, 'ModelComponents'))
 
 disp('Start creating CasADi functions...')
 disp(' ')
@@ -125,7 +148,7 @@ disp(' ')
 disp(' ')
 
 %% Formulating OCP
-addpath([S.misc.main_path '\OCP'])
+addpath(fullfile(S.misc.main_path, 'OCP'))
 if ~S.post_process.rerun
     OCP_formulation(S,model_info,f_casadi);
     disp(' ')
@@ -133,7 +156,7 @@ if ~S.post_process.rerun
 end
 
 %% PostProcessing
-addpath([S.misc.main_path '\PostProcessing'])
+addpath(fullfile(S.misc.main_path, 'PostProcessing'))
 disp('Start PostProcessing...')
 disp(' ')
 t0 = tic;

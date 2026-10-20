@@ -36,8 +36,24 @@ function [symmetry, jointi] = identify_kinematic_chains(S,osim_path,model_info)
 % Original author: Lars D'Hondt
 % Original date: 17/April/2023
 %
-% Last edit by: 
-% Last edit date: 
+% --------------------------------------------------------------------------
+% This file is part of PredSim.
+% 
+% PredSim: A Framework for Rapid Predictive Simulations of Locomotion
+% Copyright (c) 2026 KU Leuven
+% 
+% PredSim is free software: you can redistribute it and/or modify it under 
+% the terms of the GNU Affero General Public License as published by the 
+% Free Software Foundation, either version 3 of the License, or (at your 
+% option) any later version.
+% 
+% PredSim is distributed in the hope that it will be useful, but WITHOUT 
+% ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or 
+% FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public 
+% License for more details.
+% 
+% You should have received a copy of the GNU Affero General Public License 
+% along with PredSim. If not, see <https://www.gnu.org/licenses/>.
 % --------------------------------------------------------------------------
 
 import org.opensim.modeling.*;
@@ -107,7 +123,7 @@ for i=1:length(base_legs)
     end
     
     jointi.(['leg' num2str(i) '_r']) = coordi';
-    leg_r = [leg_r coordi];
+    leg_r = [leg_r; coordi];
 
     limbs.all.joints = [limbs.all.joints; joints_limb_i];
     limbs.all.coords = [limbs.all.coords; coords_limb_i];
@@ -120,7 +136,7 @@ for i=1:length(base_legs)
     end
 
     jointi.(['leg' num2str(i) '_l']) = coordi';
-    leg_l = [leg_l coordi];
+    leg_l = [leg_l; coordi];
 
     limbs.all.joints = [limbs.all.joints; joints_limb_i];
     limbs.all.coords = [limbs.all.coords; coords_limb_i];
@@ -144,7 +160,7 @@ for i=1:length(base_arms)
     end
     
     jointi.(['arm' num2str(i) '_r']) = coordi';
-    arm_r = [arm_r coordi];
+    arm_r = [arm_r; coordi];
 
     limbs.all.joints = [limbs.all.joints; joints_limb_i];
     limbs.all.coords = [limbs.all.coords; coords_limb_i];
@@ -157,7 +173,7 @@ for i=1:length(base_arms)
     end
     
     jointi.(['arm' num2str(i) '_l']) = coordi';
-    arm_l = [arm_l coordi];
+    arm_l = [arm_l; coordi];
 
     limbs.all.joints = [limbs.all.joints; joints_limb_i];
     limbs.all.coords = [limbs.all.coords; coords_limb_i];
@@ -226,7 +242,7 @@ elseif strcmp(fl_b,'PlanarJoint')
 
     % translation along y
     crd_ty = char(floating_base.get_coordinates(2).getName());
-    jointi.base_forward = model_info.ExtFunIO.coordi.(crd_tx);
+    jointi.base_vertical = model_info.ExtFunIO.coordi.(crd_ty);
     jointi.floating_base(end+1) = model_info.ExtFunIO.coordi.(crd_ty);
 
 end
@@ -277,12 +293,12 @@ for i=1:length(joints_not_limbs)
         loc_l_0 = body_frame.findStationLocationInGround(state,station_l).getAsMat;
         loc_r_0 = body_frame.findStationLocationInGround(state,station_r).getAsMat;
 
-        model.getCoordinateSet.get(coords_i{j}).setValue(state,0.3);
+        model.getCoordinateSet.get(coords_i{j}).setValue(state,0.3,false);
         model.realizePosition(state);
         loc_l_p = body_frame.findStationLocationInGround(state,station_l).getAsMat - loc_l_0;
         loc_r_p = body_frame.findStationLocationInGround(state,station_r).getAsMat - loc_r_0;
 
-        model.getCoordinateSet.get(coords_i{j}).setValue(state,-0.3);
+        model.getCoordinateSet.get(coords_i{j}).setValue(state,-0.3,false);
         model.realizePosition(state);
         loc_l_n = body_frame.findStationLocationInGround(state,station_l).getAsMat - loc_l_0;
         loc_r_n = body_frame.findStationLocationInGround(state,station_r).getAsMat - loc_r_0;
@@ -388,7 +404,7 @@ function [joints_chain, coords_chain] = getKinematicChain(joint_table,starting_j
         joints_chain{end+1,1} = next_joint;
         % add coordinates to kinematic chain
         coords_i = joint_table.coordinates(strcmp(joint_table.joint,next_joint));
-        coords_chain = [coords_chain(:); coords_i{:}];
+        coords_chain = [coords_chain(:); coords_i{:}'];
         % get the child frame of this joint
         next_frame = joint_table.child(strcmp(joint_table.joint,next_joint));
         % get joints that have this frame as their parent frame and add

@@ -28,10 +28,26 @@ function [f_ligamentMoment,f_ligamentMoment_single,f_ligamentMoment_multi,...
 %
 %
 % Original author: Lars D'Hondt
-% Original date: 5/April/2023
+% Original date: 5/April/2023 
 %
-% Last edit by: 
-% Last edit date: 
+% --------------------------------------------------------------------------
+% This file is part of PredSim.
+% 
+% PredSim: A Framework for Rapid Predictive Simulations of Locomotion
+% Copyright (c) 2026 KU Leuven
+% 
+% PredSim is free software: you can redistribute it and/or modify it under 
+% the terms of the GNU Affero General Public License as published by the 
+% Free Software Foundation, either version 3 of the License, or (at your 
+% option) any later version.
+% 
+% PredSim is distributed in the hope that it will be useful, but WITHOUT 
+% ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or 
+% FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public 
+% License for more details.
+% 
+% You should have received a copy of the GNU Affero General Public License 
+% along with PredSim. If not, see <https://www.gnu.org/licenses/>.
 % --------------------------------------------------------------------------
 
 import casadi.*
@@ -45,10 +61,9 @@ M_lig_single_MX = MX(model_info.ExtFunIO.jointi.nq.all,1);
 % ligaments that cross multiple degrees of freedom
 M_lig_multi_MX = MX(model_info.ExtFunIO.jointi.nq.all,1);
 
-% initialise ligament length, lenghtening velocity, and force
-L_lig_pp_MX = MX(model_info.ligament_info.NLigament,1);
-v_lig_pp_MX = MX(model_info.ligament_info.NLigament,1);
-F_lig_pp_MX = MX(model_info.ligament_info.NLigament,1);
+% initialise ligament length and force
+L_lig_pp_MX = MX.zeros(model_info.ligament_info.NLigament,1);
+F_lig_pp_MX = MX.zeros(model_info.ligament_info.NLigament,1);
 
 if model_info.ligament_info.NLigament > 0
 
@@ -60,12 +75,19 @@ if model_info.ligament_info.NLigament > 0
     
     for i=idx_coord_single
         q_i = model_info.ligament_info.polyFit.DummySamples.q(:,i);
-        M_i = zeros(size(q_i));
-    
+        
         idx_lig = find(model_info.ligament_info.ligament_spanning_single_coord(:,i));
     
         % sort angle and moment in order of angle
         [q_i,idx_sort] = sort(q_i);
+        % use 100 spline knots max
+        if length(q_i) > 100
+            idx_sel = round(linspace(1,length(q_i),100));
+            q_i = q_i(idx_sel);
+            idx_sort = idx_sort(idx_sel);
+        end
+
+        M_i = zeros(size(q_i));
 
         for j=idx_lig'
             % test for valid input force-length
@@ -116,23 +138,19 @@ if model_info.ligament_info.NLigament > 0
     l_lig_p_SX = SX(model_info.ligament_info.NLigament,1);
 
     if sum(model_info.ligament_info.ligament_spanning_multi_coord,'all') > 0
-        ligament_spanning_info_m = model_info.ligament_info.ligament_spanning_multi_coord(:,:);
-        LigamentInfo_m.muscle = model_info.ligament_info.polyFit.LigamentInfo.muscle(:);
-        load(fullfile(S.misc.main_path,'CasadiFunctions','nCoeffMat.mat'), 'nCoeffMat');
-        load(fullfile(S.misc.main_path,'CasadiFunctions','expoVal_all.mat'), 'expoVal_all');
-        for i=1:model_info.ligament_info.NLigament      
-            index_dof_crossing = find(ligament_spanning_info_m(i,:)==1);
+
+        for i=idx_multi_coord'      
+            index_dof_crossing = ...
+                find(model_info.ligament_info.ligament_spanning_multi_coord(i,:)==1);
             nr_dof_crossing = length(index_dof_crossing);
             if nr_dof_crossing == 0
                 continue
             end
-            order = LigamentInfo_m.muscle(i).order;
-            % get matrix with variabes for polynomial
-            % (e.g. mat = [1, q_1, q_1^2] for a 2nd order polynomial in 1 variable)
-            [mat,~] = n_art_mat_3_cas_SX_7(qin_SX(index_dof_crossing,1)',...
-                nCoeffMat(order,nr_dof_crossing), expoVal_all{order,nr_dof_crossing});
-            % multiply variable matrix with coefficient vactor to get polynomial expression
-            l_lig_p_SX(i,1) = mat'*LigamentInfo_m.muscle(i).coeff; 
+
+            l_lig_p_SX(i,1) = mvpolyval(...
+                model_info.ligament_info.polyFit.LigamentInfo.muscle(i).coeff,...
+                qin_SX(index_dof_crossing,1)',...
+                model_info.ligament_info.polyFit.LigamentInfo.muscle(i).mu);
         end 
     end
     f_l_lig = Function('f_l_lig',{qin_SX},{l_lig_p_SX});

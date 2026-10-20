@@ -22,15 +22,35 @@ function [R] = PostProcess_get_ID(model_info,f_casadi,R)
 % Original author: Lars D'Hondt
 % Original date: 10/May/2022
 %
-% Last edit by: 
-% Last edit date: 
+% --------------------------------------------------------------------------
+% This file is part of PredSim.
+% 
+% PredSim: A Framework for Rapid Predictive Simulations of Locomotion
+% Copyright (c) 2026 KU Leuven
+% 
+% PredSim is free software: you can redistribute it and/or modify it under 
+% the terms of the GNU Affero General Public License as published by the 
+% Free Software Foundation, either version 3 of the License, or (at your 
+% option) any later version.
+% 
+% PredSim is distributed in the hope that it will be useful, but WITHOUT 
+% ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or 
+% FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public 
+% License for more details.
+% 
+% You should have received a copy of the GNU Affero General Public License 
+% along with PredSim. If not, see <https://www.gnu.org/licenses/>.
 % --------------------------------------------------------------------------
 
 N = size(R.kinematics.Qs,1);
 
 import casadi.*
 
-F  = external('F',replace(fullfile(R.S.misc.subject_path,R.S.misc.external_function),'\','/'));
+if R.S.OpenSimADOptions.useSerialisedFunction
+    F = Function.load(replace(fullfile(R.S.misc.subject_path,R.S.misc.external_function),'\','/'));
+else
+    F = external('F',replace(fullfile(R.S.misc.subject_path,R.S.misc.external_function),'\','/'));
+end
 
 Foutk_opt = zeros(N,F.nnz_out);
 
