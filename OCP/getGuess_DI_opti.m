@@ -4,8 +4,8 @@ function guess = getGuess_DI_opti(S,model_info,scaling,d)
 %   This script provides an inital guess for the design variables.
 %   The guess is data-informed (DI). We use experimental data to provide an
 %   initial guess of the joint variables but set constant values to the 
-%   muscle variable and the arm variables. We use a pre-defined final time 
-%   that is function of the imposed speed.
+%   muscle variable and the actuator variables. We use a pre-defined final 
+%   time that is function of the imposed speed.
 %   
 % INPUT:
 %   - S -
@@ -25,7 +25,7 @@ function guess = getGuess_DI_opti(S,model_info,scaling,d)
 %   * initial guess values for all optimisation variables
 % 
 % Original author: Antoine Falisse
-% Original date: 12/19/2018
+% Original date: 19/Dec/2018
 %
 % --------------------------------------------------------------------------
 % This file is part of PredSim.
@@ -164,7 +164,6 @@ end
 %% Final time
 % The final time is function of the imposed speed
 all_speeds = 0.73:0.1:5;
-% all_speeds = 0.73:0.1:2.73;
 all_tf = 0.70:-((0.70-0.35)/(length(all_speeds)-1)):0.35;
 idx_speed = find(all_speeds==S.misc.forward_velocity);
 if isempty(idx_speed)

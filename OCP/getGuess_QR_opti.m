@@ -3,9 +3,10 @@ function guess = getGuess_QR_opti(S,model_info,scaling,d)
 % getGuess_QR_opti
 %   This script provides an inital guess for the design variables.
 %   The guess is quasi-random (QR). We set constant values to the muscle
-%   variables, the arm variables and most joint variables. We only ensure
-%   that the distance traveled is not null. The model is moving forward at a 
-%   constant speed and is standing on the ground. We use a pre-defined final
+%   variables, the actuator variables and most joint variables. We only 
+%   ensure that the distance traveled is not null. The model is moving 
+%   forward at a constant speed and is standing on the ground. All other 
+%   coordinates are set to their default value. We use a pre-defined final 
 %   time that is function of the imposed speed.
 %   
 % INPUT:
@@ -26,7 +27,7 @@ function guess = getGuess_QR_opti(S,model_info,scaling,d)
 %   * initial guess values for all optimisation variables
 % 
 % Original author: Antoine Falisse
-% Original date: 12/19/2018
+% Original date: 19/Dec/2018
 %
 % --------------------------------------------------------------------------
 % This file is part of PredSim.
@@ -51,7 +52,6 @@ function guess = getGuess_QR_opti(S,model_info,scaling,d)
 N = S.solver.N_meshes; % number of mesh intervals
 nq = model_info.ExtFunIO.jointi.nq;
 NMuscle = model_info.muscle_info.NMuscle;
-coordi = model_info.ExtFunIO.coordi;
 
 %% Final time
 % The final time is function of the imposed speed
@@ -73,11 +73,24 @@ if guess.tf < 0.15
 end
 
 %% Qs
-% The model is moving forward but with a standing position (Qs=0)
+% The model is moving forward but with a standing position (default Qs)
 guess.Qs = zeros(N,nq.all);
+
+% default coordinate values
+import org.opensim.modeling.*
+model = Model(model_info.osim_path);
+for j=1:model_info.ExtFunIO.jointi.nq.all
+    coord_j = model.getCoordinateSet().get(model_info.ExtFunIO.coord_names.all{j});
+    q_default = coord_j.getDefaultValue;
+    guess.Qs(:,j) = q_default;
+end
+
+% translate forward
 guess.Qs(:,model_info.ExtFunIO.jointi.base_forward) = linspace(0,guess.tf*S.misc.forward_velocity,N);
 % The model is standing on the ground
 guess.Qs(:,model_info.ExtFunIO.jointi.base_vertical) = model_info.IG_pelvis_y;
+
+
 
 %% Qdots
 guess.Qdots = zeros(N,nq.all);
@@ -100,14 +113,7 @@ guess.a_a = 0.1*ones(N,nq.torqAct);
 guess.e_a = 0.1*ones(N,nq.torqAct);
 
 %% Add last mesh point to state variables
-if strcmp(S.misc.gaitmotion_type,'HalfGaitCycle')
-    % Lower limbs and trunk
-    % Qs and Qdots are inverted after a half gait cycle BUT 
-    % Pelvis: pelvis tilt and pelvis ty should be equal, pelvis
-    % list, rot, tz should be opposite and pelvis tx should be equal
-    % plus dist traveled.
-    % Trunk: lumbar ext should be equal, lumbar bend and lumbar rot
-    % should be of opposite.     
+if strcmp(S.misc.gaitmotion_type,'HalfGaitCycle')    
     % For "symmetric" joints, we invert right and left
     inv_X_Qs = zeros(1,nq.all);
     inv_X_Qs(1,model_info.ExtFunIO.symQs.QsInvA) = guess.Qs(1,model_info.ExtFunIO.symQs.QsInvB);
@@ -149,8 +155,6 @@ guess.a         = (guess.a)./repmat(scaling.a,N+1,size(guess.a,2));
 guess.FTtilde   = (guess.FTtilde)./repmat(scaling.FTtilde,N+1,1);
 guess.vA        = (guess.vA)./repmat(scaling.vA,N,size(guess.vA,2));
 guess.dFTtilde  = (guess.dFTtilde)./repmat(scaling.dFTtilde,N,size(guess.dFTtilde,2));
-% guess.a_mtp_col = zeros(d*N,nq.mtp);
-% guess.a_lumbar_col = zeros(d*N,nq.torso);
 
 %% Collocation points
 guess.a_col = zeros(d*N,NMuscle);
