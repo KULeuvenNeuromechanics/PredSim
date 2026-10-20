@@ -117,17 +117,14 @@ st_e = pctst.*sin(pi/2*exc);
 ft_e = pctft.*(1-cos(pi/2*exc));
 
 %% Activation heat rate
-% decay_function_value = 1;
-% activation_constant_st = 40; % default (Bhargava et al. 2004)
-% activation_constant_ft = 133; % default (Bhargava et al. 2004)
-% Adot = musclemass.*decay_function_value.*((activation_constant_st*st_e)+...
-%     (activation_constant_ft*ft_e));
-
-Adot = 0;
+decay_function_value = 1;
+activation_constant_st = 40; % default (Bhargava et al. 2004)
+activation_constant_ft = 133; % default (Bhargava et al. 2004)
+Adot = musclemass.*decay_function_value.*((activation_constant_st*st_e)+...
+    (activation_constant_ft*ft_e));
 
 %% Maintenance heat rate
-% fiber_length_dep = lMtilde;
-fiber_length_dep = Fiso/2 + .5;
+fiber_length_dep = lMtilde;
 maintenance_constant_st = 74; % default (Bhargava et al. 2004)
 maintenance_constant_ft = 111; % default (Bhargava et al. 2004)
 Mdot = musclemass.*fiber_length_dep.*((maintenance_constant_st*st_e)+...
@@ -139,15 +136,14 @@ Mdot = musclemass.*fiber_length_dep.*((maintenance_constant_st*st_e)+...
 % Fiso is getActiveForceLengthMultiplier in OpenSim. To minimize the
 % difference between the models, we keep the same input, i.e., Fiso, that is
 % used in the models of Umberger and Uchida.
-% F_iso = act.*Fiso.*Fmax.*strength;
-% fiber_force_total = Fce + Fpass;
-% alpha = (0.16 * F_iso); % + (0.18 * fiber_force_total);
-alpha = 0.18 * Fce;
+F_iso = act.*Fiso.*Fmax.*strength;
+fiber_force_total = Fce + Fpass;
+alpha = (0.16 * F_iso) + (0.18 * fiber_force_total);
 % vM is positive (muscle lengthening)
-% vM_pos = 0.5 + 0.5*tanh(b*(vM));
+vM_pos = 0.5 + 0.5*tanh(b*(vM));
 % vM is negative (muscle shortening)
-% vM_neg = 1-vM_pos;
-% alpha = alpha + (-alpha + 0.157*fiber_force_total).*vM_pos;
+vM_neg = 1-vM_pos;
+alpha = alpha + (-alpha + 0.157*fiber_force_total).*vM_pos;
 % If get_use_force_dependent_shortening_prop_constant is false then
 % alpha = 0.25*fiber_force_total;
 % alpha(vM>0) = 0;
@@ -155,26 +151,10 @@ Sdot = -alpha.*vM;
 
 %% Mechanical work rate
 % No negative mechanical work allowed
-Wdot = - Fce.*vM; %.*vM_neg;
+Wdot = - Fce.*vM.*vM_neg;
 
-%% Total power is non-negative
-% If necessary, increase the shortening heat rate
-% https://github.com/opensim-org/opensim-core/blob/master/OpenSim/Simulation/Model/Bhargava2004MuscleMetabolicsProbe.cpp#L393
-% Edot_W_beforeClamp = Adot + Mdot + Sdot + Wdot;
-% Edot_Wkg_beforeClamp_neg = 0.5+(0.5*tanh(b*(-Edot_W_beforeClamp)));
-% Sdot = Sdot - Edot_W_beforeClamp.*Edot_Wkg_beforeClamp_neg;
-
-%% The total heat rate is not allowed to drop below 1(W/kg)
-% https://github.com/opensim-org/opensim-core/blob/master/OpenSim/Simulation/Model/Bhargava2004MuscleMetabolicsProbe.cpp#L400
-% totalHeatRate = Adot + Mdot + Sdot;
-% We first express in W/kg 
-% totalHeatRate = totalHeatRate./musclemass;
-% totalHeatRate = totalHeatRate + (-totalHeatRate + ...
-%     ones(size(totalHeatRate,1),1)).*(0.5 + 0.5*tanh(b*(1-totalHeatRate)));
-% We then express back in W
-
+%% Simple sum
 totalHeatRate = Adot + Mdot + Sdot;
-% totalHeatRate = totalHeatRate.*musclemass;
 
 %% Total metabolic energy rate
 energy_total = totalHeatRate + Wdot;

@@ -52,7 +52,7 @@ function [R] = PostProcess_metabolic_energy(model_info,f_casadi,R)
 N = size(R.kinematics.Qs,1);
 NMuscle = model_info.muscle_info.NMuscle;
 
-all_models = {'Bhargava2004', 'Uchida2016', 'Bhargava2004_simple', 'Margaria'};
+all_models = {'Bhargava2004', 'Uchida2016', 'Bhargava2004_simple', 'Margaria', 'Bhargava2004_revised'};
 
 %% Get metabolic energy rate 
 pctsts = struct_array_to_double_array(model_info.muscle_info.parameters,'slow_twitch_fiber_ratio');

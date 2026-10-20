@@ -68,6 +68,9 @@ if strcmp(S.metabolicE.model,'Bhargava2004')
     
 elseif strcmp(S.metabolicE.model,'Bhargava2004_simple')    
     metabolics_function = @getMetabolicEnergySmooth2004all_simple;
+
+elseif strcmp(S.metabolicE.model,'Bhargava2004_revised')    
+    metabolics_function = @getMetabolicEnergySmooth2004all_revised;
     
 elseif strcmp(S.metabolicE.model,'Uchida2016')    
     metabolics_function = @getMetabolicEnergySmooth2016all;

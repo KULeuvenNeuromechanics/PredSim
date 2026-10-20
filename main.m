@@ -38,7 +38,8 @@ osim_path = fullfile(pathRepo,'Subjects',S.subject.name,[S.subject.name '.osim']
 % S.metabolicE.model = 'Bhargava2004'; 
 % S.metabolicE.model = 'Bhargava2004_simple';
 % S.metabolicE.model = 'Uchida2016';
-S.metabolicE.model = 'Margaria';
+% S.metabolicE.model = 'Margaria';
+S.metabolicE.model = 'Bhargava2004_revised';
 
 %% Run predictive simulations
 
