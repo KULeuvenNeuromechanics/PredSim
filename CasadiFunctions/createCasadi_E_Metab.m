@@ -72,7 +72,7 @@ if strcmp(S.metabolicE.model,'Bhargava2004')
         FMo,modelmass_SX,b_SX,...
         [model_info.muscle_info.parameters.muscle_strength]');
 
-elseif strcmp(S.metabolicE.model,'Bhargava2004-simple')
+elseif strcmp(S.metabolicE.model,'Bhargava2004_simple')
     % Get metabolic energy rate Bhargava et al. (2004)
 
     % Bhargava et al. (2004) - simple
