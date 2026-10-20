@@ -52,7 +52,6 @@ function guess = getGuess_QR_opti(S,model_info,scaling,d)
 N = S.solver.N_meshes; % number of mesh intervals
 nq = model_info.ExtFunIO.jointi.nq;
 NMuscle = model_info.muscle_info.NMuscle;
-coordi = model_info.ExtFunIO.coordi;
 
 %% Final time
 % The final time is function of the imposed speed
