@@ -26,12 +26,6 @@ function [S,model_info] = PreProcessing(S,osim_path)
 % Last edit date: 
 % --------------------------------------------------------------------------
 
-% Update settings about points that need to be exported from external function
-[S] = updateExport3DPositionsVelocities(S,osim_path);
-
-% Test the user-defined orthosis functions and add the required OpenSimAD
-% options
-[S] = finaliseOrthosisDefinitions(S,osim_path);
 
 % Create external function to describe the rigid-body skeletal dynamics and
 % foot-ground contact dynamics.
@@ -40,7 +34,7 @@ S = osim2dll(S,osim_path);
 % Create a struct to contain all information about the neuro-musculoskeletal model
 model_info = get_model_info(S,osim_path);
 
-% Read ligament parameters from the opensim model and settings
+% ADDED FOR LIGAMENT IMPLEMENTATION
 if model_info.ligament_info.NLigament > 0
     model_info = get_ligament_info(S,osim_path,model_info);
 end

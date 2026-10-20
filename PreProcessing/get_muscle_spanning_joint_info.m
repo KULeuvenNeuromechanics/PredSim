@@ -83,46 +83,45 @@ dM = zeros(n_data_points,n_muscle,n_coord);
 lMT = dM;
 
 %% Option 1: based on momentarms
-if nargout>=3
-    % Loop through dummy states
-    for j=1:n_data_points
-        % Set each coordinate value
-        for i=1:n_coord
-            model.getCoordinateSet.get(coord_names{i}).setValue(s,Qs(j,i),false);
-        end
-        model.realizePosition(s);
-    
-        % Loop over muscles
-        for m=1:n_muscle
-            muscle_m = force_set.get(muscle_names{m});
-            if ligaments_bool
-                muscle_m = Ligament.safeDownCast(muscle_m);
-            end
-    
-            % Get moment arm for each joint
-            for i=1:n_coord
-                dM(j,m,i) = muscle_m.computeMomentArm(s,model.getCoordinateSet().get(coord_names{i}));
-                
-            end
-        end
-    
+% Loop through dummy states
+for j=1:n_data_points
+    % Set each coordinate value
+    for i=1:n_coord
+        state_vars.set(model_info.ExtFunIO.coordi_OpenSimAPIstate.(coord_names{i}),Qs(j,i));
     end
-    
-    muscle_spanning_joint_info_1 = squeeze(sum(abs(dM), 1));
-    muscle_spanning_joint_info_1(muscle_spanning_joint_info_1<=0.0001 & muscle_spanning_joint_info_1>=-0.0001) = 0;
-    muscle_spanning_joint_info_1(muscle_spanning_joint_info_1~=0) = 1;
+    model.setStateVariableValues(s,state_vars);
+    model.realizePosition(s);
+
+    % Loop over muscles
+    for m=1:n_muscle
+        muscle_m = force_set.get(muscle_names{m});
+        if ligaments_bool
+            muscle_m = Blankevoort1991Ligament.safeDownCast(muscle_m);
+        end
+
+        % Get moment arm for each joint
+        for i=1:n_coord
+            dM(j,m,i) = muscle_m.computeMomentArm(s,model.getCoordinateSet().get(coord_names{i}));
+            
+        end
+    end
+
 end
 
+muscle_spanning_joint_info_1 = squeeze(sum(abs(dM), 1));
+muscle_spanning_joint_info_1(muscle_spanning_joint_info_1<=0.0001 & muscle_spanning_joint_info_1>=-0.0001) = 0;
+muscle_spanning_joint_info_1(muscle_spanning_joint_info_1~=0) = 1;
+
 %% option 2: based on lengths
-for i=1:n_coord
-    state_names{i} = model.getCoordinateSet.get(coord_names{i}).getStateVariableNames().get(0);
-end
 % reference lengths
 lMT0 = zeros(1,n_muscle);
+state_vars.setToZero();
+model.setStateVariableValues(s,state_vars);
+model.realizePosition(s);
 for m=1:n_muscle
     muscle_m = force_set.get(muscle_names{m});
     if ligaments_bool
-        muscle_m = Ligament.safeDownCast(muscle_m);
+        muscle_m = Blankevoort1991Ligament.safeDownCast(muscle_m);
     end
     lMT0(m) = muscle_m.getLength(s);          
 end
@@ -132,16 +131,15 @@ for j=1:n_data_points
     % Set ONE coordinate value
     for i=1:n_coord
         state_vars.setToZero();
+        state_vars.set(model_info.ExtFunIO.coordi_OpenSimAPIstate.(coord_names{i}),Qs(j,i));
         model.setStateVariableValues(s,state_vars);
-        model.realizePosition(s);
-        model.setStateVariableValue(s,state_names{i},Qs(j,i));
         model.realizePosition(s);
     
         % Loop over muscles
         for m=1:n_muscle
             muscle_m = force_set.get(muscle_names{m});
             if ligaments_bool
-                muscle_m = Ligament.safeDownCast(muscle_m);
+                muscle_m = Blankevoort1991Ligament.safeDownCast(muscle_m);
             end
     
             lMT(j,m,i) = muscle_m.getLength(s);

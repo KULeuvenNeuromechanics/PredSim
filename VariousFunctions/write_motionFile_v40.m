@@ -52,7 +52,7 @@ try
     
 catch ME
     fclose(fid);
-    error(ME.message)
+    error(ME)
 end
 
 fclose(fid);

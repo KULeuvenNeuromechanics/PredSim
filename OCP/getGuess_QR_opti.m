@@ -41,32 +41,23 @@ coordi = model_info.ExtFunIO.coordi;
 % The final time is function of the imposed speed
 all_speeds = 0.73:0.1:5;
 all_tf = 0.70:-((0.70-0.35)/(length(all_speeds)-1)):0.35;
-idx_speed = find(all_speeds==S.misc.forward_velocity);
+idx_speed = find(all_speeds==S.subject.v_pelvis_x_trgt);
 if isempty(idx_speed)
-    idx_speed = find(all_speeds > S.misc.forward_velocity,1,'first');
+    idx_speed = find(all_speeds > S.subject.v_pelvis_x_trgt,1,'first');
 end
 guess.tf = all_tf(idx_speed);
-
-% extrapolate outside of 0.73:5 range
-if isempty(idx_speed)
-    guess.tf = -0.1750*S.misc.forward_velocity + 0.8277;
-end
-% avoid going too low
-if guess.tf < 0.15
-    guess.tf = 0.15;
-end
 
 %% Qs
 % The model is moving forward but with a standing position (Qs=0)
 guess.Qs = zeros(N,nq.all);
-guess.Qs(:,model_info.ExtFunIO.jointi.base_forward) = linspace(0,guess.tf*S.misc.forward_velocity,N);
+guess.Qs(:,model_info.ExtFunIO.jointi.base_forward) = linspace(0,guess.tf*S.subject.v_pelvis_x_trgt,N);
 % The model is standing on the ground
-guess.Qs(:,model_info.ExtFunIO.jointi.base_vertical) = model_info.IG_pelvis_y;
+guess.Qs(:,coordi.pelvis_ty) = model_info.IG_pelvis_y;
 
 %% Qdots
 guess.Qdots = zeros(N,nq.all);
 % The model is moving forward with a constant speed
-guess.Qdots(:,model_info.ExtFunIO.jointi.base_forward) = S.misc.forward_velocity;
+guess.Qdots(:,model_info.ExtFunIO.jointi.base_forward) = S.subject.v_pelvis_x_trgt;
 
 %% Qdotdots
 guess.Qdotdots = zeros(N,nq.all);
@@ -76,8 +67,6 @@ guess.a = 0.1*ones(N,NMuscle);
 guess.vA = 0.01*ones(N,NMuscle);
 guess.FTtilde = 0.1*ones(N,NMuscle);
 guess.dFTtilde = 0.01*ones(N,NMuscle);
-guess.SynH = 0.1*ones(N,NMuscle);
-guess.SynW = 0.2;
 
 %% Torque actuator activations
 guess.a_a = 0.1*ones(N,nq.torqAct);
