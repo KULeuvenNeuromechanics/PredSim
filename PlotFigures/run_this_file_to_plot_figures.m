@@ -19,7 +19,7 @@ result_paths{1} = fullfile(pathRepo,'Tests','ReferenceResults','Falisse_et_al_20
 
 
 % Cell array with legend name for each result
-legend_names = {'Reference result', 'Your first simulation'};
+legend_names = {'Reference result'};
 
 % Path to the folder where figures are saved
 figure_folder = results_folder;

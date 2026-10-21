@@ -165,3 +165,19 @@ Hill-type muscle
 | COT | Cost of transport  | 1 x 1 | [J/kg/m] |
 
 
+### R.left
+
+By default, *R* contains one gait cycle that starts at right heel strike. It is also possible to obtain the left gait cycle (starting at left heel strike) from the same results, without rerunning the simulation:
+
+    R = add_left_gait_cycle(R, model_info);
+
+This adds *R.left*. Its subfields have the same fields, dimensions and units as the corresponding fields of *R*, but only contain the variables with a value for each meshpoint. Variables that are the same for both gait cycles (e.g. *R.colheaders*, *R.spatiotemp*) are not repeated.
+
+| Field | Description | Dimension | Unit |
+| ----- | ----------- | --------- | ---- |
+| idx\_GC | indices of meshpoints of *R* in the order of the left gait cycle | mesh x 1 | [-] |
+| kinematics | see *R.kinematics*; forward position of the pelvis starts at 0 | | |
+| kinetics | see *R.kinetics* | | |
+| ground\_reaction | see *R.ground\_reaction*; stance indices refer to meshpoints of the left gait cycle, COP x-position is relative to the pelvis at the start of the left gait cycle | | |
+| muscles | see *R.muscles* | | |
+| metabolics | see *R.metabolics* | | |
