@@ -126,8 +126,19 @@ end
 
 model_info.muscle_info = muscle_info;
 
-% Time constants of excitation-activation dynamics are fixed.
-model_info.muscle_info.tact = 0.015; % activation
-model_info.muscle_info.tdeact = 0.06; % deactivation
+%% Activation dynamics
+% Time constants of excitation-activation dynamics.
+
+if isfield(S.subject, 'tau_act')
+    model_info.muscle_info.tact = S.subject.tau_act;
+else
+    model_info.muscle_info.tact = 0.015; % activation
+end
+
+if isfield(S.subject, 'tau_deact')
+    model_info.muscle_info.tdeact = S.subject.tau_deact;
+else
+    model_info.muscle_info.tdeact = 0.06; % deactivation
+end
 
 end
