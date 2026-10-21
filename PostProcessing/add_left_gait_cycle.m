@@ -67,13 +67,13 @@ for i = 1:numel(categories)
         end
     end
 end
-%% Stance phase indices (R.ground_reaction.idx_stance_r / _l)
+%% Stance phase indices (R.ground_reaction.idx_stance_r / _l / idx_double_support)
 % These are frame numbers of the right cycle, not one row per frame, so
 % they are not copied above. Convert them to frame numbers of the left
 % cycle: new frame k corresponds to old frame idx_GC(k).
-sides = {'r','l'};
-for s = 1:numel(sides)
-    fld = ['idx_stance_' sides{s}];
+stance_fields = {'idx_stance_r','idx_stance_l','idx_double_support'};
+for s = 1:numel(stance_fields)
+    fld = stance_fields{s};
     if isfield(R.ground_reaction,fld)
         idx_old = R.ground_reaction.(fld);
         if islogical(idx_old)
@@ -85,7 +85,6 @@ for s = 1:numel(sides)
         end
     end
 end
-
 %% Correct forward position
 % Make forward position continuous and start at zero
 i_fw = model_info.ExtFunIO.jointi.base_forward;
@@ -102,6 +101,7 @@ for k = 1:numel(q_fields)
 end
 %% Correct forward position of the centre of pressure (x = column 1)
 % Same correction as base_forward, only for frames in stance of that foot
+sides = {'r','l'};
 shift = R.kinematics.Qs(idx_GC(1),i_fw);   % pelvis position at start of left cycle
 rows_offset = false(N,1);
 rows_offset(idx_GC_base_forward_offset) = true;

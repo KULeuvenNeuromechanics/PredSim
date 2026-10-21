@@ -20,7 +20,7 @@ function [] = plot_figures(result_paths,legend_names,figure_settings)
 %       > side: (optional) 'right' (default) or 'left'. Selects which
 %           gait cycle is plotted. 'left' uses R.left (see
 %           add_left_gait_cycle.m); if a result has no R.left, it is
-%           computed
+%           computed within this function
 %       > savepath: path + name to save figure, no file extension
 %       > filetyp: file extension: 'png', 'jpg', 'eps'
 %

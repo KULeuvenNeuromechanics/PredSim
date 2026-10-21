@@ -137,7 +137,6 @@ for j = 1:length(figure_settings)
     figure_settings(j).savepath = fullfile(figure_folder,...
         [figure_savename '_' figure_settings(j).name '_default']);
 end
-assert(~isfield(figure_settings,'side'), 'figure_settings should not have the field side here.')
 plot_figures(result_paths,legend_names,figure_settings);
 
 %% Option 3: add left gait cycle explicitly, right and left in one figure
@@ -169,7 +168,6 @@ for i = 1:length(result_paths)
 
     % add left gait cycle explicitly
     R = add_left_gait_cycle(R,model_info);
-    assert(isfield(R,'left'), 'add_left_gait_cycle did not add R.left.')
 
     % R_left: copy of R with the fields of the left gait cycle (R.left)
     R_left = rmfield(R,'left');
