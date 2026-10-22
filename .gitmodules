@@ -1,7 +1,9 @@
 [submodule "opensimAD"]
 	path = opensimAD
-	url = https://github.com/KULeuvenNeuromechanics/opensimAD
-	branch = bugfix-cmake
+	# Temporary until https://github.com/KULeuvenNeuromechanics/opensimAD/pull/4 is merged.
+	# Then restore the KULeuvenNeuromechanics/opensimAD URL and bugfix-cmake branch, and update the pinned commit.
+	url = https://github.com/MaartenAfschrift/opensimAD
+	branch = dev/bug_long_path
 [submodule "opensimAD_linux"]
 	path = opensimAD_linux
 	url = https://github.com/stevenvdb/opensimAD_linux

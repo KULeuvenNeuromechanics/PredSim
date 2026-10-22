@@ -67,3 +67,41 @@ filenameJointAngles = fullfile(R.S.misc.save_folder,...
     [R.S.misc.result_filename '.mot']);
 write_motionFile_v40(JointAngleMuscleAct, filenameJointAngles);
 
+% if gravity vector was tilted (walking on a slope) also export new mot
+% file with gravity vector along y-axis.
+if isfield(model_info,'slope') && abs(model_info.slope)>0
+    % convert slope to angle
+    fi = atan2(model_info.slope,1);
+
+    % rotate data mot file
+    data = JointAngleMuscleAct.data;
+	Rotm =    [cos(fi)	-sin(fi)	0	
+		sin(fi)	cos(fi)	0	
+		0	0	1];
+
+    i_pelvis_tilt = strcmp(JointAngleMuscleAct.labels,'pelvis_tilt');
+    data(:,i_pelvis_tilt) = data(:,i_pelvis_tilt)+fi*180/pi;
+
+    [found,translation_columns] = ismember({'pelvis_tx','pelvis_ty','pelvis_tz'},...
+        JointAngleMuscleAct.labels);
+    if ~all(found)
+        warning('PredSim:SlopeMotionCoordinates',...
+            'Skipping slope-corrected motion export: pelvis translation coordinates are missing.');
+        return
+    end
+    % Row vectors rotate into the world frame using the transpose, as for GRFs.
+    data(:,translation_columns) = data(:,translation_columns)*Rotm';
+
+    % structure for output
+    slope_mot.data = data;
+    slope_mot.labels = JointAngleMuscleAct.labels;
+    slope_mot.inDeg = 'yes';
+
+    % export mot file
+    filenameJointAngles = fullfile(R.S.misc.save_folder,...
+    [R.S.misc.result_filename '_slope.mot']);
+    write_motionFile_v40(slope_mot, filenameJointAngles);
+
+
+end
+

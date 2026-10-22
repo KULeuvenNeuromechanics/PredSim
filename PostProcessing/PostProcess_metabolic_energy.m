@@ -76,8 +76,9 @@ for i=1:N
 
 end
 
-% cost of transport
-E_sum_GC = trapz(R.time.mesh_GC(1:end-1),R.metabolics.Bhargava2004.Edot_incl_basal);
+% Close the periodic cycle: result arrays omit the repeated endpoint.
+power_GC = R.metabolics.Bhargava2004.Edot_incl_basal;
+E_sum_GC = trapz(R.time.mesh_GC,[power_GC;power_GC(1)]);
 R.metabolics.Bhargava2004.COT = E_sum_GC/R.misc.body_mass/R.spatiotemp.dist_trav;
 
 %% ...
