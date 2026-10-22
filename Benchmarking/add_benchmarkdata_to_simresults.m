@@ -24,7 +24,7 @@ addParameter(p, 'dofs', {}, @(x) iscellstr(x) || isstring(x));
 addParameter(p, 'studies', {}, @(x) iscellstr(x) || isstring(x));
 addParameter(p, 'OverwriteData', false, @(x) islogical(x) && isscalar(x));
 positive_scalar = @(x) isnumeric(x) && isscalar(x) && isfinite(x) && x > 0;
-addParameter(p, 'SubjectMass', [], @(x) isempty(x) || positive_scalar(x));
+addParameter(p, 'SubjectMass', 62, @(x) isempty(x) || positive_scalar(x));
 addParameter(p, 'LegLength', 0.85, positive_scalar);
 parse(p, varargin{:});
 BoolPlot = logical(p.Results.BoolPlot);
@@ -42,7 +42,7 @@ end
 
 if BoolPlot
     msim = p.Results.SubjectMass;
-    if isempty(msim)
+    if msim == 62 % default value
         if isfield(S,'subject') && isfield(S.subject,'mass') && ~isempty(S.subject.mass)
             msim = S.subject.mass;
         elseif isfile(osim_path)
@@ -50,8 +50,7 @@ if BoolPlot
             addpath(fullfile(repo,'VariousFunctions'));
             msim = getModelMass(osim_path);
         else
-            error('PredSim:MissingBenchmarkMass',...
-                'The original model is unavailable. Supply SubjectMass (unloaded mass in kg) for plotting.');
+            disp(['using default value of 62 kg for the subject mass for plotting'])
         end
     end
     assert(positive_scalar(msim),'PredSim:InvalidBenchmarkMass',...
@@ -163,7 +162,7 @@ if BoolPlot
     end
 
     % plot all data on one graph
-    h_figallp = figure('Name','All data','Color',[1 1 1]);
+    h_figallp = figure('Name','All data','Color',[0 0 0]);
     t_layout = tiledlayout(1,2,'TileSpacing','compact','Padding','compact');
 
     % get study ids and assign colors

@@ -28,7 +28,7 @@ for isim = 1:nsim
 end
 
 if any(arrayfun(@(d) ~isempty(d.benchmark.ik),Dat))
-    figure('Name',[study_name ': kinematics'],'Color',[1 1 1]);
+    figure('Name',[study_name ': kinematics']);
     t = tiledlayout(2,nsubplot_dofs,'TileSpacing','compact','Padding','compact');
 
     for idof = 1:length(dofs_plot)
@@ -52,7 +52,7 @@ if any(arrayfun(@(d) ~isempty(d.benchmark.ik),Dat))
             nexttile(tile_number);
             dsel_int = simulation_coordinate(Dat(isim).R.kinematics.Qs,...
                 Dat(isim).R.colheaders.coordinates,dofs_plot{idof});
-            legs(isim) = plot(dsel_int,'Color',Cs); hold on;
+            legs(isim) = plot(dsel_int); hold on;
         end
     end
 
@@ -82,7 +82,7 @@ end
 
 % Plot joint moments
 if any(arrayfun(@(d) ~isempty(d.benchmark.id),Dat))
-    figure('Name',[study_name ': kinetics'],'Color',[1 1 1]);
+    figure('Name',[study_name ': kinetics']);
     t = tiledlayout(2,nsubplot_dofs,'TileSpacing','compact','Padding','compact');
     for idof = 1:length(dofs_plot)
         for isim = 1:length(Dat)
@@ -127,7 +127,7 @@ end
 
 % Plot ground reaction forces
 if any(arrayfun(@(d) ~isempty(d.benchmark.grf_r),Dat))
-    figure('Name',[study_name ': grf'],'Color',[1 1 1]);
+    figure('Name',[study_name ': grf']);
     t = tiledlayout(2,3,'TileSpacing','compact','Padding','compact');
     grf_headers = {'Fx','Fy','Fz'};
     for coord = 1:3
@@ -187,7 +187,7 @@ end
 
 % plot stride frequency
 if any(arrayfun(@(d) ~isempty(d.benchmark.stride_frequency),Dat))
-    figure('Name',[study_name ': stride frequency'],'Color',[1 1 1]);
+    figure('Name',[study_name ': stride frequency']);
 
     % experimental stride frequency
     exp_freq = nan(nsim,1);
@@ -198,9 +198,9 @@ if any(arrayfun(@(d) ~isempty(d.benchmark.stride_frequency),Dat))
         end
         sim_freq(isim) = Dat(isim).R.spatiotemp.stride_freq;
     end
-    Cs = [0 0 0];
+    Cs = [1 0.2 0.2];
     mk = 4;
-    plot([min(exp_freq) max(exp_freq)], [min(exp_freq) max(exp_freq)],'--','Color',[0 0 0],'LineWidth',1.3); hold on;
+    plot([min(exp_freq) max(exp_freq)], [min(exp_freq) max(exp_freq)],'--','LineWidth',1.3); hold on;
     plot(exp_freq,sim_freq,'ok','Color',Cs,'MarkerFaceColor',Cs,...
         'MarkerSize',mk);
     set(gca,'box','off');
@@ -213,7 +213,7 @@ end
 
 % plot metabolic power
 % if ~isempty(Dat(1).benchmark.Pmetab_mean)
-figure('Name',[study_name ': metabolic power'],'Color',[1 1 1]);
+figure('Name',[study_name ': metabolic power']);
 
 % experimental stride frequency
 exp_metab = nan(nsim,1);
@@ -228,11 +228,11 @@ for isim = 1:nsim
     % simulated metabolic power
     sim_metab(isim) = benchmark_mean_metabolic_power(Dat(isim).R);
 end
-Cs = [0 0 0];
+Cs = [1 0.2 0.2];
 mk = 4;
 plot([min(exp_metab) max(exp_metab)], [min(exp_metab) max(exp_metab)],...
-    '--','Color',[0 0 0],'LineWidth',1.3); hold on;
-plot(exp_metab,sim_metab,'ok','Color',Cs,'MarkerFaceColor',Cs,...
+    '--','LineWidth',1.3); hold on;
+plot(exp_metab,sim_metab,'ok','MarkerFaceColor',Cs,...
     'MarkerSize',mk);
 set(gca,'box','off');
 set(gca,'FontSize',10);
