@@ -69,11 +69,20 @@ if strcmp(S.metabolicE.model,'Bhargava2004')
 elseif strcmp(S.metabolicE.model,'Bhargava2004_simple')    
     metabolics_function = @getMetabolicEnergySmooth2004all_simple;
 
+elseif strcmp(S.metabolicE.model,'Bhargava2004_original')    
+    metabolics_function = @getMetabolicEnergySmooth2004all_original;
+    
 elseif strcmp(S.metabolicE.model,'Bhargava2004_revised')    
     metabolics_function = @getMetabolicEnergySmooth2004all_revised;
     
 elseif strcmp(S.metabolicE.model,'Uchida2016')    
     metabolics_function = @getMetabolicEnergySmooth2016all;
+
+elseif strcmp(S.metabolicE.model,'Umberger2003')    
+    metabolics_function = @getMetabolicEnergySmooth2003all;
+
+elseif strcmp(S.metabolicE.model,'Umberger2010')    
+    metabolics_function = @getMetabolicEnergySmooth2010all;
     
 elseif strcmp(S.metabolicE.model,'Margaria')    
     metabolics_function = @getMetabolicEnergyMargaria;

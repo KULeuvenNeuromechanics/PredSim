@@ -8,7 +8,7 @@ function [energy_total,Adot,Mdot,Sdot,Wdot,energy_model] = ...
 %    the original functions using tanh approximations for use in optimization
 %    problems.
 %
-%    Note: we did not include the length dependence of the maintenance heat rate.
+%    Note: we did include the length dependence of the maintenance heat rate.
 %      In OpenSim, they use a Piecewise Linear Function
 %      https://github.com/opensim-org/opensim-core/blob/master/OpenSim/Simulation/Model/Bhargava2004MuscleMetabolicsProbe.cpp#L103
 %    Note: we consider some lengthening heat rate, i.e. 

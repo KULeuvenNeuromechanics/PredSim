@@ -136,7 +136,7 @@ disp(' ')
 
 %% Creating casadi functions
 addpath(fullfile(S.misc.main_path, 'CasadiFunctions'))
-addpath(fullfile(S.misc.main_path, 'ModelComponents'))
+addpath(genpath(fullfile(S.misc.main_path, 'ModelComponents')))
 
 disp('Start creating CasADi functions...')
 disp(' ')

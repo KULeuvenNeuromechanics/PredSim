@@ -2,16 +2,15 @@ function [energy_total,Adot,Mdot,Sdot,Wdot,energy_model] = ...
     getMetabolicEnergySmooth2004all_simple(exc,act,lMtilde,vM,Fce,Fpass,...
         musclemass,pctst,Fiso,Fmax,modelmass,b,strength, lmo, vcemax)
 % --------------------------------------------------------------------------
-% getMetabolicEnergySmooth2004all
+% getMetabolicEnergySmooth2004all_simple
 %    This function computes the muscle energy expenditure based on the model
-%    of Bhargava et al. (2004). This function provides a smooth approximation of
-%    the original functions using tanh approximations for use in optimization
-%    problems.
+%    of Bhargava et al. (2004). This is a simpler form of the model that
+%    only requires 1 tanh function.
 %
 %    Note: we did not include the length dependence of the maintenance heat rate.
 %      In OpenSim, they use a Piecewise Linear Function
 %      https://github.com/opensim-org/opensim-core/blob/master/OpenSim/Simulation/Model/Bhargava2004MuscleMetabolicsProbe.cpp#L103
-%    Note: we consider some lengthening heat rate, i.e. 
+%    Note: we did consider lengthening heat rate, i.e. 
 %      get_use_force_dependent_shortening_prop_constant is true (OpenSim)
 %   
 % INPUT:
@@ -131,27 +130,22 @@ Mdot = musclemass.*fiber_length_dep.*((maintenance_constant_st*st_e)+...
     (maintenance_constant_ft*ft_e));
 
 %% Shortening heat rate
-% F_iso that would be developed at the current activation and fiber length
-% under isometric conditions (different than models of Umberger and Uchida).
-% Fiso is getActiveForceLengthMultiplier in OpenSim. To minimize the
-% difference between the models, we keep the same input, i.e., Fiso, that is
-% used in the models of Umberger and Uchida.
-F_iso = act.*Fiso.*Fmax.*strength;
 fiber_force_total = Fce + Fpass;
-alpha = (0.16 * F_iso) + (0.18 * fiber_force_total);
+
+alpha = 0.25*fiber_force_total;
+
 % vM is positive (muscle lengthening)
 vM_pos = 0.5 + 0.5*tanh(b*(vM));
+
 % vM is negative (muscle shortening)
-vM_neg = 1-vM_pos;
+
 alpha = alpha + (-alpha + 0.157*fiber_force_total).*vM_pos;
-% If get_use_force_dependent_shortening_prop_constant is false then
-% alpha = 0.25*fiber_force_total;
-% alpha(vM>0) = 0;
+
 Sdot = -alpha.*vM;
 
 %% Mechanical work rate
 % No negative mechanical work allowed
-Wdot = - Fce.*vM.*vM_neg;
+Wdot = - Fce.*vM;
 
 %% Simple sum
 totalHeatRate = Adot + Mdot + Sdot;

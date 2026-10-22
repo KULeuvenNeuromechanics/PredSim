@@ -35,16 +35,15 @@ S.solver.IG_selection_gaitCyclePercent = 100;
 % give the path to the osim model of your subject
 osim_path = fullfile(pathRepo,'Subjects',S.subject.name,[S.subject.name '.osim']);
 
-% S.metabolicE.model = 'Bhargava2004'; 
-% S.metabolicE.model = 'Bhargava2004_simple';
-% S.metabolicE.model = 'Uchida2016';
-% S.metabolicE.model = 'Margaria';
-S.metabolicE.model = 'Bhargava2004_revised';
+
+all_models = {'Bhargava2004', 'Bhargava2004_simple','Bhargava2004_original','Bhargava2004_revised', 'Umberger2003', 'Umberger2010', 'Uchida2016', 'Margaria'};
+
+S.metabolicE.model = all_models{6};
 
 %% Run predictive simulations
 
 % S.solver.max_iter = 2;
-% S.solver.run_as_batch_job = 1;
+S.solver.run_as_batch_job = 1;
 
 [savename] = runPredSim(S, osim_path);
 

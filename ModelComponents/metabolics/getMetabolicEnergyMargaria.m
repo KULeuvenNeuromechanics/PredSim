@@ -1,8 +1,12 @@
+function [energy_total,energy_a, energy_am,energy_sl,energy_mech,energy_model] = ...
+    getMetabolicEnergyMargaria(exc,act,lMtilde,vM,Fce,Fpe, ...
+        musclemass,pctst,Fiso,Fmax, modelmass,b,strength, lmo, vcemax)
+    
 % This function computes the muscle energy expenditure based on the model
 % of Margaria. 
 %
 % Author: Tim van der Zee
-% Date: 28/07/2026
+% Date: 22/10/2026
 %
 % INPUTS:
 %   exc: muscle excitations
@@ -32,9 +36,7 @@
 %       Note: energy_total might be different than the sum of the different
 %             components if the total heat rate was clamped to one.
 
-function [energy_total,energy_a, energy_am,energy_sl,energy_mech,energy_model] = ...
-    getMetabolicEnergyMargaria(exc,act,lMtilde,vM,Fce,Fpe, ...
-        musclemass,pctst,Fiso,Fmax, modelmass,b,strength, lmo, vcemax)
+
             
     vMtilde = vM./lmo;
         

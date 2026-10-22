@@ -7,7 +7,7 @@
 % Date: 01/22/2019
 %
 % Modified by: Tim van der Zee
-% Date: 16/06/2026
+% Date: 22/10/2026
 %
 % INPUTS:
 %   exc: muscle excitations
@@ -42,10 +42,10 @@ function [energy_total,energy_a, energy_am,energy_sl,energy_mech,energy_model] =
         musclemass,pctst,Fiso,Fmax, modelmass,b,strength, lmo, vcemax)
         
     
-    % following getMetabolicEnergySmooth2004all
-    musclemass=musclemass.*strength;
-    
-    vMtilde = vM./lmo;
+% following getMetabolicEnergySmooth2004all
+musclemass=musclemass.*strength;
+
+vMtilde = vM./lmo;
     
 %% Order recruitment model
 % The percentage of slow-twitch fibers recruited is function of excitation
