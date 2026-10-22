@@ -706,15 +706,7 @@ end
 %   Unix Makefiles: on Linux and similar systems
 if ~isfield(S.OpenSimADOptions,'compiler')
     if ispc
-        %S.OpenSimADOptions.compiler = findVisualStudioInstallation;
-        compiler_info = detectCompilerInfo;
-        if ~isempty(compiler_info.CMakeGenerators)
-            S.OpenSimADOptions.compiler = compiler_info.LatestCMakeGenerator;
-        else
-            error(['Could not detect Visual Studio in c:/Program Files or c:/Program Files (x86). ',...
-                'Please set S.OpenSimADOptions.compiler to Visual Studio 14 2015 Win64, Visual Studio 15 2017 Win64,',...
-                'Visual Studio 16 2019, or Visual Studio 17 2022 based on your installed version']);
-        end
+        S.OpenSimADOptions.compiler = findVisualStudioInstallation;
     elseif isunix
         S.OpenSimADOptions.compiler = 'Unix Makefiles';
     end
