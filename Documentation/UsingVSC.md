@@ -109,10 +109,30 @@ be written to the job output file (by default looking like `slurm-<jobid>.out`.
 > line breaks. You can rectify this by running `dos2unix <fn>` on the cluster.
 >
 
-### A few useful Git commands
-```squeue --clusters=NAMECLUSTER --me``` Check queue (replace _Name Cluster_)
+### ⚙️ Manage jobs
 
-```git rev-parse --short HEAD``` Check current commit
+🔗 **Active Jobs Dashboard**
+Jobs can be managed using the [Active Jobs Dashboard](https://ondemand.hpc.kuleuven.be/pun/sys/dashboard/activejobs).
+
+💻 **Git Server Shell**
+Jobs can also be managed directly from the Git server shell.
+
+### A few useful Git commands
+Check queue
+```squeue --clusters=NAMECLUSTER``` (replace NAMECLUSTER)
+
+Cancel all jobs
+```scancel -u $USER```
+
+Cancel one specific job
+```squeue --clusters=NAMECLUSTER JOBNUM``` (replace NAMECLUSTER, JOBNUM)
+
+
+Check current commit
+```git rev-parse --short HEAD``` 
+
+
+
 Update to new commit (stash and keep changes):
 ```
 git stash
