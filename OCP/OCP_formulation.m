@@ -353,6 +353,7 @@ ineq_constr_deact = {}; % Initialize inequality constraint vector
 ineq_constr_act = {}; % Initialize inequality constraint vector
 ineq_constr_distance = cell(length(S.bounds.distanceConstraints),1);
 ineq_constr_syn = {}; % Initialize inequality constraint vector
+ineq_constr_grf = {}; % Initialize inequality constraint vector (added by Menthy)
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Time step
@@ -483,6 +484,11 @@ for j=1:d
     % Evaluate external function
     [Tj] = F(F_ext_input);
 
+    % Save left/right ground reaction forces
+    RGRFj = Tj(model_info.ExtFunIO.GRFs.right_total(2),1);                  % right total, vertical GRF force
+    LGRFj = Tj(model_info.ExtFunIO.GRFs.left_total(2),1);                   % left total, vertical GRF force
+    ineq_constr_grf{end+1} = [RGRFj; LGRFj];
+
     % Evaluate ligament moment
     M_lig_j = f_casadi.ligamentMoment(Qskj_nsc(:,j+1));
 
@@ -605,6 +611,9 @@ for i_dc=1:length(ineq_constr_distance)
 end
 ineq_constr_syn = vertcat(ineq_constr_syn{:});
 
+% GRF constraint (added by Menthy)
+ineq_constr_grf = vertcat(ineq_constr_grf{:});
+
 % Casadi function to get constraints and objective
 coll_input_vars_def = {tfk,ak,aj,FTtildek,FTtildej,Qsk,Qsj,Qdotsk,Qdotsj,vAk,dFTtildej,Aj,M_ort_coordk,M_ort_bodyk};
 if nq.torqAct > 0
@@ -616,7 +625,7 @@ end
 
 f_coll = Function('f_coll',coll_input_vars_def,...
         {eq_constr, ineq_constr_deact, ineq_constr_act,...
-        ineq_constr_distance{:}, ineq_constr_syn,J});
+        ineq_constr_distance{:}, ineq_constr_syn, ineq_constr_grf, J});       % Added inequality constraint GRF (added by Menthy)
 
 % Repeat function for each mesh interval and assign evaluation to multiple threads
 f_coll_map = f_coll.map(N,S.solver.parallel_mode,S.solver.N_threads);
@@ -635,7 +644,7 @@ end
 coll_ineq_constr_distance = cell(1,length(ineq_constr_distance));
 
 [coll_eq_constr, coll_ineq_constr_deact, coll_ineq_constr_act,...
-    coll_ineq_constr_distance{:}, coll_ineq_constr_syn,Jall] =...
+    coll_ineq_constr_distance{:}, coll_ineq_constr_syn,coll_ineq_constr_grf,Jall] =... % Added inequality constraint GRF (added by Menthy)
     f_coll_map(coll_input_vars_eval{:});
 
 % equality constraints
@@ -664,6 +673,51 @@ for i_dc=1:length(ineq_constr_distance)
 end
 if (S.subject.synergies)
     opti.subject_to(S.bounds.SynConstr.lower < coll_ineq_constr_syn(:) < S.bounds.SynConstr.upper); 
+end
+
+% GRF Constraint
+if(isfield(S.bounds, "GRFConstraints"))
+    % get ground reaction forces from f_coll function
+    GRFcoll_right = coll_ineq_constr_grf(1:2:end);                              % right GRF force, every 2 because left/right switch when saved in coll_ineq_constr_grf
+    GRFcoll_left = coll_ineq_constr_grf(2:2:end);                               % left GRF force
+
+    tau_c = tau_root(2:end);                                                    % timing of collocation points
+    pct_window = ((0:N-1) + tau_c(:))/N; pct_window = pct_window(:);            % percent of the simulated window (first collocation point to last one, 0.00...% --> 100%)
+
+    % loop over intervals
+    for c = 1:numel(S.bounds.GRFConstraints)
+        con = S.bounds.GRFConstraints{c};                                       % current constraint
+        conActive = find((pct_window >= con.gait_percent(1)) & (pct_window <= con.gait_percent(2)));
+
+        % Change scale
+        if(isfield(con, "unit"))
+            if strcmp(con.unit,'BW')
+                scale = model_info.mass*9.81;                                   % percent of body weight
+            elseif(strcmp(con.unit,'BM'))
+                scale = model_info.mass;                                        % percent of body mass
+            end
+        else
+            scale = 1;                                                          % bound in Newton
+        end
+
+        % Choose side
+        if(strcmp(con.side, 'l'))
+            GRFcoll_con = GRFcoll_left(conActive);                              % only when constraint is active
+        elseif(strcmp(con.side,'r'))
+            GRFcoll_con = GRFcoll_right(conActive);
+        end
+
+        % Apply lower bound constraints
+        if isfield(con, "lower_bound")
+            opti.subject_to(GRFcoll_con > con.lower_bound*scale)
+        end
+
+        % Apply upper bound constraints
+        if isfield(con, "upper_bound")
+            opti.subject_to(GRFcoll_con < con.upper_bound*scale)
+        end
+    end
+
 end
 
 % Loop over mesh points

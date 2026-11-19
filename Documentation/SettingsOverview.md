@@ -81,6 +81,17 @@ Quickly navigate to:
     1. Individual bounds from settings (S.bounds.Qs, S.bounds.Qdots, S.bounds.Qdotdots)
     2. Default bounds from table (S.bounds.default_coordinate_bounds)
     3. Read from model file. Qs: min and max coordinate values, Qdots: +/-10x coordinate range, Qdotdots: +/-155x coordinate range.
+- **S.bounds.GRFConstraints**
+    - Cell array of structures, defining bounds on the vertical ground reaction force during an interval of the gait cycle. Default is no constraints.
+    
+    Fields of the [struct] are: `side` ('r' or 'l'), `gait_percent` ([start end]% when the constraint should be active), `lower_bound`, `upper_bound`, and `unit` (Default: Newton, Other options: body mass ('BM') or body weight ('BW')). It is also possible to apply the same constraint to the left and right side, by specifying ['l', 'r'] for `side`. 
+
+    The gait percent covers the simulated window: half a gait cycle when simulating with S.misc.gaitmotion_type = 'HalfGaitCycle', and the full gait cycle when simulating with S.misc.gaitmotion_type = 'FullGaitCycle'.
+
+    An example constraint, enforcing heel strike of the right foot at t = 0, could be:
+    S.bounds.GRFConstraints = {struct('side', 'r', 'gait_percent', [0, 0.2], 'lower_bound', 0.35, 'unit', 'BM'), ...
+                        struct('side', 'r', 'gait_percent', [0.2, 0.8], 'lower_bound', 0.30, 'unit', 'BW'), ...
+                        struct('side', 'l', 'gait_percent', [0.8, 1], 'upper_bound', 0.35, 'unit', 'BM')};
 
 
 #### S.metabolicE - metabolic energy
