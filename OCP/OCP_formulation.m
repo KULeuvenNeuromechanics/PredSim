@@ -877,6 +877,10 @@ if ~S.post_process.load_prev_opti_vars
     % Opti does not use bounds on variables but constraints. This function
     % adjusts for that.
     [w_opt,stats] = solve_NLPSOL(opti,options);
+
+    % --- temporary debug: raw GRF constraint values at the collocation points ---
+    f_debug = casadi.Function('f_debug', {opti.x}, {coll_ineq_constr_grf});
+    grf_debug = full(f_debug(w_opt));
     
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     disp(' ')
@@ -1442,6 +1446,7 @@ R.ground_reaction.threshold = HS_threshold;
 R.ground_reaction.initial_contact_side = HS1;
 R.ground_reaction.idx_GC = idx_GC;
 R.spatiotemp.dist_trav = dist_trav_opt;
+R.ground_reaction.rawGRF = grf_debug;                                       % temporary to debug GRF constraints
 
 % save results
 Outname = fullfile(S.misc.save_folder,[S.misc.result_filename '.mat']);
