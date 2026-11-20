@@ -717,6 +717,8 @@ if(isfield(S.bounds, "GRFConstraints"))
                 GRFcoll_con = GRFcoll_left_shift(conActive);                    % only when constraint is active
             elseif(strcmp(con.side(s),'r'))
                 GRFcoll_con = GRFcoll_right_shift(conActive);
+            else
+                error(['Side: ' con.side(s) ' not defined in GRF constraints'])
             end
         
             % Apply lower bound constraints
