@@ -681,14 +681,25 @@ if(isfield(S.bounds, "GRFConstraints"))
     GRFcoll_right = coll_ineq_constr_grf(1:2:end);                              % right GRF force, every 2 because left/right switch when saved in coll_ineq_constr_grf
     GRFcoll_left = coll_ineq_constr_grf(2:2:end);                               % left GRF force
 
+    % shift to make sure final collocation point alings with first mesh point
+    if(strcmp(S.misc.gaitmotion_type,'HalfGaitCycle'))
+        GRFcoll_right_shift = [GRFcoll_left(end), GRFcoll_right(1:end-1)];
+        GRFcoll_left_shift = [GRFcoll_right(end), GRFcoll_left(1:end-1)];
+    else
+        GRFcoll_right_shift = [GRFcoll_right(end), GRFcoll_right(1:end-1)];
+        GRFcoll_left_shift = [GRFcoll_left(end), GRFcoll_left(1:end-1)];
+    end
+    
+    % define percent of simulated window
     tau_c = tau_root(2:end);                                                    % timing of collocation points
     pct_window = ((0:N-1) + tau_c(:))/N; pct_window = pct_window(:);            % percent of the simulated window (first collocation point to last one, 0.00...% --> 100%)
+    pct_window = [0; pct_window(1:end-1)];                                      % 0 --> 99.99%, first point now matches first mesh point
 
     % loop over intervals
     for c = 1:numel(S.bounds.GRFConstraints)
         con = S.bounds.GRFConstraints{c};                                       % current constraint
         conActive = find((pct_window >= con.gait_percent(1)) & (pct_window <= con.gait_percent(2)));
-
+        
         % Change scale
         if(isfield(con, "unit"))
             if strcmp(con.unit,'BW')
@@ -699,22 +710,24 @@ if(isfield(S.bounds, "GRFConstraints"))
         else
             scale = 1;                                                          % bound in Newton
         end
-
+        
         % Choose side
-        if(strcmp(con.side, 'l'))
-            GRFcoll_con = GRFcoll_left(conActive);                              % only when constraint is active
-        elseif(strcmp(con.side,'r'))
-            GRFcoll_con = GRFcoll_right(conActive);
-        end
-
-        % Apply lower bound constraints
-        if isfield(con, "lower_bound")
-            opti.subject_to(GRFcoll_con > con.lower_bound*scale)
-        end
-
-        % Apply upper bound constraints
-        if isfield(con, "upper_bound")
-            opti.subject_to(GRFcoll_con < con.upper_bound*scale)
+        for s = 1:numel(con.side)
+            if(strcmp(con.side(s), 'l'))
+                GRFcoll_con = GRFcoll_left_shift(conActive);                    % only when constraint is active
+            elseif(strcmp(con.side(s),'r'))
+                GRFcoll_con = GRFcoll_right_shift(conActive);
+            end
+        
+            % Apply lower bound constraints
+            if isfield(con, "lower_bound")
+                opti.subject_to(GRFcoll_con > con.lower_bound*scale)
+            end
+            
+            % Apply upper bound constraints
+            if isfield(con, "upper_bound")
+                opti.subject_to(GRFcoll_con < con.upper_bound*scale)
+            end
         end
     end
 
