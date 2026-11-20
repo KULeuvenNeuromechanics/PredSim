@@ -24,7 +24,6 @@ load(fullfile(pathRepo,'Tests','ReferenceResults','gait1018','gait1018_GRFconstr
 %% Define Variables
 S = R.S;                                                                    % settings structure
 N = R.S.solver.N_meshes;                                                    % number of meshes
-d = 3;                                                                      % number of collocation points
 tau_root = [0, (4-sqrt(6))/10, (4+sqrt(6))/10, 1];                          % radau collocation points
 
 tau_c = tau_root(2:end);
